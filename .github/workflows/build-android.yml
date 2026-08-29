@@ -1,0 +1,129 @@
+name: Build Vyapar AI Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - 'android-app/**'
+      - 'version.json'
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build and Release Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 34
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Detect native C++ / JNI configuration
+        id: native
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f android-app/app/src/main/cpp/CMakeLists.txt ]; then
+            echo "kind=cmake" >> "$GITHUB_OUTPUT"
+          elif [ -f android-app/app/src/main/jni/Android.mk ]; then
+            echo "kind=ndk-build" >> "$GITHUB_OUTPUT"
+          elif find android-app/app/src/main -type f \
+            \( -name '*.cpp' -o -name '*.cc' -o -name '*.c' -o -name '*.h' -o -name '*.hpp' \) \
+            -print -quit | grep -q .; then
+            echo "JNI/C++ source exists, but no app/src/main/cpp/CMakeLists.txt or app/src/main/jni/Android.mk was found." >&2
+            exit 1
+          else
+            echo "kind=none" >> "$GITHUB_OUTPUT"
+            echo "No JNI/C++ sources detected; no NDK toolchain is required."
+          fi
+
+      - name: Install native toolchain when JNI exists
+        if: steps.native.outputs.kind != 'none'
+        run: sdkmanager "ndk;26.1.10909125" "cmake;3.22.1"
+
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '8.7'
+
+      - name: Validate Android bundled JavaScript
+        run: |
+          for f in android-app/app/src/main/assets/*.js; do
+            node --check "$f"
+          done
+
+      - name: Verify Android SDK and version configuration
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const version = JSON.parse(fs.readFileSync('version.json','utf8'));
+          const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
+          const compileSdk = Number((gradle.match(/compileSdk\s+(\d+)/)||[])[1]);
+          const targetSdk = Number((gradle.match(/targetSdk\s+(\d+)/)||[])[1]);
+          const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
+          const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+          if (compileSdk !== 34 || targetSdk !== 34) {
+            throw new Error(`SDK mismatch: compile=${compileSdk}, target=${targetSdk}`);
+          }
+          if (versionName !== version.versionName || versionCode !== version.versionCode) {
+            throw new Error(`Version mismatch: ${versionName}/${versionCode} vs ${version.versionName}/${version.versionCode}`);
+          }
+          console.log('Android config OK:', {compileSdk,targetSdk,versionName,versionCode});
+          NODE
+
+      - name: Generate Gradle wrapper
+        working-directory: android-app
+        run: gradle wrapper --gradle-version 8.7 --distribution-type bin
+
+      - name: Build debug APK
+        working-directory: android-app
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug \
+            -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
+            --stacktrace \
+            --no-daemon
+
+      - name: Read app version
+        id: version
+        working-directory: android-app
+        run: |
+          VERSION_NAME=$(node -p "require('../version.json').versionName")
+          VERSION_CODE=$(node -p "require('../version.json').versionCode")
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK
+        run: |
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk \
+            "VyaparAI-${{ steps.version.outputs.version_name }}.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VyaparAI-${{ steps.version.outputs.version_name }}-apk
+          path: VyaparAI-${{ steps.version.outputs.version_name }}.apk
+
+      - name: Create or update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version_name }}
+          name: Vyapar AI v${{ steps.version.outputs.version_name }}
+          generate_release_notes: true
+          files: VyaparAI-${{ steps.version.outputs.version_name }}.apk
