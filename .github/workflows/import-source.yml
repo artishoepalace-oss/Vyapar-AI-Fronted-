@@ -1,0 +1,87 @@
+name: Import uploaded Vyapar AI source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.source-transfer/**'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout staged upload
+        uses: actions/checkout@v4
+
+      - name: Extract uploaded text source
+        run: |
+          set -euo pipefail
+          tar -xzf .source-transfer/text-source.tar.gz
+
+      - name: Recreate image assets blocked by binary transfer limits
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check --quiet pillow
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps, ImageEnhance
+          import shutil
+
+          root = Path('.')
+          logo_path = root / 'android-app/app/src/main/assets/logo.png'
+          gold_path = root / 'android-app/app/src/main/assets/subscription-business-gold.png'
+          logo = Image.open(logo_path).convert('RGB')
+
+          for target, size in [
+              ('android-app/app/src/main/res/drawable/ic_launcher.png', (192, 192)),
+              ('branding/ic_launcher.png', (192, 192)),
+              ('android-app/app/src/main/res/drawable/ic_launcher_512.png', (512, 512)),
+              ('branding/ic_launcher_512.png', (512, 512)),
+          ]:
+              p = root / target
+              p.parent.mkdir(parents=True, exist_ok=True)
+              logo.resize(size, Image.Resampling.LANCZOS).save(p, format='PNG', optimize=True)
+
+          jpg = root / 'branding/vyapar_ai_logo_original.jpg'
+          jpg.parent.mkdir(parents=True, exist_ok=True)
+          logo.resize((1536, 1536), Image.Resampling.LANCZOS).save(jpg, format='JPEG', quality=92, optimize=True)
+
+          gold = Image.open(gold_path).convert('RGB')
+          gray = ImageOps.grayscale(gold)
+          gray = ImageEnhance.Contrast(gray).enhance(1.08)
+          silver = ImageOps.colorize(gray, black='#15191f', white='#f4f6f8')
+          for target in [
+              'android-app/app/src/main/assets/subscription-pro-silver.png',
+              'web/subscription-pro-silver.png',
+          ]:
+              p = root / target
+              p.parent.mkdir(parents=True, exist_ok=True)
+              silver.save(p, format='PNG', optimize=True)
+          PY
+
+      - name: Remove transfer scaffolding
+        run: |
+          rm -rf .source-transfer
+          rm -f .github/workflows/import-source.yml
+
+      - name: Commit imported source
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Import Vyapar AI frontend source'
+          git push origin HEAD:main
+
+      - name: Start Android build workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run build-android.yml --ref main
