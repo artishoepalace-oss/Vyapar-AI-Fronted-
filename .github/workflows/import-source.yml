@@ -20,14 +20,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reassemble verified text source
+      - name: Reassemble verified 6.5.9 text source
         shell: bash
         run: |
           set -euo pipefail
           test -f .source-transfer/READY-659
-          cat .source-transfer/v659-text-* > /tmp/v659-full-text.tar.xz.b64
+          cat .source-transfer/v659b-* > /tmp/v659-full-text.tar.xz.b64
           base64 -d /tmp/v659-full-text.tar.xz.b64 > /tmp/v659-full-text.tar.xz
-          echo 'be062a8909e33af1e174337c13f2b806133cff7e3f5fef6f6cfb46477bcbea54  /tmp/v659-full-text.tar.xz' | sha256sum -c -
+          echo '517ac95c431176461105af030b2e415b9ca81fd4f7e585c8313e372c6820ce8f  /tmp/v659-full-text.tar.xz' | sha256sum -c -
           tar -xJf /tmp/v659-full-text.tar.xz
 
       - name: Restore required binary app assets
@@ -92,7 +92,7 @@ jobs:
           for f in web/*.js android-app/app/src/main/assets/*.js; do node --check "$f"; done
           test -f android-app/app/src/main/assets/motion-engine-659.js
           test -f android-app/app/src/main/assets/motion-engine-659.css
-          test -f android-app/app/src/main/java/com/anuj/guptalegacy/vyaparai/MainActivity.java
+          test -f android-app/app/src/main/java/com/vyaparai/app/MainActivity.java
 
       - name: Remove transfer scaffolding and commit
         shell: bash
