@@ -1,7 +1,7 @@
 /* Vyapar AI 6.5.8 — audit stability and financial clarity patch. */
 (function(){
   'use strict';
-  const V='6.5.8';
+  const V='6.5.9';
 
   function currentYear(){ return String(new Date().getFullYear()); }
   function n(v){ const x=Number(v||0); return Number.isFinite(x)?x:0; }
@@ -94,7 +94,7 @@
   // Update check persists metadata without calling the global save() render cycle.
   window.fs607CheckUpdate=async function(manual){
     try{
-      let currentCode=65800,currentName=V;
+      let currentCode=65900,currentName=V;
       if(window.AndroidApp){
         try{ if(typeof AndroidApp.getVersionCode==='function') currentCode=Number(AndroidApp.getVersionCode())||currentCode; }catch(_){}
         try{ if(typeof AndroidApp.getVersionName==='function') currentName=String(AndroidApp.getVersionName()||currentName); }catch(_){}

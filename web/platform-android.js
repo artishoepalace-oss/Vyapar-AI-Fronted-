@@ -15,7 +15,7 @@
     pass.textContent='Login with Password';
     otp.textContent='Login with OTP';
     var help=gate.querySelector('.auth-help');
-    if(help && !help.querySelector('.gupta-legacy-signature')) help.innerHTML='Vyapar AI 6.5.2<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
+    if(help) help.textContent='Vyapar AI 6.5.9';
 
     var startX=null;
     function sync(){

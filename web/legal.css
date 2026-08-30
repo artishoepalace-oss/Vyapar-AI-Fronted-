@@ -112,3 +112,11 @@ main{
 .legal-footer{margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.10);text-align:center;color:#91a8bd;font-size:11px;}
 
 .legal-footer .gupta-legacy-signature{display:block;margin-top:7px;font-weight:850;font-style:italic;letter-spacing:.025em;color:#d7e6f5;}
+
+
+/* 6.5.9 legal footer branding */
+.legal-footer.vy659-legal-footer{display:flex;flex-direction:column;align-items:center;gap:11px;margin-top:28px;padding:22px 10px 4px;font-size:12px;}
+.legal-footer-logo{width:72px;height:72px;object-fit:contain;opacity:.74;}
+.legal-footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;}
+.legal-footer-links a{font-weight:760;text-decoration:none;min-height:34px;display:inline-flex;align-items:center;}
+@media(max-width:600px){.legal-footer-logo{width:64px;height:64px}.legal-footer-links{gap:8px 14px}}

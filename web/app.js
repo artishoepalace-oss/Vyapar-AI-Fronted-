@@ -8661,27 +8661,25 @@ render();
   }
 
   function ensureLegalFooter(){
-    const app = document.querySelector(".app");
-    if(!app) return;
+    const settings = document.querySelector("#screen-settings .settings-stack");
+    if(!settings) return;
     let footer = document.getElementById("appLegalFooter");
     if(!footer){
       footer = document.createElement("footer");
       footer.id = "appLegalFooter";
-      footer.className = "app-legal-footer";
-      footer.innerHTML =
-        '<span>© 2026 Vyapar AI. All Rights Reserved.</span>' +
-        '<span class="app-legal-links">' +
-          '<a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>' +
-          '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
-          '<a href="refund.html" target="_blank" rel="noopener noreferrer">Refund</a>' +
-          '<a href="delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>' +
-        '</span>' +
-        '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
-      // The legal identity belongs at the absolute end of the web app.
-      // Older web flex ordering inserted it before navigation, which made it
-      // appear at the top of Sales/Settings in desktop screenshots.
-      app.appendChild(footer);
+      footer.className = "app-legal-footer vy659-settings-footer";
     }
+    footer.innerHTML =
+      '<img class="vy659-footer-logo" src="footer-logo.png" alt="Vyapar AI">' +
+      '<span>© 2026 Vyapar AI. All Rights Reserved.</span>' +
+      '<span class="app-legal-links">' +
+        '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
+        '<a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>' +
+        '<a href="refund.html" target="_blank" rel="noopener noreferrer">Refund</a>' +
+        '<a href="delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>' +
+      '</span>' +
+      '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
+    settings.appendChild(footer);
   }
 
   function closeMoreSheet(restoreNav){
@@ -8736,14 +8734,6 @@ render();
         sheetItem("calculator","Calculator","Business calculations")+
         sheetItem("subscription","Plans","Subscription manage")+
         sheetItem("settings","App Settings","Account, backup and preferences")+
-      '</div>'+
-      '<div class="android-sheet-legal">'+
-        '<span class="android-sheet-copyright">© 2026 Vyapar AI · All Rights Reserved.</span>'+
-        '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>'+
-        '<a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>'+
-        '<a href="refund.html" target="_blank" rel="noopener noreferrer">Refund</a>'+
-        '<a href="delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>'+
-        '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>'+
       '</div>'+
     '</div>';
 

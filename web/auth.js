@@ -393,7 +393,7 @@
         </section>
 
         <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
-        <div class="auth-help">Vyapar AI 6.5.2<strong class="gupta-legacy-signature">From: Gupta Legacy</strong></div>
+        <div class="auth-help">Vyapar AI 6.5.9</div>
       </main>
       <div class="auth-loading-overlay" role="status" aria-live="polite" aria-label="Opening Vyapar AI">
         <div class="auth-loading-card"><div class="auth-loading-spinner" aria-hidden="true"></div><strong>Login successful</strong><span>Opening home…</span></div>
