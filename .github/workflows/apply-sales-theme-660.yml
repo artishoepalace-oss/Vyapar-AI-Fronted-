@@ -1,0 +1,87 @@
+name: Apply Vyapar AI 6.6.0 sales and theme update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-sales-theme-660.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply 6.6.0 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          for path in [Path('web/index.html'), Path('android-app/app/src/main/assets/index.html')]:
+              text = path.read_text(encoding='utf-8')
+              text = re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>', '<meta name="vyapar-ui-version" content="6.6.0-sales-live-theme" />', text)
+              text = re.sub(r'\s*<link rel="stylesheet" href="profit-footer-659\.css\?v=[^"]+"\s*/>', '', text)
+              text = re.sub(r'\s*<script src="profit-footer-659\.js\?v=[^"]+"></script>', '', text)
+              css = '  <link rel="stylesheet" href="sales-theme-660.css?v=20260831-660" />\n'
+              js = '  <script src="sales-theme-660.js?v=20260831-660"></script>\n'
+              if 'sales-theme-660.css' not in text:
+                  text = text.replace('</head>', css + '</head>')
+              if 'sales-theme-660.js' not in text:
+                  text = text.replace('</body>', js + '</body>')
+              path.write_text(text, encoding='utf-8')
+
+          Path('android-app/app/src/main/assets/sales-theme-660.js').write_text(Path('web/sales-theme-660.js').read_text(encoding='utf-8'), encoding='utf-8')
+          Path('android-app/app/src/main/assets/sales-theme-660.css').write_text(Path('web/sales-theme-660.css').read_text(encoding='utf-8'), encoding='utf-8')
+
+          version = {
+            'versionName':'6.6.0',
+            'versionCode':66000,
+            'channel':'sales-live-theme-660',
+            'baseVersion':'6.5.9',
+            'released':'2026-08-31',
+            'backendVersion':'2.5.2'
+          }
+          Path('version.json').write_text(json.dumps(version, indent=2) + '\n', encoding='utf-8')
+
+          gradle = Path('android-app/app/build.gradle')
+          g = gradle.read_text(encoding='utf-8')
+          g = re.sub(r'versionCode\s+\d+', 'versionCode 66000', g)
+          g = re.sub(r"versionName\s+['\"][^'\"]+['\"]", "versionName '6.6.0'", g)
+          gradle.write_text(g, encoding='utf-8')
+
+          Path('SALES_THEME_6.6.0.md').write_text('''# Vyapar AI 6.6.0\n\n- Unified dark-blue Liquid Glass palette across Android app surfaces.\n- Sales top card no longer labels the historical/yearly manual total as Monthly Profit.\n- Sales now shows current-month live profit: current-month manual + current-month daily profit + current-month item-sale profit.\n- Daily Profit shown in Sales is today-only (Daily Quick Entry for the current date).\n- Yearly Profit continues to include all recorded profit sources.\n- Settings-only app footer behavior is preserved.\n''', encoding='utf-8')
+          PY
+
+      - name: Validate frontend and Android assets
+        run: |
+          node --check web/sales-theme-660.js
+          node --check android-app/app/src/main/assets/sales-theme-660.js
+          grep -q 'sales-theme-660.css' web/index.html
+          grep -q 'sales-theme-660.js' web/index.html
+          grep -q 'sales-theme-660.css' android-app/app/src/main/assets/index.html
+          grep -q 'sales-theme-660.js' android-app/app/src/main/assets/index.html
+          ! grep -q 'profit-footer-659.js' web/index.html
+          ! grep -q 'profit-footer-659.js' android-app/app/src/main/assets/index.html
+          node -e "const v=require('./version.json'); if(v.versionName!=='6.6.0'||v.versionCode!==66000) process.exit(1)"
+
+      - name: Commit clean 6.6.0 source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add web/index.html web/sales-theme-660.js web/sales-theme-660.css \
+            android-app/app/src/main/assets/index.html \
+            android-app/app/src/main/assets/sales-theme-660.js \
+            android-app/app/src/main/assets/sales-theme-660.css \
+            android-app/app/build.gradle version.json SALES_THEME_6.6.0.md
+          git rm .github/workflows/apply-sales-theme-660.yml
+          git commit -m 'Release Vyapar AI 6.6.0 sales live profit and unified blue theme'
+          git push
