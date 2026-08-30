@@ -1,0 +1,96 @@
+name: Build Vyapar AI 6.6.0 now
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-660-now.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 34
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '8.7'
+
+      - name: Validate 6.6.0 source
+        run: |
+          node --check web/sales-theme-660.js
+          node --check android-app/app/src/main/assets/sales-theme-660.js
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=JSON.parse(fs.readFileSync('version.json','utf8'));
+          const g=fs.readFileSync('android-app/app/build.gradle','utf8');
+          if(v.versionName!=='6.6.0'||v.versionCode!==66000) throw new Error('version.json mismatch');
+          if(!/versionCode\s+66000/.test(g)||!/versionName\s+['\"]6\.6\.0['\"]/.test(g)) throw new Error('Gradle version mismatch');
+          const html=fs.readFileSync('android-app/app/src/main/assets/index.html','utf8');
+          if(!html.includes('sales-theme-660.js')||!html.includes('sales-theme-660.css')) throw new Error('660 assets not linked');
+          if(html.includes('profit-footer-659.js')) throw new Error('old 659 runtime still linked');
+          console.log('Vyapar AI 6.6.0 source validated');
+          NODE
+
+      - name: Generate Gradle wrapper
+        working-directory: android-app
+        run: gradle wrapper --gradle-version 8.7 --distribution-type bin
+
+      - name: Build debug APK
+        working-directory: android-app
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug \
+            -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
+            --stacktrace --no-daemon
+
+      - name: Prepare APK
+        run: cp android-app/app/build/outputs/apk/debug/app-debug.apk VyaparAI-6.6.0.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VyaparAI-6.6.0-apk
+          path: VyaparAI-6.6.0.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v6.6.0
+          name: Vyapar AI v6.6.0
+          generate_release_notes: true
+          body: |
+            Sales profit clarity and visual consistency release.
+            - Unified dark-blue Liquid Glass surfaces.
+            - Removed incorrect yearly-manual-as-monthly breakdown from Sales top.
+            - Current month live = monthly manual + daily profit + item-sale profit for the current month.
+            - Today's Daily Profit = today-only Daily Quick Entry.
+          files: VyaparAI-6.6.0.apk
+
+      - name: Cleanup one-time workflow
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/build-660-now.yml
+          git commit -m 'Clean one-time 6.6.0 release workflow' || true
+          git push || true
