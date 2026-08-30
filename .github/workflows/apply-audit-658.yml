@@ -1,0 +1,61 @@
+name: Apply Vyapar AI 6.5.8 audit release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-audit-658.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reassemble audit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .audit-transfer/v658-part-*.b64 > /tmp/v658-patch.tar.xz.b64
+          base64 -d /tmp/v658-patch.tar.xz.b64 > /tmp/v658-patch.tar.xz
+          echo '52636e187065ca8b8e945c57ca9724d11d2ece2042527c7583dcce54a285476c  /tmp/v658-patch.tar.xz' | sha256sum -c -
+          tar -xJf /tmp/v658-patch.tar.xz
+
+      - name: Validate release patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=JSON.parse(fs.readFileSync('version.json','utf8'));
+          if(v.versionName!=='6.5.8'||Number(v.versionCode)!==65800) throw new Error('bad version');
+          const g=fs.readFileSync('android-app/app/build.gradle','utf8');
+          if(!g.includes('versionCode 65800')||!g.includes("versionName '6.5.8'")) throw new Error('gradle mismatch');
+          NODE
+          for f in web/*.js android-app/app/src/main/assets/*.js; do node --check "$f"; done
+          test -f web/footer-logo.png
+          test -f android-app/app/src/main/assets/footer-logo.png
+
+      - name: Commit audited release
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .audit-transfer .github/workflows/apply-audit-658.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Release Vyapar AI 6.5.8 audit stability fixes'
+          git push origin HEAD:main
+
+      - name: Start Android APK build and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: gh workflow run build-android.yml --ref main
