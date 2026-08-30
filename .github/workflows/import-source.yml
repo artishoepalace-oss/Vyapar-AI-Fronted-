@@ -1,4 +1,4 @@
-name: Import Vyapar AI 6.5.9 exact source
+name: Import Vyapar AI 6.5.9 source
 
 on:
   push:
@@ -20,60 +20,90 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reassemble exact source ZIP
+      - name: Reassemble verified text source
         shell: bash
         run: |
           set -euo pipefail
           test -f .source-transfer/READY-659
-          cat .source-transfer/v659-* > /tmp/vyapar-659.zip.b64
-          base64 -d /tmp/vyapar-659.zip.b64 > /tmp/vyapar-659.zip
-          echo '47c8ac84eec30daf91f8dce7a0d1b4902cce46601264f6b5c990933ff676290e  /tmp/vyapar-659.zip' | sha256sum -c -
-          rm -rf /tmp/vyapar-659-import
-          mkdir -p /tmp/vyapar-659-import
-          unzip -q /tmp/vyapar-659.zip -d /tmp/vyapar-659-import
-          SOURCE_ROOT="$(find /tmp/vyapar-659-import -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-          test -n "$SOURCE_ROOT"
-          test -f "$SOURCE_ROOT/version.json"
-          test -d "$SOURCE_ROOT/android-app"
-          echo "SOURCE_ROOT=$SOURCE_ROOT" >> "$GITHUB_ENV"
+          cat .source-transfer/v659-text-* > /tmp/v659-full-text.tar.xz.b64
+          base64 -d /tmp/v659-full-text.tar.xz.b64 > /tmp/v659-full-text.tar.xz
+          echo 'be062a8909e33af1e174337c13f2b806133cff7e3f5fef6f6cfb46477bcbea54  /tmp/v659-full-text.tar.xz' | sha256sum -c -
+          tar -xJf /tmp/v659-full-text.tar.xz
 
-      - name: Import exact source tree
+      - name: Restore required binary app assets
         shell: bash
         run: |
           set -euo pipefail
-          rsync -a --delete \
-            --exclude='.git/' \
-            --exclude='.source-transfer/' \
-            "$SOURCE_ROOT/" ./
-          rm -rf .source-transfer .source-v2 .full-transfer .bootstrap
+          python -m pip install --disable-pip-version-check --quiet pillow
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps, ImageEnhance
+          root = Path('.')
+          android_assets = root / 'android-app/app/src/main/assets'
+          web = root / 'web'
+          branding = root / 'branding'
+          drawable = root / 'android-app/app/src/main/res/drawable'
+          drawable.mkdir(parents=True, exist_ok=True)
+          branding.mkdir(parents=True, exist_ok=True)
+          web.mkdir(parents=True, exist_ok=True)
+          android_assets.mkdir(parents=True, exist_ok=True)
 
-      - name: Validate imported version and JavaScript
+          logo_candidates = [android_assets/'logo.png', web/'logo.png', branding/'vyapar_ai_logo_full.png']
+          gold_candidates = [android_assets/'subscription-business-gold.png', web/'subscription-business-gold.png']
+          logo_path = next((p for p in logo_candidates if p.exists()), None)
+          gold_path = next((p for p in gold_candidates if p.exists()), None)
+          if not logo_path or not gold_path:
+              raise SystemExit('Required existing logo/gold seed assets are missing')
+
+          logo = Image.open(logo_path).convert('RGB')
+          for target in [android_assets/'logo.png', web/'logo.png', branding/'vyapar_ai_logo_full.png']:
+              target.parent.mkdir(parents=True, exist_ok=True)
+              logo.save(target, format='PNG', optimize=True)
+
+          for target, size in [
+              (drawable/'ic_launcher.png', (192,192)),
+              (branding/'ic_launcher.png', (192,192)),
+              (drawable/'ic_launcher_512.png', (512,512)),
+              (branding/'ic_launcher_512.png', (512,512)),
+          ]:
+              logo.resize(size, Image.Resampling.LANCZOS).save(target, format='PNG', optimize=True)
+          logo.resize((1536,1536), Image.Resampling.LANCZOS).save(branding/'vyapar_ai_logo_original.jpg', format='JPEG', quality=92, optimize=True)
+
+          gold = Image.open(gold_path).convert('RGB')
+          for target in [android_assets/'subscription-business-gold.png', web/'subscription-business-gold.png']:
+              target.parent.mkdir(parents=True, exist_ok=True)
+              gold.save(target, format='PNG', optimize=True)
+          gray = ImageEnhance.Contrast(ImageOps.grayscale(gold)).enhance(1.08)
+          silver = ImageOps.colorize(gray, black='#15191f', white='#f4f6f8')
+          for target in [android_assets/'subscription-pro-silver.png', web/'subscription-pro-silver.png']:
+              silver.save(target, format='PNG', optimize=True)
+          PY
+
+      - name: Validate 6.5.9 source
         shell: bash
         run: |
           set -euo pipefail
           node - <<'NODE'
           const fs = require('fs');
-          const version = JSON.parse(fs.readFileSync('version.json','utf8'));
-          if (version.versionName !== '6.5.9' || Number(version.versionCode) !== 65900) {
-            throw new Error(`Unexpected version ${version.versionName}/${version.versionCode}`);
-          }
-          console.log('Imported version:', version.versionName, version.versionCode);
+          const v = JSON.parse(fs.readFileSync('version.json','utf8'));
+          if (v.versionName !== '6.5.9' || Number(v.versionCode) !== 65900) throw new Error(`Unexpected version ${v.versionName}/${v.versionCode}`);
+          console.log('Version OK:', v.versionName, v.versionCode);
           NODE
-          for f in android-app/app/src/main/assets/*.js; do node --check "$f"; done
+          for f in web/*.js android-app/app/src/main/assets/*.js; do node --check "$f"; done
+          test -f android-app/app/src/main/assets/motion-engine-659.js
+          test -f android-app/app/src/main/assets/motion-engine-659.css
+          test -f android-app/app/src/main/java/com/anuj/guptalegacy/vyaparai/MainActivity.java
 
-      - name: Commit exact 6.5.9 source
+      - name: Remove transfer scaffolding and commit
         shell: bash
         run: |
           set -euo pipefail
+          rm -rf .source-transfer .source-v2 .full-transfer .bootstrap
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          if git diff --cached --quiet; then
-            echo 'No source changes to commit.'
-          else
-            git commit -m 'Release Vyapar AI 6.5.9 iOS Motion Liquid Glass'
-            git push origin HEAD:main
-          fi
+          git commit -m 'Release Vyapar AI 6.5.9 iOS Motion Liquid Glass'
+          git push origin HEAD:main
 
       - name: Start Android APK build and release
         env:
