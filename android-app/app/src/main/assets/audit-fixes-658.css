@@ -1,0 +1,29 @@
+/* Vyapar AI 6.5.8 — low-risk audit polish */
+#tabLoader{display:none!important;opacity:0!important;pointer-events:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.android-ui:has(#tabLoader.show) .nav{filter:none!important;opacity:1!important;pointer-events:auto!important}
+
+.vy658-footer-logo{display:block;width:56px;height:56px;object-fit:contain;margin:0 auto 3px;grid-column:1/-1;opacity:.9}
+.app-legal-footer .vy658-footer-logo{flex:0 0 100%}
+.android-sheet-legal .vy658-footer-logo{width:44px;height:44px;margin-bottom:1px}
+.app-legal-footer{font-size:12px!important;gap:9px 13px!important}
+.app-legal-footer a,.android-sheet-legal a{min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+
+.vy658-finance-note{margin:12px 0 0!important;line-height:1.5!important}
+.vy658-year-filter{display:flex;align-items:end;gap:10px;max-width:220px;margin:10px 0 12px}
+.vy658-year-filter label{margin:0!important}.vy658-year-filter select{min-height:42px!important}
+.vy658-empty-state{display:grid;gap:7px;padding:18px;border:1px dashed var(--android-border,rgba(255,255,255,.15));border-radius:16px;text-align:center;color:var(--android-muted,#8fa2b5)}
+.vy658-empty-state b{color:var(--android-text,#eef6ff);font-size:16px}.vy658-empty-state span{font-size:13px}.vy658-empty-state .btn{justify-self:center;margin-top:4px}
+
+/* Make editable/read-only/disabled states visually distinct. */
+input:not([disabled]):not([readonly]),select:not([disabled]),textarea:not([disabled]):not([readonly]){border-color:rgba(120,181,238,.28)}
+input[readonly],textarea[readonly]{opacity:.88;border-style:dashed!important;background:rgba(255,255,255,.035)!important}
+input:disabled,select:disabled,textarea:disabled{opacity:.5!important;cursor:not-allowed}
+
+/* Readability and reliable touch targets on phone. */
+.android-ui .btn,.android-ui button,.native-android .btn,.native-android button{min-height:44px}
+.android-ui .muted,.native-android .muted{line-height:1.45}
+.android-ui canvas{max-width:100%}
+.android-ui .pnl-legend-item,.native-android .pnl-legend-item{font-size:12px!important}
+
+/* App view should feel native: scroll remains enabled but ornamental bars stay hidden. */
+.android-ui *{scrollbar-width:none!important}.android-ui *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}

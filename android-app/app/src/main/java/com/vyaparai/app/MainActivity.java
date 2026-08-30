@@ -93,6 +93,8 @@ protected void onCreate(Bundle savedInstanceState) {
     );
 
     webView = new WebView(this);
+        // Match the native window and WebView backgrounds to prevent a white launch flash.
+        webView.setBackgroundColor(android.graphics.Color.rgb(7, 20, 39));
         // Keep WebView on the hardware accelerated render path for the Liquid Glass UI.
         webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
         webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
