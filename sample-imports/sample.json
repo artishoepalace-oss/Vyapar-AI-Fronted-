@@ -1,0 +1,359 @@
+{
+  "app": "Vyapar AI",
+  "version": 2,
+  "dataType": "profit",
+  "profit": [
+    {
+      "type": "profit",
+      "date": "2023-08-01",
+      "year": 2023,
+      "month": "August",
+      "profit": 20300,
+      "amount": 20300,
+      "entries": 8,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2023-09-01",
+      "year": 2023,
+      "month": "September",
+      "profit": 12600,
+      "amount": 12600,
+      "entries": 22,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2023-10-01",
+      "year": 2023,
+      "month": "October",
+      "profit": 15600,
+      "amount": 15600,
+      "entries": 21,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2023-11-01",
+      "year": 2023,
+      "month": "November",
+      "profit": 25100,
+      "amount": 25100,
+      "entries": 26,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2023-12-01",
+      "year": 2023,
+      "month": "December",
+      "profit": 23600,
+      "amount": 23600,
+      "entries": 26,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-01-01",
+      "year": 2024,
+      "month": "January",
+      "profit": 15800,
+      "amount": 15800,
+      "entries": 24,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-02-01",
+      "year": 2024,
+      "month": "February",
+      "profit": 13200,
+      "amount": 13200,
+      "entries": 22,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-03-01",
+      "year": 2024,
+      "month": "March",
+      "profit": 21800,
+      "amount": 21800,
+      "entries": 24,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-04-01",
+      "year": 2024,
+      "month": "April",
+      "profit": 40600,
+      "amount": 40600,
+      "entries": 26,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-05-01",
+      "year": 2024,
+      "month": "May",
+      "profit": 15050,
+      "amount": 15050,
+      "entries": 22,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-06-01",
+      "year": 2024,
+      "month": "June",
+      "profit": 14000,
+      "amount": 14000,
+      "entries": 20,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-07-01",
+      "year": 2024,
+      "month": "July",
+      "profit": 29500,
+      "amount": 29500,
+      "entries": 26,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-08-01",
+      "year": 2024,
+      "month": "August",
+      "profit": 18150,
+      "amount": 18150,
+      "entries": 24,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-09-01",
+      "year": 2024,
+      "month": "September",
+      "profit": 11000,
+      "amount": 11000,
+      "entries": 20,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-10-01",
+      "year": 2024,
+      "month": "October",
+      "profit": 9400,
+      "amount": 9400,
+      "entries": 17,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-11-01",
+      "year": 2024,
+      "month": "November",
+      "profit": 23600,
+      "amount": 23600,
+      "entries": 27,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2024-12-01",
+      "year": 2024,
+      "month": "December",
+      "profit": 24300,
+      "amount": 24300,
+      "entries": 27,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-01-01",
+      "year": 2025,
+      "month": "January",
+      "profit": 17100,
+      "amount": 17100,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-02-01",
+      "year": 2025,
+      "month": "February",
+      "profit": 16100,
+      "amount": 16100,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-03-01",
+      "year": 2025,
+      "month": "March",
+      "profit": 14800,
+      "amount": 14800,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-04-01",
+      "year": 2025,
+      "month": "April",
+      "profit": 26300,
+      "amount": 26300,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-05-01",
+      "year": 2025,
+      "month": "May",
+      "profit": 25100,
+      "amount": 25100,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-06-01",
+      "year": 2025,
+      "month": "June",
+      "profit": 22000,
+      "amount": 22000,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-07-01",
+      "year": 2025,
+      "month": "July",
+      "profit": 24900,
+      "amount": 24900,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-08-01",
+      "year": 2025,
+      "month": "August",
+      "profit": 9200,
+      "amount": 9200,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-09-01",
+      "year": 2025,
+      "month": "September",
+      "profit": 5000,
+      "amount": 5000,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-10-01",
+      "year": 2025,
+      "month": "October",
+      "profit": 11300,
+      "amount": 11300,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-11-01",
+      "year": 2025,
+      "month": "November",
+      "profit": 22300,
+      "amount": 22300,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2025-12-01",
+      "year": 2025,
+      "month": "December",
+      "profit": 17800,
+      "amount": 17800,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2026-01-01",
+      "year": 2026,
+      "month": "January",
+      "profit": 13800,
+      "amount": 13800,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2026-02-01",
+      "year": 2026,
+      "month": "February",
+      "profit": 19700,
+      "amount": 19700,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2026-03-01",
+      "year": 2026,
+      "month": "March",
+      "profit": 16100,
+      "amount": 16100,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2026-04-01",
+      "year": 2026,
+      "month": "April",
+      "profit": 50400,
+      "amount": 50400,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2026-05-01",
+      "year": 2026,
+      "month": "May",
+      "profit": 19900,
+      "amount": 19900,
+      "entries": null,
+      "remark": "Visible/readable entries"
+    },
+    {
+      "type": "profit",
+      "date": "2026-06-01",
+      "year": 2026,
+      "month": "June",
+      "profit": 5800,
+      "amount": 5800,
+      "entries": null,
+      "remark": "Partial month till 9 June visible"
+    }
+  ],
+  "sales": [],
+  "stock": []
+}

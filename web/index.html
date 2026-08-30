@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="vyapar-ui-version" content="6.5.6-web-footer-fixed" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="icon" href="logo.png" type="image/x-icon">
+  <title>Vyapar AI</title>
+  <meta name="description" content="Sales, stock, profit and business insights for small retailers." />
+  <meta name="theme-color" content="#07101d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <script>
+    try {
+      const ua = navigator.userAgent || "";
+      const hasAndroidBridge = Boolean(window.AndroidApp);
+      const isAndroidWebView = /;\s*wv\)/i.test(ua) || /\bwv\b/i.test(ua);
+      const isNativeAndroid = hasAndroidBridge || isAndroidWebView;
+      const viewportWidth = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 1024);
+      const coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      const isMobileWeb = !isNativeAndroid && (viewportWidth <= 700 || (viewportWidth <= 900 && coarsePointer));
+
+      document.documentElement.classList.add(isNativeAndroid ? "native-android" : "web-ui");
+      if (isNativeAndroid) document.documentElement.classList.add("android-ui");
+      if (!isNativeAndroid) document.documentElement.classList.add(isMobileWeb ? "mobile-web" : "desktop-web");
+
+      const saved = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
+      if (saved && saved.settings && saved.settings.theme === "light") {
+        document.documentElement.classList.add("theme-light");
+        document.documentElement.style.colorScheme = "light";
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", "#edf4fb");
+      }
+    } catch (error) {}
+  </script>
+  <link rel="stylesheet" href="app.css?v=20260828-649" />
+  <link rel="stylesheet" href="platform-android.css?v=20260828-649" />
+  <link rel="stylesheet" href="security-ui-643.css?v=20260829-652" />
+  <link rel="stylesheet" href="menu-popover-644.css?v=20260828-649" />
+  <link rel="stylesheet" href="plan-badge-menu-645.css?v=20260829-654" />
+  <link rel="stylesheet" href="website-646.css?v=20260828-web2" />
+  <link rel="stylesheet" href="web-polish-650.css?v=20260828-lightfix2" />
+  <link rel="stylesheet" href="android-session-flow-647.css?v=20260829-652" />
+  <link rel="stylesheet" href="android-ui-fixes-651.css?v=20260829-652" />
+  <link rel="stylesheet" href="web-more-sheet-fix.css?v=20260829-653" />
+  <link rel="stylesheet" href="shop-rewards-web-653.css?v=20260829-653" />
+  <link rel="stylesheet" href="web-fixes-653.css?v=20260829-653" />
+  <link rel="stylesheet" href="web-account-plan-654.css?v=20260829-656" />
+  <link rel="stylesheet" href="web-photo-fixes-655.css?v=20260829-656" />
+</head>
+<body>
+  <script src="android-session-flow-647.js?v=20260829-652"></script>
+  <script src="auth.js?v=20260829-652"></script>
+  <script src="platform-android.js?v=20260829-652"></script>
+
+  <div id="appLoader" class="android-loader" aria-label="Loading Vyapar AI">
+    <div class="android-loader-logo" aria-hidden="true">
+      <img src="logo.png" alt="" />
+      <span class="android-loader-shine"></span>
+      <i class="android-loader-spark spark-a"></i>
+      <i class="android-loader-spark spark-b"></i>
+    </div>
+    <strong>Vyapar AI</strong>
+    <div class="android-loader-bar"><span></span></div>
+  </div>
+
+  <div id="tabLoader">
+    <div class="tab-loader-card">
+      <div class="tab-loader-dot"></div>
+      <div class="tab-loader-text">Loading</div>
+    </div>
+  </div>
+
+  <div class="app">
+    <header class="top">
+      <div class="brand">
+        <img class="logo" src="logo.png" alt="Vyapar AI" />
+        <div>
+          <h1>Vyapar AI</h1>
+          <div class="tag">Clear business overview</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="badge" id="planBadge">Free Plan</div>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme(event)" type="button" aria-label="Change appearance">Theme</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="screen-home" class="screen"></section>
+      <section id="screen-upload" class="screen hide"></section>
+      <section id="screen-sales" class="screen hide"></section>
+      <section id="screen-stock" class="screen hide"></section>
+      <section id="screen-analytics" class="screen hide"></section>
+      <section id="screen-calculator" class="screen hide"></section>
+      <section id="screen-business" class="screen hide"></section>
+      <section id="screen-subscription" class="screen hide"></section>
+      <section id="screen-settings" class="screen hide"></section>
+    </main>
+
+    <nav class="nav" id="nav" aria-label="Main navigation"></nav>
+  </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="app.js?v=20260829-656"></script>
+  <script src="security-ui-643.js?v=20260829-652"></script>
+  <script src="plan-badge-menu-645.js?v=20260829-656"></script>
+  <script src="web-polish-650.js?v=20260829-656"></script>
+  <script src="shop-rewards-web-653.js?v=20260829-653"></script>
+  <script src="web-fixes-653.js?v=20260829-656"></script>
+  <script src="web-photo-fixes-655.js?v=20260829-656"></script>
+</body>
+</html>

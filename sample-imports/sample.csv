@@ -1,0 +1,36 @@
+type,date,year,month,profit,entries,remark
+profit,2023-08-01,2023,August,20300,8,Visible/readable entries
+profit,2023-09-01,2023,September,12600,22,Visible/readable entries
+profit,2023-10-01,2023,October,15600,21,Visible/readable entries
+profit,2023-11-01,2023,November,25100,26,Visible/readable entries
+profit,2023-12-01,2023,December,23600,26,Visible/readable entries
+profit,2024-01-01,2024,January,15800,24,Visible/readable entries
+profit,2024-02-01,2024,February,13200,22,Visible/readable entries
+profit,2024-03-01,2024,March,21800,24,Visible/readable entries
+profit,2024-04-01,2024,April,40600,26,Visible/readable entries
+profit,2024-05-01,2024,May,15050,22,Visible/readable entries
+profit,2024-06-01,2024,June,14000,20,Visible/readable entries
+profit,2024-07-01,2024,July,29500,26,Visible/readable entries
+profit,2024-08-01,2024,August,18150,24,Visible/readable entries
+profit,2024-09-01,2024,September,11000,20,Visible/readable entries
+profit,2024-10-01,2024,October,9400,17,Visible/readable entries
+profit,2024-11-01,2024,November,23600,27,Visible/readable entries
+profit,2024-12-01,2024,December,24300,27,Visible/readable entries
+profit,2025-01-01,2025,January,17100,,Visible/readable entries
+profit,2025-02-01,2025,February,16100,,Visible/readable entries
+profit,2025-03-01,2025,March,14800,,Visible/readable entries
+profit,2025-04-01,2025,April,26300,,Visible/readable entries
+profit,2025-05-01,2025,May,25100,,Visible/readable entries
+profit,2025-06-01,2025,June,22000,,Visible/readable entries
+profit,2025-07-01,2025,July,24900,,Visible/readable entries
+profit,2025-08-01,2025,August,9200,,Visible/readable entries
+profit,2025-09-01,2025,September,5000,,Visible/readable entries
+profit,2025-10-01,2025,October,11300,,Visible/readable entries
+profit,2025-11-01,2025,November,22300,,Visible/readable entries
+profit,2025-12-01,2025,December,17800,,Visible/readable entries
+profit,2026-01-01,2026,January,13800,,Visible/readable entries
+profit,2026-02-01,2026,February,19700,,Visible/readable entries
+profit,2026-03-01,2026,March,16100,,Visible/readable entries
+profit,2026-04-01,2026,April,50400,,Visible/readable entries
+profit,2026-05-01,2026,May,19900,,Visible/readable entries
+profit,2026-06-01,2026,June,5800,,Partial month till 9 June visible

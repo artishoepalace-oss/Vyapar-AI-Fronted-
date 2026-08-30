@@ -1,0 +1,9 @@
+{
+  "versionName": "6.5.6",
+  "versionCode": 65600,
+  "channel": "web-footer-fix-656",
+  "baseVersion": "6.5.5",
+  "released": "2026-08-29",
+  "backendVersion": "2.5.2",
+  "version": "6.5.6"
+}

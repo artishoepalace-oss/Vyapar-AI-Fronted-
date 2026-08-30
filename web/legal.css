@@ -1,0 +1,114 @@
+:root{
+  color-scheme:dark;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#020617;
+  color:#e5eefb;
+  font:15px/1.7 Inter,system-ui,sans-serif;
+}
+
+main{
+  width:min(920px,92vw);
+  margin:42px auto;
+  padding:30px;
+  border:1px solid #1e3a5f;
+  border-radius:24px;
+  background:
+    linear-gradient(
+      160deg,
+      #0f172a,
+      #07101f
+    );
+  box-shadow:
+    0 28px 80px
+    rgba(0,0,0,.45);
+}
+
+h1{
+  font-size:34px;
+  margin:0 0 6px;
+}
+
+h2{
+  margin-top:28px;
+  color:#7dd3fc;
+}
+
+p,
+li{
+  color:#b9c7d8;
+}
+
+a{
+  color:#67e8f9;
+}
+
+.meta{
+  color:#718096;
+  font-size:12px;
+}
+
+.notice{
+  padding:13px 15px;
+  border:1px solid #334155;
+  border-radius:14px;
+  background:#111827;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+.btn{
+  display:inline-block;
+  padding:11px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  background:
+    linear-gradient(
+      135deg,
+      #0891b2,
+      #2563eb
+    );
+  color:white;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  main{
+    padding:22px 17px;
+    margin:18px auto;
+  }
+
+  h1{
+    font-size:28px;
+  }
+}
+
+/* legal liquid glass refresh */
+html,body{min-height:100%;}
+body{
+  background:
+    radial-gradient(30rem 22rem at 8% 5%,rgba(96,145,255,.18),transparent 62%),
+    radial-gradient(28rem 22rem at 92% 12%,rgba(62,211,195,.13),transparent 64%),
+    linear-gradient(145deg,#070d18,#0b1423 52%,#07101c)!important;
+}
+main{
+  background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.035))!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  backdrop-filter:blur(26px) saturate(155%);
+  -webkit-backdrop-filter:blur(26px) saturate(155%);
+  box-shadow:0 30px 90px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.16)!important;
+}
+.legal-footer{margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.10);text-align:center;color:#91a8bd;font-size:11px;}
+
+.legal-footer .gupta-legacy-signature{display:block;margin-top:7px;font-weight:850;font-style:italic;letter-spacing:.025em;color:#d7e6f5;}

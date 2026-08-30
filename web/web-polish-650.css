@@ -1,0 +1,144 @@
+/* Web-only polish layer. Do not use for native Android. */
+html.web-ui{--web-accent:#57d7e6;--web-blue:#4d8dff;--web-surface:rgba(18,39,61,.78);--web-line:rgba(150,190,225,.19)}
+html.web-ui body{background:radial-gradient(42rem 30rem at 8% -6%,rgba(57,128,203,.15),transparent 62%),radial-gradient(34rem 24rem at 100% 4%,rgba(64,219,225,.08),transparent 68%),#071522!important}
+html.web-ui .card,html.web-ui .stat{border-color:var(--web-line)!important}
+
+/* Navigation icons must inherit the light/accent color instead of rendering black. */
+html.web-ui .nav button .android-nav-icon{color:#a9bed3!important;opacity:1!important}
+html.web-ui .nav button.active .android-nav-icon{color:#64dce8!important}
+html.web-ui .nav button .android-nav-icon svg{display:block!important;width:18px!important;height:18px!important;overflow:visible!important}
+html.web-ui .nav button .android-nav-icon svg path,
+html.web-ui .nav button .android-nav-icon svg line,
+html.web-ui .nav button .android-nav-icon svg polyline,
+html.web-ui .nav button .android-nav-icon svg circle,
+html.web-ui .nav button .android-nav-icon svg rect{stroke:currentColor!important;fill:none!important;stroke-width:1.9!important}
+html.web-ui .nav button .android-nav-icon svg [fill]:not([fill="none"]){fill:currentColor!important;stroke:none!important}
+html.web-ui .nav button .android-nav-lock{color:#d7a94d!important}
+
+/* Monthly year-on-year comparison: compact visual cards with readable progress bars. */
+html.web-ui .month-compare-strip{display:grid!important;grid-auto-flow:column!important;grid-auto-columns:minmax(245px,285px)!important;gap:12px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:4px 2px 10px!important;scroll-snap-type:x proximity!important;scrollbar-width:thin!important;overscroll-behavior-inline:contain!important}
+html.web-ui .month-compare-card{scroll-snap-align:start!important;min-width:0!important;padding:15px!important;border:1px solid rgba(145,188,226,.20)!important;border-radius:17px!important;background:linear-gradient(160deg,rgba(255,255,255,.105),rgba(255,255,255,.035))!important;box-shadow:0 12px 34px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.10)!important}
+html.web-ui .month-compare-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin-bottom:13px!important}
+html.web-ui .month-compare-head span{display:inline-flex!important;align-items:center!important;min-height:28px!important;padding:6px 9px!important;border-radius:999px!important;background:rgba(87,215,230,.10)!important;border:1px solid rgba(87,215,230,.22)!important;color:#7de8ef!important;font-size:10px!important;font-weight:900!important;letter-spacing:.08em!important}
+html.web-ui .month-compare-head h3{margin:0!important;font-size:17px!important;letter-spacing:-.02em!important}
+html.web-ui .month-compare-years{display:grid!important;gap:10px!important}
+html.web-ui .month-year-row{display:grid!important;gap:5px!important}
+html.web-ui .month-year-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;font-size:11px!important;color:var(--muted)!important}
+html.web-ui .month-year-meta b{color:var(--text)!important;font-size:12px!important;font-variant-numeric:tabular-nums!important}
+html.web-ui .month-year-track{height:6px!important;border-radius:999px!important;overflow:hidden!important;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.05)!important}
+html.web-ui .month-year-track span{display:block!important;height:100%!important;min-width:2px!important;border-radius:inherit!important;background:linear-gradient(90deg,#4b86ff,#58dce3)!important;box-shadow:0 0 12px rgba(88,220,227,.20)!important}
+
+/* Bulk/select mode: checkboxes and destructive tools appear only after the three-dot menu is opened. */
+html.web-ui .web-bulk-scope:not(.web-bulk-active) th:has(input[type="checkbox"]),
+html.web-ui .web-bulk-scope:not(.web-bulk-active) td:has(.vx621-legacy-check),
+html.web-ui .web-bulk-scope:not(.web-bulk-active) td:has(.vx621-stock-check),
+html.web-ui .web-bulk-scope:not(.web-bulk-active) td:has(.vx621-recent-check),
+html.web-ui .web-bulk-scope:not(.web-bulk-active) td:has(.vx621-data-check),
+html.web-ui .web-bulk-scope:not(.web-bulk-active) td:has(.vx621-platform-tx-check),
+html.web-ui .web-bulk-scope:not(.web-bulk-active) td:has(.vx621-generic-check){display:none!important}
+html.web-ui .web-bulk-scope .vx622-menu-panel,
+html.web-ui .web-bulk-panel{display:none!important;position:absolute!important;right:12px!important;top:48px!important;z-index:120!important;min-width:190px!important;max-width:min(270px,calc(100vw - 42px))!important;padding:8px!important;border:1px solid rgba(151,189,224,.23)!important;border-radius:15px!important;background:rgba(12,28,45,.97)!important;box-shadow:0 18px 48px rgba(0,0,0,.38)!important;backdrop-filter:blur(18px) saturate(145%)!important;-webkit-backdrop-filter:blur(18px) saturate(145%)!important}
+html.web-ui .web-bulk-scope.web-bulk-active .vx622-menu-panel,
+html.web-ui .web-bulk-scope.web-bulk-active .web-bulk-panel{display:grid!important;gap:6px!important}
+html.web-ui .web-bulk-scope{position:relative!important}
+html.web-ui .web-bulk-panel .vx621-bulk-actions,
+html.web-ui .web-bulk-scope .vx622-menu-panel .vx621-bulk-actions{display:grid!important;gap:6px!important;margin:0!important}
+html.web-ui .web-bulk-panel .btn,
+html.web-ui .web-bulk-scope .vx622-menu-panel .btn{width:100%!important;justify-content:flex-start!important;text-align:left!important;min-height:38px!important}
+html.web-ui .vx622-menu-trigger.web-menu-open{border-color:rgba(87,215,230,.40)!important;background:rgba(87,215,230,.12)!important;color:#86edf2!important}
+
+/* Subscription cards: reserve room for labels so FULL WORKSPACE never overlaps the title/copy. */
+html.web-ui #screen-subscription .subscription-plan-card{position:relative!important;overflow:hidden!important}
+html.web-ui #screen-subscription .subscription-business-card,
+html.web-ui #screen-subscription .vy649-business-card{padding-top:54px!important}
+html.web-ui #screen-subscription .subscription-recommended{top:11px!important;right:11px!important;left:auto!important;max-width:calc(100% - 22px)!important;width:auto!important;white-space:nowrap!important;padding:6px 10px!important;font-size:10px!important;line-height:1!important;letter-spacing:.04em!important;border-radius:999px!important;z-index:4!important}
+
+/* Slightly more premium web feel; disabled automatically for constrained connections/devices. */
+html.web-ui:not(.web-effects-lite) .card,html.web-ui:not(.web-effects-lite) .stat,html.web-ui:not(.web-effects-lite) .nav,html.web-ui:not(.web-effects-lite) .top{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important}
+@media (hover:hover) and (pointer:fine){html.web-ui:not(.web-effects-lite) .card:hover{border-color:rgba(137,194,234,.28)!important}}
+html.web-ui.web-effects-lite *,html.web-ui.web-effects-lite *::before,html.web-ui.web-effects-lite *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+html.web-ui.web-effects-lite .card,html.web-ui.web-effects-lite .nav,html.web-ui.web-effects-lite .top{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* LIGHT MODE ONLY — dark mode above remains unchanged. */
+html.web-ui.theme-light{
+  --web-accent:#0b9fbd;
+  --web-blue:#2b6fe8;
+  --web-surface:rgba(255,255,255,.88);
+  --web-line:rgba(79,111,145,.16);
+  --text:#142235!important;
+  --muted:#60748a!important;
+  --nav-bg:rgba(255,255,255,.78)!important;
+  --card:rgba(255,255,255,.88)!important;
+  --card2:rgba(246,250,255,.95)!important;
+  --input:rgba(255,255,255,.94)!important;
+}
+html.web-ui.theme-light body{
+  background:radial-gradient(42rem 28rem at 4% -8%,rgba(48,147,255,.12),transparent 64%),radial-gradient(32rem 24rem at 100% 3%,rgba(45,202,215,.10),transparent 70%),linear-gradient(180deg,#f8fbff 0%,#eef5fb 52%,#f7fbff 100%)!important;
+  color:#142235!important;
+}
+html.web-ui.theme-light body::before,html.web-ui.theme-light body::after{opacity:.34!important}
+html.web-ui.theme-light .top,
+html.web-ui.theme-light .nav,
+html.web-ui.theme-light .card,
+html.web-ui.theme-light .stat,
+html.web-ui.theme-light .p611-card,
+html.web-ui.theme-light .adv-card,
+html.web-ui.theme-light .vx621-stock-records,
+html.web-ui.theme-light .production-account-card,
+html.web-ui.theme-light .settings-stack>section,
+html.web-ui.theme-light .home-overview,
+html.web-ui.theme-light .home-next{
+  color:#142235!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(244,249,255,.84))!important;
+  border-color:rgba(85,116,150,.16)!important;
+  box-shadow:0 12px 34px rgba(57,82,111,.08),inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+html.web-ui.theme-light #screen-business .vx621-section,
+html.web-ui.theme-light #screen-business .vx621-command-section,
+html.web-ui.theme-light #screen-business .business-section,
+html.web-ui.theme-light #screen-business .vx621-feature-card,
+html.web-ui.theme-light #screen-business .vx621-module-card,
+html.web-ui.theme-light #screen-business .business-tool-card,
+html.web-ui.theme-light #screen-stock .business-tool-card,
+html.web-ui.theme-light #screen-sales .business-tool-card{
+  color:#17263a!important;
+  background:linear-gradient(180deg,#ffffff,#f2f7fc)!important;
+  border-color:rgba(84,115,149,.16)!important;
+  box-shadow:0 10px 26px rgba(57,82,111,.07)!important;
+}
+html.web-ui.theme-light h1,html.web-ui.theme-light h2,html.web-ui.theme-light h3,html.web-ui.theme-light h4,html.web-ui.theme-light strong,html.web-ui.theme-light b{color:#142235!important}
+html.web-ui.theme-light p,html.web-ui.theme-light small,html.web-ui.theme-light .muted,html.web-ui.theme-light .tag{color:#65798d!important}
+html.web-ui.theme-light .nav button{color:#50677e!important;background:transparent!important}
+html.web-ui.theme-light .nav button.active{color:#126f99!important;background:linear-gradient(180deg,rgba(87,190,255,.18),rgba(80,151,242,.10))!important;border-color:rgba(80,151,242,.20)!important}
+html.web-ui.theme-light .nav button .android-nav-icon{color:#7790a7!important}
+html.web-ui.theme-light .nav button.active .android-nav-icon{color:#129cc2!important}
+html.web-ui.theme-light input,html.web-ui.theme-light select,html.web-ui.theme-light textarea{
+  color:#142235!important;background:#fff!important;border-color:rgba(87,117,151,.18)!important;box-shadow:inset 0 1px 2px rgba(40,63,90,.04)!important
+}
+html.web-ui.theme-light input::placeholder,html.web-ui.theme-light textarea::placeholder{color:#8da0b4!important}
+html.web-ui.theme-light .btn:not(.primary):not(.danger):not(.gold){color:#28425c!important;background:linear-gradient(180deg,#fff,#eef4fa)!important;border-color:rgba(80,111,145,.18)!important}
+html.web-ui.theme-light .btn.primary{color:#06212a!important}
+html.web-ui.theme-light .month-compare-card{background:linear-gradient(160deg,#fff,#f3f8fd)!important;border-color:rgba(74,110,147,.16)!important;box-shadow:0 10px 28px rgba(57,82,111,.08)!important}
+html.web-ui.theme-light .month-compare-head span{color:#087f9a!important;background:rgba(14,166,196,.09)!important;border-color:rgba(14,166,196,.18)!important}
+html.web-ui.theme-light .month-year-track{background:#e7eff7!important;border-color:#dfe8f1!important}
+html.web-ui.theme-light .web-bulk-scope .vx622-menu-panel,
+html.web-ui.theme-light .web-bulk-panel{background:rgba(255,255,255,.98)!important;border-color:rgba(76,105,136,.18)!important;box-shadow:0 18px 48px rgba(45,65,90,.16)!important}
+html.web-ui.theme-light #screen-subscription .subscription-plan-card{background:linear-gradient(180deg,#fff,#f3f7fb)!important;color:#152439!important}
+html.web-ui.theme-light #screen-subscription .vy649-business-card,
+html.web-ui.theme-light #screen-subscription .subscription-business-card{background:linear-gradient(145deg,#fff9e6,#f7e9b0)!important;border-color:rgba(185,137,26,.30)!important}
+html.web-ui.theme-light #screen-subscription .vy649-pro-card{background:linear-gradient(145deg,#ffffff,#edf2f8)!important;border-color:rgba(110,128,151,.24)!important}
+html.web-ui.theme-light .production-overlay,
+html.web-ui.theme-light .upgrade-plan-reference-popup{background:rgba(39,55,73,.32)!important}
+html.web-ui.theme-light .production-modal,
+html.web-ui.theme-light .upgrade-plan-card,
+html.web-ui.theme-light .subscription-dialog{background:rgba(255,255,255,.98)!important;color:#142235!important;border-color:rgba(78,107,139,.18)!important}
+html.web-ui.theme-light .home-metrics .stat{background:linear-gradient(180deg,#fff,#f2f7fc)!important}
+html.web-ui.theme-light .home-metric-icon,html.web-ui.theme-light .android-quick-action-icon{background:#eaf4fb!important;color:#1193b4!important}
+html.web-ui.theme-light .android-quick-action{background:linear-gradient(180deg,#fff,#f2f7fb)!important;color:#17263a!important;border-color:rgba(78,109,143,.16)!important}
+
+@media(max-width:700px){
+ html.web-ui .month-compare-strip{grid-auto-columns:minmax(228px,82vw)!important;gap:10px!important}
+ html.web-ui #screen-subscription .subscription-plan-grid{gap:10px!important}
+ html.web-ui #screen-subscription .subscription-business-card,html.web-ui #screen-subscription .vy649-business-card{padding-top:50px!important}
+ html.web-ui .web-bulk-scope .vx622-menu-panel,html.web-ui .web-bulk-panel{right:8px!important;top:44px!important}
+}

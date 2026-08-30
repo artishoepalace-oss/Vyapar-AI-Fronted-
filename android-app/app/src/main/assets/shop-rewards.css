@@ -1,0 +1,88 @@
+/* Android-only small-shop reward UI. Scoped to the existing Android bundle. */
+html.android-ui .shop-growth-card{margin-top:16px;padding:18px;overflow:hidden}
+html.android-ui .shop-growth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+html.android-ui .shop-growth-head h3{margin:4px 0 5px;font-size:22px;line-height:1.12}
+html.android-ui .shop-growth-head p{margin:0;max-width:560px;color:var(--muted,#91a0b3);font-size:13px;line-height:1.5}
+html.android-ui .shop-streak{min-width:76px;padding:10px 9px;border:1px solid var(--border,rgba(142,168,196,.25));border-radius:16px;background:rgba(31,103,210,.10);display:grid;grid-template-columns:auto auto;align-items:center;justify-content:center;column-gap:5px;text-align:center}
+html.android-ui .shop-streak>span{font-size:17px}
+html.android-ui .shop-streak>b{font-size:20px;line-height:1}
+html.android-ui .shop-streak>small{grid-column:1/-1;margin-top:5px;color:var(--muted,#91a0b3);font-size:10px}
+html.android-ui .shop-reward-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+html.android-ui .shop-reward-stat{min-width:0;padding:13px;border-radius:16px;border:1px solid var(--border,rgba(142,168,196,.2));background:rgba(255,255,255,.035)}
+html.android-ui .shop-reward-stat.wide{grid-column:1/-1}
+html.android-ui .shop-reward-stat>span{display:block;color:var(--muted,#91a0b3);font-size:11px;font-weight:700}
+html.android-ui .shop-reward-stat>b{display:block;margin-top:5px;font-size:20px;line-height:1.2}
+html.android-ui .shop-reward-stat>b em{font-size:12px;font-style:normal;color:var(--muted,#91a0b3);font-weight:600}
+html.android-ui .shop-reward-stat>small{display:block;margin-top:5px;color:var(--muted,#91a0b3);font-size:10.5px;line-height:1.35}
+html.android-ui .shop-mini-track{height:7px;margin-top:10px;border-radius:999px;background:rgba(69,107,151,.18);overflow:hidden}
+html.android-ui .shop-mini-track i{display:block;height:100%;border-radius:inherit;background:#3d7ff3}
+html.android-ui .shop-growth-foot{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin-top:12px}
+html.android-ui .shop-growth-foot>div{min-width:0}
+html.android-ui .shop-growth-foot>div b{display:block;font-size:12px}
+html.android-ui .shop-growth-foot>div small{display:block;margin-top:2px;color:var(--muted,#91a0b3);font-size:9.5px}
+html.android-ui .shop-progress-btn{grid-column:1/-1;min-height:44px;width:100%;margin-top:1px}
+html.android-ui .shop-progress-overlay{position:fixed;inset:0;z-index:9995;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,7,16,.64);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);padding-top:50px}
+html.android-ui .shop-progress-sheet{width:min(100%,680px);max-height:88vh;overflow:auto;padding:9px 16px calc(22px + env(safe-area-inset-bottom));border:1px solid rgba(103,143,188,.34);border-bottom:0;border-radius:28px 28px 0 0;background:#142334;color:#eef5ff;box-shadow:0 -15px 45px rgba(0,0,0,.34);overscroll-behavior:contain}
+html.android-ui .shop-sheet-handle{width:48px;height:5px;margin:2px auto 17px;border-radius:99px;background:#31577f}
+html.android-ui .shop-sheet-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+html.android-ui .shop-sheet-head h2{margin:4px 0 5px;font-size:25px;line-height:1.08}
+html.android-ui .shop-sheet-head p{margin:0;color:#9eacbb;font-size:12px;line-height:1.45}
+html.android-ui .shop-sheet-close{flex:0 0 46px;width:46px;height:46px;border:0;border-radius:16px;background:#223b57;color:#f2f7ff;font-size:30px;line-height:1;display:grid;place-items:center}
+html.android-ui .shop-sheet-score{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center;margin-top:18px;padding:14px;border:1px solid rgba(114,153,196,.28);border-radius:19px;background:rgba(255,255,255,.035)}
+html.android-ui .shop-score-ring{--score:0;width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#3d7ff3 calc(var(--score)*1%),rgba(88,119,153,.22) 0);position:relative}
+html.android-ui .shop-score-ring:after{content:"";position:absolute;inset:7px;border-radius:50%;background:#142334}
+html.android-ui .shop-score-ring span{position:relative;z-index:1;display:flex;align-items:baseline;gap:1px}
+html.android-ui .shop-score-ring b{font-size:23px}
+html.android-ui .shop-score-ring small{font-size:10px;color:#9eacbb}
+html.android-ui .shop-sheet-score h3{margin:0 0 4px;font-size:17px}
+html.android-ui .shop-sheet-score p{margin:0;color:#d5dfeb;font-size:12px;line-height:1.45}
+html.android-ui .shop-sheet-score>div>small{display:block;margin-top:6px;color:#8fa0b2;font-size:9.5px}
+html.android-ui .shop-sheet-section{margin-top:19px}
+html.android-ui .shop-sheet-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+html.android-ui .shop-sheet-title h3{margin:0;font-size:16px}
+html.android-ui .shop-sheet-title span{color:#8fa0b2;font-size:10px}
+html.android-ui .shop-milestone-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+html.android-ui .shop-milestone{display:flex;align-items:center;gap:9px;min-width:0;padding:11px;border:1px solid rgba(114,153,196,.2);border-radius:15px;background:rgba(255,255,255,.028);opacity:.72}
+html.android-ui .shop-milestone.done{opacity:1;border-color:rgba(61,127,243,.38);background:rgba(61,127,243,.09)}
+html.android-ui .shop-milestone-icon{flex:0 0 29px;width:29px;height:29px;border-radius:10px;display:grid;place-items:center;background:#213c59;color:#7f93aa;font-weight:800}
+html.android-ui .shop-milestone.done .shop-milestone-icon{background:#244f91;color:#dceaff}
+html.android-ui .shop-milestone b{display:block;font-size:11px;line-height:1.25}
+html.android-ui .shop-milestone small{display:block;margin-top:3px;color:#8fa0b2;font-size:9px;line-height:1.25}
+html.android-ui .shop-next-target{padding:13px;border-radius:16px;border:1px solid rgba(114,153,196,.22);background:rgba(255,255,255,.03)}
+html.android-ui .shop-next-target b{font-size:14px}
+html.android-ui .shop-next-target p{margin:4px 0 0;color:#94a4b5;font-size:11px}
+html.android-ui .shop-month-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+html.android-ui .shop-month-grid>div{padding:12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(114,153,196,.2)}
+html.android-ui .shop-month-grid span{display:block;color:#91a1b2;font-size:10px}
+html.android-ui .shop-month-grid b{display:block;margin-top:4px;font-size:16px}
+html.android-ui .shop-sheet-note{display:flex;flex-direction:column;gap:3px;margin:18px 0 5px;padding:12px;border-left:3px solid #3d7ff3;border-radius:10px;background:rgba(61,127,243,.08)}
+html.android-ui .shop-sheet-note b{font-size:11px}
+html.android-ui .shop-sheet-note span{color:#95a7b9;font-size:9.5px;line-height:1.4}
+html.android-ui body.shop-progress-open{overflow:hidden}
+html.theme-light.android-ui .shop-growth-card .shop-reward-stat{background:rgba(255,255,255,.52)}
+html.theme-light.android-ui .shop-progress-overlay{background:rgba(31,45,61,.35)}
+html.theme-light.android-ui .shop-progress-sheet{background:#eef4fa;color:#182536;border-color:rgba(62,91,124,.25)}
+html.theme-light.android-ui .shop-score-ring:after{background:#eef4fa}
+html.theme-light.android-ui .shop-sheet-head p,
+html.theme-light.android-ui .shop-sheet-score>div>small,
+html.theme-light.android-ui .shop-sheet-title span,
+html.theme-light.android-ui .shop-milestone small,
+html.theme-light.android-ui .shop-next-target p,
+html.theme-light.android-ui .shop-month-grid span,
+html.theme-light.android-ui .shop-sheet-note span{color:#647487}
+html.theme-light.android-ui .shop-sheet-score,
+html.theme-light.android-ui .shop-milestone,
+html.theme-light.android-ui .shop-next-target,
+html.theme-light.android-ui .shop-month-grid>div{background:rgba(255,255,255,.58);border-color:rgba(70,99,132,.17)}
+@media(max-width:420px){
+  html.android-ui .shop-growth-card{padding:15px}
+  html.android-ui .shop-growth-head{gap:10px}
+  html.android-ui .shop-growth-head h3{font-size:20px}
+  html.android-ui .shop-streak{min-width:68px;padding:9px 7px}
+  html.android-ui .shop-reward-grid{gap:8px}
+  html.android-ui .shop-reward-stat{padding:11px}
+  html.android-ui .shop-reward-stat>b{font-size:18px}
+  html.android-ui .shop-milestone-list{grid-template-columns:1fr}
+  html.android-ui .shop-progress-sheet{padding-left:14px;padding-right:14px}
+}
+@media(prefers-reduced-motion:reduce){html.android-ui .shop-progress-overlay,html.android-ui .shop-progress-sheet{scroll-behavior:auto}}
