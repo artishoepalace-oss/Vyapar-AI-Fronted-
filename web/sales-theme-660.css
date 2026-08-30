@@ -1,0 +1,99 @@
+/* Vyapar AI 6.6.0 — one consistent dark-blue Liquid Glass palette. */
+html.android-ui:not(.theme-light){
+  --android-bg:#071522;
+  --android-bg-deep:#06111d;
+  --android-surface:rgba(15,38,59,.96);
+  --android-surface-2:rgba(18,45,69,.96);
+  --android-surface-3:rgba(22,52,79,.96);
+  --android-top:rgba(20,52,78,.98);
+  --android-nav-bg:rgba(17,45,70,.98);
+  --android-border:rgba(116,157,191,.24);
+  --android-border-strong:rgba(133,177,213,.36);
+  --android-text:#f3f7fb;
+  --android-muted:#9fb3c5;
+  --android-accent:#4f8fff;
+  --android-accent-soft:rgba(79,143,255,.13);
+}
+html.android-ui:not(.theme-light) body{
+  background:linear-gradient(180deg,#061320 0%,#071522 52%,#06111d 100%)!important;
+}
+html.android-ui:not(.theme-light) body::before,
+html.android-ui:not(.theme-light) body::after{opacity:.18!important;}
+html.android-ui:not(.theme-light) .top{
+  background:linear-gradient(180deg,rgba(25,61,89,.98),rgba(20,51,77,.98))!important;
+  border-bottom:1px solid rgba(116,157,191,.20)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.14)!important;
+}
+html.android-ui:not(.theme-light) .card,
+html.android-ui:not(.theme-light) .stat,
+html.android-ui:not(.theme-light) [class*="home-"][class*="card"],
+html.android-ui:not(.theme-light) [class*="business-"][class*="card"],
+html.android-ui:not(.theme-light) [class*="insight-"][class*="card"],
+html.android-ui:not(.theme-light) .ux608-business-summary,
+html.android-ui:not(.theme-light) .android-quick-action,
+html.android-ui:not(.theme-light) .android-sheet-item{
+  background:linear-gradient(180deg,rgba(25,55,82,.94),rgba(15,38,59,.96))!important;
+  border-color:rgba(116,157,191,.23)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 12px 30px rgba(0,0,0,.11)!important;
+}
+html.android-ui:not(.theme-light) .nav{
+  background:linear-gradient(180deg,rgba(24,58,87,.98),rgba(17,44,68,.99))!important;
+  border-color:rgba(125,166,199,.25)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html.android-ui:not(.theme-light) .android-sheet{
+  background:linear-gradient(180deg,#1a344e 0%,#102a42 100%)!important;
+  border-color:rgba(125,166,199,.25)!important;
+}
+html.android-ui:not(.theme-light) input,
+html.android-ui:not(.theme-light) select,
+html.android-ui:not(.theme-light) textarea{
+  background:rgba(18,42,63,.93)!important;
+  border-color:rgba(125,166,199,.24)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+html.android-ui:not(.theme-light) .notice,
+html.android-ui:not(.theme-light) .code-output,
+html.android-ui:not(.theme-light) .pnl-legend-item,
+html.android-ui:not(.theme-light) .month-compare-card{
+  background:rgba(18,43,65,.88)!important;
+  border-color:rgba(116,157,191,.20)!important;
+}
+html.android-ui:not(.theme-light) .btn:not(.danger):not(.gold),
+html.android-ui:not(.theme-light) .android-sheet-close{
+  background:linear-gradient(180deg,rgba(33,70,103,.92),rgba(22,51,77,.94))!important;
+  border-color:rgba(116,157,191,.24)!important;
+}
+html.android-ui:not(.theme-light) .btn.primary,
+html.android-ui:not(.theme-light) .nav button.active{
+  background:linear-gradient(180deg,rgba(54,111,191,.96),rgba(39,86,157,.98))!important;
+  color:#f7fbff!important;
+  border-color:rgba(103,158,235,.62)!important;
+}
+
+#appLegalFooter{display:none!important;}
+#screen-settings #appLegalFooter.vy660-settings-footer{display:flex!important;}
+.android-sheet-legal{display:none!important;}
+.vy660-settings-footer{
+  position:static!important;width:100%;margin:18px 0 5px!important;padding:22px 14px 12px!important;
+  flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;
+  border-top:1px solid rgba(148,163,184,.16)!important;background:transparent!important;box-shadow:none!important;order:9999;
+}
+.vy660-footer-logo{width:66px;height:66px;object-fit:contain;opacity:.72;display:block;margin:0 auto 2px;}
+.vy660-settings-footer .app-legal-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 18px;}
+.vy660-settings-footer .app-legal-links a{min-height:36px;display:inline-flex;align-items:center;font-weight:760;text-decoration:none;}
+.vy660-settings-footer .gupta-legacy-signature{display:block;font-style:italic;font-weight:850;}
+
+.vy660-profit-card{margin:0 0 14px!important;overflow:hidden;}
+.vy660-profit-head h2{margin:5px 0 4px;font-size:24px!important;}
+.vy660-profit-head strong{display:block;font-size:34px;line-height:1.1;margin-top:6px;letter-spacing:-.025em;}
+.vy660-live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px;}
+.vy660-live-box{padding:15px;border:1px solid rgba(116,157,191,.22);border-radius:18px;background:rgba(19,45,68,.76);min-width:0;}
+.vy660-live-box>span{display:block;color:var(--android-muted,var(--muted));font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.06em;}
+.vy660-live-box>b{display:block;font-size:23px;margin:7px 0 5px;overflow-wrap:anywhere;}
+.vy660-live-box>small{display:block;color:var(--android-muted,var(--muted));line-height:1.45;font-size:10.5px;}
+.vy660-note{margin:13px 0 0;line-height:1.5;font-size:11px;}
+.vy660-daily-note{display:flex;flex-direction:column;gap:3px;margin:8px 0 11px;padding:11px 12px;border:1px solid rgba(79,143,255,.25);border-radius:14px;background:rgba(79,143,255,.08);}
+.vy660-daily-note b{font-size:13px;}.vy660-daily-note span{font-size:10.5px;color:var(--android-muted,var(--muted));}
+.vy660-month-note{display:block;margin-top:10px;line-height:1.45;}
+@media(max-width:560px){.vy660-live-grid{grid-template-columns:1fr}.vy660-profit-head strong{font-size:31px}.vy660-profit-head h2{font-size:22px!important}}
