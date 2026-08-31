@@ -1,9 +1,9 @@
 {
-  "versionName": "6.5.9",
-  "versionCode": 65900,
-  "channel": "profit-unified-659",
-  "baseVersion": "6.5.8",
+  "versionName": "6.6.0.1",
+  "versionCode": 66001,
+  "channel": "stage2-audit-6601",
+  "baseVersion": "6.6.0",
   "released": "2026-08-31",
   "backendVersion": "2.5.2",
-  "version": "6.5.9"
+  "version": "6.6.0.1"
 }
