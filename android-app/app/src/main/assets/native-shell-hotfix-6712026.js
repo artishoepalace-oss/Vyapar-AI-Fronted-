@@ -1,8 +1,13 @@
-/* Vyapar AI 6.7.1.2026 — Android native shell hotfix. */
+/* Vyapar AI Android native shell + SwiftUI-inspired UI behavior. */
 (() => {
   "use strict";
 
-  if (!document.documentElement.classList.contains("native-android")) return;
+  const root = document.documentElement;
+  if (!root.classList.contains("native-android")) return;
+  if (window.__vyaparNativeShellSwiftUI) return;
+  window.__vyaparNativeShellSwiftUI = true;
+
+  root.classList.add("swiftui-android-v2");
 
   function keepFooterInSettings() {
     document.querySelectorAll(".android-sheet-legal").forEach((node) => node.remove());
@@ -51,35 +56,127 @@
     }, true);
   }
 
+  function readTheme() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
+      return saved?.settings?.theme || "";
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function syncThemeChrome() {
+    const stored = readTheme();
+    const dark = stored === "dark" || (!root.classList.contains("theme-light") && stored !== "light");
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", dark ? "#000000" : "#F2F2F7");
+    root.style.background = dark ? "#000000" : "#F2F2F7";
+    if (document.body) document.body.style.background = dark ? "#000000" : "#F2F2F7";
+  }
+
+  function normalizeStaticChrome() {
+    const tagline = document.querySelector(".brand .tag");
+    if (tagline && /clear business overview|business overview/i.test(tagline.textContent || "")) {
+      tagline.textContent = "Business overview";
+    }
+
+    const themeButton = document.getElementById("themeToggle");
+    if (themeButton) {
+      themeButton.setAttribute("aria-label", "Appearance");
+      themeButton.setAttribute("title", "Appearance");
+    }
+  }
+
+  function improveButtonSemantics(scope = document) {
+    scope.querySelectorAll("button").forEach((button) => {
+      if (!button.getAttribute("aria-label")) {
+        const label = (button.textContent || "").replace(/\s+/g, " ").trim();
+        if (label && label.length <= 48) button.setAttribute("aria-label", label);
+      }
+    });
+  }
+
+  function markSettingsRows() {
+    const settings = document.getElementById("screen-settings");
+    if (!settings) return;
+    settings.querySelectorAll(".vx622-settings-row").forEach((row) => row.classList.add("ios-settings-row"));
+  }
+
+  function enforceTapOnlyNav() {
+    const nav = document.getElementById("nav");
+    if (!nav || nav.dataset.iosTapOnly === "1") return;
+    nav.dataset.iosTapOnly = "1";
+    nav.style.touchAction = "manipulation";
+    nav.addEventListener("dragstart", (event) => event.preventDefault(), { passive: false });
+  }
+
+  function addPressedFeedback() {
+    if (document.body?.dataset.iosPressedReady === "1") return;
+    if (document.body) document.body.dataset.iosPressedReady = "1";
+    const selector = "button, .btn, .vx621-action, .android-quick-action";
+
+    document.addEventListener("pointerdown", (event) => {
+      const target = event.target?.closest?.(selector);
+      if (!target || target.disabled) return;
+      target.classList.add("ios-pressed");
+    }, { passive: true });
+
+    const clear = () => document.querySelectorAll(".ios-pressed").forEach((node) => node.classList.remove("ios-pressed"));
+    document.addEventListener("pointerup", clear, { passive: true });
+    document.addEventListener("pointercancel", clear, { passive: true });
+  }
+
   function refresh() {
+    root.classList.add("swiftui-android-v2");
     keepFooterInSettings();
+    normalizeStaticChrome();
+    improveButtonSemantics(document);
+    markSettingsRows();
+    enforceTapOnlyNav();
+    syncThemeChrome();
   }
 
   blockPageSelectionGestures();
+  syncThemeChrome();
 
-  const observer = new MutationObserver(() => {
-    clearTimeout(window.__vy671NativeShellTimer);
-    window.__vy671NativeShellTimer = setTimeout(refresh, 24);
+  let refreshTimer = 0;
+  const observer = new MutationObserver((records) => {
+    if (!records.some((record) => record.addedNodes && record.addedNodes.length)) return;
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(refresh, 40);
   });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
+      addPressedFeedback();
       refresh();
       observer.observe(document.body, { childList: true, subtree: true });
     }, { once: true });
   } else {
+    addPressedFeedback();
     refresh();
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  if (typeof window.renderSettings === "function" && !window.renderSettings.__vy671NativeShell) {
+  if (typeof window.renderSettings === "function" && !window.renderSettings.__vySwiftUINativeShell) {
     const original = window.renderSettings;
     const wrapped = function () {
       const result = original.apply(this, arguments);
       requestAnimationFrame(refresh);
       return result;
     };
-    wrapped.__vy671NativeShell = true;
+    wrapped.__vySwiftUINativeShell = true;
     window.renderSettings = wrapped;
+  }
+
+  const originalToggle = window.toggleTheme;
+  if (typeof originalToggle === "function" && !originalToggle.__vySwiftUITheme) {
+    const wrappedToggle = function () {
+      const result = originalToggle.apply(this, arguments);
+      requestAnimationFrame(syncThemeChrome);
+      return result;
+    };
+    wrappedToggle.__vySwiftUITheme = true;
+    window.toggleTheme = wrappedToggle;
   }
 })();
