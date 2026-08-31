@@ -5,7 +5,7 @@
 html.native-android,
 html.native-android body {
   min-height: 100%;
-  background: #F8F9FA !important;
+  background: var(--cu-bg, #F8F9FA) !important;
   -webkit-tap-highlight-color: transparent;
 }
 
