@@ -1,10 +1,10 @@
-name: Import Vyapar AI 6.7.0.2026 phase 3.1 hotfix
+name: Promote Vyapar AI 6.7.1.2026 UI release
 
 on:
   push:
     branches: [main]
     paths:
-      - '.source-transfer/READY-6702026'
+      - '.release/READY-6712026'
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,7 @@ permissions:
   actions: write
 
 jobs:
-  import-source:
+  promote-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current main
@@ -20,48 +20,90 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reassemble and apply verified phase 3.1 hotfix patch
+      - name: Promote synchronized 6.7.1.2026 version files
         shell: bash
         run: |
           set -euo pipefail
-          test -f .source-transfer/READY-6702026
-          cat .source-transfer/v6702026-patch-* > /tmp/v6702026.patch.xz.b64
-          base64 -d /tmp/v6702026.patch.xz.b64 > /tmp/v6702026.patch.xz
-          echo 'eeb0864b9839c7076d79ff251d153979f39ddb13688a69685435d4f13e87b2dd  /tmp/v6702026.patch.xz' | sha256sum -c -
-          xz -dc /tmp/v6702026.patch.xz > /tmp/v6702026.patch
-          patch -p1 < /tmp/v6702026.patch
+          test -f .release/READY-6712026
+          test -f .release/v6.7.1.2026-version.json
+          test -f .release/v6.7.1.2026-build.gradle
 
-      - name: Validate promoted release source
+          cp .release/v6.7.1.2026-version.json version.json
+          cp .release/v6.7.1.2026-build.gradle android-app/app/build.gradle
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = json.loads(Path('version.json').read_text(encoding='utf-8'))
+          web_version = dict(root)
+          web_version['version'] = root['versionName']
+          Path('web/version.json').write_text(json.dumps(web_version, indent=2) + '\n', encoding='utf-8')
+
+          for path in [Path('web/index.html'), Path('android-app/app/src/main/assets/index.html')]:
+              text = path.read_text(encoding='utf-8')
+              text = text.replace('content="6.7.0.2026"', 'content="6.7.1.2026"')
+              path.write_text(text, encoding='utf-8')
+
+          manifest_path = Path('phase-manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest.update({
+              'phase': '3.2',
+              'phaseName': 'Commercial UI UX Polish',
+              'versionName': '6.7.1.2026',
+              'versionCode': 6712026,
+              'baseVersion': '6.7.0.2026',
+              'released': '2026-08-31',
+              'featureRemoval': False,
+              'dataSchemaChanged': False,
+              'financeLogicChanged': False,
+              'nextPhaseMustUseThisOutput': True,
+              'status': 'production-release',
+              'uiHotfix': True,
+              'fixes': [
+                  'Cleaner light-first commercial visual hierarchy with preserved theme preference.',
+                  'Reduced nested containers, heavy borders, glow and visual clutter.',
+                  'Standardized spacing, radii, forms, CTAs, tables, sheets and bottom navigation.',
+                  'Added compact help treatment, keyboard focus visibility and reduced-motion support.'
+              ]
+          })
+          manifest_path.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Validate 6.7.1.2026 release source
         shell: bash
         run: |
           set -euo pipefail
           node - <<'NODE'
           const fs = require('fs');
-          const v = JSON.parse(fs.readFileSync('version.json','utf8'));
-          const w = JSON.parse(fs.readFileSync('web/version.json','utf8'));
+          const root = JSON.parse(fs.readFileSync('version.json','utf8'));
+          const web = JSON.parse(fs.readFileSync('web/version.json','utf8'));
           const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
           const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
           const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
-          if (v.versionName !== '6.7.0.2026' || Number(v.versionCode) !== 6702026) throw new Error(`Unexpected root version ${v.versionName}/${v.versionCode}`);
-          if (w.versionName !== '6.7.0.2026' || Number(w.versionCode) !== 6702026 || w.version !== '6.7.0.2026') throw new Error('Web version mismatch');
-          if (versionName !== '6.7.0.2026' || versionCode !== 6702026) throw new Error(`Gradle version mismatch ${versionName}/${versionCode}`);
-          console.log('Version sync OK:', v.versionName, v.versionCode);
+          if (root.versionName !== '6.7.1.2026' || Number(root.versionCode) !== 6712026) throw new Error(`Root version mismatch ${root.versionName}/${root.versionCode}`);
+          if (web.versionName !== '6.7.1.2026' || Number(web.versionCode) !== 6712026 || web.version !== '6.7.1.2026') throw new Error('Web version mismatch');
+          if (versionName !== '6.7.1.2026' || versionCode !== 6712026) throw new Error(`Gradle version mismatch ${versionName}/${versionCode}`);
+          console.log('Version sync OK:', root.versionName, root.versionCode);
           NODE
-          for f in web/*.js android-app/app/src/main/assets/*.js; do node --check "$f"; done
-          if [ -d tests ]; then node --test tests/*.test.js; fi
-          test -f web/production-ui-670p1.css
-          test -f web/workflow-ui-670p2.css
-          test -f tests/phase31-ui-hotfix.test.js
 
-      - name: Commit phase 3.1 hotfix as v6.7.0.2026
+          for f in web/*.js android-app/app/src/main/assets/*.js; do node --check "$f"; done
+          test -f web/commercial-ui-6702026.css
+          test -f web/commercial-ui-6702026.js
+          test -f android-app/app/src/main/assets/commercial-ui-6702026.css
+          test -f android-app/app/src/main/assets/commercial-ui-6702026.js
+          grep -q 'content="6.7.1.2026"' web/index.html
+          grep -q 'content="6.7.1.2026"' android-app/app/src/main/assets/index.html
+
+      - name: Commit production version 6.7.1.2026
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf .source-transfer
+          rm -rf .release
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'Release Vyapar AI v6.7.0.2026 from phase 3.1 hotfix'
+          git commit -m 'Release Vyapar AI v6.7.1.2026 commercial UI polish'
           git push origin HEAD:main
 
       - name: Start Android APK build and GitHub release
