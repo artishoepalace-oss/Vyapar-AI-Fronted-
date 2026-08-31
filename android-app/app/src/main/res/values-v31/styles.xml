@@ -9,5 +9,9 @@
         <item name="android:statusBarColor">#F8F9FA</item>
         <item name="android:navigationBarColor">#F8F9FA</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowSplashScreenBackground">#F8F9FA</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#F8F9FA</item>
+        <item name="android:windowSplashScreenAnimationDuration">180</item>
     </style>
 </resources>

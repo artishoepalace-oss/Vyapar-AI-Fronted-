@@ -1,0 +1,126 @@
+/* Vyapar AI 6.7.1.2026 — Android shell hotfix.
+ * Presentation only: native feel, full-width chrome, footer placement and launch surface.
+ */
+
+html.native-android,
+html.native-android body {
+  min-height: 100%;
+  background: var(--cu-bg, #F8F9FA) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Native app text should not behave like a selectable web page. */
+html.native-android body,
+html.native-android .app,
+html.native-android .top,
+html.native-android main,
+html.native-android .screen,
+html.native-android .card,
+html.native-android .stat,
+html.native-android .nav,
+html.native-android button,
+html.native-android label,
+html.native-android p,
+html.native-android span,
+html.native-android small,
+html.native-android h1,
+html.native-android h2,
+html.native-android h3,
+html.native-android h4,
+html.native-android td,
+html.native-android th {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Editing must remain normal: cursor, select, paste and form interaction stay available. */
+html.native-android input,
+html.native-android textarea,
+html.native-android [contenteditable="true"],
+html.native-android .allow-copy {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
+
+/* Full-bleed Android shell. Content keeps 16px rhythm; top chrome reaches both screen edges. */
+html.native-android .app {
+  width: 100% !important;
+  max-width: none !important;
+  padding-top: 0 !important;
+  padding-inline: 16px !important;
+}
+
+html.native-android .top {
+  box-sizing: border-box !important;
+  width: calc(100% + 32px) !important;
+  max-width: none !important;
+  margin: 0 -16px 14px !important;
+  padding: 9px 16px !important;
+  top: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  border-radius: 0 !important;
+  background: rgba(248, 249, 250, .96) !important;
+  box-shadow: 0 1px 0 rgba(17, 24, 39, .02) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+}
+
+html.native-android:not(.theme-light) .top {
+  border-bottom-color: #263449 !important;
+  background: rgba(11, 18, 32, .96) !important;
+}
+
+/* Workspace bars align consistently on every screen. */
+html.native-android .p1-modebar {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Footer belongs to Settings only and sits at the true bottom of the page/viewport. */
+html.native-android #screen-settings .settings-stack {
+  display: flex !important;
+  min-height: calc(100dvh - 190px);
+  flex-direction: column !important;
+}
+
+html.native-android #screen-settings #appLegalFooter {
+  order: 9999 !important;
+  width: 100% !important;
+  margin-top: auto !important;
+  padding-top: 28px !important;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+}
+
+html.native-android .screen:not(#screen-settings) #appLegalFooter,
+html.native-android .android-sheet-legal {
+  display: none !important;
+}
+
+/* First WebView paint matches the native launch window: no black interstitial. */
+html.native-android #appLoader {
+  background: #F8F9FA !important;
+  color: #111827 !important;
+}
+
+html.native-android #appLoader .android-loader-logo {
+  box-shadow: none !important;
+}
+
+html.native-android #appLoader .android-loader-bar {
+  background: #E5E7EB !important;
+}
+
+html.native-android #appLoader .android-loader-bar > span {
+  background: #2457D6 !important;
+}
+
+@media (max-width: 420px) {
+  html.native-android .top {
+    width: calc(100% + 32px) !important;
+    margin-inline: -16px !important;
+  }
+}
