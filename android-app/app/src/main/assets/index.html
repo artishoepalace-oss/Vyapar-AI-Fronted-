@@ -7,18 +7,21 @@
   <link rel="icon" href="logo.png" type="image/x-icon">
   <title>Vyapar AI</title>
   <meta name="description" content="Sales, stock, profit and business insights for small retailers." />
-  <meta name="theme-color" content="#07101d" />
+  <meta name="theme-color" content="#F8F9FA" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #F8F9FA; }
+  </style>
   <script>
     try {
       document.documentElement.classList.add("android-ui", "native-android");
+      document.documentElement.style.background = "#F8F9FA";
       const saved = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
       if (saved && saved.settings && saved.settings.theme === "light") {
         document.documentElement.classList.add("theme-light");
         document.documentElement.style.colorScheme = "light";
-        document.querySelector('meta[name="theme-color"]').setAttribute("content", "#edf4fb");
       }
     } catch (error) {}
   </script>
@@ -37,6 +40,7 @@
   <link rel="stylesheet" href="production-ui-670p1.css?v=20260831-67001" />
   <link rel="stylesheet" href="workflow-ui-670p2.css?v=20260831-67003" />
   <link rel="stylesheet" href="commercial-ui-6702026.css?v=20260831-commercial1" />
+  <link rel="stylesheet" href="native-shell-hotfix-6712026.css?v=20260831-native1" />
 </head>
 <body>
   <script src="android-session-flow-647.js?v=20260829-657"></script>
@@ -102,5 +106,6 @@
   <script src="production-ui-670p1.js?v=20260831-67001"></script>
   <script src="workflow-ui-670p2.js?v=20260831-67003"></script>
   <script src="commercial-ui-6702026.js?v=20260831-commercial1"></script>
+  <script src="native-shell-hotfix-6712026.js?v=20260831-native1"></script>
 </body>
 </html>
