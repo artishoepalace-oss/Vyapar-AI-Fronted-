@@ -149,19 +149,10 @@
     const screen=document.getElementById('screen-sales'); if(!screen) return;
     // Gold is reserved for premium status; normal save actions use primary blue.
     [...screen.querySelectorAll('button.gold')].forEach(b=>{ b.classList.remove('gold'); b.classList.add('primary'); });
+    // Stage 2 owns the canonical Year filter. Remove the legacy injector so
+    // MutationObserver rerenders cannot create a second Year selector beside it.
     const card=document.getElementById('monthly-profit-records');
-    if(card && !card.querySelector('.vy658-year-filter')){
-      const years=[...new Set((window.state&&state.monthly||[]).map(x=>String(x.month||'').slice(0,4)).filter(x=>/^\d{4}$/.test(x)))].sort().reverse();
-      if(years.length>1){
-        const wrap=document.createElement('div'); wrap.className='vy658-year-filter';
-        wrap.innerHTML='<label for="vy658ProfitYear">Year</label><select id="vy658ProfitYear"><option value="all">All years</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join('')+'</select>';
-        const tableWrap=card.querySelector('.scroll'); card.insertBefore(wrap,tableWrap||null);
-        const sel=wrap.querySelector('select');
-        sel.value=years[0];
-        const apply=()=>{ const y=sel.value; [...card.querySelectorAll('tbody tr')].forEach(row=>{ const cell=row.querySelector('td'); row.hidden=(y!=='all'&&cell&&!String(cell.textContent||'').includes(y)); }); };
-        sel.addEventListener('change',apply); apply();
-      }
-    }
+    if(card) card.querySelectorAll('.vy658-year-filter').forEach(node=>node.remove());
   }
 
   function enhanceStock(){

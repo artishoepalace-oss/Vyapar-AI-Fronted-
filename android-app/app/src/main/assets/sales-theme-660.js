@@ -1,8 +1,8 @@
 /* Vyapar AI 6.6.0 — consistent blue surfaces + corrected live Sales profit overview. */
 (function(){
   'use strict';
-  const VERSION='6.6.0';
-  const VERSION_CODE=66000;
+  const VERSION='6.7.0.2026';
+  const VERSION_CODE=6702026;
   const n=(v)=>{const x=Number(v||0);return Number.isFinite(x)?x:0;};
   const cash=(v)=>typeof window.money==='function'?window.money(v):'₹'+n(v).toLocaleString('en-IN');
   const pad=(v)=>String(v).padStart(2,'0');
@@ -75,15 +75,71 @@
     }
   }
 
+  function closeUpdatePrompt(){
+    const popup=document.getElementById('vy670UpdatePrompt');
+    if(popup)popup.remove();
+    document.body.classList.remove('subscription-dialog-open');
+  }
+  function openUpdateUrl(url){
+    if(!url)return;
+    if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function')AndroidApp.openExternalUrl(url);
+    else window.open(url,'_blank','noopener');
+  }
+  function showUpdatePrompt(data,force){
+    const current=document.getElementById('vy670UpdatePrompt');
+    if(current){current.querySelector('[data-update-now]')?.focus();return current;}
+    const popup=document.createElement('div');
+    popup.id='vy670UpdatePrompt';
+    popup.className='subscription-overlay subscription-cancel-overlay';
+    popup.innerHTML='<section class="subscription-dialog subscription-result-card" role="dialog" aria-modal="true" aria-labelledby="vy670UpdateTitle">'+
+      '<div class="subscription-result-icon success" aria-hidden="true">↑</div>'+
+      '<h2 id="vy670UpdateTitle"></h2><p data-update-message></p>'+
+      '<button class="subscription-dialog-primary" data-update-now type="button">Update now</button>'+
+      (force?'':'<button class="subscription-dialog-secondary" data-update-later type="button">Not now</button>')+
+      '</section>';
+    popup.querySelector('#vy670UpdateTitle').textContent=force?'Update required':'Vyapar AI update available';
+    popup.querySelector('[data-update-message]').textContent='Version '+String(data.versionName||'new')+' is available.'+(force?' This version is required to continue safely.':'');
+    popup.querySelector('[data-update-now]').onclick=()=>{closeUpdatePrompt();openUpdateUrl(data.apkUrl);};
+    const later=popup.querySelector('[data-update-later]');if(later)later.onclick=closeUpdatePrompt;
+    popup.addEventListener('click',event=>{if(event.target===popup&&!force)closeUpdatePrompt();});
+    document.body.appendChild(popup);
+    document.body.classList.add('subscription-dialog-open');
+    setTimeout(()=>popup.querySelector('[data-update-now]')?.focus(),0);
+    return popup;
+  }
+
   window.fs607CheckUpdate=async function(manual){
-    try{
-      let currentCode=VERSION_CODE,currentName=VERSION;
-      if(window.AndroidApp){try{if(typeof AndroidApp.getVersionCode==='function')currentCode=Number(AndroidApp.getVersionCode())||currentCode;}catch(_){}try{if(typeof AndroidApp.getVersionName==='function')currentName=String(AndroidApp.getVersionName()||currentName);}catch(_){}}
-      const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
-      const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});const data=await res.json();if(!res.ok||!data.success)throw new Error(data.message||'Update check failed');
-      try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state));}}catch(_){}
-      if(Number(data.versionCode)>currentCode){const force=currentCode<Number(data.minimumSupportedVersionCode||0);const msg='Vyapar AI '+data.versionName+' available'+(force?' (required)':'')+'.';if(data.apkUrl){const ok=confirm(msg+'\n\nOpen the update download?');if(ok){if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function')AndroidApp.openExternalUrl(data.apkUrl);else window.open(data.apkUrl,'_blank','noopener');}}else if(manual&&typeof window.showGlassToast==='function')showGlassToast(msg+' Download link is not available yet.');}else if(manual){if(typeof window.showGlassToast==='function')showGlassToast('App is up to date: '+currentName);else alert('App is up to date: '+currentName);}return data;
-    }catch(e){if(manual){if(typeof window.showGlassToast==='function')showGlassToast('Update check failed. Please try again.');else alert('Update check failed. Please try again.');}return null;}
+    if(manual)window.__vy670ManualUpdateRequested=true;
+    if(window.__vy670UpdateCheckPromise)return window.__vy670UpdateCheckPromise;
+    window.__vy670UpdateCheckPromise=(async()=>{
+      try{
+        let currentCode=VERSION_CODE,currentName=VERSION;
+        if(window.AndroidApp){try{if(typeof AndroidApp.getVersionCode==='function')currentCode=Number(AndroidApp.getVersionCode())||currentCode;}catch(_){}try{if(typeof AndroidApp.getVersionName==='function')currentName=String(AndroidApp.getVersionName()||currentName);}catch(_){}}
+        const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
+        const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});const data=await res.json();if(!res.ok||!data.success)throw new Error(data.message||'Update check failed');
+        try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state));}}catch(_){}
+        const requested=()=>Boolean(window.__vy670ManualUpdateRequested);
+        if(Number(data.versionCode)>currentCode){
+          const force=currentCode<Number(data.minimumSupportedVersionCode||0);
+          const msg='Vyapar AI '+data.versionName+' available'+(force?' (required)':'')+'.';
+          if(data.apkUrl){
+            // Automatic checks stay silent unless the backend marks the update required.
+            // Manual checks and required updates use ONE Vyapar AI modal; no JS confirm dialog.
+            if(requested()||force)showUpdatePrompt(data,force);
+          }else if(requested()&&typeof window.showGlassToast==='function')showGlassToast(msg+' Download link is not available yet.');
+          else if(requested())alert(msg+' Download link is not available yet.');
+        }else if(requested()){
+          if(typeof window.showGlassToast==='function')showGlassToast('App is up to date: '+currentName);
+          else alert('App is up to date: '+currentName);
+        }
+        return data;
+      }catch(e){
+        if(window.__vy670ManualUpdateRequested){if(typeof window.showGlassToast==='function')showGlassToast('Update check failed. Please try again.');else alert('Update check failed. Please try again.');}
+        return null;
+      }
+    })();
+    try{return await window.__vy670UpdateCheckPromise;}
+    finally{window.__vy670UpdateCheckPromise=null;window.__vy670ManualUpdateRequested=false;}
   };
 
   if(typeof window.renderSales==='function'){const old=window.renderSales;window.renderSales=function(){const r=old.apply(this,arguments);enhanceSales();placeFooter();return r;};}

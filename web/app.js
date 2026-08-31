@@ -64,6 +64,37 @@ let scannedStockItems = [];
 
 let state = loadState();
 
+/*
+  Keep every legacy and platform module on one canonical state object.
+  Several later modules access window.state while the original app uses
+  this lexical state variable. The accessor also keeps restore/rollback
+  assignments synchronized instead of letting stale records merge back.
+*/
+function installCanonicalStateBridge(){
+  try{
+    Object.defineProperty(window, 'state', {
+      configurable: true,
+      enumerable: false,
+      get(){
+        return state;
+      },
+      set(value){
+        if(
+          value &&
+          typeof value === 'object' &&
+          !Array.isArray(value)
+        ){
+          state = value;
+        }
+      }
+    });
+  }catch(error){
+    window.state = state;
+  }
+}
+
+installCanonicalStateBridge();
+
 function uid(){
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
@@ -106,6 +137,42 @@ function localDateKey(value = new Date()){
     String(date.getMonth() + 1).padStart(2, '0'),
     String(date.getDate()).padStart(2, '0')
   ].join('-');
+}
+
+function isValidDateKey(value){
+  const text = String(value || '').trim();
+
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(text)){
+    return false;
+  }
+
+  const [year, month, day] =
+    text.split('-').map(Number);
+
+  if(month < 1 || month > 12 || day < 1){
+    return false;
+  }
+
+  const leap =
+    year % 4 === 0 &&
+    (year % 100 !== 0 || year % 400 === 0);
+
+  const days = [
+    31,
+    leap ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31
+  ];
+
+  return day <= days[month - 1];
 }
 
 function monthKey(value){
@@ -845,7 +912,7 @@ function detailedBusinessData(){
     const date =
       String(item.date || '').trim();
 
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    if(!isValidDateKey(date)){
       return;
     }
 
@@ -882,23 +949,15 @@ function detailedBusinessData(){
     const date =
       String(item.date || '').trim();
 
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    if(!isValidDateKey(date)){
       return;
     }
 
-    const current =
-      dailyByDate.get(date) || {
-        sale: 0,
-        profit: 0
-      };
-
-    current.sale +=
-      Math.max(0, num(item.sale));
-
-    current.profit +=
-      num(item.profit);
-
-    dailyByDate.set(date, current);
+    /* A daily row is the final total for its date; latest row wins. */
+    dailyByDate.set(date, {
+      sale: Math.max(0, num(item.sale)),
+      profit: num(item.profit)
+    });
   });
 
   const allDates =
@@ -1016,7 +1075,7 @@ function yearlySalesForYear(year){
 
   (state.sales || []).forEach(item => {
     const date = String(item.date || '').trim();
-    if(!date.startsWith(yearText + '-')) return;
+    if(!isValidDateKey(date) || !date.startsWith(yearText + '-')) return;
     const quantity = Math.max(0, num(item.qty));
     const current = itemByDate.get(date) || { sale: 0 };
     current.sale += Math.max(0, num(item.sellingPrice)) * quantity;
@@ -1025,10 +1084,11 @@ function yearlySalesForYear(year){
 
   (state.daily || []).forEach(item => {
     const date = String(item.date || '').trim();
-    if(!date.startsWith(yearText + '-')) return;
-    const current = dailyByDate.get(date) || { sale: 0 };
-    current.sale += Math.max(0, num(item.sale));
-    dailyByDate.set(date, current);
+    if(!isValidDateKey(date) || !date.startsWith(yearText + '-')) return;
+    /* A daily row is the final total for its date; latest row wins. */
+    dailyByDate.set(date, {
+      sale: Math.max(0, num(item.sale))
+    });
   });
 
   const allDates = new Set([...itemByDate.keys(), ...dailyByDate.keys()]);
@@ -1044,7 +1104,7 @@ function yearlyCogsForYear(year){
   const prefix = String(year || '').trim() + '-';
   return (state.sales || []).reduce((sum, item) => {
     const date = String(item.date || '').trim();
-    if(!date.startsWith(prefix)) return sum;
+    if(!isValidDateKey(date) || !date.startsWith(prefix)) return sum;
     return sum + Math.max(0, num(item.purchasePrice)) * Math.max(0, num(item.qty));
   }, 0);
 }
@@ -2054,10 +2114,14 @@ function addMonthlyFromRow(row, source){
     return false;
   }
 
-  const existing =
-    state.monthly.find(
-      item => item.month === ym
-    );
+  let existing = null;
+
+  for(let index = state.monthly.length - 1; index >= 0; index--){
+    if(String(state.monthly[index].month || '').slice(0, 7) === ym){
+      existing = state.monthly[index];
+      break;
+    }
+  }
 
   if(existing){
     existing.profit = amount;
@@ -2071,6 +2135,9 @@ function addMonthlyFromRow(row, source){
       row.note ||
       existing.remark ||
       '';
+
+    existing.updatedAt =
+      new Date().toISOString();
 
     return 'updated';
   }
@@ -2123,8 +2190,7 @@ function addSaleFromRow(row, source){
     localDateKey();
 
   if(
-    !/^\d{4}-\d{2}-\d{2}$/
-      .test(date) ||
+    !isValidDateKey(date) ||
     quantity <= 0 ||
     sell < 0 ||
     buy < 0 ||
@@ -2537,8 +2603,7 @@ async function removeBadImportedSales(){
         .test(product);
 
     const invalidDate =
-      !/^\d{4}-\d{2}-\d{2}$/
-        .test(date);
+      !isValidDateKey(date);
 
     const invalidNumbers =
       qty <= 0 ||
@@ -2867,7 +2932,7 @@ function saleFormData(){
   const qty =
     num(v('sqty'));
 
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+  if(!isValidDateKey(date)){
     throw new Error('A valid sale date is required.');
   }
 
@@ -2983,7 +3048,7 @@ function addDaily(){
   const profit =
     num(v('dprofit'));
 
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+  if(!isValidDateKey(date)){
     alert('A valid daily entry date is required.');
     return;
   }
@@ -3001,13 +3066,30 @@ function addDaily(){
   state.daily =
     state.daily || [];
 
-  state.daily.push({
-    id: uid(),
-    date,
-    sale,
-    profit,
-    source: 'manual-daily'
-  });
+  let existing = null;
+
+  for(let index = state.daily.length - 1; index >= 0; index--){
+    if(String(state.daily[index].date || '').trim() === date){
+      existing = state.daily[index];
+      break;
+    }
+  }
+
+  if(existing){
+    existing.sale = sale;
+    existing.profit = profit;
+    existing.source = 'manual-daily';
+    existing.updatedAt = new Date().toISOString();
+
+  }else{
+    state.daily.push({
+      id: uid(),
+      date,
+      sale,
+      profit,
+      source: 'manual-daily'
+    });
+  }
 
   save();
 }
@@ -3031,14 +3113,19 @@ function addMonthly(){
   state.monthly =
     state.monthly || [];
 
-  const existing =
-    state.monthly.find(
-      item => item.month === month
-    );
+  let existing = null;
+
+  for(let index = state.monthly.length - 1; index >= 0; index--){
+    if(String(state.monthly[index].month || '').slice(0, 7) === month){
+      existing = state.monthly[index];
+      break;
+    }
+  }
 
   if(existing){
     existing.profit = profit;
     existing.source = 'manual';
+    existing.updatedAt = new Date().toISOString();
 
   }else{
     state.monthly.push({
@@ -4865,8 +4952,29 @@ render();
     };
   }
   window.advRestoreSecure=async function(input){
-    const file=input?.files?.[0];if(!file)return;const pass=prompt('Backup password');if(!pass)return;
-    try{const obj=JSON.parse(await file.text());const enc=new TextEncoder(),dec=new TextDecoder();const salt=new Uint8Array(obj.s),iv=new Uint8Array(obj.i),data=new Uint8Array(obj.d);const km=await crypto.subtle.importKey('raw',enc.encode(pass),'PBKDF2',false,['deriveKey']);const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data);const restored=normalizeState(JSON.parse(dec.decode(plain)));state=restored;save();advToast('Encrypted backup restored.');}catch(e){alert('Encrypted restore failed. Wrong password or corrupted backup.');}
+    const file=input?.files?.[0];
+    if(!file)return;
+    if(file.size>10*1024*1024){alert('Encrypted backup is too large. The maximum size is 10 MB.');return;}
+    const pass=prompt('Backup password');
+    if(!pass)return;
+    try{
+      const obj=JSON.parse(await file.text());
+      const validByteArray=(value,length)=>Array.isArray(value)&&(!length||value.length===length)&&value.every(x=>Number.isInteger(x)&&x>=0&&x<=255);
+      if(!obj||obj.v!==1||!validByteArray(obj.s,16)||!validByteArray(obj.i,12)||!validByteArray(obj.d)||!obj.d.length||obj.d.length>5*1024*1024)throw new Error('Invalid encrypted backup envelope');
+      const enc=new TextEncoder(),dec=new TextDecoder();
+      const salt=new Uint8Array(obj.s),iv=new Uint8Array(obj.i),data=new Uint8Array(obj.d);
+      const km=await crypto.subtle.importKey('raw',enc.encode(pass),'PBKDF2',false,['deriveKey']);
+      const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+      const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data);
+      const restored=normalizeState(JSON.parse(dec.decode(plain)));
+      restored.subscription={...state.subscription};
+      restored.plan=state.plan;
+      state=restored;
+      save();
+      advToast('Encrypted backup restored.');
+    }catch(e){
+      alert('Encrypted restore failed. Wrong password or corrupted backup.');
+    }
   };
   const _oldSec=window.advSecureBackup;
 })();
@@ -9473,7 +9581,10 @@ function linkedActiveChildren(tx){const allowed=tx.type==='SALE'?new Set(['SALE_
 function reverseFixed(tx){if(!tx||tx.reversedAt||tx.status==='cancelled')return;if(['SALE','PURCHASE'].includes(tx.type)){const children=linkedActiveChildren(tx);if(children.length)throw new Error('Cancel linked returns/payments first: '+children.map(x=>x.number).join(', '))}(S().ledgerEntries611||[]).filter(x=>x.transactionId===tx.id).forEach(e=>addLedgerId(tx.id+'-REV',e.accountId,e.credit,e.debit,'Reversal: '+e.narration,day()));(S().stockMovements611||[]).filter(x=>x.transactionId===tx.id).forEach(m=>move(m.itemId,m.godownId,tx.id+'-REV','Adjustment',m.quantityOut,m.quantityIn,day()));tx.reversedAt=now();tx.status='cancelled';if(tx.linkedTransactionId)recalcOriginal(txById(tx.linkedTransactionId));log('REVERSE',tx.type,tx.id,tx.number);saveAll()}
 function normalizeOpeningBalances(){S().platform612OpeningMigrated=S().platform612OpeningMigrated&&typeof S().platform612OpeningMigrated==='object'?S().platform612OpeningMigrated:{};if(S().platform612OpeningMigrated[biz()])return;S().platform612OpeningMigrated[biz()]=true;const cap=accountByCode('CAPITAL');(S().accounts611||[]).filter(a=>a.businessId===biz()&&String(a.code||'').startsWith('CUSTOM-')&&Math.abs(n(a.openingBalance))>0).forEach(a=>{const v=Math.abs(n(a.openingBalance));a.openingBalance=0;if(a.category==='asset'){addLedgerId('MIGRATION-612-OPEN-'+a.id,a.id,v,0,'Opening balance '+a.name,day());if(cap)addLedgerId('MIGRATION-612-OPEN-'+a.id,cap.id,0,v,'Opening capital',day())}else if(['liability','equity'].includes(a.category)){if(cap)addLedgerId('MIGRATION-612-OPEN-'+a.id,cap.id,v,0,'Opening balance funding',day());addLedgerId('MIGRATION-612-OPEN-'+a.id,a.id,0,v,'Opening balance '+a.name,day())}})}
 function addOpeningStockValuation(){const tag='MIGRATION-612-OPENING-STOCK-'+biz();S().ledgerEntries611=S().ledgerEntries611.filter(e=>!(e.businessId===biz()&&e.transactionId===tag));const opening=(S().stockMovements611||[]).filter(m=>m.businessId===biz()&&m.movementType==='Opening Stock');let value=0;opening.forEach(m=>{const p=itemBy(m.itemId);value+=Math.max(0,n(m.quantityIn)-n(m.quantityOut))*Math.max(0,n(p?.purchasePrice))});if(value>0){addLedger(tag,'STOCK',value,0,'Opening stock valuation',day());addLedger(tag,'CAPITAL',0,value,'Opening stock capital',day())}}
-function rebuildAccounting(){const ids=new Set((S().transactions611||[]).filter(t=>t.businessId===biz()).flatMap(t=>[t.id,t.id+'-REV']));S().ledgerEntries611=(S().ledgerEntries611||[]).filter(e=>e.businessId!==biz()||!ids.has(e.transactionId));S().stockMovements611=(S().stockMovements611||[]).filter(m=>m.businessId!==biz()||!ids.has(m.transactionId));addOpeningStockValuation();(S().transactions611||[]).filter(t=>t.businessId===biz()).forEach(t=>{if(t.initialReceivedPaid==null&&['SALE','PURCHASE'].includes(t.type))t.initialReceivedPaid=n(t.receivedPaid)});(S().transactions611||[]).filter(t=>t.businessId===biz()&&t.status!=='cancelled'&&POSTING_TYPES.has(t.type)).sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.createdAt).localeCompare(String(b.createdAt))).forEach(postFixed);(S().transactions611||[]).filter(t=>t.businessId===biz()&&['SALE','PURCHASE'].includes(t.type)).forEach(recalcOriginal);log('REPAIR','ACCOUNTING','612','Rebuilt transaction ledger/stock postings with return COGS, inventory asset and linked settlement fixes');saveAll()}
+function linkedPaymentTotal(original){const paymentType=original.type==='SALE'?'PAYMENT_IN':'PAYMENT_OUT';return activeTx().filter(t=>t.type===paymentType&&t.linkedTransactionId===original.id).reduce((z,t)=>z+n(t.total),0)}
+function ensureInitialSettlement(tx){if(!tx||!['SALE','PURCHASE'].includes(tx.type)||tx.initialReceivedPaid!=null)return;const inferred=n(tx.receivedPaid)-linkedPaymentTotal(tx);tx.initialReceivedPaid=Math.max(0,Math.min(n(tx.total),inferred))}
+function postForRebuild(tx){if(!['SALE','PURCHASE'].includes(tx.type))return postFixed(tx);ensureInitialSettlement(tx);const currentReceived=tx.receivedPaid;try{tx.receivedPaid=n(tx.initialReceivedPaid);postFixed(tx)}finally{tx.receivedPaid=currentReceived}}
+function rebuildAccounting(){const ids=new Set((S().transactions611||[]).filter(t=>t.businessId===biz()).flatMap(t=>[t.id,t.id+'-REV']));S().ledgerEntries611=(S().ledgerEntries611||[]).filter(e=>e.businessId!==biz()||!ids.has(e.transactionId));S().stockMovements611=(S().stockMovements611||[]).filter(m=>m.businessId!==biz()||!ids.has(m.transactionId));addOpeningStockValuation();(S().transactions611||[]).filter(t=>t.businessId===biz()).forEach(ensureInitialSettlement);(S().transactions611||[]).filter(t=>t.businessId===biz()&&t.status!=='cancelled'&&POSTING_TYPES.has(t.type)).sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.createdAt).localeCompare(String(b.createdAt))).forEach(postForRebuild);(S().transactions611||[]).filter(t=>t.businessId===biz()&&['SALE','PURCHASE'].includes(t.type)).forEach(recalcOriginal);log('REPAIR','ACCOUNTING','612','Rebuilt transaction ledger/stock postings with original settlements and linked payments posted once');saveAll()}
 function ensure612(){S().schemaVersion=Math.max(n(S().schemaVersion),SCHEMA);const b=(S().businesses||[]).find(x=>x.id===biz());if(b&&!b.baseCurrency)b.baseCurrency=S().currency611?.baseCurrency||'INR';normalizeOpeningBalances();S().platform612AccountingMigrated=S().platform612AccountingMigrated&&typeof S().platform612AccountingMigrated==='object'?S().platform612AccountingMigrated:{};if(!S().platform612AccountingMigrated[biz()]){S().platform612AccountingMigrated[biz()]=true;rebuildAccounting();notify('system','Accounting upgraded','6.1.2 repaired inventory asset, return COGS, linked payments and Balance Sheet postings.')}saveAll()}
 function totals(from,to){const tx=activeTx().filter(t=>(!from||t.date>=from)&&(!to||t.date<=to));const net=t=>tx.filter(x=>x.type===t).reduce((z,x)=>z+baseNet(x),0),gross=t=>tx.filter(x=>x.type===t).reduce((z,x)=>z+baseTotal(x),0);const revenue=net('SALE')-net('SALE_RETURN'),other=gross('OTHER_INCOME');const cogs=(S().ledgerEntries611||[]).filter(e=>e.businessId===biz()&&accountById(e.accountId)?.code==='COGS'&&(!from||e.date>=from)&&(!to||e.date<=to)).reduce((z,e)=>z+n(e.debit)-n(e.credit),0);const expenses=(S().expenses||[]).filter(e=>(!from||e.date>=from)&&(!to||e.date<=to)).reduce((z,e)=>z+n(e.amount),0);return{revenue,other,cogs,expenses,net:revenue+other-cogs-expenses}}
 function balanceSheet(){const byCat=c=>(S().accounts611||[]).filter(a=>a.businessId===biz()&&a.category===c).reduce((z,a)=>z+accountBalance(a.id),0),pnl=totals().net;return{assets:byCat('asset'),liabilities:-byCat('liability'),equity:-byCat('equity')+pnl,retainedProfit:pnl}}
@@ -10570,4 +10681,3 @@ else setTimeout(init,0);
 
 window.VyaparUI622={version:VERSION,refresh:init};
 })();
-

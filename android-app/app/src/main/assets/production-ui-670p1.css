@@ -1,0 +1,555 @@
+/*
+ * Vyapar AI 6.7.0-phase.1
+ * Production-readiness Phase 1: visual foundation and simpler information architecture.
+ * Loaded last so older feature modules remain intact while sharing one coherent UI layer.
+ */
+
+html.production-ui-p1 {
+  --p1-bg: #06111f;
+  --p1-bg-deep: #030a13;
+  --p1-surface: rgba(15, 37, 59, .84);
+  --p1-surface-raised: rgba(20, 47, 73, .92);
+  --p1-surface-soft: rgba(255, 255, 255, .045);
+  --p1-border: rgba(137, 180, 219, .18);
+  --p1-border-strong: rgba(108, 169, 225, .32);
+  --p1-text: #f3f7fb;
+  --p1-muted: #9cafc2;
+  --p1-accent: #4a91ef;
+  --p1-accent-strong: #2f7ee8;
+  --p1-accent-soft: rgba(65, 139, 234, .16);
+  --p1-positive: #43c59e;
+  --p1-warning: #f2b84b;
+  --p1-danger: #e74f5f;
+  --p1-radius-card: 18px;
+  --p1-radius-control: 13px;
+  --p1-shadow: 0 12px 28px rgba(0, 5, 12, .20);
+  color-scheme: dark;
+}
+
+html.production-ui-p1 body {
+  background:
+    radial-gradient(circle at 88% -12%, rgba(48, 119, 194, .17), transparent 38%),
+    radial-gradient(circle at -12% 34%, rgba(29, 83, 132, .11), transparent 34%),
+    linear-gradient(180deg, var(--p1-bg) 0%, var(--p1-bg-deep) 100%) !important;
+  color: var(--p1-text) !important;
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+}
+
+html.production-ui-p1 body,
+html.production-ui-p1 button,
+html.production-ui-p1 input,
+html.production-ui-p1 select,
+html.production-ui-p1 textarea {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+html.production-ui-p1 .app {
+  width: 100% !important;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: 12px !important;
+  padding-top: max(8px, env(safe-area-inset-top)) !important;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+}
+
+html.production-ui-p1 .top {
+  position: sticky !important;
+  top: max(6px, env(safe-area-inset-top)) !important;
+  z-index: 90 !important;
+  min-height: 58px !important;
+  margin: 0 0 12px !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 17px !important;
+  background: rgba(9, 27, 44, .88) !important;
+  box-shadow: 0 9px 22px rgba(0, 5, 12, .18) !important;
+  backdrop-filter: blur(14px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+}
+
+html.production-ui-p1 .brand { gap: 9px !important; min-width: 0 !important; }
+html.production-ui-p1 .brand .logo {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .brand h1 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.025em !important;
+}
+html.production-ui-p1 .brand .tag {
+  max-width: 220px;
+  margin-top: 3px !important;
+  color: var(--p1-muted) !important;
+  font-size: 10.5px !important;
+  line-height: 1.2 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html.production-ui-p1 .theme-toggle {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 50% !important;
+  background: rgba(4, 16, 29, .58) !important;
+  box-shadow: none !important;
+}
+
+html.production-ui-p1 #vyaparOtpGate .auth-help::after {
+  content: 'Vyapar AI 6.7.0 · Phase 1' !important;
+}
+
+html.production-ui-p1 .screen {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 0 10px !important;
+}
+
+html.production-ui-p1 .card,
+html.production-ui-p1 .stat,
+html.production-ui-p1 .settings-section,
+html.production-ui-p1 .production-account-card,
+html.production-ui-p1 .vx621-group,
+html.production-ui-p1 .shop-growth-card {
+  border: 1px solid var(--p1-border) !important;
+  border-radius: var(--p1-radius-card) !important;
+  background: linear-gradient(180deg, rgba(23, 52, 79, .90), rgba(13, 34, 55, .88)) !important;
+  box-shadow: var(--p1-shadow) !important;
+  backdrop-filter: blur(10px) saturate(126%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(126%) !important;
+}
+
+html.production-ui-p1 .card,
+html.production-ui-p1 .settings-section,
+html.production-ui-p1 .vx621-group,
+html.production-ui-p1 .shop-growth-card {
+  padding: 15px !important;
+}
+
+html.production-ui-p1 .card::before,
+html.production-ui-p1 .card::after,
+html.production-ui-p1 .stat::before,
+html.production-ui-p1 .stat::after,
+html.production-ui-p1 .nav::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+
+html.production-ui-p1 h1,
+html.production-ui-p1 h2,
+html.production-ui-p1 h3,
+html.production-ui-p1 h4 {
+  color: var(--p1-text) !important;
+  letter-spacing: -.025em !important;
+}
+html.production-ui-p1 h1 { font-size: clamp(24px, 7vw, 32px) !important; }
+html.production-ui-p1 h2 { font-size: 18px !important; line-height: 1.25 !important; }
+html.production-ui-p1 h3 { font-size: 15px !important; line-height: 1.3 !important; }
+html.production-ui-p1 p,
+html.production-ui-p1 .muted,
+html.production-ui-p1 small { color: var(--p1-muted) !important; }
+html.production-ui-p1 p { line-height: 1.48 !important; }
+
+html.production-ui-p1 .grid,
+html.production-ui-p1 .grid3,
+html.production-ui-p1 .row,
+html.production-ui-p1 .stats,
+html.production-ui-p1 .vx621-feature-grid,
+html.production-ui-p1 .settings-stack {
+  gap: 10px !important;
+}
+html.production-ui-p1 .grid > .card,
+html.production-ui-p1 .grid3 > .card { margin: 0 !important; }
+html.production-ui-p1 .p1-grid-hidden { display: none !important; }
+
+html.production-ui-p1 label {
+  display: block;
+  margin: 10px 0 5px !important;
+  color: var(--p1-muted) !important;
+  font-size: 11px !important;
+  font-weight: 720 !important;
+  letter-spacing: .01em !important;
+}
+html.production-ui-p1 input,
+html.production-ui-p1 select,
+html.production-ui-p1 textarea {
+  width: 100%;
+  min-height: 46px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: var(--p1-radius-control) !important;
+  outline: none !important;
+  background: rgba(5, 20, 35, .66) !important;
+  color: var(--p1-text) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 textarea { min-height: 108px !important; }
+html.production-ui-p1 input:focus,
+html.production-ui-p1 select:focus,
+html.production-ui-p1 textarea:focus {
+  border-color: rgba(77, 151, 239, .72) !important;
+  box-shadow: 0 0 0 3px rgba(58, 132, 224, .15) !important;
+}
+html.production-ui-p1 input::placeholder,
+html.production-ui-p1 textarea::placeholder { color: #73889c !important; opacity: 1 !important; }
+
+html.production-ui-p1 .btn,
+html.production-ui-p1 .vx621-action,
+html.production-ui-p1 .home-text-button {
+  min-height: 42px !important;
+  padding: 9px 13px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 12px !important;
+  background: rgba(35, 72, 108, .56) !important;
+  color: var(--p1-text) !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 730 !important;
+  transform: none !important;
+}
+html.production-ui-p1 .btn.primary,
+html.production-ui-p1 .vx621-action.primary {
+  border-color: rgba(100, 166, 245, .42) !important;
+  background: linear-gradient(180deg, #397fda, #2869c4) !important;
+  color: #fff !important;
+}
+html.production-ui-p1 .btn.gold {
+  border-color: rgba(239, 188, 83, .42) !important;
+  background: rgba(134, 93, 26, .62) !important;
+  color: #ffe8b1 !important;
+}
+html.production-ui-p1 .btn.danger,
+html.production-ui-p1 .danger,
+html.production-ui-p1 .delete-solid {
+  border-color: #d84655 !important;
+  background: #d84655 !important;
+  color: #fff !important;
+}
+html.production-ui-p1 .btn.mini { min-height: 34px !important; padding: 6px 9px !important; font-size: 11px !important; }
+html.production-ui-p1 .actions { gap: 7px !important; margin-top: 11px !important; }
+
+/* Task mode switchers keep every feature while removing long, intimidating pages. */
+html.production-ui-p1 .p1-modebar {
+  position: sticky;
+  top: calc(max(6px, env(safe-area-inset-top)) + 66px);
+  z-index: 70;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(max-content, 1fr);
+  gap: 4px;
+  width: 100%;
+  margin: 10px 0 12px;
+  padding: 4px;
+  overflow-x: auto;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 15px;
+  background: rgba(5, 19, 33, .92);
+  box-shadow: 0 8px 20px rgba(0, 5, 12, .16);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  scrollbar-width: none;
+}
+html.production-ui-p1 .p1-modebar::-webkit-scrollbar { display: none; }
+html.production-ui-p1 .p1-modebar button {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--p1-muted);
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+html.production-ui-p1 .p1-modebar button[aria-selected="true"] {
+  background: var(--p1-accent-soft);
+  color: #8fc1ff;
+  box-shadow: inset 0 0 0 1px rgba(89, 157, 238, .26);
+}
+html.production-ui-p1 .p1-mode-section[hidden] { display: none !important; }
+
+/* Home */
+html.production-ui-p1 .home-shell { gap: 12px !important; }
+html.production-ui-p1 .home-overview { padding: 18px !important; }
+html.production-ui-p1 .home-overview-copy h2 { margin: 5px 0 4px !important; font-size: 24px !important; }
+html.production-ui-p1 .home-overview-copy p { margin: 0 !important; font-size: 12px !important; }
+html.production-ui-p1 .home-eyebrow,
+html.production-ui-p1 .home-section-kicker,
+html.production-ui-p1 .settings-kicker,
+html.production-ui-p1 .vx621-group-head + span {
+  color: #78adf3 !important;
+  font-size: 9px !important;
+  font-weight: 820 !important;
+  letter-spacing: .11em !important;
+}
+html.production-ui-p1 .home-profit { margin-top: 14px !important; }
+html.production-ui-p1 .home-profit b { margin-top: 3px !important; font-size: 29px !important; }
+html.production-ui-p1 .home-goal-track { height: 6px !important; margin-top: 11px !important; }
+html.production-ui-p1 .home-section-heading { margin-bottom: 8px !important; }
+html.production-ui-p1 .home-section-heading h3 { margin: 3px 0 0 !important; font-size: 16px !important; }
+html.production-ui-p1 .android-quick-actions { gap: 8px !important; }
+html.production-ui-p1 .android-quick-action {
+  min-height: 76px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 16px !important;
+  background: rgba(18, 44, 69, .76) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .android-quick-action-copy b { font-size: 12px !important; }
+html.production-ui-p1 .android-quick-action-copy small { font-size: 9.5px !important; line-height: 1.25 !important; }
+html.production-ui-p1 .home-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html.production-ui-p1 .home-metrics .stat { min-height: 104px !important; padding: 13px !important; }
+html.production-ui-p1 .home-metrics .stat b { margin-top: 10px !important; font-size: 20px !important; }
+html.production-ui-p1 .home-metrics .stat small { font-size: 9.5px !important; }
+html.production-ui-p1 .home-next { grid-template-columns: auto 1fr !important; padding: 14px !important; }
+html.production-ui-p1 .home-next .btn { grid-column: 1 / -1 !important; width: 100% !important; }
+
+/* Keep the shop-progress feature, but make its default card much lighter. */
+html.production-ui-p1 .shop-growth-card { margin: 0 !important; }
+html.production-ui-p1 .shop-growth-head { gap: 8px !important; }
+html.production-ui-p1 .shop-growth-head p { margin: 3px 0 0 !important; font-size: 10.5px !important; }
+html.production-ui-p1 .shop-streak { min-width: 62px !important; padding: 7px !important; border-radius: 13px !important; }
+html.production-ui-p1 .shop-reward-grid { gap: 7px !important; margin-top: 10px !important; }
+html.production-ui-p1 .shop-reward-stat { padding: 10px !important; border-radius: 13px !important; }
+html.production-ui-p1 .shop-reward-stat > b { font-size: 17px !important; }
+html.production-ui-p1 .shop-reward-stat > small { font-size: 9px !important; }
+html.production-ui-p1 .shop-level-row { margin-top: 9px !important; }
+
+/* Business */
+html.production-ui-p1 .vx621-business-shell { gap: 10px !important; }
+html.production-ui-p1 .vx621-hero { padding: 16px !important; }
+html.production-ui-p1 .vx621-hero h1 { margin: 5px 0 !important; font-size: 23px !important; }
+html.production-ui-p1 .vx621-hero p { max-width: 54ch !important; font-size: 11px !important; }
+html.production-ui-p1 .vx621-hero-actions { margin-top: 11px !important; }
+html.production-ui-p1 .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
+html.production-ui-p1 .vx621-kpi {
+  min-height: 69px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 15px !important;
+  background: rgba(16, 42, 67, .72) !important;
+}
+html.production-ui-p1 .vx621-kpi:last-child { grid-column: 1 / -1; }
+html.production-ui-p1 .vx621-kpi span { font-size: 9.5px !important; }
+html.production-ui-p1 .vx621-kpi b { margin-top: 5px !important; font-size: 17px !important; }
+html.production-ui-p1 .vx621-group { padding: 13px !important; }
+html.production-ui-p1 .vx621-group-head { margin-bottom: 9px !important; }
+html.production-ui-p1 .vx621-group-head h2 { font-size: 16px !important; }
+html.production-ui-p1 .vx621-group-head p { font-size: 10px !important; }
+html.production-ui-p1 .vx621-feature-grid,
+html.production-ui-p1 .vx621-feature-grid.compact { grid-template-columns: 1fr !important; }
+html.production-ui-p1 .vx621-feature-card {
+  gap: 10px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, .025) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .vx621-feature-card h3 { margin: 0 !important; font-size: 13px !important; }
+html.production-ui-p1 .vx621-feature-card p { margin: 4px 0 8px !important; font-size: 10px !important; }
+
+/* Sales, Stock, Settings, Insights and utility screens */
+html.production-ui-p1 #screen-sales > .card,
+html.production-ui-p1 #screen-stock > .card,
+html.production-ui-p1 #screen-analytics > .card,
+html.production-ui-p1 #screen-upload > .card,
+html.production-ui-p1 #screen-calculator > .card { margin-top: 10px !important; }
+html.production-ui-p1 #screen-sales .vy660-profit-head strong { font-size: 26px !important; }
+html.production-ui-p1 #screen-sales .vy660-live-grid { gap: 8px !important; }
+html.production-ui-p1 #screen-sales .vy660-live-box { padding: 11px !important; border-radius: 14px !important; }
+html.production-ui-p1 #screen-sales .vy660-note { font-size: 9.5px !important; }
+html.production-ui-p1 .settings-stack { display: grid !important; }
+html.production-ui-p1 .settings-section-heading { gap: 9px !important; }
+html.production-ui-p1 .settings-section-heading h2 { margin: 3px 0 !important; font-size: 17px !important; }
+html.production-ui-p1 .settings-section-heading p { margin: 0 !important; font-size: 10px !important; }
+html.production-ui-p1 .vx622-settings-row { min-height: 54px !important; padding: 10px 11px !important; }
+html.production-ui-p1 .vx622-settings-row b { font-size: 12px !important; }
+html.production-ui-p1 .vx622-settings-row small { font-size: 9.5px !important; }
+
+html.production-ui-p1 .scroll,
+html.production-ui-p1 .vx621-table-wrap,
+html.production-ui-p1 .p611-table {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 13px !important;
+  scrollbar-width: thin;
+}
+html.production-ui-p1 .table th {
+  padding: 10px !important;
+  color: #a9bdd1 !important;
+  font-size: 10px !important;
+  white-space: nowrap;
+}
+html.production-ui-p1 .table td { padding: 10px !important; font-size: 11px !important; }
+
+/* More sheet */
+html.production-ui-p1 .android-sheet-overlay { background: rgba(0, 7, 15, .70) !important; }
+html.production-ui-p1 .android-sheet {
+  max-width: 620px !important;
+  padding: 10px 14px calc(18px + env(safe-area-inset-bottom)) !important;
+  border: 1px solid var(--p1-border-strong) !important;
+  border-bottom: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
+  background: #102b45 !important;
+  box-shadow: 0 -18px 50px rgba(0, 5, 12, .38) !important;
+}
+html.production-ui-p1 .android-sheet-handle { width: 44px !important; height: 4px !important; margin-bottom: 12px !important; }
+html.production-ui-p1 .android-sheet-head h2 { font-size: 24px !important; }
+html.production-ui-p1 .android-sheet-head p { font-size: 11px !important; }
+html.production-ui-p1 .android-sheet-grid { gap: 8px !important; }
+html.production-ui-p1 .android-sheet-item {
+  min-height: 78px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 15px !important;
+  background: rgba(255, 255, 255, .035) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .android-sheet-item b { font-size: 13px !important; }
+html.production-ui-p1 .android-sheet-item small { font-size: 9.5px !important; }
+
+/* Stable, tap-only bottom navigation. The sliding glass indicator is intentionally disabled. */
+html.production-ui-p1.android-ui .nav,
+html.production-ui-p1.native-android .nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(7px, env(safe-area-inset-bottom)) !important;
+  z-index: 120 !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 3px !important;
+  width: calc(100vw - 16px) !important;
+  max-width: 610px !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  padding: 4px !important;
+  border: 1px solid var(--p1-border-strong) !important;
+  border-radius: 20px !important;
+  background: rgba(12, 36, 58, .94) !important;
+  box-shadow: 0 13px 32px rgba(0, 5, 12, .38) !important;
+  transform: translateX(-50%) !important;
+  touch-action: manipulation !important;
+  overscroll-behavior: none !important;
+  backdrop-filter: blur(14px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(130%) !important;
+}
+html.production-ui-p1.android-ui .android-nav-glass-indicator,
+html.production-ui-p1.native-android .android-nav-glass-indicator { display: none !important; }
+html.production-ui-p1.android-ui .nav button,
+html.production-ui-p1.native-android .nav button {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  width: 100% !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  margin: 0 !important;
+  padding: 4px 2px !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  background: transparent !important;
+  color: #70869b !important;
+  box-shadow: none !important;
+  font-size: 9px !important;
+  transform: none !important;
+  touch-action: manipulation !important;
+}
+html.production-ui-p1.android-ui .nav button.active,
+html.production-ui-p1.native-android .nav button.active {
+  background: linear-gradient(180deg, rgba(57, 128, 221, .92), rgba(40, 103, 193, .92)) !important;
+  color: #fff !important;
+}
+html.production-ui-p1 .android-nav-icon { width: 20px !important; height: 20px !important; }
+html.production-ui-p1 .android-nav-label { font-size: 9px !important; font-weight: 750 !important; }
+html.production-ui-p1 .nav-plan-lock { top: 4px !important; right: 11% !important; font-size: 7px !important; }
+
+html.production-ui-p1.vyapar-keyboard-open .nav,
+html.production-ui-p1 body.vyapar-keyboard-open .nav {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translate(-50%, 16px) !important;
+}
+
+/* Light mode retains the same hierarchy and contrast. */
+html.production-ui-p1.theme-light {
+  --p1-bg: #edf3f8;
+  --p1-bg-deep: #e5edf5;
+  --p1-surface: rgba(255, 255, 255, .88);
+  --p1-surface-raised: rgba(255, 255, 255, .96);
+  --p1-surface-soft: rgba(21, 54, 87, .045);
+  --p1-border: rgba(52, 83, 112, .15);
+  --p1-border-strong: rgba(45, 103, 163, .26);
+  --p1-text: #102338;
+  --p1-muted: #62758a;
+  color-scheme: light;
+}
+html.production-ui-p1.theme-light body {
+  background: linear-gradient(180deg, #edf4fa, #e4edf5) !important;
+  color: var(--p1-text) !important;
+}
+html.production-ui-p1.theme-light .top,
+html.production-ui-p1.theme-light .card,
+html.production-ui-p1.theme-light .stat,
+html.production-ui-p1.theme-light .settings-section,
+html.production-ui-p1.theme-light .production-account-card,
+html.production-ui-p1.theme-light .vx621-group,
+html.production-ui-p1.theme-light .shop-growth-card {
+  background: rgba(255, 255, 255, .88) !important;
+  color: var(--p1-text) !important;
+}
+html.production-ui-p1.theme-light input,
+html.production-ui-p1.theme-light select,
+html.production-ui-p1.theme-light textarea,
+html.production-ui-p1.theme-light .p1-modebar {
+  background: rgba(245, 249, 253, .94) !important;
+  color: var(--p1-text) !important;
+}
+html.production-ui-p1.theme-light .android-sheet { background: #f4f8fc !important; }
+html.production-ui-p1.theme-light.android-ui .nav,
+html.production-ui-p1.theme-light.native-android .nav { background: rgba(248, 252, 255, .96) !important; }
+
+@media (max-width: 430px) {
+  html.production-ui-p1 .app { padding-inline: 9px !important; }
+  html.production-ui-p1 .card,
+  html.production-ui-p1 .settings-section,
+  html.production-ui-p1 .vx621-group,
+  html.production-ui-p1 .shop-growth-card { padding: 13px !important; }
+  html.production-ui-p1 .top { border-radius: 15px !important; }
+  html.production-ui-p1 .home-overview { padding: 16px !important; }
+  html.production-ui-p1 .android-sheet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  html.production-ui-p1 .android-sheet-item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 350px) {
+  html.production-ui-p1 .p1-modebar button { padding-inline: 9px; }
+  html.production-ui-p1 .home-metrics { grid-template-columns: 1fr !important; }
+  html.production-ui-p1 .android-sheet-grid { grid-template-columns: 1fr !important; }
+  html.production-ui-p1 .android-sheet-item:last-child:nth-child(odd) { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.production-ui-p1 *,
+  html.production-ui-p1 *::before,
+  html.production-ui-p1 *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
