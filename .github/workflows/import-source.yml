@@ -1,10 +1,10 @@
-name: Import Vyapar AI 6.5.9 source
+name: Import Vyapar AI 6.7.0.2026 phase 3.1 hotfix
 
 on:
   push:
     branches: [main]
     paths:
-      - '.source-transfer/READY-659'
+      - '.source-transfer/READY-6702026'
   workflow_dispatch:
 
 permissions:
@@ -15,97 +15,55 @@ jobs:
   import-source:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout staged source
+      - name: Checkout current main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Reassemble verified 6.5.9 text source
+      - name: Reassemble verified phase 3.1 hotfix patch
         shell: bash
         run: |
           set -euo pipefail
-          test -f .source-transfer/READY-659
-          cat .source-transfer/v659b-* > /tmp/v659-full-text.tar.xz.b64
-          base64 -d /tmp/v659-full-text.tar.xz.b64 > /tmp/v659-full-text.tar.xz
-          echo '517ac95c431176461105af030b2e415b9ca81fd4f7e585c8313e372c6820ce8f  /tmp/v659-full-text.tar.xz' | sha256sum -c -
-          tar -xJf /tmp/v659-full-text.tar.xz
+          test -f .source-transfer/READY-6702026
+          cat .source-transfer/v6702026-patch-* > /tmp/v6702026-patch.tar.xz.b64
+          base64 -d /tmp/v6702026-patch.tar.xz.b64 > /tmp/v6702026-patch.tar.xz
+          echo '7f8509b49b6971b8c1efc75c4ba6cdedc778134ee2cf4ca650e96354a5d1dc5c  /tmp/v6702026-patch.tar.xz' | sha256sum -c -
+          tar -xJf /tmp/v6702026-patch.tar.xz -C .
 
-      - name: Restore required binary app assets
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m pip install --disable-pip-version-check --quiet pillow
-          python - <<'PY'
-          from pathlib import Path
-          from PIL import Image, ImageOps, ImageEnhance
-          root = Path('.')
-          android_assets = root / 'android-app/app/src/main/assets'
-          web = root / 'web'
-          branding = root / 'branding'
-          drawable = root / 'android-app/app/src/main/res/drawable'
-          drawable.mkdir(parents=True, exist_ok=True)
-          branding.mkdir(parents=True, exist_ok=True)
-          web.mkdir(parents=True, exist_ok=True)
-          android_assets.mkdir(parents=True, exist_ok=True)
-
-          logo_candidates = [android_assets/'logo.png', web/'logo.png', branding/'vyapar_ai_logo_full.png']
-          gold_candidates = [android_assets/'subscription-business-gold.png', web/'subscription-business-gold.png']
-          logo_path = next((p for p in logo_candidates if p.exists()), None)
-          gold_path = next((p for p in gold_candidates if p.exists()), None)
-          if not logo_path or not gold_path:
-              raise SystemExit('Required existing logo/gold seed assets are missing')
-
-          logo = Image.open(logo_path).convert('RGB')
-          for target in [android_assets/'logo.png', web/'logo.png', branding/'vyapar_ai_logo_full.png']:
-              target.parent.mkdir(parents=True, exist_ok=True)
-              logo.save(target, format='PNG', optimize=True)
-
-          for target, size in [
-              (drawable/'ic_launcher.png', (192,192)),
-              (branding/'ic_launcher.png', (192,192)),
-              (drawable/'ic_launcher_512.png', (512,512)),
-              (branding/'ic_launcher_512.png', (512,512)),
-          ]:
-              logo.resize(size, Image.Resampling.LANCZOS).save(target, format='PNG', optimize=True)
-          logo.resize((1536,1536), Image.Resampling.LANCZOS).save(branding/'vyapar_ai_logo_original.jpg', format='JPEG', quality=92, optimize=True)
-
-          gold = Image.open(gold_path).convert('RGB')
-          for target in [android_assets/'subscription-business-gold.png', web/'subscription-business-gold.png']:
-              target.parent.mkdir(parents=True, exist_ok=True)
-              gold.save(target, format='PNG', optimize=True)
-          gray = ImageEnhance.Contrast(ImageOps.grayscale(gold)).enhance(1.08)
-          silver = ImageOps.colorize(gray, black='#15191f', white='#f4f6f8')
-          for target in [android_assets/'subscription-pro-silver.png', web/'subscription-pro-silver.png']:
-              silver.save(target, format='PNG', optimize=True)
-          PY
-
-      - name: Validate 6.5.9 source
+      - name: Validate promoted release source
         shell: bash
         run: |
           set -euo pipefail
           node - <<'NODE'
           const fs = require('fs');
           const v = JSON.parse(fs.readFileSync('version.json','utf8'));
-          if (v.versionName !== '6.5.9' || Number(v.versionCode) !== 65900) throw new Error(`Unexpected version ${v.versionName}/${v.versionCode}`);
-          console.log('Version OK:', v.versionName, v.versionCode);
+          const w = JSON.parse(fs.readFileSync('web/version.json','utf8'));
+          const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
+          const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
+          const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+          if (v.versionName !== '6.7.0.2026' || Number(v.versionCode) !== 6702026) throw new Error(`Unexpected root version ${v.versionName}/${v.versionCode}`);
+          if (w.versionName !== '6.7.0.2026' || Number(w.versionCode) !== 6702026 || w.version !== '6.7.0.2026') throw new Error('Web version mismatch');
+          if (versionName !== '6.7.0.2026' || versionCode !== 6702026) throw new Error(`Gradle version mismatch ${versionName}/${versionCode}`);
+          console.log('Version sync OK:', v.versionName, v.versionCode);
           NODE
           for f in web/*.js android-app/app/src/main/assets/*.js; do node --check "$f"; done
-          test -f android-app/app/src/main/assets/motion-engine-659.js
-          test -f android-app/app/src/main/assets/motion-engine-659.css
-          test -f android-app/app/src/main/java/com/vyaparai/app/MainActivity.java
+          if [ -d tests ]; then node --test tests/*.test.js; fi
+          test -f web/production-ui-670p1.css
+          test -f web/workflow-ui-670p2.css
+          test -f tests/phase31-ui-hotfix.test.js
 
-      - name: Remove transfer scaffolding and commit
+      - name: Commit phase 3.1 hotfix as v6.7.0.2026
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf .source-transfer .source-v2 .full-transfer .bootstrap
+          rm -rf .source-transfer
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'Release Vyapar AI 6.5.9 iOS Motion Liquid Glass'
+          git commit -m 'Release Vyapar AI v6.7.0.2026 from phase 3.1 hotfix'
           git push origin HEAD:main
 
-      - name: Start Android APK build and release
+      - name: Start Android APK build and GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
