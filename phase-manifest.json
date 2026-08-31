@@ -1,10 +1,10 @@
 {
   "product": "Vyapar AI",
-  "phase": "3.1",
-  "phaseName": "Finance UI Duplicate Hotfix",
-  "versionName": "6.7.0.2026",
-  "versionCode": 6702026,
-  "baseVersion": "6.7.0-phase.3.1",
+  "phase": "3.2",
+  "phaseName": "Commercial UI UX Polish",
+  "versionName": "6.7.1.2026",
+  "versionCode": 6712026,
+  "baseVersion": "6.7.0.2026",
   "baseArchiveSha256": "6c622e26309e4200dbe324ff8ce3af754892570f38d25193a8942387ea07193a",
   "backendVersion": "2.5.2",
   "released": "2026-08-31",
@@ -15,8 +15,9 @@
   "status": "production-release",
   "uiHotfix": true,
   "fixes": [
-    "Monthly Manual Profit Records now renders one canonical Year selector.",
-    "App Update uses one Vyapar AI in-app modal instead of a browser/WebView confirm dialog.",
-    "Automatic and manual update checks are deduplicated to prevent double popups."
+    "Cleaner light-first commercial visual hierarchy with preserved theme preference.",
+    "Reduced nested containers, heavy borders, glow and visual clutter.",
+    "Standardized spacing, radii, forms, CTAs, tables, sheets and bottom navigation.",
+    "Added compact help treatment, keyboard focus visibility and reduced-motion support."
   ]
 }
