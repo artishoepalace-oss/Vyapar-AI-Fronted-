@@ -1,4 +1,4 @@
-/* Vyapar AI 6.6.0.1 — Stage 2 audit UI repairs */
+/* Vyapar AI 6.6.0.1.1 — Stage 2 audit UI repairs + OTP hotfix */
 :root{--vy6601-nav-safe:104px}
 html.android-ui{color-scheme:dark}
 html.android-ui.theme-light{color-scheme:light}
@@ -8,30 +8,23 @@ html.android-ui .screen:not(.hide){padding-bottom:calc(26px + env(safe-area-inse
 html.android-ui .scroll,.android-ui .p611-table,.android-ui .vx621-table-wrap{scrollbar-width:none!important;-ms-overflow-style:none!important;padding-bottom:8px}
 html.android-ui .scroll::-webkit-scrollbar,.android-ui .p611-table::-webkit-scrollbar,.android-ui .vx621-table-wrap::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 
-/* Calculator: the last 0 / decimal / equals row must always clear the fixed navbar. */
 html.native-android #screen-calculator{padding-bottom:calc(var(--vy6601-nav-safe) + 20px + env(safe-area-inset-bottom))!important}
 html.native-android #screen-calculator .calculator-page{padding-bottom:8px!important}
 html.native-android #screen-calculator .calculator-card{overflow:visible!important}
 html.native-android #screen-calculator .calc-keypad{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
 html.native-android #screen-calculator .calc-key{min-height:44px!important;height:44px!important}
 html.native-android #screen-calculator .calc-key.equal{grid-column:auto!important}
-@media(max-height:700px){
-  html.native-android #screen-calculator .calc-key{min-height:39px!important;height:39px!important;font-size:17px!important}
-  html.native-android #screen-calculator .calc-display-wrap{position:relative!important;top:auto!important}
-  html.native-android #screen-calculator .calc-memory-row .btn{min-height:31px!important;padding:5px 6px!important}
-}
+@media(max-height:700px){html.native-android #screen-calculator .calc-key{min-height:39px!important;height:39px!important;font-size:17px!important}html.native-android #screen-calculator .calc-display-wrap{position:relative!important;top:auto!important}html.native-android #screen-calculator .calc-memory-row .btn{min-height:31px!important;padding:5px 6px!important}}
 html.theme-light #screen-calculator .calc-key{color:#16283a!important;background:#f4f8fc!important;border-color:rgba(49,78,108,.22)!important}
 html.theme-light #screen-calculator .calc-key.operator{color:#0a4f9d!important;background:#e4effc!important}
 html.theme-light #screen-calculator .calc-key.equal{color:#fff!important;background:#2169c7!important}
 html.theme-light #screen-calculator .calc-display{color:#0f2235!important}
 
-/* Fixed year filter hierarchy. */
 .vy6601-year-filter{display:grid;gap:6px;margin:12px 0 10px;max-width:380px}
 .vy6601-year-filter label{order:0;font-size:12px;font-weight:800;color:var(--android-muted,var(--muted))}
 .vy6601-year-filter select{order:1;width:100%}
 .vy6601-monthly-record-note{margin:4px 0 8px!important;line-height:1.45}
 
-/* Compact footer: one mark only and no nav-sized blank area. */
 #screen-settings #appLegalFooter.vy660-settings-footer{margin:14px 0 0!important;padding:14px 12px 16px!important;gap:8px!important;min-height:0!important}
 #appLegalFooter img:not(.vy6601-footer-logo){display:none!important}
 #appLegalFooter .vy6601-footer-logo{display:block!important;width:54px!important;height:54px!important;margin:0 auto 0!important;opacity:.78!important}
@@ -40,26 +33,25 @@ html.theme-light #screen-calculator .calc-display{color:#0f2235!important}
 #appLegalFooter .gupta-legacy-signature{font-size:10px!important;font-style:normal!important;font-weight:700!important;opacity:.72}
 .android-sheet-legal img{display:none!important}
 
-/* Business cleanup and hierarchy. */
 .vy6601-business-finance-note{margin:10px 0 14px!important;font-size:11px!important}
 .vx621-feature-card .vx621-tier:not(.locked){display:none!important}
 .vx621-feature-card .vx621-tier.locked{font-size:8px!important;padding:2px 5px!important}
 .p620-report-card{background:linear-gradient(180deg,rgba(25,55,82,.92),rgba(15,38,59,.96))!important;border-color:rgba(116,157,191,.23)!important;color:var(--android-text,var(--text))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 24px rgba(0,0,0,.10)!important}
 html.theme-light .p620-report-card{background:rgba(255,255,255,.88)!important;color:#17283a!important;border-color:rgba(49,78,108,.16)!important}
 
-/* Shop Journey: keep it a sheet, not a second full screen. */
 html.android-ui .shop-progress-overlay{align-items:flex-end!important;padding-top:18vh!important;background:rgba(1,8,16,.66)!important}
 html.android-ui .shop-progress-sheet{max-height:78dvh!important;border-color:rgba(133,177,213,.32)!important;box-shadow:0 -20px 58px rgba(0,0,0,.38)!important}
 html.android-ui .shop-sheet-close{width:40px!important;height:40px!important;flex-basis:40px!important;border-radius:13px!important;font-size:25px!important}
 html.android-ui .shop-sheet-score{background:rgba(255,255,255,.045)!important;border-color:rgba(133,177,213,.26)!important}
 
-/* OTP is a two-step flow: code field appears only after request success. */
-#vyaparOtpGate .vy6601-login-step,#vyaparOtpGate .vy6601-signup-step{display:none!important}
-#vyaparOtpGate.vy6601-login-sent .vy6601-login-step{display:block!important}
+/* 6.6.0.1.1 OTP hotfix: login OTP box must always be visible in Email OTP mode. */
+#vyaparOtpGate .vy6601-login-step{display:block!important}
+#vyaparOtpGate .vy6601-signup-step{display:none!important}
 #vyaparOtpGate.vy6601-signup-sent .vy6601-signup-step{display:block!important}
 #vyaparOtpGate .auth-method-tabs{touch-action:manipulation!important}
+#vyaparOtpGate .auth-help{font-size:0!important}
+#vyaparOtpGate .auth-help::after{content:'Vyapar AI 6.6.0.1.1';font-size:10px!important;line-height:1.5;color:var(--auth-subtle)}
 
-/* Android custom select sheet: avoids the white OS dropdown in dark mode. */
 .vy6601-select-overlay{position:fixed;inset:0;z-index:2147483600;display:flex;align-items:flex-end;justify-content:center;padding:0;background:rgba(2,8,16,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .vy6601-select-sheet{width:min(100%,620px);max-height:72dvh;overflow:hidden;border:1px solid rgba(133,177,213,.30);border-bottom:0;border-radius:24px 24px 0 0;background:linear-gradient(180deg,#193750,#10283e);box-shadow:0 -18px 55px rgba(0,0,0,.4);color:#f4f8fb}
 .vy6601-select-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(133,177,213,.20)}
@@ -71,6 +63,5 @@ html.android-ui .shop-sheet-score{background:rgba(255,255,255,.045)!important;bo
 html.theme-light .vy6601-select-sheet{background:#eef4fa;color:#17283a}.theme-light .vy6601-select-head button{background:#dce7f2;color:#17283a}.theme-light .vy6601-select-options button{color:#17283a;border-color:rgba(49,78,108,.12)}
 body.vy6601-select-open{overflow:hidden!important}
 
-/* Softer card hierarchy instead of every surface carrying the same weight. */
 html.android-ui:not(.theme-light) .card .card,html.android-ui:not(.theme-light) .vx621-feature-card{background:rgba(18,43,65,.78)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important}
 html.android-ui:not(.theme-light) .notice{background:rgba(12,31,48,.74)!important}
