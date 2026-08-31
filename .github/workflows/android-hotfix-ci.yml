@@ -8,13 +8,29 @@ on:
       - '.github/workflows/android-hotfix-ci.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Match WebView to logo-first launch surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE='android-app/app/src/main/java/com/vyaparai/app/MainActivity.java'
+          if grep -q 'Color.rgb(7, 20, 39)' "$FILE"; then
+            sed -i 's/Color.rgb(7, 20, 39)/Color.rgb(248, 249, 250)/' "$FILE"
+            sed -i 's/Match the native window and WebView backgrounds to prevent a white launch flash./Match the native window and WebView backgrounds to the light logo-first launch surface./' "$FILE"
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add "$FILE"
+            git commit -m 'Match Android WebView background to logo-first launch'
+            git push origin HEAD:android-ui-hotfix-6.7.1.2026
+          fi
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -34,6 +50,7 @@ jobs:
           grep -q 'native-shell-hotfix-6712026.css' android-app/app/src/main/assets/index.html
           grep -q 'native-shell-hotfix-6712026.js' android-app/app/src/main/assets/index.html
           grep -q '@drawable/launch_screen' android-app/app/src/main/res/values/styles.xml
+          grep -q 'Color.rgb(248, 249, 250)' android-app/app/src/main/java/com/vyaparai/app/MainActivity.java
           test -f android-app/app/src/main/res/values-v31/styles.xml
           test -f android-app/app/src/main/res/drawable/launch_screen.xml
       - name: Generate Gradle wrapper
