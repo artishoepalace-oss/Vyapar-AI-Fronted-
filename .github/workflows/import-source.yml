@@ -20,15 +20,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reassemble verified phase 3.1 hotfix patch
+      - name: Reassemble and apply verified phase 3.1 hotfix patch
         shell: bash
         run: |
           set -euo pipefail
           test -f .source-transfer/READY-6702026
-          cat .source-transfer/v6702026-patch-* > /tmp/v6702026-patch.tar.xz.b64
-          base64 -d /tmp/v6702026-patch.tar.xz.b64 > /tmp/v6702026-patch.tar.xz
-          echo '7f8509b49b6971b8c1efc75c4ba6cdedc778134ee2cf4ca650e96354a5d1dc5c  /tmp/v6702026-patch.tar.xz' | sha256sum -c -
-          tar -xJf /tmp/v6702026-patch.tar.xz -C .
+          cat .source-transfer/v6702026-patch-* > /tmp/v6702026.patch.xz.b64
+          base64 -d /tmp/v6702026.patch.xz.b64 > /tmp/v6702026.patch.xz
+          echo 'eeb0864b9839c7076d79ff251d153979f39ddb13688a69685435d4f13e87b2dd  /tmp/v6702026.patch.xz' | sha256sum -c -
+          xz -dc /tmp/v6702026.patch.xz > /tmp/v6702026.patch
+          patch -p1 < /tmp/v6702026.patch
 
       - name: Validate promoted release source
         shell: bash
