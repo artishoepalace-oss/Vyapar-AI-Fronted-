@@ -1,12 +1,18 @@
-/* Vyapar AI 6.7.1.2026 — Android shell hotfix.
- * Presentation only: native feel, full-width chrome, footer placement and launch surface.
+/* Vyapar AI Android native shell + SwiftUI-inspired UI layer.
+ * Presentation only: no business logic, routes, formulas, storage, auth,
+ * payment, subscription, backup or report engines are replaced.
  */
 
 html.native-android,
 html.native-android body {
   min-height: 100%;
-  background: var(--cu-bg, #F8F9FA) !important;
+  background: #F2F2F7 !important;
   -webkit-tap-highlight-color: transparent;
+}
+
+html.native-android:not(.theme-light),
+html.native-android:not(.theme-light) body {
+  background: #000 !important;
 }
 
 /* Native app text should not behave like a selectable web page. */
@@ -34,7 +40,6 @@ html.native-android th {
   -webkit-touch-callout: none !important;
 }
 
-/* Editing must remain normal: cursor, select, paste and form interaction stay available. */
 html.native-android input,
 html.native-android textarea,
 html.native-android [contenteditable="true"],
@@ -44,83 +49,448 @@ html.native-android .allow-copy {
   -webkit-touch-callout: default !important;
 }
 
-/* Full-bleed Android shell. Content keeps 16px rhythm; top chrome reaches both screen edges. */
-html.native-android .app {
-  width: 100% !important;
-  max-width: none !important;
-  padding-top: 0 !important;
-  padding-inline: 16px !important;
+/* SwiftUI-inspired tokens, used only in the native Android WebView. */
+html.native-android.swiftui-android-v2 {
+  --ios-bg: #F2F2F7;
+  --ios-surface: #FFFFFF;
+  --ios-surface-soft: #F7F7FA;
+  --ios-fill: #E9E9EF;
+  --ios-fill-strong: #DEDEE5;
+  --ios-border: rgba(60,60,67,.16);
+  --ios-text: #111114;
+  --ios-text-2: #3A3A3C;
+  --ios-muted: #74747A;
+  --ios-blue: #0A84FF;
+  --ios-blue-soft: rgba(10,132,255,.12);
+  --ios-red: #D92D20;
+  --ios-green: #248A5B;
+  --ios-card-radius: 18px;
+  --ios-row-radius: 14px;
+  --ios-sheet-radius: 26px;
+  color-scheme: light;
 }
 
-html.native-android .top {
+html.native-android.swiftui-android-v2:not(.theme-light) {
+  --ios-bg: #000000;
+  --ios-surface: #1C1C1E;
+  --ios-surface-soft: #242426;
+  --ios-fill: #2C2C2E;
+  --ios-fill-strong: #3A3A3C;
+  --ios-border: rgba(255,255,255,.12);
+  --ios-text: #F5F5F7;
+  --ios-text-2: #D1D1D6;
+  --ios-muted: #98989F;
+  --ios-blue: #0A84FF;
+  --ios-blue-soft: rgba(10,132,255,.18);
+  --ios-red: #FF6961;
+  --ios-green: #3CCB7F;
+  color-scheme: dark;
+}
+
+html.native-android.swiftui-android-v2,
+html.native-android.swiftui-android-v2 body,
+html.native-android.swiftui-android-v2 button,
+html.native-android.swiftui-android-v2 input,
+html.native-android.swiftui-android-v2 select,
+html.native-android.swiftui-android-v2 textarea {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+html.native-android.swiftui-android-v2 body {
+  background: var(--ios-bg) !important;
+  color: var(--ios-text) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  overscroll-behavior-y: contain;
+}
+
+/* Full-bleed native shell with 16px content rhythm. */
+html.native-android.swiftui-android-v2 .app {
+  width: 100% !important;
+  max-width: 760px !important;
+  padding: 0 16px calc(106px + env(safe-area-inset-bottom)) !important;
+}
+
+html.native-android.swiftui-android-v2 .top {
   box-sizing: border-box !important;
   width: calc(100% + 32px) !important;
   max-width: none !important;
-  margin: 0 -16px 14px !important;
-  padding: 9px 16px !important;
+  min-height: 62px !important;
+  margin: 0 -16px 12px !important;
+  padding: max(9px, env(safe-area-inset-top)) 16px 10px !important;
   top: 0 !important;
   border: 0 !important;
-  border-bottom: 1px solid #E5E7EB !important;
+  border-bottom: 1px solid var(--ios-border) !important;
   border-radius: 0 !important;
-  background: rgba(248, 249, 250, .96) !important;
-  box-shadow: 0 1px 0 rgba(17, 24, 39, .02) !important;
-  backdrop-filter: blur(16px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+  background: rgba(242,242,247,.91) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
 }
 
-html.native-android:not(.theme-light) .top {
-  border-bottom-color: #263449 !important;
-  background: rgba(11, 18, 32, .96) !important;
+html.native-android.swiftui-android-v2:not(.theme-light) .top {
+  background: rgba(0,0,0,.88) !important;
 }
 
-/* Workspace bars align consistently on every screen. */
-html.native-android .p1-modebar {
+html.native-android.swiftui-android-v2 .brand { gap: 10px !important; min-width: 0 !important; }
+html.native-android.swiftui-android-v2 .brand .logo {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+html.native-android.swiftui-android-v2 .brand h1 {
+  margin: 0 !important;
+  color: var(--ios-text) !important;
+  font-size: 19px !important;
+  line-height: 1.08 !important;
+  font-weight: 760 !important;
+  letter-spacing: -.025em !important;
+}
+html.native-android.swiftui-android-v2 .brand .tag {
+  margin-top: 2px !important;
+  color: var(--ios-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 520 !important;
+}
+html.native-android.swiftui-android-v2 #planBadge,
+html.native-android.swiftui-android-v2 .badge {
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--ios-fill) !important;
+  color: var(--ios-text-2) !important;
+  box-shadow: none !important;
+  font-size: 10.5px !important;
+  font-weight: 720 !important;
+}
+html.native-android.swiftui-android-v2 .theme-toggle {
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--ios-fill) !important;
+  color: var(--ios-text-2) !important;
+  box-shadow: none !important;
+}
+
+/* Clear hierarchy: fewer nested boxes, softer corners. */
+html.native-android.swiftui-android-v2 .card,
+html.native-android.swiftui-android-v2 .stat,
+html.native-android.swiftui-android-v2 .settings-section,
+html.native-android.swiftui-android-v2 .business-module-card,
+html.native-android.swiftui-android-v2 .adv-module,
+html.native-android.swiftui-android-v2 .production-account-card,
+html.native-android.swiftui-android-v2 .vx621-group,
+html.native-android.swiftui-android-v2 .shop-growth-card,
+html.native-android.swiftui-android-v2 .home-overview,
+html.native-android.swiftui-android-v2 .home-next,
+html.native-android.swiftui-android-v2 .month-compare-card,
+html.native-android.swiftui-android-v2 .insight-hero-card {
+  border: 1px solid var(--ios-border) !important;
+  border-radius: var(--ios-card-radius) !important;
+  background: var(--ios-surface) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.035), 0 5px 18px rgba(0,0,0,.03) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.native-android.swiftui-android-v2 .card,
+html.native-android.swiftui-android-v2 .settings-section,
+html.native-android.swiftui-android-v2 .business-module-card,
+html.native-android.swiftui-android-v2 .adv-module,
+html.native-android.swiftui-android-v2 .vx621-group { padding: 16px !important; }
+html.native-android.swiftui-android-v2 .card .card,
+html.native-android.swiftui-android-v2 .card .stat,
+html.native-android.swiftui-android-v2 .settings-section .card,
+html.native-android.swiftui-android-v2 .business-module-card .card,
+html.native-android.swiftui-android-v2 .adv-module .card,
+html.native-android.swiftui-android-v2 .vx621-group .card {
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.native-android.swiftui-android-v2 .grid,
+html.native-android.swiftui-android-v2 .grid3,
+html.native-android.swiftui-android-v2 .stats,
+html.native-android.swiftui-android-v2 .row,
+html.native-android.swiftui-android-v2 .actions,
+html.native-android.swiftui-android-v2 .adv-module-grid,
+html.native-android.swiftui-android-v2 .adv-form-grid,
+html.native-android.swiftui-android-v2 .settings-stack,
+html.native-android.swiftui-android-v2 .vx621-feature-grid { gap: 12px !important; }
+
+/* Neutral inactive buttons, blue selected/primary buttons. */
+html.native-android.swiftui-android-v2 .btn,
+html.native-android.swiftui-android-v2 .vx621-action,
+html.native-android.swiftui-android-v2 .home-text-button,
+html.native-android.swiftui-android-v2 .android-quick-action,
+html.native-android.swiftui-android-v2 button.p2-busy {
+  min-height: 44px !important;
+  padding: 10px 14px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: var(--ios-fill) !important;
+  color: var(--ios-text-2) !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 690 !important;
+  transform: none !important;
+  transition: transform .12s ease, background-color .16s ease, opacity .16s ease !important;
+}
+html.native-android.swiftui-android-v2 .btn.primary,
+html.native-android.swiftui-android-v2 .vx621-action.primary,
+html.native-android.swiftui-android-v2 button.primary,
+html.native-android.swiftui-android-v2 .subscription-cta,
+html.native-android.swiftui-android-v2 .subscription-dialog-primary {
+  background: var(--ios-blue) !important;
+  color: #FFF !important;
+  box-shadow: none !important;
+}
+html.native-android.swiftui-android-v2 .btn.danger,
+html.native-android.swiftui-android-v2 .danger,
+html.native-android.swiftui-android-v2 .delete-solid {
+  background: var(--ios-red) !important;
+  color: #FFF !important;
+}
+html.native-android.swiftui-android-v2 .btn:active,
+html.native-android.swiftui-android-v2 .vx621-action:active,
+html.native-android.swiftui-android-v2 .android-quick-action:active,
+html.native-android.swiftui-android-v2 .ios-pressed { transform: scale(.985) !important; }
+html.native-android.swiftui-android-v2 .btn.mini { min-height: 36px !important; padding: 7px 10px !important; border-radius: 11px !important; }
+
+/* Forms. */
+html.native-android.swiftui-android-v2 label,
+html.native-android.swiftui-android-v2 .p2-field-label {
+  color: var(--ios-text-2) !important;
+  font-size: 11px !important;
+  font-weight: 660 !important;
+}
+html.native-android.swiftui-android-v2 input,
+html.native-android.swiftui-android-v2 select,
+html.native-android.swiftui-android-v2 textarea {
+  min-height: 48px !important;
+  padding: 12px 13px !important;
+  border: 1px solid var(--ios-border) !important;
+  border-radius: var(--ios-row-radius) !important;
+  outline: 0 !important;
+  background: var(--ios-surface) !important;
+  color: var(--ios-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+html.native-android.swiftui-android-v2 input:focus,
+html.native-android.swiftui-android-v2 select:focus,
+html.native-android.swiftui-android-v2 textarea:focus {
+  border-color: var(--ios-blue) !important;
+  box-shadow: 0 0 0 3px var(--ios-blue-soft) !important;
+}
+html.native-android.swiftui-android-v2 input:disabled,
+html.native-android.swiftui-android-v2 select:disabled,
+html.native-android.swiftui-android-v2 textarea:disabled {
+  background: var(--ios-fill) !important;
+  color: var(--ios-muted) !important;
+  opacity: .78 !important;
+}
+html.native-android.swiftui-android-v2 input[type="checkbox"],
+html.native-android.swiftui-android-v2 input[type="radio"] { accent-color: var(--ios-blue) !important; }
+
+/* Segmented mode selector. */
+html.native-android.swiftui-android-v2 .p1-modebar {
+  position: relative !important;
+  top: auto !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+  margin: 4px 0 14px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--ios-fill) !important;
+  box-shadow: none !important;
+}
+html.native-android.swiftui-android-v2 .p1-modebar button {
+  min-height: 36px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--ios-muted) !important;
+  box-shadow: none !important;
+}
+html.native-android.swiftui-android-v2 .p1-modebar button.active,
+html.native-android.swiftui-android-v2 .p1-modebar button[aria-selected="true"] {
+  background: var(--ios-surface) !important;
+  color: var(--ios-text) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,.09) !important;
 }
 
-/* Footer belongs to Settings only and sits at the true bottom of the page/viewport. */
-html.native-android #screen-settings .settings-stack {
+/* Home hero and KPI readability. */
+html.native-android.swiftui-android-v2 .home-shell { gap: 14px !important; }
+html.native-android.swiftui-android-v2 .home-overview { padding: 18px !important; }
+html.native-android.swiftui-android-v2 .home-profit {
+  color: var(--ios-text) !important;
+  font-size: clamp(31px, 9vw, 42px) !important;
+  font-weight: 790 !important;
+  letter-spacing: -.045em !important;
+}
+html.native-android.swiftui-android-v2 .home-goal-track,
+html.native-android.swiftui-android-v2 .month-year-track { background: var(--ios-fill) !important; }
+html.native-android.swiftui-android-v2 .stat { min-height: 92px !important; padding: 14px !important; }
+
+/* Settings uses grouped rows instead of boxes inside boxes. */
+html.native-android.swiftui-android-v2 #screen-settings .settings-stack {
   display: flex !important;
   min-height: calc(100dvh - 190px);
   flex-direction: column !important;
 }
-
-html.native-android #screen-settings #appLegalFooter {
+html.native-android.swiftui-android-v2 #screen-settings .settings-section {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+html.native-android.swiftui-android-v2 #screen-settings .settings-section-heading {
+  padding: 14px 15px 10px !important;
+  border-bottom: 1px solid var(--ios-border) !important;
+}
+html.native-android.swiftui-android-v2 #screen-settings .vx622-settings-row,
+html.native-android.swiftui-android-v2 #screen-settings .ios-settings-row {
+  min-height: 52px !important;
+  margin: 0 !important;
+  padding: 11px 15px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--ios-border) !important;
+  border-radius: 0 !important;
+  background: var(--ios-surface) !important;
+  box-shadow: none !important;
+}
+html.native-android.swiftui-android-v2 #screen-settings #appLegalFooter {
   order: 9999 !important;
   width: 100% !important;
   margin-top: auto !important;
   padding-top: 28px !important;
   padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+  color: var(--ios-muted) !important;
 }
-
 html.native-android .screen:not(#screen-settings) #appLegalFooter,
-html.native-android .android-sheet-legal {
-  display: none !important;
+html.native-android .android-sheet-legal { display: none !important; }
+
+/* Sheets/dialogs. */
+html.native-android.swiftui-android-v2 .android-sheet,
+html.native-android.swiftui-android-v2 .more-sheet,
+html.native-android.swiftui-android-v2 .subscription-dialog,
+html.native-android.swiftui-android-v2 .glass-dialog-card,
+html.native-android.swiftui-android-v2 [role="dialog"] {
+  border: 1px solid var(--ios-border) !important;
+  border-radius: var(--ios-sheet-radius) !important;
+  background: var(--ios-surface) !important;
+  color: var(--ios-text) !important;
+  box-shadow: 0 16px 44px rgba(0,0,0,.22) !important;
+}
+html.native-android.swiftui-android-v2 .android-sheet-handle {
+  width: 38px !important;
+  height: 5px !important;
+  border-radius: 999px !important;
+  background: var(--ios-fill-strong) !important;
 }
 
-/* First WebView paint matches the native launch window: no black interstitial. */
-html.native-android #appLoader {
-  background: #F8F9FA !important;
-  color: #111827 !important;
+/* Data tables remain horizontally usable without boxy visual noise. */
+html.native-android.swiftui-android-v2 .scroll,
+html.native-android.swiftui-android-v2 .vx621-table-wrap {
+  border-radius: 15px !important;
+  -webkit-overflow-scrolling: touch;
 }
+html.native-android.swiftui-android-v2 table th {
+  background: var(--ios-surface-soft) !important;
+  color: var(--ios-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 720 !important;
+}
+html.native-android.swiftui-android-v2 table td { color: var(--ios-text-2) !important; border-color: var(--ios-border) !important; }
 
-html.native-android #appLoader .android-loader-logo {
+/* Floating translucent bottom navigation. Inactive = gray, active = blue. */
+html.native-android.swiftui-android-v2 .nav {
+  position: fixed !important;
+  left: max(12px, env(safe-area-inset-left)) !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+  z-index: 1200 !important;
+  width: auto !important;
+  max-width: 720px !important;
+  min-height: 66px !important;
+  margin: 0 auto !important;
+  padding: 6px !important;
+  border: 1px solid var(--ios-border) !important;
+  border-radius: 24px !important;
+  background: rgba(255,255,255,.90) !important;
+  box-shadow: 0 13px 36px rgba(0,0,0,.16) !important;
+  backdrop-filter: blur(28px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(170%) !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
+}
+html.native-android.swiftui-android-v2:not(.theme-light) .nav { background: rgba(28,28,30,.91) !important; }
+html.native-android.swiftui-android-v2 .nav button[data-android-tab] {
+  min-width: 0 !important;
+  min-height: 54px !important;
+  padding: 6px 4px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: transparent !important;
+  color: var(--ios-muted) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  touch-action: manipulation !important;
+}
+html.native-android.swiftui-android-v2 .nav button[data-android-tab].active,
+html.native-android.swiftui-android-v2 .nav button[data-android-tab][aria-current="page"] { color: var(--ios-blue) !important; }
+html.native-android.swiftui-android-v2 .android-nav-glass-indicator {
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: var(--ios-blue-soft) !important;
   box-shadow: none !important;
 }
+html.native-android.swiftui-android-v2 .android-nav-icon svg { width: 22px !important; height: 22px !important; }
+html.native-android.swiftui-android-v2 .android-nav-label { margin-top: 2px !important; font-size: 9.5px !important; font-weight: 650 !important; }
 
-html.native-android #appLoader .android-loader-bar {
-  background: #E5E7EB !important;
+/* First WebView paint matches the UI theme. */
+html.native-android.swiftui-android-v2 #appLoader {
+  background: var(--ios-bg) !important;
+  color: var(--ios-text) !important;
 }
+html.native-android.swiftui-android-v2 #appLoader .android-loader-logo { box-shadow: none !important; }
+html.native-android.swiftui-android-v2 #appLoader .android-loader-bar { background: var(--ios-fill) !important; }
+html.native-android.swiftui-android-v2 #appLoader .android-loader-bar > span { background: var(--ios-blue) !important; }
 
-html.native-android #appLoader .android-loader-bar > span {
-  background: #2457D6 !important;
+html.native-android.swiftui-android-v2 :focus-visible {
+  outline: 3px solid var(--ios-blue-soft) !important;
+  outline-offset: 2px !important;
 }
 
 @media (max-width: 420px) {
-  html.native-android .top {
-    width: calc(100% + 32px) !important;
-    margin-inline: -16px !important;
+  html.native-android.swiftui-android-v2 .app { padding-inline: 14px !important; }
+  html.native-android.swiftui-android-v2 .top {
+    width: calc(100% + 28px) !important;
+    margin-inline: -14px !important;
+    padding-inline: 14px !important;
+  }
+  html.native-android.swiftui-android-v2 .nav {
+    left: 8px !important;
+    right: 8px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.native-android.swiftui-android-v2 *,
+  html.native-android.swiftui-android-v2 *::before,
+  html.native-android.swiftui-android-v2 *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
