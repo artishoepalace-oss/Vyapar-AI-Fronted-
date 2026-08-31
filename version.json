@@ -1,8 +1,8 @@
 {
-  "versionName": "6.7.2.2026",
-  "versionCode": 6722026,
-  "channel": "production-6.7.2.2026",
-  "baseVersion": "6.7.1.2026",
+  "versionName": "6.7.3.2026",
+  "versionCode": 6732026,
+  "channel": "production-6.7.3.2026",
+  "baseVersion": "6.7.2.2026",
   "released": "2026-08-31",
   "backendVersion": "2.5.2"
 }
