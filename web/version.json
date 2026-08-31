@@ -1,9 +1,9 @@
 {
-  "versionName": "6.6.0.1",
-  "versionCode": 66001,
-  "channel": "stage2-audit-6601",
-  "baseVersion": "6.6.0",
+  "versionName": "6.6.0.1.1",
+  "versionCode": 660011,
+  "channel": "otp-hotfix-66011",
+  "baseVersion": "6.6.0.1",
   "released": "2026-08-31",
   "backendVersion": "2.5.2",
-  "version": "6.6.0.1"
+  "version": "6.6.0.1.1"
 }
