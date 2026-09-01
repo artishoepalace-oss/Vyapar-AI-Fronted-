@@ -1,0 +1,690 @@
+/* Vyapar AI 6.8.0 — final authoritative colorful, English-first, responsive UI layer.
+   This file intentionally loads last so legacy hotfixes cannot reintroduce visual conflicts. */
+
+:root {
+  --vy-bg-0: #07111f;
+  --vy-bg-1: #0a1b30;
+  --vy-surface: rgba(15, 32, 53, .86);
+  --vy-surface-strong: rgba(19, 40, 65, .95);
+  --vy-surface-soft: rgba(25, 48, 76, .72);
+  --vy-text: #f4f8ff;
+  --vy-muted: #a8b8ca;
+  --vy-line: rgba(183, 208, 236, .16);
+  --vy-blue: #4d9cff;
+  --vy-cyan: #35d2ea;
+  --vy-green: #42d69b;
+  --vy-yellow: #f6c95c;
+  --vy-orange: #ff9b54;
+  --vy-pink: #f777b9;
+  --vy-purple: #a783ff;
+  --vy-red: #ff6478;
+  --vy-radius: 18px;
+  --vy-radius-sm: 13px;
+  --vy-shadow: 0 16px 38px rgba(0, 0, 0, .22);
+  --vy-nav-safe: calc(92px + env(safe-area-inset-bottom));
+}
+
+html.theme-light {
+  --vy-bg-0: #eef6ff;
+  --vy-bg-1: #f9fbff;
+  --vy-surface: rgba(255, 255, 255, .94);
+  --vy-surface-strong: #ffffff;
+  --vy-surface-soft: rgba(245, 249, 255, .96);
+  --vy-text: #13243a;
+  --vy-muted: #61748a;
+  --vy-line: rgba(75, 103, 136, .15);
+  --vy-shadow: 0 12px 30px rgba(47, 78, 111, .10);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden !important;
+  background: var(--vy-bg-0) !important;
+}
+
+html { color-scheme: dark; }
+html.theme-light { color-scheme: light; }
+
+body {
+  color: var(--vy-text) !important;
+  background:
+    radial-gradient(circle at 7% 2%, rgba(77, 156, 255, .22), transparent 27%),
+    radial-gradient(circle at 92% 11%, rgba(167, 131, 255, .16), transparent 24%),
+    radial-gradient(circle at 55% 78%, rgba(53, 210, 234, .11), transparent 29%),
+    linear-gradient(180deg, var(--vy-bg-0), var(--vy-bg-1)) !important;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(circle at 4% 0%, rgba(77, 156, 255, .16), transparent 27%),
+    radial-gradient(circle at 98% 9%, rgba(247, 119, 185, .10), transparent 22%),
+    radial-gradient(circle at 50% 82%, rgba(53, 210, 234, .09), transparent 27%),
+    linear-gradient(180deg, #f7fbff, #eef5fc 52%, #f8fbff) !important;
+}
+
+body::before,
+body::after { opacity: .38 !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+img, svg, canvas, video { max-width: 100%; }
+button, input, select, textarea { max-width: 100%; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button, .btn, a.btn { touch-action: manipulation; }
+
+.app {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  padding: 12px 14px calc(var(--vy-nav-safe) + 24px) !important;
+}
+
+main,
+.screen,
+.screen > *,
+.card,
+.stat,
+.notice,
+.actions,
+.settings-stack,
+.settings-section,
+.vy675-page-body,
+.p611-form,
+.p611-grid,
+.p620-settings,
+.adv-form-grid,
+.adv-module-grid,
+.business-calc-grid,
+.vx621-feature-grid,
+.vx621-kpis,
+.android-sheet,
+.android-sheet-item,
+.subscription-dialog,
+.modal-card,
+.glass-dialog {
+  min-width: 0 !important;
+}
+
+.screen:not(.hide) {
+  width: 100% !important;
+  animation: vyScreenIn .18s ease-out both;
+}
+
+@keyframes vyScreenIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Header */
+.top {
+  position: relative !important;
+  z-index: 20 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 70px !important;
+  margin: 0 0 12px !important;
+  padding: 9px 4px 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.brand { min-width: 0 !important; flex: 1 1 auto !important; }
+.logo {
+  width: 48px !important;
+  height: 48px !important;
+  flex: 0 0 48px !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18) !important;
+}
+
+.brand h1 {
+  color: var(--vy-text) !important;
+  font-size: clamp(21px, 4.8vw, 27px) !important;
+  line-height: 1.08 !important;
+  white-space: nowrap !important;
+}
+
+.tag {
+  color: var(--vy-muted) !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.top-actions { flex: 0 0 auto !important; gap: 7px !important; }
+.badge,
+.theme-toggle {
+  min-height: 38px !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .12) !important;
+  backdrop-filter: blur(18px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(130%) !important;
+}
+.badge { color: var(--vy-blue) !important; font-weight: 800 !important; }
+.theme-toggle { padding: 8px 12px !important; }
+
+/* Cards and content surfaces */
+.card,
+.stat,
+.settings-section,
+.vx621-feature-card,
+.business-module-card,
+.p620-report-card,
+.subscription-plan-card,
+.production-account-card,
+.shop-growth-card {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface) !important;
+  color: var(--vy-text) !important;
+  box-shadow: var(--vy-shadow) !important;
+  backdrop-filter: blur(16px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(125%) !important;
+}
+
+.card,
+.settings-section,
+.business-module-card,
+.subscription-plan-card,
+.production-account-card {
+  border-radius: var(--vy-radius) !important;
+  overflow: hidden !important;
+}
+
+.card::before,
+.card::after,
+.settings-section::before,
+.settings-section::after {
+  pointer-events: none !important;
+}
+
+/* Subtle colorful identity without turning every container into a box of gradients. */
+.screen > .card:nth-of-type(6n + 1),
+.settings-section:nth-of-type(6n + 1) { border-top: 2px solid rgba(77, 156, 255, .72) !important; }
+.screen > .card:nth-of-type(6n + 2),
+.settings-section:nth-of-type(6n + 2) { border-top: 2px solid rgba(53, 210, 234, .72) !important; }
+.screen > .card:nth-of-type(6n + 3),
+.settings-section:nth-of-type(6n + 3) { border-top: 2px solid rgba(66, 214, 155, .72) !important; }
+.screen > .card:nth-of-type(6n + 4),
+.settings-section:nth-of-type(6n + 4) { border-top: 2px solid rgba(246, 201, 92, .72) !important; }
+.screen > .card:nth-of-type(6n + 5),
+.settings-section:nth-of-type(6n + 5) { border-top: 2px solid rgba(167, 131, 255, .72) !important; }
+.screen > .card:nth-of-type(6n),
+.settings-section:nth-of-type(6n) { border-top: 2px solid rgba(247, 119, 185, .72) !important; }
+
+.card .card,
+.settings-section .card,
+.vx621-group .card,
+.shop-growth-card .card {
+  background: var(--vy-surface-soft) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--vy-line) !important;
+}
+
+h1, h2, h3, h4, h5, h6, strong, b { color: var(--vy-text); }
+.muted, small, .small, .settings-field-note, .android-sheet-item-copy small { color: var(--vy-muted) !important; }
+
+h2 { font-size: clamp(19px, 4.8vw, 24px) !important; line-height: 1.18 !important; }
+h3 { font-size: clamp(16px, 4vw, 19px) !important; line-height: 1.25 !important; }
+p { line-height: 1.5; }
+
+h1, h2, h3, h4, p, span, label, a, button, th, td, .muted, .notice {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Buttons: colorful hierarchy, neutral by default. */
+.btn,
+.nav button,
+.android-sheet-close,
+.p620-report-card {
+  min-height: 42px !important;
+  border-radius: var(--vy-radius-sm) !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.nav button:focus-visible,
+.android-sheet-item:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(77, 156, 255, .24) !important;
+  outline-offset: 2px !important;
+}
+
+.btn.primary,
+.nav button.active,
+.nav .nav-item.active,
+.nav [aria-current="page"] {
+  color: #fff !important;
+  border-color: rgba(130, 187, 255, .46) !important;
+  background: linear-gradient(135deg, #347fe5, #4d9cff 56%, #45b8f4) !important;
+  box-shadow: 0 9px 22px rgba(52, 127, 229, .23) !important;
+}
+
+.btn.gold {
+  color: #251806 !important;
+  border-color: rgba(255, 222, 129, .55) !important;
+  background: linear-gradient(135deg, #ffd96a, #f6b944) !important;
+}
+
+.btn.danger,
+.danger.btn,
+button.danger {
+  color: #fff !important;
+  border-color: rgba(255, 126, 145, .4) !important;
+  background: linear-gradient(135deg, #dc4057, #ff6478) !important;
+}
+
+.btn.mini {
+  min-height: 34px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 10px !important;
+}
+
+.actions,
+.settings-actions,
+.segmented-settings {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.actions > *,
+.settings-actions > * { min-width: 0 !important; }
+
+/* Forms */
+input,
+select,
+textarea {
+  min-height: 44px !important;
+  margin: 6px 0 10px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 12px !important;
+  background: rgba(6, 18, 32, .68) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+html.theme-light input,
+html.theme-light select,
+html.theme-light textarea {
+  background: #f8fbff !important;
+  color: #14263b !important;
+}
+
+input::placeholder,
+textarea::placeholder { color: var(--vy-muted) !important; opacity: .82 !important; }
+select option { color: #13243a; background: #fff; }
+
+label {
+  color: var(--vy-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .04em !important;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 19px !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  margin: 0 8px 0 0 !important;
+  accent-color: var(--vy-blue) !important;
+}
+
+/* Status components */
+.notice {
+  border: 1px solid rgba(246, 201, 92, .18) !important;
+  border-left: 4px solid var(--vy-yellow) !important;
+  border-radius: 13px !important;
+  background: rgba(246, 201, 92, .09) !important;
+}
+.notice.success, .success.notice {
+  border-left-color: var(--vy-green) !important;
+  background: rgba(66, 214, 155, .09) !important;
+}
+.notice.bad, .notice.danger {
+  border-left-color: var(--vy-red) !important;
+  background: rgba(255, 100, 120, .09) !important;
+}
+
+.pill,
+.glass-chip {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+}
+
+.progress { border: 1px solid var(--vy-line) !important; background: rgba(255,255,255,.07) !important; }
+.bar { background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-green)) !important; }
+
+/* Metrics get visual distinction while remaining readable. */
+.stats,
+.p611-grid,
+.vx621-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.stat,
+.vx621-kpi {
+  min-height: 82px !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  overflow: hidden !important;
+}
+.stat b, .vx621-kpi b { font-size: clamp(18px, 5vw, 23px) !important; }
+.stats > :nth-child(4n + 1), .p611-grid > :nth-child(4n + 1) { border-left: 3px solid var(--vy-blue) !important; }
+.stats > :nth-child(4n + 2), .p611-grid > :nth-child(4n + 2) { border-left: 3px solid var(--vy-green) !important; }
+.stats > :nth-child(4n + 3), .p611-grid > :nth-child(4n + 3) { border-left: 3px solid var(--vy-yellow) !important; }
+.stats > :nth-child(4n), .p611-grid > :nth-child(4n) { border-left: 3px solid var(--vy-purple) !important; }
+
+/* Tables never push the full app sideways. */
+.scroll,
+.p611-table,
+.adv-table,
+.business-table,
+.vx621-table-wrap,
+[class*="table-wrap"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 12px !important;
+}
+
+.table,
+table {
+  max-width: none;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.table th,
+.table td,
+table th,
+table td {
+  border-color: var(--vy-line) !important;
+  vertical-align: middle !important;
+}
+.table th,
+table th {
+  color: var(--vy-muted) !important;
+  background: rgba(77, 156, 255, .07) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+
+/* Settings: one clean content surface per page, no huge nested box feeling. */
+#screen-settings .settings-stack,
+#screen-settings .vy675-page-body {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+#screen-settings .settings-section {
+  padding: 15px !important;
+  margin: 0 !important;
+}
+
+#screen-settings .settings-section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+#screen-settings .settings-section-heading h2,
+#screen-settings .settings-section-heading h3 {
+  margin: 2px 0 4px !important;
+}
+
+#screen-settings .settings-section-icon {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 12px !important;
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+  border: 1px solid rgba(77, 156, 255, .18) !important;
+}
+
+#screen-settings .settings-kicker {
+  color: var(--vy-blue) !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+  letter-spacing: .08em !important;
+}
+
+#screen-settings .settings-form-grid,
+.p611-form,
+.adv-form-grid,
+.business-calc-grid,
+.p620-settings {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+#screen-settings .settings-field-wide { grid-column: 1 / -1 !important; }
+#screen-settings .settings-link-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+/* More sheet, dialogs and popups: centered, readable, never clipped. */
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay,
+.subscription-dialog-backdrop,
+[class*="overlay"] {
+  max-width: 100vw !important;
+}
+
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay {
+  z-index: 10000 !important;
+}
+
+.android-sheet,
+.modal-card,
+.glass-dialog,
+.subscription-dialog {
+  width: min(94vw, 620px) !important;
+  max-width: min(94vw, 620px) !important;
+  max-height: min(88vh, 760px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 20px !important;
+  background: var(--vy-surface-strong) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .34) !important;
+}
+
+.android-sheet-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.android-sheet-item {
+  min-width: 0 !important;
+  min-height: 64px !important;
+  padding: 10px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 14px !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+}
+.android-sheet-item-copy { min-width: 0 !important; overflow: visible !important; white-space: normal !important; }
+.android-sheet-item-copy small { display: block !important; white-space: normal !important; }
+.android-sheet-item-icon {
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+}
+
+/* Subscription cards stay distinctive and premium. */
+.subscription-plan-card { position: relative !important; }
+.subscription-plan-card.pro,
+.subscription-plan-card[data-plan="pro"] { border-top: 3px solid #b9c7da !important; }
+.subscription-plan-card.business,
+.subscription-plan-card[data-plan="business"] { border-top: 3px solid var(--vy-yellow) !important; }
+.subscription-cta { min-height: 44px !important; }
+
+/* Calculator: avoid clipped keys/display on shorter Android screens. */
+#screen-calculator .calculator-head,
+#screen-calculator .calc-display-wrap,
+#screen-calculator .calc-keypad,
+#screen-calculator .calc-memory-row { max-width: 100% !important; }
+#screen-calculator .calc-key { min-width: 0 !important; }
+
+/* Bottom navigation owns the bottom safe area and never slides horizontally. */
+.nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100% - 16px), 760px) !important;
+  max-width: 760px !important;
+  min-height: 66px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  z-index: 9000 !important;
+  overflow: visible !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 21px !important;
+  background: rgba(8, 20, 35, .92) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .30) !important;
+  backdrop-filter: blur(22px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
+  touch-action: manipulation !important;
+}
+html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
+
+.nav button,
+.nav .nav-item {
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 6px 4px !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+}
+.nav .android-nav-label,
+.nav .nav-label {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.nav .android-nav-icon { flex: 0 0 auto !important; }
+
+/* Loading: one coherent colorful style for both loader phases. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(77, 156, 255, .25), transparent 24%),
+    radial-gradient(circle at 76% 72%, rgba(167, 131, 255, .19), transparent 26%),
+    linear-gradient(145deg, #071323, #0b2d5a 56%, #08182d) !important;
+  color: #f4f8ff !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  border-radius: 24px !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .30) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-purple)) !important;
+}
+
+/* Legacy duplicate footer is always suppressed; Settings Center owns the final footer. */
+#screen-settings #appLegalFooter { display: none !important; }
+
+/* Accessibility and performance modes. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+html[data-performance="lite"] *,
+html.performance-lite * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 760px) {
+  :root { --vy-radius: 16px; --vy-nav-safe: calc(84px + env(safe-area-inset-bottom)); }
+  .app { padding: 9px 10px calc(var(--vy-nav-safe) + 18px) !important; }
+  .top { min-height: 64px !important; padding: 7px 2px 10px !important; }
+  .logo { width: 44px !important; height: 44px !important; flex-basis: 44px !important; border-radius: 14px !important; }
+  .badge { display: none !important; }
+  .theme-toggle { min-height: 36px !important; padding: 7px 9px !important; font-size: 11px !important; }
+  .card, .settings-section { padding: 13px !important; }
+  .grid, .grid3, .row, .hero, .code-layout { grid-template-columns: 1fr !important; }
+  .stats, .p611-grid, .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .android-sheet-grid { grid-template-columns: 1fr !important; }
+  #screen-settings .settings-form-grid,
+  .p611-form,
+  .adv-form-grid,
+  .business-calc-grid,
+  .p620-settings { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 390px) {
+  .brand h1 { font-size: 20px !important; }
+  .tag { font-size: 10.5px !important; }
+  .stats, .p611-grid, .vx621-kpis { gap: 7px !important; }
+  .stat, .vx621-kpi { min-height: 74px !important; padding: 10px !important; }
+  .nav { width: calc(100% - 10px) !important; gap: 3px !important; padding: 5px !important; border-radius: 18px !important; }
+  .nav button, .nav .nav-item { min-height: 50px !important; padding: 5px 2px !important; font-size: 9.5px !important; border-radius: 11px !important; }
+  .btn { padding-left: 10px !important; padding-right: 10px !important; }
+}
+
+@media (max-height: 650px) and (max-width: 760px) {
+  .top { min-height: 58px !important; margin-bottom: 6px !important; }
+  .nav { min-height: 60px !important; }
+  .nav button, .nav .nav-item { min-height: 46px !important; }
+  #screen-calculator .calc-key { min-height: 38px !important; height: 38px !important; }
+}
