@@ -7917,11 +7917,11 @@ render();
     ensure();
     const p=productByQuery(query || text('fs607Product'));
     const qty=Math.max(1,Math.floor(n(text('fs607Qty'))||1));
-    if(!p){ alert('Product नहीं मिला. Product / SKU / barcode check करें.'); return; }
-    if(n(p.qty)<qty){ alert(`Stock कम है. ${p.name}: available ${n(p.qty)}`); return; }
+    if(!p){ alert('Product not found. Check the product name, SKU, or barcode.'); return; }
+    if(n(p.qty)<qty){ alert(`Insufficient stock for ${p.name}. Available: ${n(p.qty)}`); return; }
     const existing=state.posCart.find(x=>x.productId===p.id);
     const finalQty=(existing?n(existing.qty):0)+qty;
-    if(finalQty>n(p.qty)){ alert(`Cart quantity stock से ज्यादा है. Available ${n(p.qty)}`); return; }
+    if(finalQty>n(p.qty)){ alert(`Cart quantity exceeds available stock. Available: ${n(p.qty)}`); return; }
     if(existing) existing.qty=finalQty;
     else state.posCart.push({
       id:typeof uid==='function'?uid():String(Date.now()),
@@ -7980,7 +7980,7 @@ render();
 
   window.fs607CheckoutPOS=function(){
     ensure();
-    if(!state.posCart.length){alert('Cart empty है.');return;}
+    if(!state.posCart.length){alert('The cart is empty.');return;}
     // Validate all stock atomically before mutating.
     for(const item of state.posCart){
       const p=state.products.find(x=>x.id===item.productId);
@@ -8032,7 +8032,7 @@ render();
 
     state.invoices.push(inv);
     if(payment==='Credit'){
-      if(!customer && !customerInput){ alert('Credit sale के लिए customer जरूरी है.'); return; }
+      if(!customer && !customerInput){ alert('A customer is required for a credit sale.'); return; }
       if(customer) customer.due=Math.max(0,n(customer.due)+total);
       else {
         const created={id:typeof uid==='function'?uid():String(Date.now()),name:inv.customer,mobile:'',address:'',due:total,createdAt:new Date().toISOString()};
@@ -8057,7 +8057,7 @@ render();
     const supplierName=text('advSName'), productQuery=text('advSProduct');
     const qty=Math.max(0,n(text('advSQty'))), cost=Math.max(0,n(text('advSCost')));
     const openingDue=Math.max(0,n(text('advSDue')));
-    if(!supplierName||!productQuery||qty<=0||cost<=0){alert('Supplier, product, qty और unit cost भरें.');return;}
+    if(!supplierName||!productQuery||qty<=0||cost<=0){alert('Enter the supplier, product, quantity, and unit cost.');return;}
 
     let supplier=supplierByQuery(supplierName);
     if(!supplier){
@@ -8111,7 +8111,7 @@ render();
     ensure();
     const ref=prompt('Invoice number'); if(!ref)return;
     const inv=state.invoices.find(i=>String(i.number||'').toLowerCase()===String(ref).trim().toLowerCase());
-    if(!inv||!Array.isArray(inv.items)||!inv.items.length){alert('Invoice नहीं मिला.');return;}
+    if(!inv||!Array.isArray(inv.items)||!inv.items.length){alert('Invoice not found.');return;}
     const list=inv.items.map((x,i)=>`${i+1}. ${x.product} · sold ${x.qty}`).join('\n');
     const idx=Math.floor(n(prompt('Return item number:\n'+list,'1')))-1;
     const item=inv.items[idx]; if(!item){alert('Invalid item.');return;}
@@ -8142,14 +8142,14 @@ render();
     ensure();
     const ref=prompt('Purchase reference ID'); if(!ref)return;
     const pur=state.purchases.find(p=>String(p.id)===String(ref).trim());
-    if(!pur){alert('Purchase नहीं मिला.');return;}
+    if(!pur){alert('Purchase not found.');return;}
     const already=state.purchaseReturns.filter(r=>r.purchaseId===pur.id).reduce((s,r)=>s+n(r.qty),0);
     const max=Math.max(0,n(pur.qty)-already);
     const qty=Math.min(max,Math.max(0,n(prompt('Return qty (max '+max+')',String(max))||0)));
     if(qty<=0)return;
     const amount=n(pur.unitCost)*qty;
     const p=state.products.find(x=>x.id===pur.productId)||productByQuery(pur.product);
-    if(p && n(p.qty)<qty){alert('Current stock return qty से कम है.');return;}
+    if(p && n(p.qty)<qty){alert('Current stock is lower than the return quantity.');return;}
     if(p){p.qty=Math.max(0,n(p.qty)-qty);addLedger('PURCHASE_RETURN',p,-qty,-amount,pur.id,{supplierId:pur.supplierId||''});}
     const supplier=pur.supplierId?state.suppliers.find(s=>s.id===pur.supplierId):supplierByQuery(pur.supplier);
     if(supplier) supplier.due=Math.max(0,n(supplier.due)-amount);
@@ -8211,7 +8211,7 @@ render();
       },500);
       return;
     }
-    alert('Production cloud module अभी load नहीं हुआ.');
+    alert('The production cloud module has not loaded yet.');
   };
   window.advSetCloud=function(){
     ensure();
@@ -8232,7 +8232,7 @@ render();
   window.advSetLock=async function(){
     ensure();
     const pin=text('advPin');
-    if(!/^\d{4,8}$/.test(pin)){alert('4–8 digit PIN डालें.');return;}
+    if(!/^\d{4,8}$/.test(pin)){alert('Enter a 4–8 digit PIN.');return;}
     if(!window.crypto || !window.crypto.subtle){alert('Secure Web Crypto unavailable.');return;}
     const salt=crypto.getRandomValues(new Uint8Array(16));
     state.appLock={enabled:true,scheme:'PBKDF2-SHA256',iterations:180000,salt:bytesToB64(salt),pinHash:await pinHash(pin,salt)};
@@ -8291,12 +8291,12 @@ render();
         const force=currentCode<Number(data.minimumSupportedVersionCode||0);
         const msg=`Vyapar AI ${data.versionName} available${force?' (required)':''}.`;
         if(data.apkUrl){
-          const ok=confirm(msg+'\n\nUpdate download खोलें?');
+          const ok=confirm(msg+'\n\nOpen the update download?');
           if(ok){
             if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function') AndroidApp.openExternalUrl(data.apkUrl);
             else window.open(data.apkUrl,'_blank','noopener');
           }
-        }else alert(msg+'\nAPK URL backend में configure नहीं है.');
+        }else alert(msg+'\nThe APK URL is not configured on the backend.');
       }else if(manual) toast('App is up to date: '+currentName);
       return data;
     }catch(e){ if(manual) alert('Update check failed: '+e.message); return null; }
@@ -8397,7 +8397,7 @@ render();
     ensure();ensure607Extras();
     kind=String(kind||'ESTIMATE').toUpperCase();
     if(!state.posCart.length){
-      alert('Document बनाने के लिए POS cart में items add करें.');
+      alert('Add items to the POS cart before creating a document.');
       window.fs607OpenPOS();
       return;
     }

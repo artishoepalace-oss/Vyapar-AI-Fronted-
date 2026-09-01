@@ -5,7 +5,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
-const expectedVersion = '6.7.5.2026';
+const expectedVersion = '6.8.0.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -63,6 +63,6 @@ const gradle = read(path.join(root, 'android-app/app'), 'build.gradle');
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 6752026'), 'Android release code must match');
+assert(gradle.includes('versionCode 6802026'), 'Android release code must match');
 
-console.log('✓ Settings Center 6.7.5 checks passed');
+console.log('✓ Settings Center + complete UI 6.8.0 checks passed');
