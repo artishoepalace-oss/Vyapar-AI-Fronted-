@@ -1,8 +1,9 @@
 # Vyapar AI v6.7.5.2026
 
-- Fixed the Android Settings duplication shown in the 2026-09-01 screen recording.
-- The modern App Settings directory is now the only content visible on the Settings home screen.
-- Legacy `.settings-stack` cards are hard-hidden even when older Android CSS forces `display:block!important`.
-- Opening Account, Business profile, Business & security, Appearance, Backup & data, Legal & support, or App updates shows only that selected subpage.
-- Prevented Settings refreshes from briefly exposing the old stacked layout.
-- Preserved the single Settings footer/logo at the bottom of the directory and all existing settings functionality.
+- Replaced the previous layered Settings directory with one stable Settings Center.
+- Added clear groups for account, business, security, appearance, navigation, backup, updates and legal controls.
+- Added Settings search, dedicated subpages and Android back-button handling.
+- Kept descriptions readable instead of clipping them to a single line.
+- Added a working Auto Scroll to Top preference while preserving page-position memory as the default.
+- Kept the copyright footer at the true bottom with one grey Vyapar AI logo.
+- Preserved existing account, subscription, business, security, backup, update and legal actions.
