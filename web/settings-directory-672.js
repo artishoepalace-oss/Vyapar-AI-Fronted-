@@ -141,8 +141,9 @@
     if(scrollTop){ try{window.scrollTo({top:0,behavior:'auto'})}catch(_){window.scrollTo(0,0)} }
   }
 
-  function openSubpage(id){
+  function openSubpage(id, options){
     const scr=screen(); if(!scr) return;
+    const shouldScroll = !options || options.scroll !== false;
     const cfg=CONFIG.find(x=>x.id===id); if(!cfg) return;
     const map=classifyCards(scr);
     const page=getOrCreateSubpage(scr);
@@ -154,7 +155,7 @@
     sub.textContent=cfg.subtitle;
     activeId=id;
     scr.classList.add('vy672-subpage-open');
-    try{window.scrollTo({top:0,behavior:'auto'})}catch(_){window.scrollTo(0,0)}
+    if(shouldScroll){ try{window.scrollTo({top:0,behavior:'auto'})}catch(_){window.scrollTo(0,0)} }
   }
 
   function hideOldTabs(scr){
@@ -172,7 +173,7 @@
     const map=classifyCards(scr);
     renderDirectory(scr,map);
     getOrCreateSubpage(scr);
-    if(activeId) openSubpage(activeId); else openDirectory(false);
+    if(activeId) openSubpage(activeId,{scroll:false}); else openDirectory(false);
     if(observer) observer.observe(document.documentElement,{childList:true,subtree:true});
   }
 
@@ -185,8 +186,12 @@
   const original=window.renderSettings;
   if(typeof original==='function' && !original.__vy672Settings){
     const wrapped=function(){
+      // Avoid a blank frame: unhide canonical Settings content before the legacy renderer mutates it,
+      // then rebuild the directory synchronously in the same task.
+      const scr=screen();
+      if(scr) scr.classList.remove('vy672-settings-ready');
       const result=original.apply(this,arguments);
-      schedule();
+      organize();
       setTimeout(schedule,0);
       setTimeout(schedule,120);
       return result;

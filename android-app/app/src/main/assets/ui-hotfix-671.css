@@ -251,3 +251,7 @@ html.native-android .vx621-feature-card {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+
+/* v6.7.4: user-requested global removal of information popup buttons. */
+.cu-help, .cu-help-button, .cu-help-panel { display:none !important; }

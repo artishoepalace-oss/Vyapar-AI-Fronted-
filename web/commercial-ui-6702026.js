@@ -41,78 +41,30 @@
   }
 
   function makeHelpControl(text, owner) {
-    if (!text || !owner || owner.dataset.cuHelpReady === "1") return;
-    owner.dataset.cuHelpReady = "1";
-
-    const help = document.createElement("span");
-    help.className = "cu-help";
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "cu-help-button";
-    button.textContent = "i";
-    button.setAttribute("aria-label", "More information");
-    button.setAttribute("aria-expanded", "false");
-
-    const panel = document.createElement("span");
-    panel.className = "cu-help-panel";
-    panel.textContent = text;
-
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const opening = !help.classList.contains("is-open");
-      document.querySelectorAll(".cu-help.is-open").forEach((node) => {
-        if (node !== help) {
-          node.classList.remove("is-open");
-          const other = node.querySelector(".cu-help-button");
-          if (other) other.setAttribute("aria-expanded", "false");
-        }
-      });
-      help.classList.toggle("is-open", opening);
-      button.setAttribute("aria-expanded", String(opening));
-    });
-
-    help.append(button, panel);
-    owner.appendChild(help);
+    // v6.7.4: information popup buttons are intentionally disabled.
+    // Keep the UI direct and readable; no hidden help affordances.
+    return;
   }
 
   function collapseLongHelp(scope = document) {
-    const selectors = [
-      ".p2-field-hint",
-      ".p2-preview-note",
-      ".p2-tx-context",
-      ".muted"
-    ];
+    // Remove any legacy help controls created by earlier builds.
+    scope.querySelectorAll(".cu-help").forEach((node) => node.remove());
 
-    scope.querySelectorAll(selectors.join(",")).forEach((node) => {
-      if (node.dataset.cuProcessed === "1") return;
-      const full = (node.textContent || "").replace(/\s+/g, " ").trim();
-      if (full.length < HELP_THRESHOLD) return;
-
+    // Restore helper text that older builds clamped behind an info button.
+    scope.querySelectorAll(".cu-clamped-help").forEach((node) => {
+      node.classList.remove("cu-clamped-help");
+      const full = (node.getAttribute("title") || "").trim();
+      if (full && /quick tip/i.test((node.textContent || "").trim())) node.textContent = full;
+      node.removeAttribute("title");
       node.dataset.cuProcessed = "1";
-      node.classList.add("cu-clamped-help");
-      node.setAttribute("title", full);
-
-      const label =
-        node.closest(".p2-field")?.querySelector(".p2-field-label") ||
-        node.previousElementSibling;
-
-      if (label && label.nodeType === Node.ELEMENT_NODE) {
-        makeHelpControl(full, label);
-      }
     });
 
+    // Remove stale Quick tip placeholders that no longer have visible content.
     scope.querySelectorAll(".p2-form-intro").forEach((node) => {
-      if (node.dataset.cuProcessed === "1") return;
-      const full = (node.textContent || "").replace(/\s+/g, " ").trim();
-      if (!full) return;
-
-      node.dataset.cuProcessed = "1";
-      if (full.length >= HELP_THRESHOLD) {
-        node.textContent = "Quick tip";
-        makeHelpControl(full, node);
-      }
+      node.querySelectorAll(".cu-help").forEach((help) => help.remove());
+      const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+      if (/^quick tip$/i.test(text)) node.remove();
+      else node.dataset.cuProcessed = "1";
     });
   }
 
@@ -162,12 +114,8 @@
     startObserver();
   }
 
-  document.addEventListener("click", (event) => {
-    if (event.target.closest(".cu-help")) return;
-    document.querySelectorAll(".cu-help.is-open").forEach((node) => {
-      node.classList.remove("is-open");
-      const button = node.querySelector(".cu-help-button");
-      if (button) button.setAttribute("aria-expanded", "false");
-    });
+  // v6.7.4: legacy info controls are removed rather than opened/closed.
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".cu-help").forEach((node) => node.remove());
   });
 })();
