@@ -1,0 +1,36 @@
+name: Remove Vyapar AI v6.8.3 Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cleanup-v683.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  remove-v683:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete v6.8.3 release, APK and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v6.8.3.2026 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release delete v6.8.3.2026 --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+          fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v6.8.3.2026" >/dev/null 2>&1; then
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/v6.8.3.2026"
+          fi
+          if gh release view v6.8.3.2026 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "v6.8.3 release still exists" >&2
+            exit 1
+          fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v6.8.3.2026" >/dev/null 2>&1; then
+            echo "v6.8.3 tag still exists" >&2
+            exit 1
+          fi
