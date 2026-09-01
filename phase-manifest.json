@@ -1,11 +1,11 @@
 {
   "product": "Vyapar AI",
-  "phase": "4.2",
-  "phaseName": "Flat Settings and Vibrant App UI",
-  "versionName": "6.8.2.2026",
-  "versionCode": 6822026,
-  "baseVersion": "6.8.1.2026",
-  "baseArchiveSha256": "6c622e26309e4200dbe324ff8ce3af754892570f38d25193a8942387ea07193a",
+  "phase": "4.3",
+  "phaseName": "Professional Dual Theme and Startup Mark",
+  "versionName": "6.8.3.2026",
+  "versionCode": 6832026,
+  "baseVersion": "6.8.2.2026",
+  "baseArchiveSha256": "58112affda6729e2af5cfd4b02b154abaa6b338aaa4e0977ad4b855bc51eb22c",
   "backendVersion": "2.5.2",
   "released": "2026-09-01",
   "featureRemoval": false,
@@ -16,10 +16,10 @@
   "uiHotfix": true,
   "releaseBranch": "main",
   "fixes": [
-    "Flattened Settings sub-pages by removing redundant outer containers while retaining usable input and action boundaries.",
-    "Converted Business controls into a clean divider list and compacted Account actions into a two-column layout.",
-    "Added stronger screen-specific colors for Home, Business, Sales, Stock and More.",
-    "Increased palette saturation and colorful depth in dark and light modes without applying filters to brand images.",
+    "Created independent dark and light visual systems with purpose-built surfaces, shadows, contrast and background depth.",
+    "Added a disciplined six-color business-tool system for feature cards, modules, KPIs and action controls.",
+    "Refined Home, Business, Sales, Stock, More and Settings surfaces while keeping Settings sub-pages flat.",
+    "Replaced the square full-logo splash poster with a scalable icon-only professional startup mark across Android and WebView loading phases.",
     "Preserved business logic, stored data schema, accounting logic, subscription flows and navigation behavior."
   ]
 }

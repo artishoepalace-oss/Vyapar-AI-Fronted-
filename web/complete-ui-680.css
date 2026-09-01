@@ -1072,3 +1072,490 @@ html.theme-light #screen-settings[data-vy675-page="account"] .production-account
     border-left: 0 !important;
   }
 }
+
+/* ===== 6.8.3 — professional dual-theme business experience ===== */
+:root {
+  --vy-electric-blue: #287dff;
+  --vy-electric-cyan: #00d5e8;
+  --vy-electric-purple: #8d5cff;
+  --vy-electric-pink: #ff4fa3;
+  --vy-electric-green: #16ce83;
+  --vy-electric-gold: #ffc53d;
+}
+
+/* Dark mode is a deep, luminous command centre. */
+html:not(.theme-light) {
+  --vy-bg-0: #030a14;
+  --vy-bg-1: #07172a;
+  --vy-surface: rgba(8, 25, 43, .90);
+  --vy-surface-strong: rgba(12, 34, 57, .98);
+  --vy-surface-soft: rgba(18, 43, 69, .86);
+  --vy-text: #f6faff;
+  --vy-muted: #9eb1c7;
+  --vy-line: rgba(111, 192, 255, .20);
+  --vy-shadow: 0 18px 46px rgba(0, 0, 0, .34);
+}
+
+html:not(.theme-light) body {
+  background:
+    radial-gradient(36rem 28rem at -8% -5%, rgba(31, 111, 255, .36), transparent 64%),
+    radial-gradient(32rem 26rem at 108% 9%, rgba(142, 70, 255, .28), transparent 64%),
+    radial-gradient(30rem 24rem at 50% 105%, rgba(0, 215, 210, .17), transparent 68%),
+    linear-gradient(180deg, #030a14 0%, #061426 46%, #04101e 100%) !important;
+}
+
+html:not(.theme-light) .top {
+  background: linear-gradient(180deg, rgba(3,10,20,.78), rgba(3,10,20,0)) !important;
+}
+
+html:not(.theme-light) .card,
+html:not(.theme-light) .stat,
+html:not(.theme-light) .settings-section,
+html:not(.theme-light) .vx621-group,
+html:not(.theme-light) .vx621-feature-card,
+html:not(.theme-light) .business-module-card,
+html:not(.theme-light) .adv-module,
+html:not(.theme-light) .p611-card,
+html:not(.theme-light) .p620-report-card {
+  border-color: rgba(100, 183, 255, .22) !important;
+  background:
+    radial-gradient(22rem 14rem at 105% -12%, rgba(46, 134, 255, .13), transparent 66%),
+    linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.018)),
+    rgba(7, 24, 42, .91) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 16px 42px rgba(0,0,0,.24) !important;
+}
+
+html:not(.theme-light) input,
+html:not(.theme-light) select,
+html:not(.theme-light) textarea {
+  color: #f7fbff !important;
+  border-color: rgba(90, 181, 255, .26) !important;
+  background: rgba(8, 26, 45, .90) !important;
+}
+
+html:not(.theme-light) input:focus,
+html:not(.theme-light) select:focus,
+html:not(.theme-light) textarea:focus {
+  border-color: #25c7f2 !important;
+  box-shadow: 0 0 0 3px rgba(37,199,242,.14), 0 10px 26px rgba(0,0,0,.18) !important;
+}
+
+/* Light mode is a separate clean, energetic business dashboard. */
+html.theme-light {
+  --vy-bg-0: #f2f7ff;
+  --vy-bg-1: #fbfdff;
+  --vy-surface: rgba(255, 255, 255, .94);
+  --vy-surface-strong: #ffffff;
+  --vy-surface-soft: rgba(246, 250, 255, .98);
+  --vy-text: #12243b;
+  --vy-muted: #5c7089;
+  --vy-line: rgba(54, 99, 147, .17);
+  --vy-shadow: 0 14px 34px rgba(39, 82, 130, .12);
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(34rem 26rem at -10% -5%, rgba(51, 143, 255, .24), transparent 65%),
+    radial-gradient(30rem 24rem at 108% 7%, rgba(181, 91, 255, .18), transparent 65%),
+    radial-gradient(28rem 22rem at 52% 105%, rgba(0, 204, 184, .13), transparent 68%),
+    linear-gradient(180deg, #f8fbff 0%, #edf5ff 48%, #f9fcff 100%) !important;
+}
+
+html.theme-light .top {
+  margin-bottom: 16px !important;
+  padding: 9px 10px 12px !important;
+  border: 1px solid rgba(62, 112, 163, .12) !important;
+  border-radius: 20px !important;
+  background: rgba(255,255,255,.72) !important;
+  box-shadow: 0 10px 30px rgba(55,96,139,.09) !important;
+  backdrop-filter: blur(20px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+}
+
+html.theme-light .logo {
+  border: 1px solid rgba(40,125,255,.18) !important;
+  box-shadow: 0 9px 22px rgba(35,96,160,.14) !important;
+}
+
+html.theme-light .card,
+html.theme-light .stat,
+html.theme-light .settings-section,
+html.theme-light .vx621-group,
+html.theme-light .vx621-feature-card,
+html.theme-light .business-module-card,
+html.theme-light .adv-module,
+html.theme-light .p611-card,
+html.theme-light .p620-report-card {
+  color: #12243b !important;
+  border-color: rgba(55, 105, 157, .16) !important;
+  background:
+    radial-gradient(22rem 14rem at 106% -12%, rgba(44, 132, 255, .095), transparent 67%),
+    linear-gradient(145deg, rgba(255,255,255,1), rgba(246,250,255,.96)) !important;
+  box-shadow: 0 14px 34px rgba(39,82,130,.105), inset 0 1px 0 #fff !important;
+}
+
+html.theme-light input,
+html.theme-light select,
+html.theme-light textarea {
+  color: #12243b !important;
+  border-color: rgba(54, 112, 171, .22) !important;
+  background: #fff !important;
+  box-shadow: inset 0 1px 2px rgba(40,72,105,.035) !important;
+}
+
+html.theme-light input:focus,
+html.theme-light select:focus,
+html.theme-light textarea:focus {
+  border-color: #287dff !important;
+  box-shadow: 0 0 0 3px rgba(40,125,255,.13), 0 8px 20px rgba(40,125,255,.08) !important;
+}
+
+/* Business tools use a vivid but disciplined six-color system. */
+.vx621-feature-grid > .vx621-feature-card,
+.business-module-grid > .business-module-card,
+.adv-module-grid > .adv-module {
+  --vy-tool-rgb: 40, 125, 255;
+  --vy-tool-accent: #287dff;
+  position: relative !important;
+  overflow: hidden !important;
+  border-top: 3px solid var(--vy-tool-accent) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+}
+
+.vx621-feature-grid > :nth-child(6n + 2),
+.business-module-grid > :nth-child(6n + 2),
+.adv-module-grid > :nth-child(6n + 2) { --vy-tool-rgb: 0, 194, 211; --vy-tool-accent: #00c2d3; }
+.vx621-feature-grid > :nth-child(6n + 3),
+.business-module-grid > :nth-child(6n + 3),
+.adv-module-grid > :nth-child(6n + 3) { --vy-tool-rgb: 141, 92, 255; --vy-tool-accent: #8d5cff; }
+.vx621-feature-grid > :nth-child(6n + 4),
+.business-module-grid > :nth-child(6n + 4),
+.adv-module-grid > :nth-child(6n + 4) { --vy-tool-rgb: 255, 79, 163; --vy-tool-accent: #ff4fa3; }
+.vx621-feature-grid > :nth-child(6n + 5),
+.business-module-grid > :nth-child(6n + 5),
+.adv-module-grid > :nth-child(6n + 5) { --vy-tool-rgb: 22, 206, 131; --vy-tool-accent: #16ce83; }
+.vx621-feature-grid > :nth-child(6n),
+.business-module-grid > :nth-child(6n),
+.adv-module-grid > :nth-child(6n) { --vy-tool-rgb: 255, 174, 38; --vy-tool-accent: #ffae26; }
+
+html:not(.theme-light) .vx621-feature-grid > .vx621-feature-card,
+html:not(.theme-light) .business-module-grid > .business-module-card,
+html:not(.theme-light) .adv-module-grid > .adv-module {
+  border-color: rgba(var(--vy-tool-rgb), .40) !important;
+  background:
+    radial-gradient(19rem 12rem at 105% -12%, rgba(var(--vy-tool-rgb), .24), transparent 68%),
+    linear-gradient(145deg, rgba(var(--vy-tool-rgb), .105), rgba(255,255,255,.025)),
+    rgba(8,27,47,.94) !important;
+  box-shadow: 0 15px 34px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+html.theme-light .vx621-feature-grid > .vx621-feature-card,
+html.theme-light .business-module-grid > .business-module-card,
+html.theme-light .adv-module-grid > .adv-module {
+  border-color: rgba(var(--vy-tool-rgb), .34) !important;
+  background:
+    radial-gradient(19rem 12rem at 106% -14%, rgba(var(--vy-tool-rgb), .19), transparent 68%),
+    linear-gradient(145deg, #fff, rgba(var(--vy-tool-rgb), .055)) !important;
+  box-shadow: 0 13px 30px rgba(var(--vy-tool-rgb), .105) !important;
+}
+
+.vx621-feature-icon {
+  color: var(--vy-tool-accent) !important;
+  border: 1px solid rgba(var(--vy-tool-rgb), .30) !important;
+  background: rgba(var(--vy-tool-rgb), .15) !important;
+  box-shadow: 0 8px 20px rgba(var(--vy-tool-rgb), .12) !important;
+}
+
+.vx621-feature-card h3,
+.business-module-card h3,
+.adv-module b { color: var(--vy-text) !important; }
+
+.vx621-feature-card:active,
+.business-module-card:active,
+.adv-module:active { transform: scale(.985) !important; }
+
+.vx621-hero {
+  border-color: rgba(141,92,255,.42) !important;
+  background:
+    radial-gradient(25rem 18rem at 104% -12%, rgba(255,79,163,.24), transparent 65%),
+    radial-gradient(24rem 17rem at -5% 110%, rgba(0,213,232,.18), transparent 68%),
+    linear-gradient(135deg, rgba(40,125,255,.20), rgba(141,92,255,.15)),
+    var(--vy-surface) !important;
+  box-shadow: 0 20px 48px rgba(77,67,189,.18) !important;
+}
+
+.vx621-kpis > .vx621-kpi:nth-child(5n + 1) { --vy-kpi-rgb: 40,125,255; --vy-kpi-accent: #48a2ff; }
+.vx621-kpis > .vx621-kpi:nth-child(5n + 2) { --vy-kpi-rgb: 22,206,131; --vy-kpi-accent: #23d993; }
+.vx621-kpis > .vx621-kpi:nth-child(5n + 3) { --vy-kpi-rgb: 255,79,163; --vy-kpi-accent: #ff64ad; }
+.vx621-kpis > .vx621-kpi:nth-child(5n + 4) { --vy-kpi-rgb: 141,92,255; --vy-kpi-accent: #a780ff; }
+.vx621-kpis > .vx621-kpi:nth-child(5n) { --vy-kpi-rgb: 255,174,38; --vy-kpi-accent: #ffc14f; }
+.vx621-kpi {
+  border-color: rgba(var(--vy-kpi-rgb), .32) !important;
+  background: linear-gradient(145deg, rgba(var(--vy-kpi-rgb), .18), rgba(var(--vy-kpi-rgb), .045)), var(--vy-surface) !important;
+}
+.vx621-kpi b { color: var(--vy-kpi-accent) !important; }
+
+/* Buttons look like purposeful business actions in both themes. */
+.btn.primary,
+.vx621-action.primary,
+button.primary {
+  border-color: transparent !important;
+  background: linear-gradient(135deg, #236fff, #00bedb) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 24px rgba(35,111,255,.25) !important;
+}
+.btn.gold,
+button.gold {
+  border-color: transparent !important;
+  background: linear-gradient(135deg, #ff9f1c, #ffd84d) !important;
+  color: #261803 !important;
+  box-shadow: 0 10px 24px rgba(255,159,28,.23) !important;
+}
+.btn.danger,
+button.danger {
+  border-color: rgba(255,76,111,.35) !important;
+  background: linear-gradient(135deg, rgba(222,43,86,.94), rgba(255,91,122,.94)) !important;
+  color: #fff !important;
+}
+
+html.theme-light .btn:not(.primary):not(.gold):not(.danger),
+html.theme-light button.vx621-action:not(.primary) {
+  border-color: rgba(40,125,255,.20) !important;
+  background: linear-gradient(145deg, #fff, #f0f6ff) !important;
+  color: #17406d !important;
+  box-shadow: 0 7px 18px rgba(44,91,140,.08) !important;
+}
+
+/* Navigation has its own tuned surface and contrast per theme. */
+html:not(.theme-light) .nav {
+  border-color: rgba(62,174,255,.38) !important;
+  background: linear-gradient(145deg, rgba(4,24,42,.97), rgba(8,39,65,.96)) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+html.theme-light .nav {
+  border-color: rgba(52,125,193,.22) !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: 0 16px 36px rgba(38,79,123,.17), inset 0 1px 0 #fff !important;
+  backdrop-filter: blur(22px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+}
+
+html.theme-light .nav button[data-android-tab] .android-nav-label {
+  color: #516a84 !important;
+  font-weight: 750 !important;
+}
+
+html.theme-light .nav button.active[data-android-tab] .android-nav-icon,
+html.theme-light .nav button.active[data-android-tab] .android-nav-label { color: #fff !important; }
+html.theme-light .nav button.active[data-android-tab="more"] .android-nav-icon,
+html.theme-light .nav button.active[data-android-tab="more"] .android-nav-label { color: #261803 !important; }
+
+html:not(.theme-light) .android-sheet {
+  border-color: rgba(74,177,255,.32) !important;
+  background: linear-gradient(160deg, rgba(8,34,57,.98), rgba(5,20,36,.98)) !important;
+}
+
+html.theme-light .android-sheet {
+  border-color: rgba(54,111,169,.18) !important;
+  background: rgba(248,251,255,.98) !important;
+  box-shadow: 0 -18px 48px rgba(35,70,110,.18) !important;
+}
+
+html.theme-light .android-sheet-item[data-tab] {
+  border-color: rgba(var(--vy-sheet-rgb, 40,125,255), .12) !important;
+  background: linear-gradient(145deg, #fff, var(--vy-sheet-soft)) !important;
+  color: #17314f !important;
+}
+
+/* Settings directory stays colorful without bringing nested compartments back. */
+html:not(.theme-light) #screen-settings .vy675-settings-row {
+  background: linear-gradient(90deg, var(--vy-row-soft), rgba(255,255,255,.015) 68%) !important;
+}
+html.theme-light #screen-settings .vy675-settings-row {
+  border-color: rgba(57,100,146,.13) !important;
+  background: linear-gradient(90deg, var(--vy-row-soft), rgba(255,255,255,.96) 72%) !important;
+}
+html.theme-light #screen-settings .vy675-row-title { color: #152b46 !important; }
+html.theme-light #screen-settings .vy675-row-description { color: #60738a !important; }
+
+/* Professional loader: icon-only mark, layered glass and restrained motion. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background:
+    radial-gradient(28rem 22rem at 20% 13%, rgba(35,111,255,.42), transparent 66%),
+    radial-gradient(25rem 20rem at 86% 84%, rgba(141,92,255,.30), transparent 65%),
+    radial-gradient(18rem 14rem at 72% 18%, rgba(0,213,232,.16), transparent 67%),
+    linear-gradient(150deg, #020812, #071b34 55%, #061126) !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-mark {
+  position: relative !important;
+  isolation: isolate !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 118px !important;
+  min-width: 118px !important;
+  max-width: 118px !important;
+  height: 118px !important;
+  min-height: 118px !important;
+  max-height: 118px !important;
+  flex: 0 0 118px !important;
+  margin: 0 auto 20px !important;
+  padding: 18px !important;
+  overflow: visible !important;
+  border: 1px solid rgba(125,225,255,.38) !important;
+  border-radius: 34px !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.17), transparent 34%),
+    linear-gradient(145deg, rgba(26,70,114,.88), rgba(8,27,52,.94)) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.42),
+    0 0 44px rgba(35,135,255,.22),
+    inset 0 1px 0 rgba(255,255,255,.15) !important;
+  animation: vy683MarkFloat 2.8s ease-in-out infinite !important;
+}
+
+#appLoader .android-loader-logo::before,
+#vy647StartupSplash .vy647-splash-mark::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: -10px;
+  border: 1px solid rgba(75,186,255,.25);
+  border-radius: 42px;
+  box-shadow: 0 0 32px rgba(94,92,255,.18);
+  animation: vy683Halo 2.8s ease-in-out infinite !important;
+}
+
+#appLoader .android-loader-logo::after,
+#vy647StartupSplash .vy647-splash-mark::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 9px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(35,111,255,.18), rgba(0,213,232,.10) 52%, rgba(141,92,255,.18));
+}
+
+#appLoader .android-loader-logo > img,
+#vy647StartupSplash .vy647-splash-mark > img {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 82px !important;
+  min-width: 82px !important;
+  max-width: 82px !important;
+  height: 82px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,.24)) saturate(1.12) !important;
+  box-shadow: none !important;
+}
+
+#appLoader .android-loader-shine {
+  display: block !important;
+  position: absolute !important;
+  z-index: 3 !important;
+  inset: 5px !important;
+  border-radius: 29px !important;
+  background: linear-gradient(118deg, transparent 28%, rgba(255,255,255,.16) 44%, transparent 60%) !important;
+  transform: translateX(-70%) !important;
+  animation: vy683Shine 3.2s ease-in-out infinite !important;
+  pointer-events: none !important;
+}
+
+#appLoader .android-loader-spark {
+  display: block !important;
+  position: absolute !important;
+  z-index: 4 !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: #ffe066 !important;
+  box-shadow: 0 0 14px rgba(255,224,102,.85) !important;
+}
+#appLoader .android-loader-spark.spark-a { top: 6px !important; right: 12px !important; }
+#appLoader .android-loader-spark.spark-b { bottom: 10px !important; left: 8px !important; width: 5px !important; height: 5px !important; background: #63edff !important; }
+
+#appLoader.android-loader > strong,
+#vy647StartupSplash .vy647-splash-core > strong {
+  margin-top: 2px !important;
+  color: #fff !important;
+  font-size: 28px !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.5px !important;
+  text-shadow: 0 8px 24px rgba(18,91,182,.32) !important;
+}
+
+#appLoader .android-loader-caption,
+#vy647StartupSplash .vy647-splash-core > span {
+  display: block !important;
+  margin: 9px 0 0 !important;
+  color: #a8bdd5 !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: .2px !important;
+}
+
+#appLoader .android-loader-bar,
+#vy647StartupSplash .vy647-splash-bar {
+  width: min(66vw, 230px) !important;
+  height: 5px !important;
+  margin-top: 23px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(151,188,228,.14) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.22) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #26a8ff, #00d8dd 46%, #9b6dff 76%, #ffd24a) !important;
+  box-shadow: 0 0 16px rgba(44,183,255,.48) !important;
+}
+
+#vy647StartupSplash .vy647-splash-core {
+  width: min(100%, 320px) !important;
+  padding: 28px 20px !important;
+}
+
+.vy647-mark-orbit { display: none !important; }
+
+@keyframes vy683MarkFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.015); }
+}
+@keyframes vy683Halo {
+  0%, 100% { opacity: .55; transform: scale(.97); }
+  50% { opacity: 1; transform: scale(1.035); }
+}
+@keyframes vy683Shine {
+  0%, 36% { transform: translateX(-78%); opacity: 0; }
+  52% { opacity: 1; }
+  70%, 100% { transform: translateX(78%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #appLoader .android-loader-logo,
+  #vy647StartupSplash .vy647-splash-mark,
+  #appLoader .android-loader-logo::before,
+  #vy647StartupSplash .vy647-splash-mark::before,
+  #appLoader .android-loader-shine { animation: none !important; }
+}
+
+@media (min-width: 761px) {
+  .vx621-feature-card:hover,
+  .business-module-card:hover,
+  .adv-module:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 20px 42px rgba(var(--vy-tool-rgb), .16) !important;
+  }
+}

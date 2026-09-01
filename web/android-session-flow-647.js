@@ -25,7 +25,7 @@
     if(document.getElementById('vy647StartupSplash'))return;
     var splash=document.createElement('div');
     splash.id='vy647StartupSplash';
-    splash.innerHTML='<div class="vy647-splash-core"><img src="logo.png" alt="Vyapar AI"><strong>Vyapar AI</strong><span>Loading secure session…</span><div class="vy647-splash-bar"><i></i></div></div>';
+    splash.innerHTML='<div class="vy647-splash-core"><div class="vy647-splash-mark" aria-hidden="true"><img src="startup-mark.svg" alt=""><i class="vy647-mark-orbit"></i></div><strong>Vyapar AI</strong><span>Preparing your business workspace…</span><div class="vy647-splash-bar"><i></i></div></div>';
     document.body.appendChild(splash);
   }
 
