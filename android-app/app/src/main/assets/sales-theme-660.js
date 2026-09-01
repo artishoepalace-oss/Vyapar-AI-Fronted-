@@ -103,9 +103,9 @@
     popup.id='vy670UpdatePrompt';
     popup.className='subscription-overlay subscription-cancel-overlay';
     popup.innerHTML='<section class="subscription-dialog subscription-result-card" role="dialog" aria-modal="true" aria-labelledby="vy670UpdateTitle">'+
-      '<div class="subscription-result-icon success" aria-hidden="true">↑</div>'+ 
-      '<h2 id="vy670UpdateTitle"></h2><p data-update-message></p>'+ 
-      '<button class="subscription-dialog-primary" data-update-now type="button">Update now</button>'+ 
+      '<div class="subscription-result-icon success" aria-hidden="true">↑</div>'+
+      '<h2 id="vy670UpdateTitle"></h2><p data-update-message></p>'+
+      '<button class="subscription-dialog-primary" data-update-now type="button">Update now</button>'+
       (force?'':'<button class="subscription-dialog-secondary" data-update-later type="button">Not now</button>')+
       '</section>';
     popup.querySelector('#vy670UpdateTitle').textContent=force?'Update required':'Vyapar AI update available';
