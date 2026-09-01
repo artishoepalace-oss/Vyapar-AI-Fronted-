@@ -5,7 +5,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
-const expectedVersion = '6.8.1.2026';
+const expectedVersion = '6.8.2.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -51,6 +51,10 @@ for (const base of [web, android]) {
   assert(finalStyle.includes('settings-stack.vy675-settings-repository[hidden]'), 'hidden Settings repository needs an authoritative final override');
   assert(finalStyle.includes('data-vy675-page="account"'), 'Settings destinations must keep color-coded accents');
   assert(finalStyle.includes('width: 108px !important'), 'WebView loading logo must match the native 108dp logo scale');
+  assert(finalStyle.includes('flatter Settings pages + higher-saturation app identity'), 'flat and vibrant UI layer must be present');
+  assert(finalStyle.includes('.nav button.active[data-android-tab="business"]'), 'every primary nav destination needs its own active color');
+  assert(finalStyle.includes('production-actions {'), 'Account actions must use the compact layout');
+  assert(finalStyle.includes('padding: 2px 0 16px !important'), 'Settings sub-page outer cards must be flattened');
 }
 
 assert.strictEqual(
@@ -71,7 +75,7 @@ const mainActivity = read(path.join(root, 'android-app/app/src/main/java/com/vya
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 6812026'), 'Android release code must match');
+assert(gradle.includes('versionCode 6822026'), 'Android release code must match');
 assert(mainActivity.includes('Color.rgb(6, 23, 45)'), 'first WebView frame must match the dark launch surface');
 
 console.log(`✓ Settings Center + complete UI ${expectedVersion} checks passed`);

@@ -801,3 +801,274 @@ html.performance-lite * {
   .nav button, .nav .nav-item { min-height: 46px !important; }
   #screen-calculator .calc-key { min-height: 38px !important; height: 38px !important; }
 }
+
+/* ===== 6.8.2 — flatter Settings pages + higher-saturation app identity ===== */
+:root {
+  --vy-blue: #3295ff;
+  --vy-cyan: #12d9ee;
+  --vy-green: #26db91;
+  --vy-yellow: #ffd047;
+  --vy-orange: #ff9142;
+  --vy-pink: #ff5fb2;
+  --vy-purple: #9b72ff;
+  --vy-red: #ff526d;
+}
+
+body {
+  background:
+    radial-gradient(circle at 4% 3%, rgba(37, 139, 255, .36), transparent 28%),
+    radial-gradient(circle at 96% 13%, rgba(155, 114, 255, .28), transparent 25%),
+    radial-gradient(circle at 52% 82%, rgba(18, 217, 238, .18), transparent 32%),
+    linear-gradient(180deg, #061426, #071a2c 52%, #061321) !important;
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(circle at 4% 0%, rgba(50, 149, 255, .24), transparent 28%),
+    radial-gradient(circle at 98% 10%, rgba(255, 95, 178, .17), transparent 24%),
+    radial-gradient(circle at 50% 84%, rgba(18, 217, 238, .15), transparent 29%),
+    linear-gradient(180deg, #f8fbff, #eaf4ff 54%, #f7fbff) !important;
+}
+
+/* Each primary screen gets a recognisable, saturated color family. */
+#screen-home { --vy-screen-rgb: 50, 149, 255; --vy-screen-accent: #3295ff; }
+#screen-business { --vy-screen-rgb: 155, 114, 255; --vy-screen-accent: #9b72ff; }
+#screen-sales { --vy-screen-rgb: 255, 95, 178; --vy-screen-accent: #ff5fb2; }
+#screen-stock { --vy-screen-rgb: 38, 219, 145; --vy-screen-accent: #26db91; }
+#screen-upload,
+#screen-analytics,
+#screen-calculator,
+#screen-subscription,
+#screen-settings { --vy-screen-rgb: 18, 217, 238; --vy-screen-accent: #12d9ee; }
+
+#screen-home .card,
+#screen-home .stat,
+#screen-business .card,
+#screen-business .vx621-feature-card,
+#screen-business .vx621-group,
+#screen-sales .card,
+#screen-sales .stat,
+#screen-stock .card,
+#screen-stock .stat {
+  border-color: rgba(var(--vy-screen-rgb), .30) !important;
+  background:
+    radial-gradient(24rem 13rem at 104% -8%, rgba(var(--vy-screen-rgb), .19), transparent 66%),
+    linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
+    var(--vy-surface) !important;
+}
+
+#screen-home .home-overview,
+#screen-business .vx621-hero,
+#screen-sales > .card:first-child,
+#screen-stock > .card:first-child {
+  border-color: rgba(var(--vy-screen-rgb), .48) !important;
+  box-shadow: 0 18px 44px rgba(var(--vy-screen-rgb), .13) !important;
+}
+
+#screen-home .home-eyebrow,
+#screen-home .home-section-kicker,
+#screen-business .settings-kicker,
+#screen-business .vx621-group-kicker,
+#screen-sales .settings-kicker,
+#screen-stock .settings-kicker,
+#screen-business a,
+#screen-sales a,
+#screen-stock a {
+  color: var(--vy-screen-accent) !important;
+}
+
+#screen-home .home-metrics .stat:nth-child(4n + 1) { border-top: 3px solid #3295ff !important; }
+#screen-home .home-metrics .stat:nth-child(4n + 2) { border-top: 3px solid #12d9ee !important; }
+#screen-home .home-metrics .stat:nth-child(4n + 3) { border-top: 3px solid #26db91 !important; }
+#screen-home .home-metrics .stat:nth-child(4n) { border-top: 3px solid #ff9142 !important; }
+#screen-home .android-quick-action:nth-child(1) { border-color: rgba(50,149,255,.48) !important; background: linear-gradient(145deg,rgba(50,149,255,.29),rgba(50,149,255,.09)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(2) { border-color: rgba(255,95,178,.42) !important; background: linear-gradient(145deg,rgba(255,95,178,.24),rgba(255,95,178,.07)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(3) { border-color: rgba(255,208,71,.42) !important; background: linear-gradient(145deg,rgba(255,208,71,.20),rgba(255,208,71,.06)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(4) { border-color: rgba(38,219,145,.44) !important; background: linear-gradient(145deg,rgba(38,219,145,.24),rgba(38,219,145,.07)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(1) .android-quick-action-icon { color: #52adff !important; }
+#screen-home .android-quick-action:nth-child(2) .android-quick-action-icon { color: #ff75bd !important; }
+#screen-home .android-quick-action:nth-child(3) .android-quick-action-icon { color: #ffd75d !important; }
+#screen-home .android-quick-action:nth-child(4) .android-quick-action-icon { color: #3ce5a1 !important; }
+
+/* Persistent nav: every destination is colorful; active state stays unmistakable. */
+.nav {
+  border-color: rgba(71, 173, 255, .34) !important;
+  background: rgba(5, 23, 40, .94) !important;
+  backdrop-filter: blur(22px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
+}
+.nav button[data-android-tab] { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+.nav button[data-android-tab="home"] .android-nav-icon { color: #52adff !important; }
+.nav button[data-android-tab="business"] .android-nav-icon { color: #af91ff !important; }
+.nav button[data-android-tab="sales"] .android-nav-icon { color: #ff75bd !important; }
+.nav button[data-android-tab="stock"] .android-nav-icon { color: #3ce5a1 !important; }
+.nav button[data-android-tab="more"] .android-nav-icon { color: #ffd75d !important; }
+.nav button[data-android-tab] .android-nav-label { color: #aebed0 !important; opacity: 1 !important; }
+.nav button.active[data-android-tab] .android-nav-icon,
+.nav button.active[data-android-tab] .android-nav-label { color: #fff !important; }
+.nav button.active[data-android-tab="home"] { background: linear-gradient(145deg,#247fea,#45b0ff) !important; box-shadow: 0 9px 24px rgba(36,127,234,.34) !important; }
+.nav button.active[data-android-tab="business"] { background: linear-gradient(145deg,#704be6,#a77cff) !important; box-shadow: 0 9px 24px rgba(112,75,230,.34) !important; }
+.nav button.active[data-android-tab="sales"] { background: linear-gradient(145deg,#e83e91,#ff73bb) !important; box-shadow: 0 9px 24px rgba(232,62,145,.34) !important; }
+.nav button.active[data-android-tab="stock"] { background: linear-gradient(145deg,#0faa6b,#38df98) !important; box-shadow: 0 9px 24px rgba(15,170,107,.32) !important; }
+.nav button.active[data-android-tab="more"] { background: linear-gradient(145deg,#e59a18,#ffd04a) !important; box-shadow: 0 9px 24px rgba(229,154,24,.34) !important; color: #211707 !important; }
+.nav button.active[data-android-tab="more"] .android-nav-icon,
+.nav button.active[data-android-tab="more"] .android-nav-label { color: #211707 !important; }
+
+/* More sheet follows the same destination colors. */
+.android-sheet { backdrop-filter: blur(24px) saturate(165%) !important; -webkit-backdrop-filter: blur(24px) saturate(165%) !important; }
+.android-sheet-item[data-tab="analytics"] { --vy-sheet-color: #12d9ee; --vy-sheet-soft: rgba(18,217,238,.15); }
+.android-sheet-item[data-tab="upload"] { --vy-sheet-color: #9b72ff; --vy-sheet-soft: rgba(155,114,255,.16); }
+.android-sheet-item[data-tab="calculator"] { --vy-sheet-color: #ff9142; --vy-sheet-soft: rgba(255,145,66,.16); }
+.android-sheet-item[data-tab="subscription"] { --vy-sheet-color: #ffd047; --vy-sheet-soft: rgba(255,208,71,.15); }
+.android-sheet-item[data-tab="settings"] { --vy-sheet-color: #ff5fb2; --vy-sheet-soft: rgba(255,95,178,.15); }
+.android-sheet-item[data-tab] { border-color: var(--vy-sheet-soft) !important; background: linear-gradient(145deg,var(--vy-sheet-soft),rgba(255,255,255,.025)) !important; }
+.android-sheet-item[data-tab] .android-sheet-item-icon { color: var(--vy-sheet-color) !important; background: var(--vy-sheet-soft) !important; }
+
+/* Settings sub-pages: one content plane, not a stack of nested compartments. */
+#screen-settings .vy675-page-header {
+  min-height: 62px !important;
+  margin-bottom: 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+#screen-settings .vy675-page-back {
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  border: 1px solid rgba(18,217,238,.36) !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg,rgba(18,217,238,.22),rgba(50,149,255,.13)) !important;
+  color: #7deeff !important;
+}
+#screen-settings .vy675-page-body { gap: 10px !important; }
+#screen-settings .vy675-page-body > .card,
+#screen-settings .vy675-page-body > .settings-section,
+#screen-settings .vy675-page-body > #fs607Settings {
+  padding: 2px 0 16px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  border-color: rgba(18,217,238,.28) !important;
+  background: linear-gradient(145deg,rgba(18,217,238,.09),rgba(50,149,255,.055)),rgba(12,28,45,.78) !important;
+}
+#screen-settings .vy675-page-body input:focus,
+#screen-settings .vy675-page-body select:focus,
+#screen-settings .vy675-page-body textarea:focus {
+  border-color: #12d9ee !important;
+  box-shadow: 0 0 0 3px rgba(18,217,238,.14) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-list {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row {
+  min-height: 62px !important;
+  margin: 0 !important;
+  padding: 10px 8px 10px 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(155,114,255,.20) !important;
+  border-radius: 0 !important;
+  background: linear-gradient(90deg,rgba(155,114,255,.10),transparent 70%) !important;
+  box-shadow: inset 3px 0 0 rgba(155,114,255,.72) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:nth-child(2n) {
+  background: linear-gradient(90deg,rgba(18,217,238,.085),transparent 70%) !important;
+  box-shadow: inset 3px 0 0 rgba(18,217,238,.70) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:last-child { border-bottom: 0 !important; }
+#screen-settings[data-vy675-page="update"] #fs607Settings > button,
+#screen-settings[data-vy675-page="update"] #fs607Settings .btn {
+  width: 100% !important;
+  min-height: 52px !important;
+  border: 0 !important;
+  background: linear-gradient(135deg,#247fea,#12cce2) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 28px rgba(36,127,234,.24) !important;
+}
+
+/* Account keeps one identity panel; inner stats become simple divided data. */
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  padding: 16px !important;
+  border: 1px solid rgba(255,208,71,.34) !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.15),transparent 62%),
+    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.16),transparent 66%),
+    rgba(12,35,55,.90) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.20) !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 0 !important;
+  margin: 14px 0 !important;
+  padding: 11px 0 !important;
+  border-top: 1px solid rgba(255,255,255,.13) !important;
+  border-bottom: 1px solid rgba(255,255,255,.13) !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid > div {
+  min-width: 0 !important;
+  padding: 3px 11px !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(255,255,255,.13) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid > div:first-child { border-left: 0 !important; }
+#screen-settings[data-vy675-page="account"] .production-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 8px !important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button {
+  min-height: 44px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: linear-gradient(135deg,rgba(50,149,255,.30),rgba(18,217,238,.18)) !important;
+  color: #eefdff !important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-child(3) { background: linear-gradient(135deg,rgba(255,145,66,.32),rgba(255,208,71,.18)) !important; }
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-last-child(2) { background: rgba(255,255,255,.09) !important; }
+#screen-settings[data-vy675-page="account"] .production-actions button.danger {
+  grid-column: 1 / -1 !important;
+  background: linear-gradient(135deg,#e83d59,#ff6077) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 24px rgba(232,61,89,.24) !important;
+}
+
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  background: linear-gradient(145deg,rgba(18,217,238,.10),rgba(50,149,255,.06)),#fff !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard {
+  background:
+    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.20),transparent 62%),
+    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.15),transparent 66%),
+    #fff !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid,
+html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid > div { border-color: rgba(44,66,90,.15) !important; }
+
+@media (max-width: 520px) {
+  #screen-settings .vy675-page-header { grid-template-columns: 44px minmax(0,1fr) !important; gap: 11px !important; }
+  #screen-settings[data-vy675-page="account"] .production-account-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  #screen-settings[data-vy675-page="account"] .production-account-grid > div:nth-child(3) {
+    grid-column: 1 / -1 !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid rgba(255,255,255,.13) !important;
+    border-left: 0 !important;
+  }
+}
