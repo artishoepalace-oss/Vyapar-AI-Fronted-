@@ -1,4 +1,4 @@
-/* Vyapar AI 6.7.2 — list-first Settings navigation. */
+/* Vyapar AI 6.7.5 — list-first Settings navigation with Android duplicate-stack hardening. */
 (() => {
   'use strict';
 
@@ -18,6 +18,30 @@
 
   function screen(){ return document.getElementById('screen-settings'); }
   function stack(){ return screen()?.querySelector('.settings-stack'); }
+
+  // Older Android UI CSS forces .settings-stack to display:block!important.
+  // Inline !important wins that legacy rule so the Settings home stays list-only.
+  function hardHideCanonical(scr){
+    if(!scr) return;
+    const st=scr.querySelector('.settings-stack');
+    if(st){
+      st.style.setProperty('display','none','important');
+      st.setAttribute('aria-hidden','true');
+    }
+    [...scr.children].forEach(node=>{
+      if(node.id==='fs607Settings' && !node.closest('.vy672-subpage-body')){
+        node.style.setProperty('display','none','important');
+        node.setAttribute('aria-hidden','true');
+      }
+    });
+  }
+
+  function prepareVisibleCard(node){
+    if(!node) return;
+    node.style.removeProperty('display');
+    node.removeAttribute('aria-hidden');
+    node.hidden=false;
+  }
 
   function getOrCreateDirectory(scr){
     let dir=scr.querySelector(':scope > .vy672-settings-directory');
@@ -138,6 +162,7 @@
       const st=stack();
       if(st) [...body.children].forEach(node=>st.appendChild(node));
     }
+    hardHideCanonical(scr);
     if(scrollTop){ try{window.scrollTo({top:0,behavior:'auto'})}catch(_){window.scrollTo(0,0)} }
   }
 
@@ -150,11 +175,14 @@
     const body=page.querySelector('.vy672-subpage-body');
     const title=page.querySelector('.vy672-subpage-title b');
     const sub=page.querySelector('.vy672-subpage-title small');
-    body.replaceChildren(...(map[id]||[]));
+    const nodes=map[id]||[];
+    nodes.forEach(prepareVisibleCard);
+    body.replaceChildren(...nodes);
     title.textContent=cfg.title;
     sub.textContent=cfg.subtitle;
     activeId=id;
     scr.classList.add('vy672-subpage-open');
+    hardHideCanonical(scr);
     if(shouldScroll){ try{window.scrollTo({top:0,behavior:'auto'})}catch(_){window.scrollTo(0,0)} }
   }
 
@@ -174,6 +202,7 @@
     renderDirectory(scr,map);
     getOrCreateSubpage(scr);
     if(activeId) openSubpage(activeId,{scroll:false}); else openDirectory(false);
+    hardHideCanonical(scr);
     if(observer) observer.observe(document.documentElement,{childList:true,subtree:true});
   }
 
@@ -186,10 +215,8 @@
   const original=window.renderSettings;
   if(typeof original==='function' && !original.__vy672Settings){
     const wrapped=function(){
-      // Avoid a blank frame: unhide canonical Settings content before the legacy renderer mutates it,
-      // then rebuild the directory synchronously in the same task.
-      const scr=screen();
-      if(scr) scr.classList.remove('vy672-settings-ready');
+      // Keep canonical Settings hidden even while the legacy renderer refreshes it.
+      // This prevents the Android display:block!important rule from exposing duplicate cards.
       const result=original.apply(this,arguments);
       organize();
       setTimeout(schedule,0);
