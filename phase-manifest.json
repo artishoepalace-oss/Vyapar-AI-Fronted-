@@ -1,13 +1,13 @@
 {
   "product": "Vyapar AI",
-  "phase": "3.3",
-  "phaseName": "Android Native UX Hotfix",
-  "versionName": "6.7.2.2026",
-  "versionCode": 6722026,
-  "baseVersion": "6.7.1.2026",
+  "phase": "3.4",
+  "phaseName": "Android 7-16 Performance + Settings Final",
+  "versionName": "6.7.3.2026",
+  "versionCode": 6732026,
+  "baseVersion": "6.7.2.2026",
   "baseArchiveSha256": "6c622e26309e4200dbe324ff8ce3af754892570f38d25193a8942387ea07193a",
   "backendVersion": "2.5.2",
-  "released": "2026-08-31",
+  "released": "2026-09-01",
   "featureRemoval": false,
   "dataSchemaChanged": false,
   "financeLogicChanged": false,
@@ -15,9 +15,10 @@
   "status": "production-release",
   "uiHotfix": true,
   "fixes": [
-    "Disabled web-style text selection/copy on normal Android app UI while preserving editable field selection and paste.",
-    "Made Android top chrome and workspace bars span consistently across screen width.",
-    "Kept the copyright/legal footer only at the true bottom of Settings.",
-    "Replaced the dark startup frame with a light logo-first Android launch surface across native window, WebView and loader."
+    "Single visual loading experience tuned for Android 7 through Android 16.",
+    "Adaptive performance tuning for smoother scrolling and reduced frame drops on low-end and modern devices.",
+    "Auto Scroll to Top is disabled by default with a Settings toggle and per-screen scroll restoration.",
+    "Business/Sales/Stock action cards and info tooltips are mobile-safe and no longer clip text.",
+    "Settings reorganized into an Instagram-style directory with dedicated subpages, one bottom footer and one grey logo."
   ]
 }

@@ -1,17 +1,19 @@
 <resources>
+    <!-- Android 12-16+: system splash is mandatory, so make it look like the
+         same Vyapar AI loader and hand off immediately to the WebView loader. -->
     <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/launch_screen</item>
-        <item name="android:colorBackground">#F8F9FA</item>
-        <item name="android:colorAccent">#2457D6</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">#F8F9FA</item>
-        <item name="android:navigationBarColor">#F8F9FA</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:windowSplashScreenBackground">#F8F9FA</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">#F8F9FA</item>
-        <item name="android:windowSplashScreenAnimationDuration">180</item>
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:colorBackground">#06172D</item>
+        <item name="android:colorAccent">#3184FF</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#061326</item>
+        <item name="android:navigationBarColor">#06172D</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowSplashScreenBackground">#06172D</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/startup_logo</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#06172D</item>
+        <item name="android:windowSplashScreenAnimationDuration">0</item>
     </style>
 </resources>

@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="vyapar-ui-version" content="6.7.1.2026" />
+  <meta name="vyapar-ui-version" content="6.7.3.2026" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="icon" href="logo.png" type="image/x-icon">
   <title>Vyapar AI</title>
   <meta name="description" content="Sales, stock, profit and business insights for small retailers." />
-  <meta name="theme-color" content="#F8F9FA" />
+  <meta name="theme-color" content="#06172D" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <style>
-    html, body { margin: 0; min-height: 100%; background: #F8F9FA; }
+    html, body { margin: 0; min-height: 100%; background: #06172D; }
   </style>
   <script>
     try {
       document.documentElement.classList.add("android-ui", "native-android");
-      document.documentElement.style.background = "#F8F9FA";
+      document.documentElement.style.background = "#06172D";
       const saved = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
       if (saved && saved.settings && saved.settings.theme === "light") {
         document.documentElement.classList.add("theme-light");
@@ -41,6 +41,9 @@
   <link rel="stylesheet" href="workflow-ui-670p2.css?v=20260831-67003" />
   <link rel="stylesheet" href="commercial-ui-6702026.css?v=20260831-commercial1" />
   <link rel="stylesheet" href="native-shell-hotfix-6712026.css?v=20260831-native1" />
+  <link rel="stylesheet" href="performance-android7-16.css?v=20260901-perf1" />
+  <link rel="stylesheet" href="ui-hotfix-671.css?v=20260901-67101" />
+  <link rel="stylesheet" href="settings-directory-672.css?v=20260901-67201" />
 </head>
 <body>
   <script src="android-session-flow-647.js?v=20260829-657"></script>
@@ -96,6 +99,7 @@
   </div>
 
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="performance-android7-16.js?v=20260901-perf1"></script>
   <script src="app.js?v=20260831-67003"></script>
   <script src="security-ui-643.js?v=20260829-657"></script>
   <script src="plan-badge-menu-645.js?v=20260829-657"></script>
@@ -107,5 +111,7 @@
   <script src="workflow-ui-670p2.js?v=20260831-67003"></script>
   <script src="commercial-ui-6702026.js?v=20260831-commercial1"></script>
   <script src="native-shell-hotfix-6712026.js?v=20260831-native1"></script>
+  <script src="ui-hotfix-671.js?v=20260901-67101"></script>
+  <script src="settings-directory-672.js?v=20260901-67201"></script>
 </body>
 </html>

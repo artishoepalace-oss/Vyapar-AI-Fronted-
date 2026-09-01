@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Seamless launch surface for Android 7-11 and the post-system-splash handoff.
+  It deliberately mirrors the in-app loader's 135-degree dark-blue gradient
+  and keeps the same 108dp Vyapar AI logo centered, so the WebView handoff
+  reads as one continuous loading screen instead of two separate splashes.
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#F8F9FA" />
+            <gradient
+                android:angle="135"
+                android:startColor="#061326"
+                android:centerColor="#082B61"
+                android:endColor="#06172D"
+                android:centerX="0.54"
+                android:type="linear" />
         </shape>
     </item>
     <item
-        android:width="88dp"
-        android:height="88dp"
+        android:width="108dp"
+        android:height="108dp"
         android:gravity="center">
         <bitmap
-            android:src="@drawable/ic_launcher"
-            android:gravity="fill" />
+            android:src="@drawable/startup_logo"
+            android:gravity="fill"
+            android:filter="true" />
     </item>
 </layer-list>

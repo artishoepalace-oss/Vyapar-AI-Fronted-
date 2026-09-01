@@ -100,22 +100,23 @@ html.native-android .android-sheet-legal {
   display: none !important;
 }
 
-/* First WebView paint matches the native launch window: no black interstitial. */
+/* Android 7-16 seamless startup: this is the final CSS override loaded by
+   index.html, so it must match res/drawable/launch_screen.xml exactly. */
 html.native-android #appLoader {
-  background: #F8F9FA !important;
-  color: #111827 !important;
+  background: linear-gradient(135deg, #061326 0%, #082B61 54%, #06172D 100%) !important;
+  color: #F4F9FF !important;
 }
 
 html.native-android #appLoader .android-loader-logo {
-  box-shadow: none !important;
+  box-shadow: 0 20px 58px rgba(0,17,48,.42), 0 0 0 1px rgba(138,195,255,.16), 0 0 42px rgba(49,132,255,.18) !important;
 }
 
 html.native-android #appLoader .android-loader-bar {
-  background: #E5E7EB !important;
+  background: rgba(139,195,255,.16) !important;
 }
 
 html.native-android #appLoader .android-loader-bar > span {
-  background: #2457D6 !important;
+  background: linear-gradient(90deg,#1A6FE8,#55B3FF,#D6EFFF,#3184FF) !important;
 }
 
 @media (max-width: 420px) {

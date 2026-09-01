@@ -1,0 +1,257 @@
+/* Vyapar AI 6.7.1 — mobile UI hotfixes for business cards, action buttons and help tooltips */
+
+/* Make business / sales / stock feature cards cleaner and less cramped on phones. */
+html.native-android .vx621-group,
+html.commercial-ui-v1 .vx621-group {
+  border-radius: 22px !important;
+}
+html.native-android .vx621-feature-grid,
+html.commercial-ui-v1 .vx621-feature-grid,
+html.commercial-ui-v1 .vx621-feature-grid.compact {
+  gap: 12px !important;
+}
+html.native-android .vx621-feature-card,
+html.commercial-ui-v1 .vx621-feature-card {
+  align-items: flex-start !important;
+  gap: 14px !important;
+  padding: 16px !important;
+  border-radius: 20px !important;
+  overflow: visible !important;
+}
+html.native-android .vx621-feature-icon,
+html.commercial-ui-v1 .vx621-feature-icon {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 15px !important;
+  font-size: 18px !important;
+}
+html.production-ui-p1 .vx621-feature-card h3,
+html.commercial-ui-v1 .vx621-feature-card h3 {
+  font-size: 15px !important;
+  line-height: 1.25 !important;
+}
+html.production-ui-p1 .vx621-feature-card p,
+html.commercial-ui-v1 .vx621-feature-card p {
+  margin: 6px 0 12px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+/* Stack card actions neatly and remove the awkward BUSINESS pill inside buttons. */
+html.native-android .vx621-card-actions,
+html.commercial-ui-v1 .vx621-card-actions {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+html.native-android .vx621-action,
+html.commercial-ui-v1 .vx621-action {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-height: 54px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+html.native-android .vx621-action > span,
+html.commercial-ui-v1 .vx621-action > span {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+html.native-android .vx621-action .vx621-tier,
+html.commercial-ui-v1 .vx621-action .vx621-tier {
+  display: none !important;
+}
+html.native-android .vx621-action.is-locked::after,
+html.commercial-ui-v1 .vx621-action.is-locked::after {
+  content: "🔒";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: .8;
+}
+html.native-android .vx621-action.primary,
+html.commercial-ui-v1 .vx621-action.primary {
+  box-shadow: 0 8px 24px rgba(94, 156, 255, .18) !important;
+}
+
+/* Fix cramped live sale preview. */
+html.native-android #screen-sales .p2-live-preview,
+html.commercial-ui-v1 #screen-sales .p2-live-preview {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  padding: 14px !important;
+  margin-top: 12px !important;
+  border-radius: 18px !important;
+}
+html.native-android #screen-sales .p2-preview-title,
+html.native-android #screen-sales .p2-preview-status,
+html.commercial-ui-v1 #screen-sales .p2-preview-title,
+html.commercial-ui-v1 #screen-sales .p2-preview-status {
+  grid-column: auto !important;
+  align-self: start !important;
+}
+html.native-android #screen-sales .p2-preview-note,
+html.commercial-ui-v1 #screen-sales .p2-preview-note {
+  grid-column: 1 / -1 !important;
+  margin-top: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+html.native-android #screen-sales .p2-preview-metric,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric {
+  min-height: 92px !important;
+  padding: 14px !important;
+  border-radius: 16px !important;
+}
+html.native-android #screen-sales .p2-preview-metric b,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric b {
+  display: block !important;
+  margin-top: 8px !important;
+  font-size: 17px !important;
+}
+
+/* Keep cards readable and values aligned on analytics / summary cards. */
+html.native-android .stat,
+html.commercial-ui-v1 .stat {
+  min-height: 96px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+html.native-android .stat span,
+html.commercial-ui-v1 .stat span {
+  line-height: 1.3 !important;
+}
+html.native-android .stat b,
+html.commercial-ui-v1 .stat b {
+  display: block !important;
+  white-space: normal !important;
+  line-height: 1.2 !important;
+}
+
+/* Better quick-tip / info buttons. */
+html.commercial-ui-v1 .p2-form-intro,
+html.native-android .p2-form-intro {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+html.commercial-ui-v1 .cu-help,
+html.native-android .cu-help {
+  position: relative !important;
+  display: inline-flex !important;
+  margin-left: 2px !important;
+  vertical-align: middle !important;
+}
+html.commercial-ui-v1 .cu-help-button,
+html.native-android .cu-help-button {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(111, 166, 255, .35) !important;
+  background: rgba(93, 154, 255, .16) !important;
+  color: #dcecff !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+html.theme-light.commercial-ui-v1 .cu-help-button,
+html.theme-light.native-android .cu-help-button {
+  background: rgba(36, 87, 214, .10) !important;
+  color: #2457d6 !important;
+  border-color: rgba(36, 87, 214, .20) !important;
+}
+html.commercial-ui-v1 .cu-help-panel,
+html.native-android .cu-help-panel {
+  position: fixed !important;
+  left: 12px;
+  top: 12px;
+  z-index: 2147483000 !important;
+  display: none;
+  width: min(320px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: min(40vh, 280px) !important;
+  overflow: auto !important;
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(126, 169, 218, .26) !important;
+  background: rgba(10, 24, 39, .98) !important;
+  color: #eef6ff !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .35) !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+html.theme-light.commercial-ui-v1 .cu-help-panel,
+html.theme-light.native-android .cu-help-panel {
+  background: rgba(255, 255, 255, .98) !important;
+  color: #1f3248 !important;
+}
+html.commercial-ui-v1 .cu-help.is-open .cu-help-panel,
+html.native-android .cu-help.is-open .cu-help-panel {
+  display: block !important;
+}
+html.commercial-ui-v1 .cu-help-panel::before,
+html.native-android .cu-help-panel::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-left: inherit;
+  border-top: inherit;
+  transform: rotate(45deg);
+  top: -6px;
+  left: var(--cu-tip-arrow-left, 20px);
+}
+html.commercial-ui-v1 .cu-help-panel.cu-help-panel-above::before,
+html.native-android .cu-help-panel.cu-help-panel-above::before {
+  top: auto;
+  bottom: -6px;
+  transform: rotate(225deg);
+}
+
+/* Ensure parents don't clip the tooltip. */
+html.commercial-ui-v1 .p2-field,
+html.commercial-ui-v1 .p2-platform-fields,
+html.commercial-ui-v1 .p2-live-preview,
+html.commercial-ui-v1 .vx621-feature-card,
+html.native-android .p2-field,
+html.native-android .p2-platform-fields,
+html.native-android .p2-live-preview,
+html.native-android .vx621-feature-card {
+  overflow: visible !important;
+}
+
+@media (max-width: 520px) {
+  html.native-android .vx621-feature-card,
+  html.commercial-ui-v1 .vx621-feature-card {
+    padding: 14px !important;
+  }
+  html.native-android #screen-sales .p2-live-preview,
+  html.commercial-ui-v1 #screen-sales .p2-live-preview {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+
+/* v6.7.4: user-requested global removal of information popup buttons. */
+.cu-help, .cu-help-button, .cu-help-panel { display:none !important; }
