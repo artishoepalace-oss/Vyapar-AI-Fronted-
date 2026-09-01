@@ -1,0 +1,240 @@
+.card .card,
+.settings-section .card,
+.vx621-group .card,
+.shop-growth-card .card {
+  background: var(--vy-surface-soft) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--vy-line) !important;
+}
+
+h1, h2, h3, h4, h5, h6, strong, b { color: var(--vy-text); }
+.muted, small, .small, .settings-field-note, .android-sheet-item-copy small { color: var(--vy-muted) !important; }
+
+h2 { font-size: clamp(19px, 4.8vw, 24px) !important; line-height: 1.18 !important; }
+h3 { font-size: clamp(16px, 4vw, 19px) !important; line-height: 1.25 !important; }
+p { line-height: 1.5; }
+
+h1, h2, h3, h4, p, span, label, a, button, th, td, .muted, .notice {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Buttons: colorful hierarchy, neutral by default. */
+.btn,
+.nav button,
+.android-sheet-close,
+.p620-report-card {
+  min-height: 42px !important;
+  border-radius: var(--vy-radius-sm) !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.nav button:focus-visible,
+.android-sheet-item:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(77, 156, 255, .24) !important;
+  outline-offset: 2px !important;
+}
+
+.btn.primary,
+.nav button.active,
+.nav .nav-item.active,
+.nav [aria-current="page"] {
+  color: #fff !important;
+  border-color: rgba(130, 187, 255, .46) !important;
+  background: linear-gradient(135deg, #347fe5, #4d9cff 56%, #45b8f4) !important;
+  box-shadow: 0 9px 22px rgba(52, 127, 229, .23) !important;
+}
+
+.btn.gold {
+  color: #251806 !important;
+  border-color: rgba(255, 222, 129, .55) !important;
+  background: linear-gradient(135deg, #ffd96a, #f6b944) !important;
+}
+
+.btn.danger,
+.danger.btn,
+button.danger {
+  color: #fff !important;
+  border-color: rgba(255, 126, 145, .4) !important;
+  background: linear-gradient(135deg, #dc4057, #ff6478) !important;
+}
+
+.btn.mini {
+  min-height: 34px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 10px !important;
+}
+
+.actions,
+.settings-actions,
+.segmented-settings {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.actions > *,
+.settings-actions > * { min-width: 0 !important; }
+
+/* Forms */
+input,
+select,
+textarea {
+  min-height: 44px !important;
+  margin: 6px 0 10px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 12px !important;
+  background: rgba(6, 18, 32, .68) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+html.theme-light input,
+html.theme-light select,
+html.theme-light textarea {
+  background: #f8fbff !important;
+  color: #14263b !important;
+}
+
+input::placeholder,
+textarea::placeholder { color: var(--vy-muted) !important; opacity: .82 !important; }
+select option { color: #13243a; background: #fff; }
+
+label {
+  color: var(--vy-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .04em !important;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 19px !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  margin: 0 8px 0 0 !important;
+  accent-color: var(--vy-blue) !important;
+}
+
+/* Status components */
+.notice {
+  border: 1px solid rgba(246, 201, 92, .18) !important;
+  border-left: 4px solid var(--vy-yellow) !important;
+  border-radius: 13px !important;
+  background: rgba(246, 201, 92, .09) !important;
+}
+.notice.success, .success.notice {
+  border-left-color: var(--vy-green) !important;
+  background: rgba(66, 214, 155, .09) !important;
+}
+.notice.bad, .notice.danger {
+  border-left-color: var(--vy-red) !important;
+  background: rgba(255, 100, 120, .09) !important;
+}
+
+.pill,
+.glass-chip {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+}
+
+.progress { border: 1px solid var(--vy-line) !important; background: rgba(255,255,255,.07) !important; }
+.bar { background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-green)) !important; }
+
+/* Metrics get visual distinction while remaining readable. */
+.stats,
+.p611-grid,
+.vx621-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.stat,
+.vx621-kpi {
+  min-height: 82px !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  overflow: hidden !important;
+}
+.stat b, .vx621-kpi b { font-size: clamp(18px, 5vw, 23px) !important; }
+.stats > :nth-child(4n + 1), .p611-grid > :nth-child(4n + 1) { border-left: 3px solid var(--vy-blue) !important; }
+.stats > :nth-child(4n + 2), .p611-grid > :nth-child(4n + 2) { border-left: 3px solid var(--vy-green) !important; }
+.stats > :nth-child(4n + 3), .p611-grid > :nth-child(4n + 3) { border-left: 3px solid var(--vy-yellow) !important; }
+.stats > :nth-child(4n), .p611-grid > :nth-child(4n) { border-left: 3px solid var(--vy-purple) !important; }
+
+/* Tables never push the full app sideways. */
+.scroll,
+.p611-table,
+.adv-table,
+.business-table,
+.vx621-table-wrap,
+[class*="table-wrap"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 12px !important;
+}
+
+.table,
+table {
+  max-width: none;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.table th,
+.table td,
+table th,
+table td {
+  border-color: var(--vy-line) !important;
+  vertical-align: middle !important;
+}
+.table th,
+table th {
+  color: var(--vy-muted) !important;
+  background: rgba(77, 156, 255, .07) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+
+/* Settings: one clean content surface per page, no huge nested box feeling. */
+#screen-settings .settings-stack,
+#screen-settings .vy675-page-body {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+#screen-settings .settings-section {
+  padding: 15px !important;
+  margin: 0 !important;
+}
+
+#screen-settings .settings-section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+#screen-settings .settings-section-heading h2,
