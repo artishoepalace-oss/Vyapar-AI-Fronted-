@@ -1,10 +1,10 @@
 {
   "product": "Vyapar AI",
-  "phase": "4.0",
-  "phaseName": "Complete English Color UI Stability",
-  "versionName": "6.8.0.2026",
-  "versionCode": 6802026,
-  "baseVersion": "6.7.6.2026",
+  "phase": "4.1",
+  "phaseName": "Settings and Loading UI Repair",
+  "versionName": "6.8.1.2026",
+  "versionCode": 6812026,
+  "baseVersion": "6.8.0.2026",
   "baseArchiveSha256": "6c622e26309e4200dbe324ff8ce3af754892570f38d25193a8942387ea07193a",
   "backendVersion": "2.5.2",
   "released": "2026-09-01",
@@ -16,10 +16,10 @@
   "uiHotfix": true,
   "releaseBranch": "main",
   "fixes": [
-    "Converted remaining mixed Hindi/English runtime prompts to English-only messages.",
-    "Added a final authoritative colorful UI layer shared by Web and Android assets.",
-    "Hardened responsive layouts, forms, cards, tables, dialogs, Settings and bottom navigation against clipping and horizontal overflow.",
-    "Aligned light/dark colors, focus states, touch targets, loading screens and safe-area handling.",
+    "Stopped the hidden legacy Settings repository from appearing below the new Settings directory.",
+    "Kept every existing setting available inside its organized destination page.",
+    "Matched the native and WebView loading logo scale at 108dp/CSS px and removed the oversized second logo.",
+    "Added distinct, readable color accents to Settings destinations in light and dark modes.",
     "Preserved business logic, stored data schema, accounting logic, subscription flows and navigation behavior."
   ]
 }

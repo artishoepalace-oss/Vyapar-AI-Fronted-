@@ -225,6 +225,7 @@
       scr.appendChild(stack);
     }
     stack.classList.add('vy675-settings-repository');
+    stack.hidden = true;
     stack.setAttribute('aria-hidden', 'true');
     return stack;
   }

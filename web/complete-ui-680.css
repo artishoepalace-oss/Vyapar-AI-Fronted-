@@ -438,7 +438,7 @@ table th {
 }
 
 /* Settings: one clean content surface per page, no huge nested box feeling. */
-#screen-settings .settings-stack,
+#screen-settings .settings-stack:not(.vy675-settings-repository),
 #screen-settings .vy675-page-body {
   display: grid !important;
   gap: 12px !important;
@@ -637,6 +637,119 @@ html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
 
 /* Legacy duplicate footer is always suppressed; Settings Center owns the final footer. */
 #screen-settings #appLegalFooter { display: none !important; }
+
+/*
+ * Settings 6.8.1: the legacy cards are a private repository used by the
+ * Settings Center sub-pages.  It must never become visible on the directory
+ * screen, even though older presentation layers assign display:grid to every
+ * .settings-stack.
+ */
+#screen-settings.vy675-settings-ready > .settings-stack.vy675-settings-repository,
+#screen-settings.vy675-settings-ready > .settings-stack.vy675-settings-repository[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Color-coded Settings destinations: lively, readable and consistent. */
+#screen-settings .vy675-settings-row {
+  --vy-row-accent: var(--vy-blue);
+  --vy-row-soft: rgba(77, 156, 255, .13);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="account"] {
+  --vy-row-accent: #a783ff;
+  --vy-row-soft: rgba(167, 131, 255, .15);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="profile"] {
+  --vy-row-accent: #35d2ea;
+  --vy-row-soft: rgba(53, 210, 234, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="business"] {
+  --vy-row-accent: #42d69b;
+  --vy-row-soft: rgba(66, 214, 155, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="security"] {
+  --vy-row-accent: #ff9b54;
+  --vy-row-soft: rgba(255, 155, 84, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="appearance"] {
+  --vy-row-accent: #f777b9;
+  --vy-row-soft: rgba(247, 119, 185, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="navigation"] {
+  --vy-row-accent: #4d9cff;
+  --vy-row-soft: rgba(77, 156, 255, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="data"] {
+  --vy-row-accent: #35d2ea;
+  --vy-row-soft: rgba(53, 210, 234, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="update"] {
+  --vy-row-accent: #f6c95c;
+  --vy-row-soft: rgba(246, 201, 92, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="legal"] {
+  --vy-row-accent: #ff6478;
+  --vy-row-soft: rgba(255, 100, 120, .14);
+}
+#screen-settings .vy675-settings-row .vy675-row-icon {
+  color: var(--vy-row-accent) !important;
+  border-color: var(--vy-row-soft) !important;
+  background: var(--vy-row-soft) !important;
+}
+#screen-settings .vy675-settings-row:active,
+#screen-settings .vy675-settings-row:focus-visible {
+  background: linear-gradient(90deg, var(--vy-row-soft), transparent 78%) !important;
+}
+#screen-settings .vy675-settings-search {
+  border-color: rgba(77, 156, 255, .26) !important;
+  background:
+    linear-gradient(var(--vy-surface-soft), var(--vy-surface-soft)) padding-box,
+    linear-gradient(105deg, rgba(77,156,255,.50), rgba(53,210,234,.32), rgba(167,131,255,.42)) border-box !important;
+}
+
+/* Android launch image and WebView loader now use the same exact logo scale. */
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  width: 108px !important;
+  min-width: 108px !important;
+  max-width: 108px !important;
+  height: 108px !important;
+  min-height: 108px !important;
+  max-height: 108px !important;
+  flex: 0 0 108px !important;
+  margin: 0 auto 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  object-fit: contain !important;
+  box-shadow: 0 18px 44px rgba(0, 17, 48, .34) !important;
+}
+#appLoader .android-loader-logo > img {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+  box-shadow: none !important;
+}
+#appLoader .android-loader-shine,
+#appLoader .android-loader-spark {
+  display: none !important;
+}
+#vy647StartupSplash .vy647-splash-core {
+  width: min(100%, 280px) !important;
+  padding: 24px !important;
+}
 
 /* Accessibility and performance modes. */
 @media (prefers-reduced-motion: reduce) {

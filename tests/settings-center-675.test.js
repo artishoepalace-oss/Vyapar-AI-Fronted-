@@ -5,7 +5,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
-const expectedVersion = '6.8.0.2026';
+const expectedVersion = '6.8.1.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -44,6 +44,13 @@ for (const base of [web, android]) {
   assert(style.includes('white-space: normal'), 'row descriptions must remain readable instead of being clipped');
   assert(style.includes('html.theme-light'), 'light mode styling must be present');
   assert(style.includes('.danger'), 'destructive actions must keep explicit styling');
+  assert(script.includes('stack.hidden = true'), 'legacy Settings repository must be hidden at the DOM level');
+
+  const finalStyle = read(base, 'complete-ui-680.css');
+  assert(finalStyle.includes('.settings-stack:not(.vy675-settings-repository)'), 'final UI layer must not display the legacy Settings repository');
+  assert(finalStyle.includes('settings-stack.vy675-settings-repository[hidden]'), 'hidden Settings repository needs an authoritative final override');
+  assert(finalStyle.includes('data-vy675-page="account"'), 'Settings destinations must keep color-coded accents');
+  assert(finalStyle.includes('width: 108px !important'), 'WebView loading logo must match the native 108dp logo scale');
 }
 
 assert.strictEqual(
@@ -60,9 +67,11 @@ assert.strictEqual(
 const rootVersion = JSON.parse(read(root, 'version.json'));
 const webVersion = JSON.parse(read(web, 'version.json'));
 const gradle = read(path.join(root, 'android-app/app'), 'build.gradle');
+const mainActivity = read(path.join(root, 'android-app/app/src/main/java/com/vyaparai/app'), 'MainActivity.java');
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 6802026'), 'Android release code must match');
+assert(gradle.includes('versionCode 6812026'), 'Android release code must match');
+assert(mainActivity.includes('Color.rgb(6, 23, 45)'), 'first WebView frame must match the dark launch surface');
 
-console.log('✓ Settings Center + complete UI 6.8.0 checks passed');
+console.log(`✓ Settings Center + complete UI ${expectedVersion} checks passed`);
