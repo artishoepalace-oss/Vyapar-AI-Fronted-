@@ -1,0 +1,230 @@
+#screen-settings .settings-section-heading h3 {
+  margin: 2px 0 4px !important;
+}
+
+#screen-settings .settings-section-icon {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 12px !important;
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+  border: 1px solid rgba(77, 156, 255, .18) !important;
+}
+
+#screen-settings .settings-kicker {
+  color: var(--vy-blue) !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+  letter-spacing: .08em !important;
+}
+
+#screen-settings .settings-form-grid,
+.p611-form,
+.adv-form-grid,
+.business-calc-grid,
+.p620-settings {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+#screen-settings .settings-field-wide { grid-column: 1 / -1 !important; }
+#screen-settings .settings-link-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+/* More sheet, dialogs and popups: centered, readable, never clipped. */
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay,
+.subscription-dialog-backdrop,
+[class*="overlay"] {
+  max-width: 100vw !important;
+}
+
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay {
+  z-index: 10000 !important;
+}
+
+.android-sheet,
+.modal-card,
+.glass-dialog,
+.subscription-dialog {
+  width: min(94vw, 620px) !important;
+  max-width: min(94vw, 620px) !important;
+  max-height: min(88vh, 760px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 20px !important;
+  background: var(--vy-surface-strong) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .34) !important;
+}
+
+.android-sheet-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.android-sheet-item {
+  min-width: 0 !important;
+  min-height: 64px !important;
+  padding: 10px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 14px !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+}
+.android-sheet-item-copy { min-width: 0 !important; overflow: visible !important; white-space: normal !important; }
+.android-sheet-item-copy small { display: block !important; white-space: normal !important; }
+.android-sheet-item-icon {
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+}
+
+/* Subscription cards stay distinctive and premium. */
+.subscription-plan-card { position: relative !important; }
+.subscription-plan-card.pro,
+.subscription-plan-card[data-plan="pro"] { border-top: 3px solid #b9c7da !important; }
+.subscription-plan-card.business,
+.subscription-plan-card[data-plan="business"] { border-top: 3px solid var(--vy-yellow) !important; }
+.subscription-cta { min-height: 44px !important; }
+
+/* Calculator: avoid clipped keys/display on shorter Android screens. */
+#screen-calculator .calculator-head,
+#screen-calculator .calc-display-wrap,
+#screen-calculator .calc-keypad,
+#screen-calculator .calc-memory-row { max-width: 100% !important; }
+#screen-calculator .calc-key { min-width: 0 !important; }
+
+/* Bottom navigation owns the bottom safe area and never slides horizontally. */
+.nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100% - 16px), 760px) !important;
+  max-width: 760px !important;
+  min-height: 66px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  z-index: 9000 !important;
+  overflow: visible !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 21px !important;
+  background: rgba(8, 20, 35, .92) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .30) !important;
+  backdrop-filter: blur(22px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
+  touch-action: manipulation !important;
+}
+html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
+
+.nav button,
+.nav .nav-item {
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 6px 4px !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+}
+.nav .android-nav-label,
+.nav .nav-label {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.nav .android-nav-icon { flex: 0 0 auto !important; }
+
+/* Loading: one coherent colorful style for both loader phases. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(77, 156, 255, .25), transparent 24%),
+    radial-gradient(circle at 76% 72%, rgba(167, 131, 255, .19), transparent 26%),
+    linear-gradient(145deg, #071323, #0b2d5a 56%, #08182d) !important;
+  color: #f4f8ff !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  border-radius: 24px !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .30) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-purple)) !important;
+}
+
+/* Legacy duplicate footer is always suppressed; Settings Center owns the final footer. */
+#screen-settings #appLegalFooter { display: none !important; }
+
+/* Accessibility and performance modes. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+html[data-performance="lite"] *,
+html.performance-lite * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 760px) {
+  :root { --vy-radius: 16px; --vy-nav-safe: calc(84px + env(safe-area-inset-bottom)); }
+  .app { padding: 9px 10px calc(var(--vy-nav-safe) + 18px) !important; }
+  .top { min-height: 64px !important; padding: 7px 2px 10px !important; }
+  .logo { width: 44px !important; height: 44px !important; flex-basis: 44px !important; border-radius: 14px !important; }
+  .badge { display: none !important; }
+  .theme-toggle { min-height: 36px !important; padding: 7px 9px !important; font-size: 11px !important; }
+  .card, .settings-section { padding: 13px !important; }
+  .grid, .grid3, .row, .hero, .code-layout { grid-template-columns: 1fr !important; }
+  .stats, .p611-grid, .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .android-sheet-grid { grid-template-columns: 1fr !important; }
+  #screen-settings .settings-form-grid,
+  .p611-form,
+  .adv-form-grid,
+  .business-calc-grid,
+  .p620-settings { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 390px) {
+  .brand h1 { font-size: 20px !important; }
+  .tag { font-size: 10.5px !important; }
+  .stats, .p611-grid, .vx621-kpis { gap: 7px !important; }
+  .stat, .vx621-kpi { min-height: 74px !important; padding: 10px !important; }
+  .nav { width: calc(100% - 10px) !important; gap: 3px !important; padding: 5px !important; border-radius: 18px !important; }
+  .nav button, .nav .nav-item { min-height: 50px !important; padding: 5px 2px !important; font-size: 9.5px !important; border-radius: 11px !important; }
+  .btn { padding-left: 10px !important; padding-right: 10px !important; }
+}
+
+@media (max-height: 650px) and (max-width: 760px) {
+  .top { min-height: 58px !important; margin-bottom: 6px !important; }
+  .nav { min-height: 60px !important; }
+  .nav button, .nav .nav-item { min-height: 46px !important; }
+  #screen-calculator .calc-key { min-height: 38px !important; height: 38px !important; }
+}
