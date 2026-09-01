@@ -1,12 +1,13 @@
-name: Build Vyapar AI Android APK - SwiftUI Branch
+name: Build Vyapar AI Android APK - Main
 
 on:
   workflow_dispatch:
   push:
-    branches: [swiftui-android]
+    branches: [main]
     paths:
       - 'android-app/**'
       - 'version.json'
+      - 'RELEASE_*.md'
       - '.github/workflows/build-android.yml'
 
 permissions:
@@ -14,21 +15,21 @@ permissions:
 
 jobs:
   build-apk:
-    name: Build and Release Android APK
-    if: github.ref_name == 'swiftui-android'
+    name: Build and Release Android APK from main
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout dedicated APK branch
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
-          ref: swiftui-android
+          ref: main
 
       - name: Verify APK source branch
         shell: bash
         run: |
           set -euo pipefail
-          test "${GITHUB_REF_NAME}" = "swiftui-android"
+          test "${GITHUB_REF_NAME}" = "main"
           echo "APK source branch: ${GITHUB_REF_NAME}"
 
       - name: Set up JDK 17
@@ -123,19 +124,19 @@ jobs:
       - name: Rename APK
         run: |
           cp android-app/app/build/outputs/apk/debug/app-debug.apk \
-            "VyaparAI-${{ steps.version.outputs.version_name }}-swiftui.apk"
+            "VyaparAI-${{ steps.version.outputs.version_name }}.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: VyaparAI-${{ steps.version.outputs.version_name }}-swiftui-apk
-          path: VyaparAI-${{ steps.version.outputs.version_name }}-swiftui.apk
+          name: VyaparAI-${{ steps.version.outputs.version_name }}-apk
+          path: VyaparAI-${{ steps.version.outputs.version_name }}.apk
 
-      - name: Create GitHub Release from SwiftUI branch
+      - name: Create GitHub Release from main
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version_name }}
-          name: Vyapar AI v${{ steps.version.outputs.version_name }} - SwiftUI Android
-          target_commitish: swiftui-android
-          generate_release_notes: true
-          files: VyaparAI-${{ steps.version.outputs.version_name }}-swiftui.apk
+          name: Vyapar AI v${{ steps.version.outputs.version_name }} - Main Android
+          target_commitish: main
+          body_path: RELEASE_${{ steps.version.outputs.version_name }}.md
+          files: VyaparAI-${{ steps.version.outputs.version_name }}.apk

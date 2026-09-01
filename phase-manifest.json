@@ -1,10 +1,10 @@
 {
   "product": "Vyapar AI",
-  "phase": "3.5",
-  "phaseName": "User-Friendly Settings Center",
-  "versionName": "6.7.5.2026",
-  "versionCode": 6752026,
-  "baseVersion": "6.7.4.2026",
+  "phase": "3.6",
+  "phaseName": "Main Branch Stability Release",
+  "versionName": "6.7.6.2026",
+  "versionCode": 6762026,
+  "baseVersion": "6.7.5.2026",
   "baseArchiveSha256": "6c622e26309e4200dbe324ff8ce3af754892570f38d25193a8942387ea07193a",
   "backendVersion": "2.5.2",
   "released": "2026-09-01",
@@ -14,13 +14,12 @@
   "nextPhaseMustUseThisOutput": true,
   "status": "production-release",
   "uiHotfix": true,
+  "releaseBranch": "main",
   "fixes": [
-    "Single visual loading experience tuned for Android 7 through Android 16.",
-    "Adaptive performance tuning for smoother scrolling and reduced frame drops on low-end and modern devices.",
-    "Auto Scroll to Top is disabled by default with a Settings toggle and per-screen scroll restoration.",
-    "Business/Sales/Stock action cards and info tooltips are mobile-safe and no longer clip text.",
-    "Previous Settings directory layer removed and replaced by one stable Settings Center.",
-    "Settings grouped into account, business, app preferences, backup, updates and legal subpages.",
-    "Search, readable descriptions, native back navigation and one grey-logo footer added without removing working settings logic."
+    "Unified startup/loading presentation across the two WebView loading phases.",
+    "Stopped the Settings legacy footer render loop and kept one stable grey-logo footer.",
+    "Compacted and aligned Sales live preview cards on mobile.",
+    "Reduced unnecessary DOM rewrites during Sales and Settings updates.",
+    "Moved Android APK build and GitHub release source to the main branch."
   ]
 }
