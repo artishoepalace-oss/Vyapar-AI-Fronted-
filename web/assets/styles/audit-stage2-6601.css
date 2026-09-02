@@ -49,8 +49,6 @@ html.android-ui .shop-sheet-score{background:rgba(255,255,255,.045)!important;bo
 #vyaparOtpGate .vy6601-signup-step{display:none!important}
 #vyaparOtpGate.vy6601-signup-sent .vy6601-signup-step{display:block!important}
 #vyaparOtpGate .auth-method-tabs{touch-action:manipulation!important}
-#vyaparOtpGate .auth-help{font-size:0!important}
-#vyaparOtpGate .auth-help::after{content:'Vyapar AI 6.6.0.1.1';font-size:10px!important;line-height:1.5;color:var(--auth-subtle)}
 
 .vy6601-select-overlay{position:fixed;inset:0;z-index:2147483600;display:flex;align-items:flex-end;justify-content:center;padding:0;background:rgba(2,8,16,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .vy6601-select-sheet{width:min(100%,620px);max-height:72dvh;overflow:hidden;border:1px solid rgba(133,177,213,.30);border-bottom:0;border-radius:24px 24px 0 0;background:linear-gradient(180deg,#193750,#10283e);box-shadow:0 -18px 55px rgba(0,0,0,.4);color:#f4f8fb}

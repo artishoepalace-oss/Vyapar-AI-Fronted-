@@ -102,10 +102,6 @@ html.production-ui-p1 .theme-toggle {
   box-shadow: none !important;
 }
 
-html.production-ui-p1 #vyaparOtpGate .auth-help::after {
-  content: 'Vyapar AI 6.7.0 · Phase 1' !important;
-}
-
 html.production-ui-p1 .screen {
   width: 100% !important;
   min-width: 0 !important;

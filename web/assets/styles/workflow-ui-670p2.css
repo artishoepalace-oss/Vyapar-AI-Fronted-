@@ -12,10 +12,6 @@ html.workflow-ui-p2 {
   --p2-field-bg: rgba(3, 16, 29, .52);
 }
 
-html.workflow-ui-p2 #vyaparOtpGate .auth-help::after {
-  content: 'Vyapar AI 6.7.0 · Phase 3' !important;
-}
-
 html.workflow-ui-p2 .p2-form-intro {
   display: flex;
   align-items: flex-start;

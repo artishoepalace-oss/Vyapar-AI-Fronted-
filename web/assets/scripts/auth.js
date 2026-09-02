@@ -41,13 +41,18 @@
       position:fixed;
       inset:0;
       z-index:2147483647;
-      overflow:auto;
+      min-height:100vh;
+      min-height:100dvh;
+      overflow-x:hidden;
+      overflow-y:auto;
+      overscroll-behavior:contain;
       background:var(--auth-bg);
       color:var(--auth-body);
       font-family:Inter,Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       color-scheme:light;
       scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
     }
     #vyaparOtpGate::-webkit-scrollbar{display:none;width:0;height:0}
     #vyaparOtpGate.auth-dark{
@@ -73,12 +78,13 @@
     #vyaparOtpGate *{box-sizing:border-box}
     #vyaparOtpGate button,#vyaparOtpGate input{font:inherit}
     #vyaparOtpGate .auth-page{
-      min-height:100%;
+      min-height:var(--auth-viewport-height,100vh);
+      min-height:var(--auth-viewport-height,100dvh);
       width:100%;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:16px;
+      padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
     }
     #vyaparOtpGate .auth-card{
       width:100%;
@@ -88,6 +94,7 @@
       border-radius:16px;
       box-shadow:0 20px 55px rgba(15,23,42,.12);
       padding:32px;
+      margin:auto;
     }
     #vyaparOtpGate.auth-dark .auth-card{box-shadow:0 22px 60px rgba(0,0,0,.32)}
     #vyaparOtpGate .auth-logo-wrap{text-align:center;margin-bottom:20px}
@@ -256,8 +263,6 @@
     #vyaparOtpGate .auth-message{display:none;margin-top:14px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.4}
     #vyaparOtpGate .auth-message.error{display:block;color:var(--auth-error);background:var(--auth-error-bg);border:1px solid rgba(180,35,61,.22)}
     #vyaparOtpGate .auth-message.success{display:block;color:var(--auth-success);background:var(--auth-success-bg);border:1px solid rgba(12,118,95,.22)}
-    #vyaparOtpGate .auth-help{margin-top:14px;text-align:center;color:var(--auth-subtle);font-size:10px;line-height:1.5}
-    #vyaparOtpGate .gupta-legacy-signature{display:block;margin-top:5px;color:var(--auth-text);font-size:11px;font-weight:800;font-style:italic;letter-spacing:.02em}
     #vyaparOtpGate .auth-loading-overlay{position:fixed;inset:0;z-index:4;display:none;align-items:center;justify-content:center;padding:20px;background:var(--auth-bg);background:color-mix(in srgb,var(--auth-bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
     #vyaparOtpGate.auth-loading .auth-loading-overlay{display:flex}
     #vyaparOtpGate .auth-loading-card{width:min(300px,88vw);padding:22px 20px;border:1px solid var(--auth-border);border-radius:18px;background:var(--auth-card);box-shadow:0 18px 46px rgba(15,23,42,.16);text-align:center;color:var(--auth-text)}
@@ -280,6 +285,12 @@
       #vyaparOtpGate .auth-small-btn{min-height:44px;min-width:118px;justify-self:end;padding:9px 14px}
       #vyaparOtpGate .auth-forgot,#vyaparOtpGate .auth-switch button{color:#1677d2!important;background:transparent!important;border:0!important;box-shadow:none!important}
     }
+    #vyaparOtpGate.auth-keyboard-open .auth-page{align-items:flex-start}
+    #vyaparOtpGate.auth-keyboard-open .auth-card{margin-top:0;margin-bottom:12px}
+    #vyaparOtpGate.auth-keyboard-open .auth-logo{height:52px;max-width:132px}
+    #vyaparOtpGate.auth-keyboard-open .auth-logo-wrap{margin-bottom:10px}
+    #vyaparOtpGate.auth-keyboard-open .auth-title{font-size:21px}
+    #vyaparOtpGate.auth-keyboard-open .auth-subtitle{font-size:12px}
     @media(max-width:360px){
       #vyaparOtpGate .auth-card{padding:18px 16px}
       #vyaparOtpGate .auth-otp-row{align-items:stretch}
@@ -393,7 +404,6 @@
         </section>
 
         <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
-        <div class="auth-help">Vyapar AI 6.5.9</div>
       </main>
       <div class="auth-loading-overlay" role="status" aria-live="polite" aria-label="Opening Vyapar AI">
         <div class="auth-loading-card"><div class="auth-loading-spinner" aria-hidden="true"></div><strong>Login successful</strong><span>Opening home…</span></div>
@@ -415,6 +425,27 @@
 
   let pendingAuthData = null;
   let pendingAuthMethod = null;
+
+  function syncAuthViewport(){
+    const viewport=window.visualViewport;
+    const height=Math.max(320,Math.round(viewport?.height||window.innerHeight||document.documentElement.clientHeight||640));
+    const keyboardOpen=Boolean(viewport&&window.innerHeight-height>120);
+    gate.style.setProperty("--auth-viewport-height",height+"px");
+    gate.classList.toggle("auth-keyboard-open",keyboardOpen);
+  }
+  function resetAuthScroll(){
+    requestAnimationFrame(()=>{gate.scrollTop=0});
+  }
+  syncAuthViewport();
+  window.addEventListener("resize",syncAuthViewport,{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",syncAuthViewport,{passive:true});
+    window.visualViewport.addEventListener("scroll",syncAuthViewport,{passive:true});
+  }
+  gate.addEventListener("focusin",event=>{
+    if(!event.target.matches("input"))return;
+    setTimeout(()=>event.target.scrollIntoView({block:"center",inline:"nearest"}),120);
+  });
 
   function applyTheme(){
     const light = document.body.classList.contains("theme-light") || document.documentElement.classList.contains("theme-light") || preferredLightTheme();
@@ -519,6 +550,7 @@
     els.setupSection.classList.add("hidden");
     els.title.textContent="Welcome Back";
     els.subtitle.textContent="Sign in to manage your smart business growth";
+    resetAuthScroll();
   }
   function showSignup(){
     clearMessage();
@@ -527,6 +559,7 @@
     els.setupSection.classList.add("hidden");
     els.title.textContent="Create an Account";
     els.subtitle.textContent="Start your smart business growth journey";
+    resetAuthScroll();
   }
   function switchLoginMode(mode){
     const otp=mode==="otp";
@@ -536,6 +569,9 @@
     els.otpTab.classList.toggle("active",otp);
     els.passTab.setAttribute("aria-selected",String(!otp));
     els.otpTab.setAttribute("aria-selected",String(otp));
+    els.passTab.tabIndex=otp?-1:0;
+    els.otpTab.tabIndex=otp?0:-1;
+    els.passTab.parentElement.classList.toggle("otp-selected",otp);
     if(otp && els.loginEmail.value.trim() && !els.loginOtpEmail.value.trim())els.loginOtpEmail.value=els.loginEmail.value.trim();
     clearMessage();
   }
@@ -552,6 +588,7 @@
     els.setupPassword.value="";
     els.setupConfirm.value="";
     clearMessage();
+    resetAuthScroll();
   }
 
   els.passTab.addEventListener("click",()=>switchLoginMode("password"));

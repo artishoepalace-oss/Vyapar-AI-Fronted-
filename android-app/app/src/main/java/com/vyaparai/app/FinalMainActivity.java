@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 /**
- * Final Android 7-16 shell for Vyapar AI 6.8.3.2026.
+ * Final Android 7-16 shell for Vyapar AI 8.0.0.2026.
  *
  * MainActivity remains the authoritative feature implementation. This thin
  * subclass only aligns the first WebView compositor frame with the branded
