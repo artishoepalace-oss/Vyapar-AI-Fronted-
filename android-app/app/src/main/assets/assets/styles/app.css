@@ -5212,3 +5212,24 @@ html.desktop-web .upgrade-plan-reference-popup{
 @media(prefers-reduced-motion:reduce){
   .upgrade-plan-reference-card{animation:none!important;transition:none!important}
 }
+
+/* Business workspace action colours — v8.5.0.2026 */
+.vx621-action.blue,
+#screen-business .vx621-action.blue {
+  color: #fff !important;
+  border-color: rgba(147, 197, 253, .62) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb 52%, #38bdf8) !important;
+  box-shadow: 0 9px 22px rgba(37, 99, 235, .28), inset 0 1px 0 rgba(255,255,255,.24) !important;
+}
+.vx621-action.blue:hover,
+.vx621-action.blue:focus-visible {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8 52%, #0ea5e9) !important;
+  transform: translateY(-1px);
+}
+.vx621-action.blue:active { transform: scale(.98); }
+.settings-link-grid .btn.danger,
+#screen-settings .settings-link-grid a[href*="delete-account"] {
+  color: #fff !important;
+  border-color: #dc4057 !important;
+  background: linear-gradient(135deg, #c62828, #ef4444) !important;
+}

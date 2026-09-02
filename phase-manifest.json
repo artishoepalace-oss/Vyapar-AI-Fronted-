@@ -1,10 +1,10 @@
 {
   "product": "Vyapar AI",
-  "phase": "5.0",
-  "phaseName": "Production Version 8 Login Stability",
-  "versionName": "8.0.0.2026",
-  "versionCode": 8002026,
-  "baseVersion": "6.8.3.2026",
+  "phase": "5.1",
+  "phaseName": "Business Action Colour Polish",
+  "versionName": "8.5.0.2026",
+  "versionCode": 8502026,
+  "baseVersion": "8.0.0.2026",
   "baseArchiveSha256": "7400902e2e3864df7253cba6042ca32a10bd2375b8ecd4adb99ed97589940563",
   "backendVersion": "2.5.2",
   "released": "2026-09-02",
@@ -16,10 +16,9 @@
   "uiHotfix": true,
   "releaseBranch": "main",
   "fixes": [
-    "Promoted the verified source to production version 8.0.0.2026.",
-    "Removed the visible version label from the login page while keeping the version available in Settings.",
-    "Fixed Web and Android authentication viewport, keyboard, scrolling and OTP field clipping glitches.",
-    "Removed Android WebView CSS zoom and accidental swipe switching from the login method tabs.",
+    "Promoted the verified source to production version 8.5.0.2026.",
+    "Coloured Business workspace Payment In, Suppliers, Purchase Return, Cheques & Loans, Currencies and Sale Return actions blue.",
+    "Coloured Manage Cancellation and Delete Account actions red as destructive controls.",
     "Preserved navigation, business logic, stored data schema, accounting logic and subscription flows."
   ]
 }

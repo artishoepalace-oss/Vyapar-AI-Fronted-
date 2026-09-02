@@ -4503,7 +4503,7 @@ function renderSettings(){
           <a class="btn" href="pages/legal/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
           <a class="btn" href="pages/legal/terms.html" target="_blank" rel="noopener">Terms</a>
           <a class="btn" href="pages/legal/refund.html" target="_blank" rel="noopener">Refund Policy</a>
-          <a class="btn" href="pages/legal/delete-account.html" target="_blank" rel="noopener">Delete Account</a>
+          <a class="btn danger" href="pages/legal/delete-account.html" target="_blank" rel="noopener">Delete Account</a>
         </div>
       </div>
     </div>
@@ -6439,6 +6439,7 @@ render();
             plan !== "free"
               ? `
                 <button
+                  class="danger"
                   onclick="window.vyaparCancelSubscription()"
                 >
                   Cancel at Cycle End
@@ -9858,7 +9859,8 @@ function tierBadge(tier){
 }
 function button(label,action,tier='business',kind=''){
   const locked=rank(plan())<rank(tier);
-  return `<button type="button" class="vx621-action ${kind} ${locked?'is-locked':''}" onclick="${action}"><span>${E(label)}</span>${tierBadge(tier)}</button>`;
+  const blue=['Payment In','Suppliers','Purchase Return','Cheques & Loans','Currencies','Sale Return'].includes(String(label));
+  return `<button type="button" class="vx621-action ${kind} ${blue?'blue':''} ${locked?'is-locked':''}" onclick="${action}"><span>${E(label)}</span>${tierBadge(tier)}</button>`;
 }
 function featureCard(title,desc,actions,icon='◈'){
   return `<article class="vx621-feature-card"><div class="vx621-feature-icon" aria-hidden="true">${icon}</div><div class="vx621-feature-copy"><h3>${E(title)}</h3><p>${E(desc)}</p><div class="vx621-card-actions">${actions}</div></div></article>`;
@@ -10031,7 +10033,7 @@ function renderBusinessHome(){
     featureCard('Advanced Inventory','Units, wholesale price, party pricing, BOM/manufacturing and loyalty are kept with Stock.',button('Open in Stock',"vx621GoStock('advanced')",'business','primary'),'⚙')
   ];
   const salesCards=[
-    featureCard('Sales & Returns','Sale, Sale Return and invoice workflows are surfaced directly on the Sales page.',button('Open Sales & Returns',"vx621GoSales('transactions')",'business','primary'),'₹'),
+    featureCard('Sales & Returns','Sale, Sale Return and invoice workflows are surfaced directly on the Sales page.',button('Open Sales & Returns',"vx621GoSales('transactions')",'business','primary')+button('Sale Return',"vx621OpenPlatform('business','transactions','business','SALE_RETURN')",'business'),'₹'),
     featureCard('Invoice & Print','Advanced invoice and thermal tools are also available from Sales for Pro/Business users.',button('Open in Sales',"vx621GoSales('print')",'pro','primary'),'▤'),
     featureCard('Quotations & Orders','Estimate/quotation, Proforma, Sale Order and Delivery Challan shortcuts live with Sales.',button('Open in Sales',"vx621GoSales('documents')",'pro','primary'),'⇢')
   ];
