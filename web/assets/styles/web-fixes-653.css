@@ -1,0 +1,53 @@
+/* Vyapar AI 6.5.3 — web-only stability bridge and Android feature parity. */
+html.web-ui .nav{touch-action:manipulation!important;overscroll-behavior-x:contain!important}
+html.web-ui .nav button{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}
+html.web-ui .nav button.active{transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease!important}
+
+/* Rounded identity on every web loading surface. */
+html.web-ui .android-loader-logo{border-radius:34px!important;overflow:hidden!important}
+html.web-ui .android-loader-logo img{border-radius:30px!important;overflow:hidden!important}
+html.web-ui #vy647StartupSplash .vy647-splash-core img{border-radius:28px!important;background:#fff!important;overflow:hidden!important}
+
+/* Core three-dot menu is authoritative. Selection/tick columns stay out of normal view. */
+html.web-ui .vx622-menu-card .vx622-check-col{display:none!important;visibility:hidden!important;width:0!important;min-width:0!important;max-width:0!important;padding:0!important;border:0!important}
+html.web-ui .vx622-menu-card.vx622-selection-open .vx622-check-col{display:table-cell!important;visibility:visible!important;width:34px!important;min-width:34px!important;max-width:34px!important;padding:7px 5px!important}
+html.web-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-recent-check,
+html.web-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-stock-check,
+html.web-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-data-check,
+html.web-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-platform-tx-check,
+html.web-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-generic-check,
+html.web-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-legacy-check{display:none!important}
+html.web-ui .vx622-menu-card.vx622-selection-open input[type="checkbox"]{accent-color:#158fbd}
+html.web-ui .vx622-bulk-menu>.vx622-menu-panel{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+html.web-ui .vx622-bulk-menu.is-open>.vx622-menu-panel{display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;gap:6px!important}
+
+/* More footer identity — centered and intentionally secondary. */
+html.web-ui .android-sheet-legal .gupta-legacy-signature{display:block!important;width:100%!important;margin:5px auto 0!important;padding-top:2px!important;text-align:center!important;font-size:9px!important;line-height:1.25!important;font-weight:800!important;font-style:italic!important;letter-spacing:.018em!important}
+html.web-ui .app-legal-footer .gupta-legacy-signature{flex-basis:100%!important;text-align:center!important;font-size:10px!important;font-style:italic!important}
+
+/* Smooth theme swap without a full-screen visual flash. */
+html.web-ui.theme-transitioning body,
+html.web-ui.theme-transitioning .top,
+html.web-ui.theme-transitioning .nav,
+html.web-ui.theme-transitioning .card,
+html.web-ui.theme-transitioning .stat,
+html.web-ui.theme-transitioning .screen,
+html.web-ui.theme-transitioning .settings-section,
+html.web-ui.theme-transitioning .android-sheet,
+html.web-ui.theme-transitioning input,
+html.web-ui.theme-transitioning textarea,
+html.web-ui.theme-transitioning select,
+html.web-ui.theme-transitioning button{transition:background-color .30s ease,background .30s ease,color .24s ease,border-color .28s ease,box-shadow .30s ease!important}
+html.web-ui .theme-ripple{animation-duration:.28s!important}
+
+/* Web light-mode consistency for imported Android-origin modules. */
+html.web-ui.theme-light .shop-growth-card,
+html.web-ui.theme-light .shop-progress-sheet{color:#17263a!important}
+html.web-ui.theme-light .shop-growth-card p,
+html.web-ui.theme-light .shop-growth-card small{color:#64798e!important}
+
+/* Prevent long tables or action popovers from widening the mobile web viewport. */
+html.mobile-web .screen,html.mobile-web .card,html.mobile-web .vx621-table-wrap,html.mobile-web .scroll{min-width:0!important;max-width:100%!important}
+html.mobile-web .vx622-menu-panel,html.mobile-web .web-bulk-panel{max-width:min(260px,calc(100vw - 28px))!important}
+
+@media(prefers-reduced-motion:reduce){html.web-ui.theme-transitioning *{transition:none!important}}

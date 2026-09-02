@@ -1,0 +1,295 @@
+/* 6.5.6: one legal footer only; suppress the obsolete production duplicate. */
+html.web-ui #productionLegalFooter,
+html.web-ui .production-footer{display:none!important}
+
+/* Vyapar AI Web 6.5.5 — photo-driven web repair layer. Web only. */
+
+/* --------------------------------------------------------------------------
+   1) Legal footer must be the final visual element, with readable link gaps.
+   -------------------------------------------------------------------------- */
+html.web-ui .app-legal-footer{
+  order:4!important;
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  margin:18px 0 0!important;
+  padding:18px 8px 4px!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px 14px!important;
+  color:var(--web-muted,#73889c)!important;
+  font-size:10px!important;
+  line-height:1.45!important;
+  text-align:center!important;
+  border-top:1px solid rgba(126,159,191,.12)!important;
+}
+html.web-ui .app-legal-footer>span:first-child{white-space:normal!important}
+html.web-ui .app-legal-links{
+  display:inline-flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px 13px!important;
+}
+html.web-ui .app-legal-footer a{
+  display:inline-block!important;
+  color:var(--web-muted,#6d8296)!important;
+  text-decoration:none!important;
+  font-weight:750!important;
+  white-space:nowrap!important;
+}
+html.web-ui .app-legal-footer a:hover{text-decoration:underline!important;color:var(--text,#15263a)!important}
+html.web-ui .app-legal-footer .gupta-legacy-signature{
+  flex:0 0 100%!important;
+  width:100%!important;
+  display:block!important;
+  margin:0 auto!important;
+  padding-top:1px!important;
+  text-align:center!important;
+  font-size:9.5px!important;
+  line-height:1.25!important;
+  font-weight:850!important;
+  font-style:italic!important;
+  letter-spacing:.018em!important;
+  color:inherit!important;
+}
+
+/* Keep the More-sheet signature centered and intentionally smaller. */
+html.web-ui .android-sheet-legal .gupta-legacy-signature{
+  grid-column:1/-1!important;
+  justify-self:stretch!important;
+  width:100%!important;
+  text-align:center!important;
+  font-size:9px!important;
+  margin-top:2px!important;
+}
+
+/* --------------------------------------------------------------------------
+   2) Fix the giant black lock SVGs visible in the supplied screenshots.
+   -------------------------------------------------------------------------- */
+html.web-ui .nav button{position:relative!important}
+html.web-ui .nav .android-nav-lock{
+  position:absolute!important;
+  right:8px!important;
+  top:7px!important;
+  width:13px!important;
+  height:13px!important;
+  min-width:13px!important;
+  min-height:13px!important;
+  max-width:13px!important;
+  max-height:13px!important;
+  display:block!important;
+  overflow:visible!important;
+  color:#d6a83f!important;
+  stroke:currentColor!important;
+  fill:none!important;
+  stroke-width:1.85!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  opacity:.92!important;
+  pointer-events:none!important;
+}
+html.web-ui .nav .android-nav-lock rect,
+html.web-ui .nav .android-nav-lock path,
+html.web-ui .nav .android-nav-lock line,
+html.web-ui .nav .android-nav-lock polyline,
+html.web-ui .nav .android-nav-lock circle{
+  fill:none!important;
+  stroke:currentColor!important;
+}
+html.web-ui .nav .nav-plan-lock{
+  position:absolute!important;
+  right:8px!important;
+  top:6px!important;
+  width:13px!important;
+  height:13px!important;
+  font-size:10px!important;
+  line-height:13px!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+
+html.web-ui #screen-home .android-quick-action{position:relative!important}
+html.web-ui #screen-home .premium-lock-icon,
+html.web-ui #screen-home .android-lock-icon{
+  position:absolute!important;
+  right:11px!important;
+  top:10px!important;
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  min-height:16px!important;
+  max-width:16px!important;
+  max-height:16px!important;
+  display:block!important;
+  overflow:visible!important;
+  color:#d9aa40!important;
+  stroke:currentColor!important;
+  fill:none!important;
+  stroke-width:1.85!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  opacity:.94!important;
+  pointer-events:none!important;
+}
+html.web-ui #screen-home .premium-lock-icon rect,
+html.web-ui #screen-home .premium-lock-icon path,
+html.web-ui #screen-home .android-lock-icon rect,
+html.web-ui #screen-home .android-lock-icon path{
+  fill:none!important;
+  stroke:currentColor!important;
+}
+html.web-ui #screen-home .android-quick-action.is-locked{padding-right:34px!important}
+
+/* Desktop navigation has enough width: do not ellipsize Business / Stock. */
+html.desktop-web.web-ui .nav button{
+  flex:1 1 0!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+html.desktop-web.web-ui .nav .android-nav-label{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+/* --------------------------------------------------------------------------
+   3) Strong web LIGHT MODE: no dark navy cards on a light page.
+   -------------------------------------------------------------------------- */
+html.web-ui.theme-light .top,
+html.web-ui.theme-light .nav{
+  color:#14253a!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(243,248,253,.94))!important;
+  border-color:rgba(75,107,140,.16)!important;
+  box-shadow:0 10px 30px rgba(48,72,98,.08),inset 0 1px 0 #fff!important;
+}
+html.web-ui.theme-light #screen-home .home-overview,
+html.web-ui.theme-light #screen-home .home-next,
+html.web-ui.theme-light #screen-home .android-quick-action,
+html.web-ui.theme-light #screen-home .home-metrics .stat{
+  color:#14253a!important;
+  background:#fff!important;
+  background-image:linear-gradient(180deg,#fff,#f4f8fc)!important;
+  border-color:#d8e3ed!important;
+  box-shadow:0 10px 26px rgba(48,72,98,.07),inset 0 1px 0 #fff!important;
+}
+html.web-ui.theme-light #screen-home .home-overview-copy p,
+html.web-ui.theme-light #screen-home .home-profit span,
+html.web-ui.theme-light #screen-home .home-metric-head span,
+html.web-ui.theme-light #screen-home .android-quick-action-copy small,
+html.web-ui.theme-light #screen-home .home-next p{
+  color:#61758a!important;
+}
+html.web-ui.theme-light #screen-home .home-eyebrow,
+html.web-ui.theme-light #screen-home .home-section-kicker,
+html.web-ui.theme-light #screen-home .home-profit small,
+html.web-ui.theme-light #screen-home .home-text-button{
+  color:#0f839e!important;
+}
+html.web-ui.theme-light #screen-home .home-goal-track{background:#e7eef5!important}
+html.web-ui.theme-light #screen-home .android-quick-action-icon,
+html.web-ui.theme-light #screen-home .home-metric-icon{
+  color:#0b8fad!important;
+  background:#e8f5fa!important;
+  border-color:#d4eaf2!important;
+}
+html.web-ui.theme-light #screen-home .android-quick-action.is-locked{
+  background:linear-gradient(180deg,#fffdf7,#f8f3e7)!important;
+  border-color:rgba(190,151,58,.22)!important;
+}
+
+/* Settings cards/rows shown as dark bars in the screenshots become native-light. */
+html.web-ui.theme-light #screen-settings .settings-section,
+html.web-ui.theme-light #screen-settings .vx622-admin-section,
+html.web-ui.theme-light #screen-settings .vx622-lock-section,
+html.web-ui.theme-light #screen-settings .data-safety-section,
+html.web-ui.theme-light #screen-settings .production-account-card,
+html.web-ui.theme-light #screen-settings .vx622-settings-row,
+html.web-ui.theme-light #screen-settings .vx622-lock-status,
+html.web-ui.theme-light #screen-settings .vx622-pin-editor,
+html.web-ui.theme-light #screen-settings .vx622-settings-admin-host .card,
+html.web-ui.theme-light #screen-settings .adv-card,
+html.web-ui.theme-light #screen-settings .p611-card{
+  color:#14253a!important;
+  background:#fff!important;
+  background-image:linear-gradient(180deg,#fff,#f5f9fc)!important;
+  border-color:#d8e3ed!important;
+  box-shadow:0 9px 24px rgba(48,72,98,.065),inset 0 1px 0 #fff!important;
+}
+html.web-ui.theme-light #screen-settings .vx622-settings-row small,
+html.web-ui.theme-light #screen-settings .vx622-settings-row i,
+html.web-ui.theme-light #screen-settings .settings-section p,
+html.web-ui.theme-light #screen-settings .production-account-card p,
+html.web-ui.theme-light #screen-settings .production-account-grid span{
+  color:#62778c!important;
+}
+html.web-ui.theme-light #screen-settings .settings-section-icon{
+  color:#187fa0!important;
+  background:#eaf5fa!important;
+  border-color:#d4e8f0!important;
+  box-shadow:none!important;
+}
+html.web-ui.theme-light #screen-settings .settings-file-input{
+  color:#20354b!important;
+  background:#fff!important;
+  border-color:#d4e0ea!important;
+}
+html.web-ui.theme-light #screen-settings #settingsStatus{
+  color:#365267!important;
+  background:#f5f9fc!important;
+  border-color:#d8e4ee!important;
+}
+
+/* --------------------------------------------------------------------------
+   4) Paid account identity — keep Pro silver / Business gold visibly premium.
+   -------------------------------------------------------------------------- */
+html.web-ui #productionAccountCard .production-account-head{min-width:0!important}
+html.web-ui #productionAccountCard .production-avatar{
+  width:50px!important;
+  height:50px!important;
+  flex:0 0 50px!important;
+  border-radius:50%!important;
+}
+html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar.pro{
+  background:linear-gradient(145deg,#ffffff 0%,#c9d3df 19%,#77869a 42%,#eef3f8 64%,#657488 100%)!important;
+  border-color:#e2e8f0!important;
+  box-shadow:0 0 0 2px rgba(215,225,236,.28),0 0 20px rgba(183,204,229,.68),0 10px 25px rgba(30,41,59,.22)!important;
+}
+html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar.business{
+  background:linear-gradient(145deg,#fff7bd 0%,#e5b940 19%,#a96e08 42%,#ffe980 64%,#8b5705 100%)!important;
+  border-color:#f2cf61!important;
+  box-shadow:0 0 0 2px rgba(242,207,97,.26),0 0 22px rgba(242,179,35,.72),0 10px 25px rgba(92,57,4,.22)!important;
+}
+html.web-ui #productionAccountCard .vy645-plan-tick{
+  width:20px!important;
+  height:20px!important;
+  flex:0 0 20px!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+html.web-ui #productionAccountCard .vy645-plan-tick svg{width:13px!important;height:13px!important}
+html.web-ui #productionAccountCard .production-plan{white-space:nowrap!important}
+html.web-ui.theme-light #productionAccountCard .production-account-grid>div{
+  background:#f7fafc!important;
+  border-color:#dfe7ef!important;
+}
+
+/* --------------------------------------------------------------------------
+   5) Small-screen safety while retaining the fixed web presentation.
+   -------------------------------------------------------------------------- */
+@media(max-width:700px){
+  html.web-ui .app-legal-footer{padding-bottom:88px!important;margin-top:10px!important}
+  html.web-ui .app-legal-links{gap:6px 10px!important}
+  html.web-ui .nav .android-nav-lock{right:4px!important;top:4px!important;width:11px!important;height:11px!important;min-width:11px!important;min-height:11px!important}
+  html.web-ui #screen-home .premium-lock-icon,html.web-ui #screen-home .android-lock-icon{right:8px!important;top:8px!important;width:14px!important;height:14px!important;min-width:14px!important;min-height:14px!important}
+  html.web-ui #screen-home .android-quick-action.is-locked{padding-right:28px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar::after,
+  html.web-ui #productionAccountCard .vy645-plan-tick::before{animation:none!important}
+}

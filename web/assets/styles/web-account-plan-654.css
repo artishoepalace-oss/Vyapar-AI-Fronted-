@@ -1,0 +1,106 @@
+/* Vyapar AI Web 6.5.4 — paid account identity styling. Web only. */
+html.web-ui #productionAccountCard .production-avatar{
+  position:relative;
+  overflow:hidden;
+  border:1px solid transparent;
+  transition:background .28s ease,border-color .28s ease,box-shadow .28s ease,transform .2s ease;
+}
+
+html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar.pro{
+  background:linear-gradient(145deg,#f7fbff 0%,#cbd5df 18%,#8391a3 42%,#e5ebf1 64%,#6c7a8c 100%)!important;
+  border-color:#dbe5ef!important;
+  color:#243142!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.62);
+  box-shadow:0 0 0 2px rgba(203,213,225,.18),0 0 18px rgba(185,207,232,.58),0 10px 24px rgba(30,41,59,.22)!important;
+}
+
+html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar.business{
+  background:linear-gradient(145deg,#fff3ad 0%,#e5bd49 18%,#b77b0c 43%,#ffe883 65%,#96600a 100%)!important;
+  border-color:#f1cc64!important;
+  color:#4b3205!important;
+  text-shadow:0 1px 0 rgba(255,248,210,.72);
+  box-shadow:0 0 0 2px rgba(241,204,100,.17),0 0 20px rgba(245,185,48,.62),0 10px 24px rgba(92,57,4,.22)!important;
+}
+
+html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar::after{
+  content:"";
+  position:absolute;
+  top:-35%;
+  bottom:-35%;
+  left:-85%;
+  width:38%;
+  pointer-events:none;
+  transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.82),transparent);
+  animation:vy654AvatarShine 3.1s ease-in-out infinite;
+}
+
+html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar.business::after{
+  background:linear-gradient(90deg,transparent,rgba(255,249,205,.9),transparent);
+}
+
+html.web-ui #productionAccountCard .production-account-head h3{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  flex-wrap:wrap!important;
+}
+
+html.web-ui #productionAccountCard .vy645-plan-tick{
+  width:19px;
+  height:19px;
+  flex:0 0 19px;
+  display:inline-grid;
+  place-items:center;
+  position:relative;
+  overflow:hidden;
+  vertical-align:middle;
+  clip-path:polygon(50% 0,61% 13%,78% 9%,84% 26%,100% 33%,91% 50%,100% 67%,84% 74%,78% 91%,61% 87%,50% 100%,39% 87%,22% 91%,16% 74%,0 67%,9% 50%,0 33%,16% 26%,22% 9%,39% 13%);
+}
+
+html.web-ui #productionAccountCard .vy645-plan-tick svg{
+  width:13px;
+  height:13px;
+  display:block;
+  position:relative;
+  z-index:2;
+}
+
+html.web-ui #productionAccountCard .vy645-plan-tick.pro{
+  color:#203043;
+  background:linear-gradient(145deg,#ffffff,#aebbc9 38%,#edf3f8 60%,#718093);
+  box-shadow:0 0 10px rgba(191,213,237,.66),0 2px 7px rgba(15,23,42,.24);
+}
+
+html.web-ui #productionAccountCard .vy645-plan-tick.business{
+  color:#4d3200;
+  background:linear-gradient(145deg,#fff4a8,#d19a23 38%,#ffe67f 60%,#9a650d);
+  box-shadow:0 0 11px rgba(246,190,52,.72),0 2px 7px rgba(82,51,5,.25);
+}
+
+html.web-ui #productionAccountCard .vy645-plan-tick::before{
+  content:"";
+  position:absolute;
+  inset:-45%;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.92) 49%,transparent 67%);
+  animation:vy654TickShine 3s ease-in-out infinite;
+}
+
+@keyframes vy654AvatarShine{
+  0%,24%{left:-85%;opacity:0}
+  38%{opacity:.92}
+  62%,100%{left:145%;opacity:0}
+}
+
+@keyframes vy654TickShine{
+  0%,58%{transform:translateX(-58%) rotate(8deg)}
+  80%,100%{transform:translateX(58%) rotate(8deg)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.web-ui #productionAccountCard .production-avatar.vy648-plan-avatar::after,
+  html.web-ui #productionAccountCard .vy645-plan-tick::before{
+    animation:none!important;
+    display:none!important;
+  }
+}

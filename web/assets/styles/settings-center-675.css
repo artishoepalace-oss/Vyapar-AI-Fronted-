@@ -1,0 +1,750 @@
+/* Vyapar AI 6.7.5 — clean, single-source Settings UI. */
+
+#screen-settings.vy675-settings-ready {
+  --vy675-bg: var(--cu-bg, #071423);
+  --vy675-surface: var(--cu-surface, rgba(15, 34, 52, .92));
+  --vy675-surface-soft: var(--cu-surface-soft, rgba(255, 255, 255, .055));
+  --vy675-border: var(--cu-border, rgba(139, 177, 214, .16));
+  --vy675-text: var(--cu-text, #f5f8fc);
+  --vy675-muted: var(--cu-muted, #94a6b9);
+  --vy675-blue: var(--cu-primary, #4f8ff7);
+  --vy675-blue-soft: rgba(79, 143, 247, .13);
+  padding-bottom: calc(108px + env(safe-area-inset-bottom)) !important;
+}
+
+#screen-settings > .p1-modebar[data-screen="settings"],
+#screen-settings > .vy672-settings-directory,
+#screen-settings > .vy672-settings-subpage,
+#screen-settings.vy675-settings-ready > .settings-stack,
+#screen-settings.vy675-settings-ready > #fs607Settings {
+  display: none !important;
+}
+
+#screen-settings .vy675-settings-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  color: var(--vy675-text);
+}
+
+#screen-settings .vy675-settings-home,
+#screen-settings .vy675-settings-page {
+  width: 100%;
+}
+
+#screen-settings .vy675-settings-home[hidden],
+#screen-settings .vy675-settings-page[hidden],
+#screen-settings .vy675-settings-row[hidden],
+#screen-settings .vy675-settings-group[hidden],
+#screen-settings .vy675-search-empty[hidden] {
+  display: none !important;
+}
+
+#screen-settings .vy675-settings-intro {
+  padding: 5px 2px 18px;
+}
+
+#screen-settings .vy675-settings-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--vy675-blue);
+  font-size: 10.5px;
+  font-weight: 850;
+  letter-spacing: .11em;
+}
+
+#screen-settings .vy675-settings-intro h2 {
+  margin: 0;
+  color: var(--vy675-text);
+  font-size: clamp(25px, 4.5vw, 32px) !important;
+  font-weight: 820;
+  letter-spacing: -.035em;
+  line-height: 1.15;
+}
+
+#screen-settings .vy675-settings-intro p {
+  margin: 7px 0 0;
+  color: var(--vy675-muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+#screen-settings .vy675-settings-search {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 34px;
+  align-items: center;
+  min-height: 50px;
+  margin-bottom: 20px;
+  padding: 0 8px 0 15px;
+  overflow: hidden;
+  border: 1px solid var(--vy675-border);
+  border-radius: 15px;
+  background: var(--vy675-surface-soft);
+  box-shadow: none;
+}
+
+#screen-settings .vy675-settings-search > span {
+  display: grid;
+  place-items: center;
+  color: var(--vy675-muted);
+}
+
+#screen-settings .vy675-settings-search svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#screen-settings .vy675-settings-search input {
+  width: 100% !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+#screen-settings .vy675-settings-search input::placeholder {
+  color: var(--vy675-muted) !important;
+  opacity: .9;
+}
+
+#screen-settings .vy675-settings-search button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(145, 164, 186, .14) !important;
+  color: var(--vy675-muted) !important;
+  box-shadow: none !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+#screen-settings .vy675-settings-groups {
+  display: grid;
+  gap: 22px;
+}
+
+#screen-settings .vy675-settings-group {
+  min-width: 0;
+}
+
+#screen-settings .vy675-settings-group > h3 {
+  margin: 0 0 8px;
+  padding: 0 4px;
+  color: var(--vy675-muted);
+  font-size: 11px !important;
+  font-weight: 820;
+  letter-spacing: .045em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+#screen-settings .vy675-settings-list {
+  overflow: hidden;
+  border: 1px solid var(--vy675-border);
+  border-radius: 18px;
+  background: var(--vy675-surface);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .08);
+}
+
+#screen-settings .vy675-settings-row {
+  appearance: none;
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 11px;
+  width: 100% !important;
+  min-height: 66px !important;
+  margin: 0 !important;
+  padding: 10px 13px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--vy675-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#screen-settings .vy675-settings-row:first-child {
+  border-top: 0 !important;
+}
+
+#screen-settings .vy675-settings-row:active,
+#screen-settings .vy675-settings-row:focus-visible {
+  background: var(--vy675-blue-soft) !important;
+  outline: 0;
+}
+
+#screen-settings .vy675-row-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(79, 143, 247, .17);
+  border-radius: 12px;
+  background: var(--vy675-blue-soft);
+  color: var(--vy675-blue);
+}
+
+#screen-settings .vy675-row-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#screen-settings .vy675-row-copy {
+  min-width: 0;
+}
+
+#screen-settings .vy675-row-copy b {
+  display: block;
+  margin: 0 0 3px;
+  color: var(--vy675-text);
+  font-size: 13.5px;
+  font-weight: 760;
+  line-height: 1.3;
+}
+
+#screen-settings .vy675-row-copy small {
+  display: block;
+  color: var(--vy675-muted);
+  font-size: 10.8px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+#screen-settings .vy675-row-meta {
+  max-width: 92px;
+  overflow: hidden;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--vy675-surface-soft);
+  color: var(--vy675-muted);
+  font-size: 9.5px;
+  font-weight: 760;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#screen-settings .vy675-row-meta[hidden] {
+  display: none !important;
+}
+
+#screen-settings .vy675-row-chevron {
+  color: var(--vy675-muted);
+  font-size: 24px;
+  font-weight: 350;
+  line-height: 1;
+  text-align: right;
+}
+
+#screen-settings .vy675-search-empty {
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  color: var(--vy675-muted);
+  text-align: center;
+}
+
+#screen-settings .vy675-search-empty span {
+  margin-bottom: 7px;
+  opacity: .65;
+}
+
+#screen-settings .vy675-search-empty svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+#screen-settings .vy675-search-empty b {
+  color: var(--vy675-text);
+  font-size: 14px;
+}
+
+#screen-settings .vy675-search-empty small {
+  font-size: 11px;
+}
+
+#screen-settings .vy675-settings-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 24px 0 0;
+  padding: 26px 12px 8px;
+  border-top: 1px solid var(--vy675-border);
+  background: transparent;
+  color: var(--vy675-muted);
+  text-align: center;
+}
+
+#screen-settings .vy675-settings-footer img {
+  width: 54px;
+  height: 54px;
+  margin-bottom: 3px;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: .64;
+}
+
+#screen-settings .vy675-settings-footer span {
+  font-size: 10.8px;
+  line-height: 1.35;
+}
+
+#screen-settings .vy675-settings-footer small {
+  font-size: 9.8px;
+  line-height: 1.35;
+  opacity: .82;
+}
+
+#screen-settings .vy675-page-header {
+  position: sticky;
+  top: max(0px, env(safe-area-inset-top));
+  z-index: 90;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  margin: 0 0 14px;
+  padding: 5px 0 9px;
+  background: var(--vy675-bg);
+}
+
+#screen-settings .vy675-page-back {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 13px !important;
+  background: var(--vy675-surface-soft) !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+}
+
+#screen-settings .vy675-page-back:active {
+  background: var(--vy675-blue-soft) !important;
+  color: var(--vy675-blue) !important;
+}
+
+#screen-settings .vy675-page-back svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#screen-settings .vy675-page-header h2 {
+  margin: 0;
+  color: var(--vy675-text);
+  font-size: 19px !important;
+  font-weight: 790;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+
+#screen-settings .vy675-page-header p {
+  margin: 3px 0 0;
+  color: var(--vy675-muted);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+#screen-settings .vy675-page-body {
+  display: grid;
+  gap: 13px;
+  width: 100%;
+}
+
+#screen-settings .vy675-page-body > .card,
+#screen-settings .vy675-page-body > .settings-section,
+#screen-settings .vy675-page-body > #fs607Settings {
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 15px !important;
+  overflow: hidden;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 18px !important;
+  background: var(--vy675-surface) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading {
+  align-items: center !important;
+  gap: 11px !important;
+  margin: 0 0 13px !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading .settings-kicker,
+#screen-settings .vy675-page-body .settings-section-icon {
+  display: none !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading h2,
+#screen-settings .vy675-page-body #fs607Settings h2 {
+  margin: 0 0 4px !important;
+  color: var(--vy675-text) !important;
+  font-size: 15px !important;
+  font-weight: 770 !important;
+  line-height: 1.3 !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading p,
+#screen-settings .vy675-page-body #fs607Settings p {
+  margin: 0 !important;
+  color: var(--vy675-muted) !important;
+  font-size: 10.8px !important;
+  line-height: 1.45 !important;
+}
+
+/* A page title replaces repeated card titles where there is only one purpose. */
+#screen-settings[data-vy675-page="account"] .settings-account-section > .settings-section-heading,
+#screen-settings[data-vy675-page="profile"] .vy675-page-body > .settings-section > .settings-section-heading,
+#screen-settings[data-vy675-page="business"] #vx622AdminSettings > .settings-section-heading,
+#screen-settings[data-vy675-page="data"] .data-safety-section > .settings-section-heading,
+#screen-settings[data-vy675-page="legal"] .vy675-page-body > .settings-section > .settings-section-heading,
+#screen-settings[data-vy675-page="update"] #fs607Settings > h2,
+#screen-settings[data-vy675-page="update"] #fs607Settings > p {
+  display: none !important;
+}
+
+#screen-settings[data-vy675-page="account"] .settings-account-section {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+#screen-settings[data-vy675-page="account"] #productionAccountCardHost,
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  margin: 0 !important;
+}
+
+#screen-settings .vy675-page-body label:not(.vx622-switch):not(.vy675-switch) {
+  display: block;
+  margin: 0 0 6px !important;
+  color: var(--vy675-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 720 !important;
+}
+
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  min-height: 46px !important;
+  margin: 0 !important;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 13px !important;
+  background: var(--vy675-surface-soft) !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+}
+
+#screen-settings .vy675-page-body .settings-form-grid {
+  gap: 13px !important;
+}
+
+#screen-settings .vy675-page-body .settings-field-note {
+  display: block;
+  margin-top: 6px;
+  font-size: 9.8px !important;
+  line-height: 1.4 !important;
+}
+
+#screen-settings .vy675-page-body .btn,
+#screen-settings .vy675-page-body button:not(.vx622-switch):not(.vy675-switch) {
+  min-height: 43px !important;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 12px !important;
+  background: var(--vy675-surface-soft) !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  font-size: 11.5px !important;
+  font-weight: 730 !important;
+}
+
+#screen-settings .vy675-page-body .btn.primary,
+#screen-settings .vy675-page-body button.primary {
+  border-color: var(--vy675-blue) !important;
+  background: var(--vy675-blue) !important;
+  color: #fff !important;
+}
+
+#screen-settings .vy675-page-body .danger,
+#screen-settings .vy675-page-body button.danger {
+  border-color: #d92d20 !important;
+  background: #d92d20 !important;
+  color: #fff !important;
+}
+
+#screen-settings .vy675-page-body .segmented-settings .btn:not(.primary),
+#screen-settings .vy675-page-body .grid3 .btn:not(.primary) {
+  color: var(--vy675-muted) !important;
+}
+
+#screen-settings .vy675-page-body .settings-link-grid {
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+#screen-settings .vy675-page-body .settings-link-grid .btn {
+  justify-content: flex-start !important;
+  padding: 0 13px !important;
+  text-align: left !important;
+}
+
+#screen-settings .vy675-page-body .settings-actions {
+  gap: 8px !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-list {
+  display: grid;
+  gap: 0 !important;
+  overflow: hidden;
+  border: 1px solid var(--vy675-border);
+  border-radius: 14px;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row {
+  min-height: 58px !important;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--vy675-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row:first-child {
+  border-top: 0 !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row b {
+  font-size: 12px !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row small {
+  font-size: 10px !important;
+  line-height: 1.4 !important;
+}
+
+#screen-settings .vy675-navigation-card {
+  padding: 0 !important;
+}
+
+#screen-settings .vy675-option-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 68px;
+  padding: 13px 14px;
+}
+
+#screen-settings .vy675-option-copy b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--vy675-text);
+  font-size: 13px;
+  font-weight: 760;
+}
+
+#screen-settings .vy675-option-copy small {
+  display: block;
+  color: var(--vy675-muted);
+  font-size: 10.5px;
+  line-height: 1.42;
+}
+
+#screen-settings .vy675-switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex: none;
+  margin: 0 !important;
+}
+
+#screen-settings .vy675-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+#screen-settings .vy675-switch span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--vy675-border);
+  border-radius: 999px;
+  background: rgba(145, 164, 186, .22);
+  transition: background .18s ease, border-color .18s ease;
+}
+
+#screen-settings .vy675-switch span::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .22);
+  transition: transform .18s ease;
+}
+
+#screen-settings .vy675-switch input:checked + span {
+  border-color: var(--vy675-blue);
+  background: var(--vy675-blue);
+}
+
+#screen-settings .vy675-switch input:checked + span::after {
+  transform: translateX(20px);
+}
+
+#screen-settings .vy675-page-empty {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  color: var(--vy675-muted);
+  text-align: center;
+}
+
+#screen-settings .vy675-page-empty b {
+  color: var(--vy675-text);
+  font-size: 13px;
+}
+
+#screen-settings .vy675-page-empty small {
+  font-size: 10.5px;
+}
+
+/* Older footer managers may keep their source footer in the hidden repository. */
+#screen-settings .settings-stack #appLegalFooter,
+#screen-settings .vy675-page-body #appLegalFooter {
+  display: none !important;
+}
+
+html.theme-light #screen-settings.vy675-settings-ready {
+  --vy675-bg: var(--cu-bg, #f5f7fa);
+  --vy675-surface: #fff;
+  --vy675-surface-soft: #f1f4f8;
+  --vy675-border: rgba(44, 66, 90, .13);
+  --vy675-text: #172231;
+  --vy675-muted: #68788a;
+  --vy675-blue: #2864dc;
+  --vy675-blue-soft: #edf3ff;
+}
+
+html.theme-light #screen-settings .vy675-settings-list {
+  box-shadow: 0 8px 22px rgba(32, 55, 82, .055);
+}
+
+html.theme-light #screen-settings .vy675-settings-search input,
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  color-scheme: light;
+}
+
+@media (max-width: 520px) {
+  #screen-settings .vy675-settings-intro {
+    padding-top: 2px;
+  }
+
+  #screen-settings .vy675-settings-row {
+    grid-template-columns: 40px minmax(0, 1fr) auto 16px;
+    gap: 9px;
+    min-height: 64px !important;
+    padding: 9px 11px !important;
+  }
+
+  #screen-settings .vy675-row-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+
+  #screen-settings .vy675-row-copy b {
+    font-size: 13px;
+  }
+
+  #screen-settings .vy675-row-copy small {
+    font-size: 10.2px;
+  }
+
+  #screen-settings .vy675-row-meta {
+    max-width: 67px;
+    padding: 4px 6px;
+    font-size: 8.8px;
+  }
+
+  #screen-settings .vy675-page-header p {
+    max-width: 250px;
+  }
+
+  #screen-settings .vy675-page-body > .card,
+  #screen-settings .vy675-page-body > .settings-section,
+  #screen-settings .vy675-page-body > #fs607Settings {
+    padding: 13px !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #screen-settings .vy675-settings-row {
+    grid-template-columns: 38px minmax(0, 1fr) 15px;
+  }
+
+  #screen-settings .vy675-row-meta {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #screen-settings .vy675-switch span,
+  #screen-settings .vy675-switch span::after {
+    transition: none;
+  }
+}

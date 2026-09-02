@@ -1,0 +1,41 @@
+/* Vyapar AI 6.5.9 — settings-only footer + unified profit polish */
+#appLegalFooter{display:none!important;}
+#screen-settings #appLegalFooter.vy659-settings-footer{display:flex!important;}
+.auth-help .gupta-legacy-signature{display:none!important;}
+#appLegalFooter.vy659-settings-footer{
+  position:static!important;
+  width:100%;
+  margin:18px 0 4px!important;
+  padding:22px 14px 12px!important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  text-align:center;
+  border-top:1px solid rgba(148,163,184,.16)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  order:9999;
+}
+.vy659-settings-footer .vy659-footer-logo{width:72px;height:72px;object-fit:contain;opacity:.72;display:block;margin:0 auto 2px;}
+.vy659-settings-footer .app-legal-links{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 20px;}
+.vy659-settings-footer .app-legal-links a{font-weight:750;text-decoration:none;min-height:36px;display:inline-flex;align-items:center;}
+.vy659-settings-footer .gupta-legacy-signature{display:block;margin-top:4px;font-style:italic;font-weight:850;letter-spacing:.025em;}
+.android-sheet-legal{display:none!important;}
+.vy659-combined-profit-card{margin:0 0 14px;overflow:hidden;}
+.vy659-profit-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
+.vy659-profit-title h2{margin:.18rem 0 0;}
+.vy659-profit-title>strong{font-size:clamp(24px,6vw,34px);line-height:1;white-space:nowrap;}
+.vy659-profit-breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:15px;}
+.vy659-profit-breakdown span{padding:12px;border:1px solid rgba(148,163,184,.14);border-radius:14px;background:rgba(148,163,184,.055);min-width:0;}
+.vy659-profit-breakdown b,.vy659-profit-breakdown small{display:block;}
+.vy659-profit-breakdown b{font-size:15px;overflow-wrap:anywhere;}
+.vy659-profit-breakdown small{margin-top:4px;opacity:.72;line-height:1.3;}
+.vy659-profit-note{margin:12px 0 0;}
+.vy659-included-note{display:block;margin-top:10px;}
+@media(max-width:560px){
+  .vy659-profit-title{align-items:flex-start;flex-direction:column;gap:8px;}
+  .vy659-profit-breakdown{grid-template-columns:1fr;}
+  .vy659-settings-footer .vy659-footer-logo{width:64px;height:64px;}
+}

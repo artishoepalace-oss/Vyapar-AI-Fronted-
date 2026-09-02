@@ -1,0 +1,1305 @@
+/* Vyapar AI 6.8.0 — final authoritative colorful, English-first, responsive UI layer.
+   This file intentionally loads last so legacy hotfixes cannot reintroduce visual conflicts. */
+
+:root {
+  --vy-bg-0: #07111f;
+  --vy-bg-1: #0a1b30;
+  --vy-surface: rgba(15, 32, 53, .86);
+  --vy-surface-strong: rgba(19, 40, 65, .95);
+  --vy-surface-soft: rgba(25, 48, 76, .72);
+  --vy-text: #f4f8ff;
+  --vy-muted: #a8b8ca;
+  --vy-line: rgba(183, 208, 236, .16);
+  --vy-blue: #4d9cff;
+  --vy-cyan: #35d2ea;
+  --vy-green: #42d69b;
+  --vy-yellow: #f6c95c;
+  --vy-orange: #ff9b54;
+  --vy-pink: #f777b9;
+  --vy-purple: #a783ff;
+  --vy-red: #ff6478;
+  --vy-radius: 18px;
+  --vy-radius-sm: 13px;
+  --vy-shadow: 0 16px 38px rgba(0, 0, 0, .22);
+  --vy-nav-safe: calc(92px + env(safe-area-inset-bottom));
+}
+
+html.theme-light {
+  --vy-bg-0: #eef6ff;
+  --vy-bg-1: #f9fbff;
+  --vy-surface: rgba(255, 255, 255, .94);
+  --vy-surface-strong: #ffffff;
+  --vy-surface-soft: rgba(245, 249, 255, .96);
+  --vy-text: #13243a;
+  --vy-muted: #61748a;
+  --vy-line: rgba(75, 103, 136, .15);
+  --vy-shadow: 0 12px 30px rgba(47, 78, 111, .10);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden !important;
+  background: var(--vy-bg-0) !important;
+}
+
+html { color-scheme: dark; }
+html.theme-light { color-scheme: light; }
+
+body {
+  color: var(--vy-text) !important;
+  background:
+    radial-gradient(circle at 7% 2%, rgba(77, 156, 255, .22), transparent 27%),
+    radial-gradient(circle at 92% 11%, rgba(167, 131, 255, .16), transparent 24%),
+    radial-gradient(circle at 55% 78%, rgba(53, 210, 234, .11), transparent 29%),
+    linear-gradient(180deg, var(--vy-bg-0), var(--vy-bg-1)) !important;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(circle at 4% 0%, rgba(77, 156, 255, .16), transparent 27%),
+    radial-gradient(circle at 98% 9%, rgba(247, 119, 185, .10), transparent 22%),
+    radial-gradient(circle at 50% 82%, rgba(53, 210, 234, .09), transparent 27%),
+    linear-gradient(180deg, #f7fbff, #eef5fc 52%, #f8fbff) !important;
+}
+
+body::before,
+body::after { opacity: .38 !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+img, svg, canvas, video { max-width: 100%; }
+button, input, select, textarea { max-width: 100%; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button, .btn, a.btn { touch-action: manipulation; }
+
+.app {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  padding: 12px 14px calc(var(--vy-nav-safe) + 24px) !important;
+}
+
+main,
+.screen,
+.screen > *,
+.card,
+.stat,
+.notice,
+.actions,
+.settings-stack,
+.settings-section,
+.vy675-page-body,
+.p611-form,
+.p611-grid,
+.p620-settings,
+.adv-form-grid,
+.adv-module-grid,
+.business-calc-grid,
+.vx621-feature-grid,
+.vx621-kpis,
+.android-sheet,
+.android-sheet-item,
+.subscription-dialog,
+.modal-card,
+.glass-dialog {
+  min-width: 0 !important;
+}
+
+.screen:not(.hide) {
+  width: 100% !important;
+  animation: vyScreenIn .18s ease-out both;
+}
+
+@keyframes vyScreenIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Header */
+.top {
+  position: relative !important;
+  z-index: 20 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 70px !important;
+  margin: 0 0 12px !important;
+  padding: 9px 4px 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.brand { min-width: 0 !important; flex: 1 1 auto !important; }
+.logo {
+  width: 48px !important;
+  height: 48px !important;
+  flex: 0 0 48px !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18) !important;
+}
+
+.brand h1 {
+  color: var(--vy-text) !important;
+  font-size: clamp(21px, 4.8vw, 27px) !important;
+  line-height: 1.08 !important;
+  white-space: nowrap !important;
+}
+
+.tag {
+  color: var(--vy-muted) !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.top-actions { flex: 0 0 auto !important; gap: 7px !important; }
+.badge,
+.theme-toggle {
+  min-height: 38px !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .12) !important;
+  backdrop-filter: blur(18px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(130%) !important;
+}
+.badge { color: var(--vy-blue) !important; font-weight: 800 !important; }
+.theme-toggle { padding: 8px 12px !important; }
+
+/* Cards and content surfaces */
+.card,
+.stat,
+.settings-section,
+.vx621-feature-card,
+.business-module-card,
+.p620-report-card,
+.subscription-plan-card,
+.production-account-card,
+.shop-growth-card {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface) !important;
+  color: var(--vy-text) !important;
+  box-shadow: var(--vy-shadow) !important;
+  backdrop-filter: blur(16px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(125%) !important;
+}
+
+.card,
+.settings-section,
+.business-module-card,
+.subscription-plan-card,
+.production-account-card {
+  border-radius: var(--vy-radius) !important;
+  overflow: hidden !important;
+}
+
+.card::before,
+.card::after,
+.settings-section::before,
+.settings-section::after {
+  pointer-events: none !important;
+}
+
+/* Subtle colorful identity without turning every container into a box of gradients. */
+.screen > .card:nth-of-type(6n + 1),
+.settings-section:nth-of-type(6n + 1) { border-top: 2px solid rgba(77, 156, 255, .72) !important; }
+.screen > .card:nth-of-type(6n + 2),
+.settings-section:nth-of-type(6n + 2) { border-top: 2px solid rgba(53, 210, 234, .72) !important; }
+.screen > .card:nth-of-type(6n + 3),
+.settings-section:nth-of-type(6n + 3) { border-top: 2px solid rgba(66, 214, 155, .72) !important; }
+.screen > .card:nth-of-type(6n + 4),
+.settings-section:nth-of-type(6n + 4) { border-top: 2px solid rgba(246, 201, 92, .72) !important; }
+.screen > .card:nth-of-type(6n + 5),
+.settings-section:nth-of-type(6n + 5) { border-top: 2px solid rgba(167, 131, 255, .72) !important; }
+.screen > .card:nth-of-type(6n),
+.settings-section:nth-of-type(6n) { border-top: 2px solid rgba(247, 119, 185, .72) !important; }
+
+.card .card,
+.settings-section .card,
+.vx621-group .card,
+.shop-growth-card .card {
+  background: var(--vy-surface-soft) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--vy-line) !important;
+}
+
+h1, h2, h3, h4, h5, h6, strong, b { color: var(--vy-text); }
+.muted, small, .small, .settings-field-note, .android-sheet-item-copy small { color: var(--vy-muted) !important; }
+
+h2 { font-size: clamp(19px, 4.8vw, 24px) !important; line-height: 1.18 !important; }
+h3 { font-size: clamp(16px, 4vw, 19px) !important; line-height: 1.25 !important; }
+p { line-height: 1.5; }
+
+h1, h2, h3, h4, p, span, label, a, button, th, td, .muted, .notice {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Buttons: colorful hierarchy, neutral by default. */
+.btn,
+.nav button,
+.android-sheet-close,
+.p620-report-card {
+  min-height: 42px !important;
+  border-radius: var(--vy-radius-sm) !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.nav button:focus-visible,
+.android-sheet-item:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(77, 156, 255, .24) !important;
+  outline-offset: 2px !important;
+}
+
+.btn.primary,
+.nav button.active,
+.nav .nav-item.active,
+.nav [aria-current="page"] {
+  color: #fff !important;
+  border-color: rgba(130, 187, 255, .46) !important;
+  background: linear-gradient(135deg, #347fe5, #4d9cff 56%, #45b8f4) !important;
+  box-shadow: 0 9px 22px rgba(52, 127, 229, .23) !important;
+}
+
+.btn.gold {
+  color: #251806 !important;
+  border-color: rgba(255, 222, 129, .55) !important;
+  background: linear-gradient(135deg, #ffd96a, #f6b944) !important;
+}
+
+.btn.danger,
+.danger.btn,
+button.danger {
+  color: #fff !important;
+  border-color: rgba(255, 126, 145, .4) !important;
+  background: linear-gradient(135deg, #dc4057, #ff6478) !important;
+}
+
+.btn.mini {
+  min-height: 34px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 10px !important;
+}
+
+.actions,
+.settings-actions,
+.segmented-settings {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.actions > *,
+.settings-actions > * { min-width: 0 !important; }
+
+/* Forms */
+input,
+select,
+textarea {
+  min-height: 44px !important;
+  margin: 6px 0 10px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 12px !important;
+  background: rgba(6, 18, 32, .68) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+html.theme-light input,
+html.theme-light select,
+html.theme-light textarea {
+  background: #f8fbff !important;
+  color: #14263b !important;
+}
+
+input::placeholder,
+textarea::placeholder { color: var(--vy-muted) !important; opacity: .82 !important; }
+select option { color: #13243a; background: #fff; }
+
+label {
+  color: var(--vy-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .04em !important;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 19px !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  margin: 0 8px 0 0 !important;
+  accent-color: var(--vy-blue) !important;
+}
+
+/* Status components */
+.notice {
+  border: 1px solid rgba(246, 201, 92, .18) !important;
+  border-left: 4px solid var(--vy-yellow) !important;
+  border-radius: 13px !important;
+  background: rgba(246, 201, 92, .09) !important;
+}
+.notice.success, .success.notice {
+  border-left-color: var(--vy-green) !important;
+  background: rgba(66, 214, 155, .09) !important;
+}
+.notice.bad, .notice.danger {
+  border-left-color: var(--vy-red) !important;
+  background: rgba(255, 100, 120, .09) !important;
+}
+
+.pill,
+.glass-chip {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+}
+
+.progress { border: 1px solid var(--vy-line) !important; background: rgba(255,255,255,.07) !important; }
+.bar { background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-green)) !important; }
+
+/* Metrics get visual distinction while remaining readable. */
+.stats,
+.p611-grid,
+.vx621-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.stat,
+.vx621-kpi {
+  min-height: 82px !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  overflow: hidden !important;
+}
+.stat b, .vx621-kpi b { font-size: clamp(18px, 5vw, 23px) !important; }
+.stats > :nth-child(4n + 1), .p611-grid > :nth-child(4n + 1) { border-left: 3px solid var(--vy-blue) !important; }
+.stats > :nth-child(4n + 2), .p611-grid > :nth-child(4n + 2) { border-left: 3px solid var(--vy-green) !important; }
+.stats > :nth-child(4n + 3), .p611-grid > :nth-child(4n + 3) { border-left: 3px solid var(--vy-yellow) !important; }
+.stats > :nth-child(4n), .p611-grid > :nth-child(4n) { border-left: 3px solid var(--vy-purple) !important; }
+
+/* Tables never push the full app sideways. */
+.scroll,
+.p611-table,
+.adv-table,
+.business-table,
+.vx621-table-wrap,
+[class*="table-wrap"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 12px !important;
+}
+
+.table,
+table {
+  max-width: none;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.table th,
+.table td,
+table th,
+table td {
+  border-color: var(--vy-line) !important;
+  vertical-align: middle !important;
+}
+.table th,
+table th {
+  color: var(--vy-muted) !important;
+  background: rgba(77, 156, 255, .07) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+
+/* Settings: one clean content surface per page, no huge nested box feeling. */
+#screen-settings .settings-stack:not(.vy675-settings-repository),
+#screen-settings .vy675-page-body {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+#screen-settings .settings-section {
+  padding: 15px !important;
+  margin: 0 !important;
+}
+
+#screen-settings .settings-section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+#screen-settings .settings-section-heading h2,
+#screen-settings .settings-section-heading h3 {
+  margin: 2px 0 4px !important;
+}
+
+#screen-settings .settings-section-icon {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 12px !important;
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+  border: 1px solid rgba(77, 156, 255, .18) !important;
+}
+
+#screen-settings .settings-kicker {
+  color: var(--vy-blue) !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+  letter-spacing: .08em !important;
+}
+
+#screen-settings .settings-form-grid,
+.p611-form,
+.adv-form-grid,
+.business-calc-grid,
+.p620-settings {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+#screen-settings .settings-field-wide { grid-column: 1 / -1 !important; }
+#screen-settings .settings-link-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+/* More sheet, dialogs and popups: centered, readable, never clipped. */
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay,
+.subscription-dialog-backdrop,
+[class*="overlay"] {
+  max-width: 100vw !important;
+}
+
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay {
+  z-index: 10000 !important;
+}
+
+.android-sheet,
+.modal-card,
+.glass-dialog,
+.subscription-dialog {
+  width: min(94vw, 620px) !important;
+  max-width: min(94vw, 620px) !important;
+  max-height: min(88vh, 760px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 20px !important;
+  background: var(--vy-surface-strong) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .34) !important;
+}
+
+.android-sheet-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.android-sheet-item {
+  min-width: 0 !important;
+  min-height: 64px !important;
+  padding: 10px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 14px !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+}
+.android-sheet-item-copy { min-width: 0 !important; overflow: visible !important; white-space: normal !important; }
+.android-sheet-item-copy small { display: block !important; white-space: normal !important; }
+.android-sheet-item-icon {
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+}
+
+/* Subscription cards stay distinctive and premium. */
+.subscription-plan-card { position: relative !important; }
+.subscription-plan-card.pro,
+.subscription-plan-card[data-plan="pro"] { border-top: 3px solid #b9c7da !important; }
+.subscription-plan-card.business,
+.subscription-plan-card[data-plan="business"] { border-top: 3px solid var(--vy-yellow) !important; }
+.subscription-cta { min-height: 44px !important; }
+
+/* Calculator: avoid clipped keys/display on shorter Android screens. */
+#screen-calculator .calculator-head,
+#screen-calculator .calc-display-wrap,
+#screen-calculator .calc-keypad,
+#screen-calculator .calc-memory-row { max-width: 100% !important; }
+#screen-calculator .calc-key { min-width: 0 !important; }
+
+/* Bottom navigation owns the bottom safe area and never slides horizontally. */
+.nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100% - 16px), 760px) !important;
+  max-width: 760px !important;
+  min-height: 66px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  z-index: 9000 !important;
+  overflow: visible !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 21px !important;
+  background: rgba(8, 20, 35, .92) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .30) !important;
+  backdrop-filter: blur(22px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
+  touch-action: manipulation !important;
+}
+html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
+
+.nav button,
+.nav .nav-item {
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 6px 4px !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+}
+.nav .android-nav-label,
+.nav .nav-label {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.nav .android-nav-icon { flex: 0 0 auto !important; }
+
+/* Loading: one coherent colorful style for both loader phases. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(77, 156, 255, .25), transparent 24%),
+    radial-gradient(circle at 76% 72%, rgba(167, 131, 255, .19), transparent 26%),
+    linear-gradient(145deg, #071323, #0b2d5a 56%, #08182d) !important;
+  color: #f4f8ff !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  border-radius: 24px !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .30) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-purple)) !important;
+}
+
+/* Legacy duplicate footer is always suppressed; Settings Center owns the final footer. */
+#screen-settings #appLegalFooter { display: none !important; }
+
+/*
+ * Settings 6.8.1: the legacy cards are a private repository used by the
+ * Settings Center sub-pages.  It must never become visible on the directory
+ * screen, even though older presentation layers assign display:grid to every
+ * .settings-stack.
+ */
+#screen-settings.vy675-settings-ready > .settings-stack.vy675-settings-repository,
+#screen-settings.vy675-settings-ready > .settings-stack.vy675-settings-repository[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Color-coded Settings destinations: lively, readable and consistent. */
+#screen-settings .vy675-settings-row {
+  --vy-row-accent: var(--vy-blue);
+  --vy-row-soft: rgba(77, 156, 255, .13);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="account"] {
+  --vy-row-accent: #a783ff;
+  --vy-row-soft: rgba(167, 131, 255, .15);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="profile"] {
+  --vy-row-accent: #35d2ea;
+  --vy-row-soft: rgba(53, 210, 234, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="business"] {
+  --vy-row-accent: #42d69b;
+  --vy-row-soft: rgba(66, 214, 155, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="security"] {
+  --vy-row-accent: #ff9b54;
+  --vy-row-soft: rgba(255, 155, 84, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="appearance"] {
+  --vy-row-accent: #f777b9;
+  --vy-row-soft: rgba(247, 119, 185, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="navigation"] {
+  --vy-row-accent: #4d9cff;
+  --vy-row-soft: rgba(77, 156, 255, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="data"] {
+  --vy-row-accent: #35d2ea;
+  --vy-row-soft: rgba(53, 210, 234, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="update"] {
+  --vy-row-accent: #f6c95c;
+  --vy-row-soft: rgba(246, 201, 92, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="legal"] {
+  --vy-row-accent: #ff6478;
+  --vy-row-soft: rgba(255, 100, 120, .14);
+}
+#screen-settings .vy675-settings-row .vy675-row-icon {
+  color: var(--vy-row-accent) !important;
+  border-color: var(--vy-row-soft) !important;
+  background: var(--vy-row-soft) !important;
+}
+#screen-settings .vy675-settings-row:active,
+#screen-settings .vy675-settings-row:focus-visible {
+  background: linear-gradient(90deg, var(--vy-row-soft), transparent 78%) !important;
+}
+#screen-settings .vy675-settings-search {
+  border-color: rgba(77, 156, 255, .26) !important;
+  background:
+    linear-gradient(var(--vy-surface-soft), var(--vy-surface-soft)) padding-box,
+    linear-gradient(105deg, rgba(77,156,255,.50), rgba(53,210,234,.32), rgba(167,131,255,.42)) border-box !important;
+}
+
+/* Android launch image and WebView loader now use the same exact logo scale. */
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  width: 108px !important;
+  min-width: 108px !important;
+  max-width: 108px !important;
+  height: 108px !important;
+  min-height: 108px !important;
+  max-height: 108px !important;
+  flex: 0 0 108px !important;
+  margin: 0 auto 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  object-fit: contain !important;
+  box-shadow: 0 18px 44px rgba(0, 17, 48, .34) !important;
+}
+#appLoader .android-loader-logo > img {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+  box-shadow: none !important;
+}
+#appLoader .android-loader-shine,
+#appLoader .android-loader-spark {
+  display: none !important;
+}
+#vy647StartupSplash .vy647-splash-core {
+  width: min(100%, 280px) !important;
+  padding: 24px !important;
+}
+
+/* Accessibility and performance modes. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+html[data-performance="lite"] *,
+html.performance-lite * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 760px) {
+  :root { --vy-radius: 16px; --vy-nav-safe: calc(84px + env(safe-area-inset-bottom)); }
+  .app { padding: 9px 10px calc(var(--vy-nav-safe) + 18px) !important; }
+  .top { min-height: 64px !important; padding: 7px 2px 10px !important; }
+  .logo { width: 44px !important; height: 44px !important; flex-basis: 44px !important; border-radius: 14px !important; }
+  .badge { display: none !important; }
+  .theme-toggle { min-height: 36px !important; padding: 7px 9px !important; font-size: 11px !important; }
+  .card, .settings-section { padding: 13px !important; }
+  .grid, .grid3, .row, .hero, .code-layout { grid-template-columns: 1fr !important; }
+  .stats, .p611-grid, .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .android-sheet-grid { grid-template-columns: 1fr !important; }
+  #screen-settings .settings-form-grid,
+  .p611-form,
+  .adv-form-grid,
+  .business-calc-grid,
+  .p620-settings { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 390px) {
+  .brand h1 { font-size: 20px !important; }
+  .tag { font-size: 10.5px !important; }
+  .stats, .p611-grid, .vx621-kpis { gap: 7px !important; }
+  .stat, .vx621-kpi { min-height: 74px !important; padding: 10px !important; }
+  .nav { width: calc(100% - 10px) !important; gap: 3px !important; padding: 5px !important; border-radius: 18px !important; }
+  .nav button, .nav .nav-item { min-height: 50px !important; padding: 5px 2px !important; font-size: 9.5px !important; border-radius: 11px !important; }
+  .btn { padding-left: 10px !important; padding-right: 10px !important; }
+}
+
+@media (max-height: 650px) and (max-width: 760px) {
+  .top { min-height: 58px !important; margin-bottom: 6px !important; }
+  .nav { min-height: 60px !important; }
+  .nav button, .nav .nav-item { min-height: 46px !important; }
+  #screen-calculator .calc-key { min-height: 38px !important; height: 38px !important; }
+}
+
+/* ===== 6.8.2 — flatter Settings pages baseline ===== */
+:root {
+  --vy-blue: #3295ff;
+  --vy-cyan: #12d9ee;
+  --vy-green: #26db91;
+  --vy-yellow: #ffd047;
+  --vy-orange: #ff9142;
+  --vy-pink: #ff5fb2;
+  --vy-purple: #9b72ff;
+  --vy-red: #ff526d;
+}
+
+body {
+  background:
+    radial-gradient(circle at 4% 3%, rgba(37, 139, 255, .36), transparent 28%),
+    radial-gradient(circle at 96% 13%, rgba(155, 114, 255, .28), transparent 25%),
+    radial-gradient(circle at 52% 82%, rgba(18, 217, 238, .18), transparent 32%),
+    linear-gradient(180deg, #061426, #071a2c 52%, #061321) !important;
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(circle at 4% 0%, rgba(50, 149, 255, .24), transparent 28%),
+    radial-gradient(circle at 98% 10%, rgba(255, 95, 178, .17), transparent 24%),
+    radial-gradient(circle at 50% 84%, rgba(18, 217, 238, .15), transparent 29%),
+    linear-gradient(180deg, #f8fbff, #eaf4ff 54%, #f7fbff) !important;
+}
+
+/* Each primary screen gets a recognisable, saturated color family. */
+#screen-home { --vy-screen-rgb: 50, 149, 255; --vy-screen-accent: #3295ff; }
+#screen-business { --vy-screen-rgb: 155, 114, 255; --vy-screen-accent: #9b72ff; }
+#screen-sales { --vy-screen-rgb: 255, 95, 178; --vy-screen-accent: #ff5fb2; }
+#screen-stock { --vy-screen-rgb: 38, 219, 145; --vy-screen-accent: #26db91; }
+#screen-upload,
+#screen-analytics,
+#screen-calculator,
+#screen-subscription,
+#screen-settings { --vy-screen-rgb: 18, 217, 238; --vy-screen-accent: #12d9ee; }
+
+#screen-home .card,
+#screen-home .stat,
+#screen-business .card,
+#screen-business .vx621-feature-card,
+#screen-business .vx621-group,
+#screen-sales .card,
+#screen-sales .stat,
+#screen-stock .card,
+#screen-stock .stat {
+  border-color: rgba(var(--vy-screen-rgb), .30) !important;
+  background:
+    radial-gradient(24rem 13rem at 104% -8%, rgba(var(--vy-screen-rgb), .19), transparent 66%),
+    linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
+    var(--vy-surface) !important;
+}
+
+#screen-home .home-overview,
+#screen-business .vx621-hero,
+#screen-sales > .card:first-child,
+#screen-stock > .card:first-child {
+  border-color: rgba(var(--vy-screen-rgb), .48) !important;
+  box-shadow: 0 18px 44px rgba(var(--vy-screen-rgb), .13) !important;
+}
+
+#screen-home .home-eyebrow,
+#screen-home .home-section-kicker,
+#screen-business .settings-kicker,
+#screen-business .vx621-group-kicker,
+#screen-sales .settings-kicker,
+#screen-stock .settings-kicker,
+#screen-business a,
+#screen-sales a,
+#screen-stock a {
+  color: var(--vy-screen-accent) !important;
+}
+
+#screen-home .home-metrics .stat:nth-child(4n + 1) { border-top: 3px solid #3295ff !important; }
+#screen-home .home-metrics .stat:nth-child(4n + 2) { border-top: 3px solid #12d9ee !important; }
+#screen-home .home-metrics .stat:nth-child(4n + 3) { border-top: 3px solid #26db91 !important; }
+#screen-home .home-metrics .stat:nth-child(4n) { border-top: 3px solid #ff9142 !important; }
+#screen-home .android-quick-action:nth-child(1) { border-color: rgba(50,149,255,.48) !important; background: linear-gradient(145deg,rgba(50,149,255,.29),rgba(50,149,255,.09)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(2) { border-color: rgba(255,95,178,.42) !important; background: linear-gradient(145deg,rgba(255,95,178,.24),rgba(255,95,178,.07)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(3) { border-color: rgba(255,208,71,.42) !important; background: linear-gradient(145deg,rgba(255,208,71,.20),rgba(255,208,71,.06)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(4) { border-color: rgba(38,219,145,.44) !important; background: linear-gradient(145deg,rgba(38,219,145,.24),rgba(38,219,145,.07)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(1) .android-quick-action-icon { color: #52adff !important; }
+#screen-home .android-quick-action:nth-child(2) .android-quick-action-icon { color: #ff75bd !important; }
+#screen-home .android-quick-action:nth-child(3) .android-quick-action-icon { color: #ffd75d !important; }
+#screen-home .android-quick-action:nth-child(4) .android-quick-action-icon { color: #3ce5a1 !important; }
+
+/* Persistent nav: every destination is colorful; active state stays unmistakable. */
+.nav {
+  border-color: rgba(71, 173, 255, .34) !important;
+  background: rgba(5, 23, 40, .94) !important;
+  backdrop-filter: blur(22px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
+}
+.nav button[data-android-tab] { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+.nav button[data-android-tab="home"] .android-nav-icon { color: #52adff !important; }
+.nav button[data-android-tab="business"] .android-nav-icon { color: #af91ff !important; }
+.nav button[data-android-tab="sales"] .android-nav-icon { color: #ff75bd !important; }
+.nav button[data-android-tab="stock"] .android-nav-icon { color: #3ce5a1 !important; }
+.nav button[data-android-tab="more"] .android-nav-icon { color: #ffd75d !important; }
+.nav button[data-android-tab] .android-nav-label { color: #aebed0 !important; opacity: 1 !important; }
+.nav button.active[data-android-tab] .android-nav-icon,
+.nav button.active[data-android-tab] .android-nav-label { color: #fff !important; }
+.nav button.active[data-android-tab="home"] { background: linear-gradient(145deg,#247fea,#45b0ff) !important; box-shadow: 0 9px 24px rgba(36,127,234,.34) !important; }
+.nav button.active[data-android-tab="business"] { background: linear-gradient(145deg,#704be6,#a77cff) !important; box-shadow: 0 9px 24px rgba(112,75,230,.34) !important; }
+.nav button.active[data-android-tab="sales"] { background: linear-gradient(145deg,#e83e91,#ff73bb) !important; box-shadow: 0 9px 24px rgba(232,62,145,.34) !important; }
+.nav button.active[data-android-tab="stock"] { background: linear-gradient(145deg,#0faa6b,#38df98) !important; box-shadow: 0 9px 24px rgba(15,170,107,.32) !important; }
+.nav button.active[data-android-tab="more"] { background: linear-gradient(145deg,#e59a18,#ffd04a) !important; box-shadow: 0 9px 24px rgba(229,154,24,.34) !important; color: #211707 !important; }
+.nav button.active[data-android-tab="more"] .android-nav-icon,
+.nav button.active[data-android-tab="more"] .android-nav-label { color: #211707 !important; }
+
+/* More sheet follows the same destination colors. */
+.android-sheet { backdrop-filter: blur(24px) saturate(165%) !important; -webkit-backdrop-filter: blur(24px) saturate(165%) !important; }
+.android-sheet-item[data-tab="analytics"] { --vy-sheet-color: #12d9ee; --vy-sheet-soft: rgba(18,217,238,.15); }
+.android-sheet-item[data-tab="upload"] { --vy-sheet-color: #9b72ff; --vy-sheet-soft: rgba(155,114,255,.16); }
+.android-sheet-item[data-tab="calculator"] { --vy-sheet-color: #ff9142; --vy-sheet-soft: rgba(255,145,66,.16); }
+.android-sheet-item[data-tab="subscription"] { --vy-sheet-color: #ffd047; --vy-sheet-soft: rgba(255,208,71,.15); }
+.android-sheet-item[data-tab="settings"] { --vy-sheet-color: #ff5fb2; --vy-sheet-soft: rgba(255,95,178,.15); }
+.android-sheet-item[data-tab] { border-color: var(--vy-sheet-soft) !important; background: linear-gradient(145deg,var(--vy-sheet-soft),rgba(255,255,255,.025)) !important; }
+.android-sheet-item[data-tab] .android-sheet-item-icon { color: var(--vy-sheet-color) !important; background: var(--vy-sheet-soft) !important; }
+
+/* Settings sub-pages: one content plane, not a stack of nested compartments. */
+#screen-settings .vy675-page-header {
+  min-height: 62px !important;
+  margin-bottom: 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+#screen-settings .vy675-page-back {
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  border: 1px solid rgba(18,217,238,.36) !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg,rgba(18,217,238,.22),rgba(50,149,255,.13)) !important;
+  color: #7deeff !important;
+}
+#screen-settings .vy675-page-body { gap: 10px !important; }
+#screen-settings .vy675-page-body > .card,
+#screen-settings .vy675-page-body > .settings-section,
+#screen-settings .vy675-page-body > #fs607Settings {
+  padding: 2px 0 16px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  border-color: rgba(18,217,238,.28) !important;
+  background: linear-gradient(145deg,rgba(18,217,238,.09),rgba(50,149,255,.055)),rgba(12,28,45,.78) !important;
+}
+#screen-settings .vy675-page-body input:focus,
+#screen-settings .vy675-page-body select:focus,
+#screen-settings .vy675-page-body textarea:focus {
+  border-color: #12d9ee !important;
+  box-shadow: 0 0 0 3px rgba(18,217,238,.14) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-list {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row {
+  min-height: 62px !important;
+  margin: 0 !important;
+  padding: 10px 8px 10px 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(155,114,255,.20) !important;
+  border-radius: 0 !important;
+  background: linear-gradient(90deg,rgba(155,114,255,.10),transparent 70%) !important;
+  box-shadow: inset 3px 0 0 rgba(155,114,255,.72) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:nth-child(2n) {
+  background: linear-gradient(90deg,rgba(18,217,238,.085),transparent 70%) !important;
+  box-shadow: inset 3px 0 0 rgba(18,217,238,.70) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:last-child { border-bottom: 0 !important; }
+#screen-settings[data-vy675-page="update"] #fs607Settings > button,
+#screen-settings[data-vy675-page="update"] #fs607Settings .btn {
+  width: 100% !important;
+  min-height: 52px !important;
+  border: 0 !important;
+  background: linear-gradient(135deg,#247fea,#12cce2) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 28px rgba(36,127,234,.24) !important;
+}
+
+/* Account keeps one identity panel; inner stats become simple divided data. */
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  padding: 16px !important;
+  border: 1px solid rgba(255,208,71,.34) !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.15),transparent 62%),
+    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.16),transparent 66%),
+    rgba(12,35,55,.90) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.20) !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 0 !important;
+  margin: 14px 0 !important;
+  padding: 11px 0 !important;
+  border-top: 1px solid rgba(255,255,255,.13) !important;
+  border-bottom: 1px solid rgba(255,255,255,.13) !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid > div {
+  min-width: 0 !important;
+  padding: 3px 11px !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(255,255,255,.13) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid > div:first-child { border-left: 0 !important; }
+#screen-settings[data-vy675-page="account"] .production-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 8px !important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button {
+  min-height: 44px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: linear-gradient(135deg,rgba(50,149,255,.30),rgba(18,217,238,.18)) !important;
+  color: #eefdff !important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-child(3) { background: linear-gradient(135deg,rgba(255,145,66,.32),rgba(255,208,71,.18)) !important; }
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-last-child(2) { background: rgba(255,255,255,.09) !important; }
+#screen-settings[data-vy675-page="account"] .production-actions button.danger {
+  grid-column: 1 / -1 !important;
+  background: linear-gradient(135deg,#e83d59,#ff6077) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 24px rgba(232,61,89,.24) !important;
+}
+
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  background: linear-gradient(145deg,rgba(18,217,238,.10),rgba(50,149,255,.06)),#fff !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard {
+  background:
+    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.20),transparent 62%),
+    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.15),transparent 66%),
+    #fff !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid,
+html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid > div { border-color: rgba(44,66,90,.15) !important; }
+
+@media (max-width: 520px) {
+  #screen-settings .vy675-page-header { grid-template-columns: 44px minmax(0,1fr) !important; gap: 11px !important; }
+  #screen-settings[data-vy675-page="account"] .production-account-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  #screen-settings[data-vy675-page="account"] .production-account-grid > div:nth-child(3) {
+    grid-column: 1 / -1 !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid rgba(255,255,255,.13) !important;
+    border-left: 0 !important;
+  }
+}
+
+/* ===== 6.8.2 re-migration — dark blue and white major color system ===== */
+:root {
+  --vy-blue: #3187f5;
+  --vy-cyan: #5aa7ff;
+  --vy-green: #3187f5;
+  --vy-yellow: #7db7ff;
+  --vy-orange: #5b9cf2;
+  --vy-pink: #4f91ec;
+  --vy-purple: #397fe2;
+  --vy-red: #e14d61;
+}
+
+html:not(.theme-light) {
+  --vy-bg-0: #061326;
+  --vy-bg-1: #081b31;
+  --vy-surface: rgba(12, 31, 52, .92);
+  --vy-surface-strong: rgba(16, 39, 65, .98);
+  --vy-surface-soft: rgba(21, 46, 75, .88);
+  --vy-text: #f5f9ff;
+  --vy-muted: #aab9ca;
+  --vy-line: rgba(113, 166, 222, .20);
+  --vy-shadow: 0 16px 38px rgba(0, 5, 14, .28);
+}
+
+html:not(.theme-light) body {
+  background:
+    radial-gradient(36rem 25rem at 8% 0%, rgba(37, 112, 205, .22), transparent 68%),
+    linear-gradient(180deg, #061326 0%, #081b31 52%, #061426 100%) !important;
+}
+
+html.theme-light {
+  --vy-bg-0: #ffffff;
+  --vy-bg-1: #f7faff;
+  --vy-surface: #ffffff;
+  --vy-surface-strong: #ffffff;
+  --vy-surface-soft: #f7faff;
+  --vy-text: #14263d;
+  --vy-muted: #63758a;
+  --vy-line: rgba(51, 95, 143, .15);
+  --vy-shadow: 0 12px 28px rgba(39, 74, 113, .09);
+}
+
+html.theme-light body {
+  background: linear-gradient(180deg, #ffffff 0%, #f7faff 54%, #ffffff 100%) !important;
+}
+
+#screen-home,
+#screen-business,
+#screen-sales,
+#screen-stock,
+#screen-upload,
+#screen-analytics,
+#screen-calculator,
+#screen-subscription,
+#screen-settings {
+  --vy-screen-rgb: 49, 135, 245;
+  --vy-screen-accent: #3187f5;
+}
+
+#screen-home .card,
+#screen-home .stat,
+#screen-business .card,
+#screen-business .vx621-feature-card,
+#screen-business .vx621-group,
+#screen-sales .card,
+#screen-sales .stat,
+#screen-stock .card,
+#screen-stock .stat,
+.business-module-card,
+.adv-module,
+.p611-card,
+.p620-report-card {
+  border-color: rgba(74, 137, 202, .22) !important;
+  background:
+    linear-gradient(145deg, rgba(62,133,217,.075), rgba(255,255,255,.018)),
+    var(--vy-surface) !important;
+  box-shadow: var(--vy-shadow) !important;
+}
+
+html.theme-light #screen-home .card,
+html.theme-light #screen-home .stat,
+html.theme-light #screen-business .card,
+html.theme-light #screen-business .vx621-feature-card,
+html.theme-light #screen-business .vx621-group,
+html.theme-light #screen-sales .card,
+html.theme-light #screen-sales .stat,
+html.theme-light #screen-stock .card,
+html.theme-light #screen-stock .stat,
+html.theme-light .business-module-card,
+html.theme-light .adv-module,
+html.theme-light .p611-card,
+html.theme-light .p620-report-card {
+  color: #14263d !important;
+  border-color: rgba(51, 95, 143, .15) !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 28px rgba(39,74,113,.09) !important;
+}
+
+#screen-home .home-metrics .stat:nth-child(n),
+.vx621-feature-card,
+.business-module-card,
+.adv-module {
+  border-top-color: #3187f5 !important;
+}
+
+#screen-home .android-quick-action:nth-child(n) {
+  border-color: rgba(49,135,245,.30) !important;
+  background: linear-gradient(145deg,rgba(49,135,245,.16),rgba(49,135,245,.045)),var(--vy-surface) !important;
+}
+
+#screen-home .android-quick-action:nth-child(n) .android-quick-action-icon,
+.vx621-feature-icon,
+.adv-module b,
+.business-module-card h3 {
+  color: #5aa7ff !important;
+}
+
+html.theme-light #screen-home .android-quick-action:nth-child(n) {
+  background: #ffffff !important;
+}
+
+html.theme-light #screen-home .android-quick-action:nth-child(n) .android-quick-action-icon,
+html.theme-light .vx621-feature-icon,
+html.theme-light .adv-module b,
+html.theme-light .business-module-card h3 {
+  color: #236fc9 !important;
+}
+
+.nav {
+  border-color: rgba(75, 147, 220, .30) !important;
+  background: rgba(6, 27, 49, .96) !important;
+  backdrop-filter: blur(20px) saturate(110%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(110%) !important;
+}
+
+.nav button[data-android-tab] .android-nav-icon { color: #86a8ca !important; }
+.nav button[data-android-tab] .android-nav-label { color: #aebed0 !important; }
+.nav button.active[data-android-tab] {
+  background: linear-gradient(145deg, #246fca, #3c91ed) !important;
+  color: #ffffff !important;
+  box-shadow: 0 9px 24px rgba(36,111,202,.28) !important;
+}
+.nav button.active[data-android-tab] .android-nav-icon,
+.nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
+
+html.theme-light .nav {
+  border-color: rgba(51,95,143,.16) !important;
+  background: rgba(255,255,255,.97) !important;
+  box-shadow: 0 14px 32px rgba(39,74,113,.13) !important;
+}
+html.theme-light .nav button[data-android-tab] .android-nav-icon { color: #5c7b9b !important; }
+html.theme-light .nav button[data-android-tab] .android-nav-label { color: #60758b !important; }
+html.theme-light .nav button.active[data-android-tab] .android-nav-icon,
+html.theme-light .nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
+
+.android-sheet-item[data-tab] {
+  --vy-sheet-color: #5aa7ff;
+  --vy-sheet-soft: rgba(49,135,245,.12);
+  border-color: rgba(49,135,245,.18) !important;
+  background: linear-gradient(145deg,rgba(49,135,245,.12),rgba(255,255,255,.02)) !important;
+}
+.android-sheet-item[data-tab] .android-sheet-item-icon {
+  color: #5aa7ff !important;
+  background: rgba(49,135,245,.12) !important;
+}
+html.theme-light .android-sheet {
+  background: #ffffff !important;
+  border-color: rgba(51,95,143,.16) !important;
+}
+html.theme-light .android-sheet-item[data-tab] { background: #ffffff !important; }
+html.theme-light .android-sheet-item[data-tab] .android-sheet-item-icon { color: #236fc9 !important; }
+
+#screen-settings .vy675-settings-row {
+  --vy-row-accent: #3187f5 !important;
+  --vy-row-soft: rgba(49,135,245,.11) !important;
+}
+#screen-settings .vy675-settings-row .vy675-row-icon {
+  color: #5aa7ff !important;
+  border-color: rgba(49,135,245,.18) !important;
+  background: rgba(49,135,245,.11) !important;
+}
+html.theme-light #screen-settings .vy675-settings-row .vy675-row-icon { color: #236fc9 !important; }
+
+#screen-settings .vy675-page-back {
+  border-color: rgba(49,135,245,.32) !important;
+  background: rgba(49,135,245,.13) !important;
+  color: #72b4ff !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row,
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:nth-child(2n) {
+  border-bottom-color: rgba(49,135,245,.16) !important;
+  background: linear-gradient(90deg,rgba(49,135,245,.09),transparent 72%) !important;
+  box-shadow: inset 3px 0 0 rgba(49,135,245,.65) !important;
+}
+
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  border-color: rgba(49,135,245,.24) !important;
+  background: rgba(12,31,52,.82) !important;
+}
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  background: #ffffff !important;
+}
+
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  border-color: rgba(49,135,245,.30) !important;
+  background: linear-gradient(145deg,rgba(49,135,245,.14),rgba(255,255,255,.025)),rgba(12,35,55,.94) !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard { background: #ffffff !important; }
+
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-child(n),
+#screen-settings[data-vy675-page="update"] #fs607Settings > button,
+#screen-settings[data-vy675-page="update"] #fs607Settings .btn,
+.btn.primary,
+button.primary {
+  background: linear-gradient(135deg,#246fca,#3c91ed) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(36,111,202,.22) !important;
+}
+
+/* Red remains reserved only for destructive actions. */
+#screen-settings[data-vy675-page="account"] .production-actions button.danger,
+.btn.danger,
+button.danger {
+  background: #d94b5f !important;
+  color: #ffffff !important;
+}
