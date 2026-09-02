@@ -10,13 +10,13 @@ const ROOT = path.resolve(__dirname, '..');
 const TARGETS = [
   {
     name: 'web',
-    app: path.join(ROOT, 'web/app.js'),
-    finance: path.join(ROOT, 'web/audit-stage2-6601.js')
+    app: path.join(ROOT, 'web/assets/scripts/app.js'),
+    finance: path.join(ROOT, 'web/assets/scripts/audit-stage2-6601.js')
   },
   {
     name: 'android',
-    app: path.join(ROOT, 'android-app/app/src/main/assets/app.js'),
-    finance: path.join(ROOT, 'android-app/app/src/main/assets/audit-stage2-6601.js')
+    app: path.join(ROOT, 'android-app/app/src/main/assets/assets/scripts/app.js'),
+    finance: path.join(ROOT, 'android-app/app/src/main/assets/assets/scripts/audit-stage2-6601.js')
   }
 ];
 
@@ -600,8 +600,8 @@ function testStaticParity(){
   const androidFinance = fs.readFileSync(TARGETS[1].finance);
   assert.equal(Buffer.compare(webFinance, androidFinance), 0, 'finance resolver assets must match');
 
-  const webWorkflow = fs.readFileSync(path.join(ROOT, 'web/workflow-ui-670p2.js'));
-  const androidWorkflow = fs.readFileSync(path.join(ROOT, 'android-app/app/src/main/assets/workflow-ui-670p2.js'));
+  const webWorkflow = fs.readFileSync(path.join(ROOT, 'web/assets/scripts/workflow-ui-670p2.js'));
+  const androidWorkflow = fs.readFileSync(path.join(ROOT, 'android-app/app/src/main/assets/assets/scripts/workflow-ui-670p2.js'));
   assert.equal(Buffer.compare(webWorkflow, androidWorkflow), 0, 'workflow assets must match');
 
   TARGETS.forEach(target => {

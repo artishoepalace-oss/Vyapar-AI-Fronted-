@@ -13,8 +13,8 @@ function read(base, name) {
 
 for (const base of [web, android]) {
   const index = read(base, 'index.html');
-  const script = read(base, 'settings-center-675.js');
-  const style = read(base, 'settings-center-675.css');
+  const script = read(base, 'assets/scripts/settings-center-675.js');
+  const style = read(base, 'assets/styles/settings-center-675.css');
 
   assert(index.includes('settings-center-675.css'), 'new Settings stylesheet must be loaded');
   assert(index.includes('settings-center-675.js'), 'new Settings script must be loaded');
@@ -47,7 +47,7 @@ for (const base of [web, android]) {
   assert(style.includes('.danger'), 'destructive actions must keep explicit styling');
   assert(script.includes('stack.hidden = true'), 'legacy Settings repository must be hidden at the DOM level');
 
-  const finalStyle = read(base, 'complete-ui-680.css');
+  const finalStyle = read(base, 'assets/styles/complete-ui-680.css');
   assert(finalStyle.includes('.settings-stack:not(.vy675-settings-repository)'), 'final UI layer must not display the legacy Settings repository');
   assert(finalStyle.includes('settings-stack.vy675-settings-repository[hidden]'), 'hidden Settings repository needs an authoritative final override');
   assert(finalStyle.includes('data-vy675-page="account"'), 'Settings destinations must keep color-coded accents');
@@ -62,13 +62,13 @@ for (const base of [web, android]) {
 }
 
 assert.strictEqual(
-  read(web, 'settings-center-675.js'),
-  read(android, 'settings-center-675.js'),
+  read(web, 'assets/scripts/settings-center-675.js'),
+  read(android, 'assets/scripts/settings-center-675.js'),
   'web and Android Settings logic must stay identical'
 );
 assert.strictEqual(
-  read(web, 'settings-center-675.css'),
-  read(android, 'settings-center-675.css'),
+  read(web, 'assets/styles/settings-center-675.css'),
+  read(android, 'assets/styles/settings-center-675.css'),
   'web and Android Settings styles must stay identical'
 );
 

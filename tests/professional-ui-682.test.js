@@ -12,7 +12,7 @@ function read(base, name) {
 
 for (const base of [web, android]) {
   const index = read(base, 'index.html');
-  const css = read(base, 'professional-ui-682.css');
+  const css = read(base, 'assets/styles/professional-ui-682.css');
 
   assert(index.includes('class="vy-professional-ui"'), 'professional UI root class must load before first paint');
   assert(index.includes('professional-ui-682.css?v=20260902-professional1'), 'professional UI stylesheet must be cache-busted');
@@ -26,8 +26,8 @@ for (const base of [web, android]) {
 }
 
 assert.strictEqual(
-  read(web, 'professional-ui-682.css'),
-  read(android, 'professional-ui-682.css'),
+  read(web, 'assets/styles/professional-ui-682.css'),
+  read(android, 'assets/styles/professional-ui-682.css'),
   'web and Android professional UI styles must stay identical'
 );
 
