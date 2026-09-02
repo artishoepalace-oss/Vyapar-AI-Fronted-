@@ -5,7 +5,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
-const expectedVersion = '6.8.2.2026';
+const expectedVersion = '6.8.3.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -19,7 +19,7 @@ for (const base of [web, android]) {
   assert(index.includes('settings-center-675.css'), 'new Settings stylesheet must be loaded');
   assert(index.includes('settings-center-675.js'), 'new Settings script must be loaded');
   assert(index.includes(`content="${expectedVersion}"`), 'UI version metadata must match the release');
-  assert(!index.includes('startup-mark.svg'), 'v6.8.3 startup mark reference must be removed by the migration');
+  assert(!index.includes('startup-mark.svg'), 'deprecated startup mark reference must remain removed');
   assert(!index.includes('settings-directory-672'), 'old Settings directory must not be loaded');
   assert(!fs.existsSync(path.join(base, 'settings-directory-672.js')), 'old Settings script must be removed');
   assert(!fs.existsSync(path.join(base, 'settings-directory-672.css')), 'old Settings stylesheet must be removed');
@@ -58,7 +58,7 @@ for (const base of [web, android]) {
   assert(finalStyle.includes('.nav button.active[data-android-tab]'), 'all primary nav destinations need the unified active style');
   assert(finalStyle.includes('production-actions {'), 'Account actions must use the compact layout');
   assert(finalStyle.includes('padding: 2px 0 16px !important'), 'Settings sub-page outer cards must be flattened');
-  assert(!finalStyle.includes('professional dual-theme business experience'), 'v6.8.3 visual layer must be removed');
+  assert(!finalStyle.includes('professional dual-theme business experience'), 'deprecated experimental visual layer must remain removed');
 }
 
 assert.strictEqual(
@@ -79,11 +79,11 @@ const mainActivity = read(path.join(root, 'android-app/app/src/main/java/com/vya
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 6822026'), 'Android release code must match');
+assert(gradle.includes('versionCode 6832026'), 'Android release code must match');
 assert(mainActivity.includes('Color.rgb(6, 23, 45)'), 'first WebView frame must match the dark launch surface');
-assert(!fs.existsSync(path.join(root, 'RELEASE_6.8.3.2026.md')), 'v6.8.3 release file must be removed');
-assert(!fs.existsSync(path.join(root, 'VALIDATION_6.8.3.2026.md')), 'v6.8.3 validation file must be removed');
-assert(!fs.existsSync(path.join(web, 'startup-mark.svg')), 'v6.8.3 web startup asset must be removed');
-assert(!fs.existsSync(path.join(android, 'startup-mark.svg')), 'v6.8.3 Android startup asset must be removed');
+assert(fs.existsSync(path.join(root, 'RELEASE_6.8.3.2026.md')), 'v6.8.3 release file must exist');
+assert(!fs.existsSync(path.join(root, 'VALIDATION_6.8.3.2026.md')), 'validation file should only exist after an explicit validation pass');
+assert(!fs.existsSync(path.join(web, 'startup-mark.svg')), 'deprecated web startup asset must remain removed');
+assert(!fs.existsSync(path.join(android, 'startup-mark.svg')), 'deprecated Android startup asset must remain removed');
 
 console.log(`✓ Settings Center + complete UI ${expectedVersion} checks passed`);
