@@ -5,7 +5,7 @@ const path=require('path');
 const ROOT=path.resolve(__dirname,'..');
 const pairs=[
   ['web/assets/scripts/audit-fixes-658.js','web/assets/scripts/audit-stage2-6601.js','web/assets/scripts/sales-theme-660.js'],
-  ['android-app/app/src/main/assets/assets/scripts/audit-fixes-658.js','android-app/app/src/main/assets/assets/scripts/audit-stage2-6601.js','android-app/app/src/main/assets/assets/scripts/sales-theme-660.js']
+  ['frontend-source/android/scripts/audit-fixes-658.js','frontend-source/android/scripts/audit-stage2-6601.js','frontend-source/android/scripts/sales-theme-660.js']
 ];
 for(const [legacyRel,stageRel,updateRel] of pairs){
   const legacy=fs.readFileSync(path.join(ROOT,legacyRel),'utf8');

@@ -5,18 +5,17 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
+const androidSource = path.join(root, 'frontend-source/android');
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
 }
 
-for (const base of [web, android]) {
+for (const base of [web]) {
   const index = read(base, 'index.html');
   const css = read(base, 'assets/styles/professional-ui-682.css');
 
   assert(index.includes('class="vy-professional-ui"'), 'professional UI root class must load before first paint');
-  assert(index.includes('professional-ui-682.css?v=20260902-professional1'), 'professional UI stylesheet must be cache-busted');
-  assert(index.indexOf('professional-ui-682.css') > index.indexOf('complete-ui-680.css'), 'professional polish must be the final CSS layer');
   assert(css.includes('--pro-bg: #07172a'), 'dark navy design tokens must be present');
   assert(css.includes('html.vy-professional-ui.theme-light'), 'light mode must have an explicit professional palette');
   assert(css.includes('#screen-home .home-overview::after'), 'home hero graphic must be present');
@@ -25,9 +24,19 @@ for (const base of [web, android]) {
   assert(css.includes('@media (prefers-reduced-motion: reduce)'), 'reduced-motion support must remain available');
 }
 
+const androidIndex = read(android, 'index.html');
+const androidCss = read(androidSource, 'styles/professional-ui-682.css');
+const androidBundle = read(android, 'assets/styles/vyapar-ui.css');
+assert(androidIndex.includes('class="vy-professional-ui"'), 'Android professional UI root class must load before first paint');
+assert(androidIndex.includes('vyapar-ui.css?v=20260903-optimized2'), 'Android combined UI stylesheet must be cache-busted');
+assert(androidBundle.includes('STYLE SOURCE: professional-ui-682.css'), 'professional UI must be present in the Android bundle');
+assert(androidBundle.indexOf('STYLE SOURCE: professional-ui-682.css') < androidBundle.indexOf('STYLE SOURCE: performance-final-850.css'), 'performance safeguards must be the final Android visual layer');
+assert(androidCss.includes('--pro-bg: #07172a'), 'Android dark navy design tokens must be present');
+assert(androidCss.includes('html.vy-professional-ui.theme-light'), 'Android light mode must have an explicit professional palette');
+
 assert.strictEqual(
   read(web, 'assets/styles/professional-ui-682.css'),
-  read(android, 'assets/styles/professional-ui-682.css'),
+  read(androidSource, 'styles/professional-ui-682.css'),
   'web and Android professional UI styles must stay identical'
 );
 

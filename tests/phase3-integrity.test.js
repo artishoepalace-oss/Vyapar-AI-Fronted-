@@ -15,8 +15,8 @@ const TARGETS = [
   },
   {
     name: 'android',
-    app: path.join(ROOT, 'android-app/app/src/main/assets/assets/scripts/app.js'),
-    finance: path.join(ROOT, 'android-app/app/src/main/assets/assets/scripts/audit-stage2-6601.js')
+    app: path.join(ROOT, 'frontend-source/android/scripts/app.js'),
+    finance: path.join(ROOT, 'frontend-source/android/scripts/audit-stage2-6601.js')
   }
 ];
 
@@ -601,8 +601,10 @@ function testStaticParity(){
   assert.equal(Buffer.compare(webFinance, androidFinance), 0, 'finance resolver assets must match');
 
   const webWorkflow = fs.readFileSync(path.join(ROOT, 'web/assets/scripts/workflow-ui-670p2.js'));
-  const androidWorkflow = fs.readFileSync(path.join(ROOT, 'android-app/app/src/main/assets/assets/scripts/workflow-ui-670p2.js'));
-  assert.equal(Buffer.compare(webWorkflow, androidWorkflow), 0, 'workflow assets must match');
+  const androidWorkflow = fs.readFileSync(path.join(ROOT, 'frontend-source/android/scripts/workflow-ui-670p2.js'));
+  assert.match(webWorkflow.toString('utf8'), /dataset\.p2Busy/);
+  assert.match(androidWorkflow.toString('utf8'), /dataset\.p2Busy/);
+  assert.match(androidWorkflow.toString('utf8'), /document\.querySelector\('main'\) \|\| document\.body/, 'Android observer must stay scoped to app content');
 
   TARGETS.forEach(target => {
     const source = fs.readFileSync(target.app, 'utf8');

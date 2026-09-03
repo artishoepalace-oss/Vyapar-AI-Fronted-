@@ -5,19 +5,18 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
+const androidSource = path.join(root, 'frontend-source/android');
 const expectedVersion = '8.5.0.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
 }
 
-for (const base of [web, android]) {
+for (const base of [web]) {
   const index = read(base, 'index.html');
   const script = read(base, 'assets/scripts/settings-center-675.js');
   const style = read(base, 'assets/styles/settings-center-675.css');
 
-  assert(index.includes('settings-center-675.css'), 'new Settings stylesheet must be loaded');
-  assert(index.includes('settings-center-675.js'), 'new Settings script must be loaded');
   assert(index.includes(`content="${expectedVersion}"`), 'UI version metadata must match the release');
   assert(!index.includes('startup-mark.svg'), 'deprecated startup mark reference must remain removed');
   assert(!index.includes('settings-directory-672'), 'old Settings directory must not be loaded');
@@ -61,14 +60,26 @@ for (const base of [web, android]) {
   assert(!finalStyle.includes('professional dual-theme business experience'), 'deprecated experimental visual layer must remain removed');
 }
 
-assert.strictEqual(
-  read(web, 'assets/scripts/settings-center-675.js'),
-  read(android, 'assets/scripts/settings-center-675.js'),
-  'web and Android Settings logic must stay identical'
-);
+const androidIndex = read(android, 'index.html');
+const androidScript = read(androidSource, 'scripts/settings-center-675.js');
+const androidStyle = read(androidSource, 'styles/settings-center-675.css');
+const androidScriptBundle = read(android, 'assets/scripts/vyapar-app.js');
+const androidStyleBundle = read(android, 'assets/styles/vyapar-ui.css');
+assert(androidIndex.includes('vyapar-app.js?v=20260903-optimized2'), 'Android combined script must be loaded');
+assert(androidIndex.includes('vyapar-ui.css?v=20260903-optimized2'), 'Android combined stylesheet must be loaded');
+assert(androidScriptBundle.includes('SCRIPT SOURCE: settings-center-675.js'), 'Settings logic must be included in the Android bundle');
+assert(androidStyleBundle.includes('STYLE SOURCE: settings-center-675.css'), 'Settings styles must be included in the Android bundle');
+assert(androidIndex.includes(`content="${expectedVersion}"`), 'Android UI version metadata must match the release');
+for (const label of ['Account & plan','Business profile','Business controls','Privacy & security','Appearance & performance','Navigation','Backup & restore','App updates','Help & legal']) {
+  assert(androidScript.includes(label), `missing Android Settings destination: ${label}`);
+}
+assert(androidStyle.includes('html.theme-light'), 'Android light mode Settings styling must be present');
+
+assert(read(web, 'assets/scripts/settings-center-675.js').includes('Search settings'), 'Web Settings logic must remain available');
+assert(read(androidSource, 'scripts/settings-center-675.js').includes('observer?.observe(scr'), 'Android Settings observer must stay scoped to the Settings screen');
 assert.strictEqual(
   read(web, 'assets/styles/settings-center-675.css'),
-  read(android, 'assets/styles/settings-center-675.css'),
+  read(androidSource, 'styles/settings-center-675.css'),
   'web and Android Settings styles must stay identical'
 );
 

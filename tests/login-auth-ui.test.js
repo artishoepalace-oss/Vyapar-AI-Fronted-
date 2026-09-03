@@ -6,11 +6,11 @@ const root = path.resolve(__dirname, '..');
 const read = (...parts) => fs.readFileSync(path.join(root, ...parts), 'utf8');
 
 const webAuth = read('web', 'assets', 'scripts', 'auth.js');
-const androidAuth = read('android-app', 'app', 'src', 'main', 'assets', 'assets', 'scripts', 'auth.js');
+const androidAuth = read('frontend-source', 'android', 'scripts', 'auth.js');
 const webPlatformJs = read('web', 'assets', 'scripts', 'platform-android.js');
-const androidPlatformJs = read('android-app', 'app', 'src', 'main', 'assets', 'assets', 'scripts', 'platform-android.js');
+const androidPlatformJs = read('frontend-source', 'android', 'scripts', 'platform-android.js');
 const webPlatformCss = read('web', 'assets', 'styles', 'platform-android.css');
-const androidPlatformCss = read('android-app', 'app', 'src', 'main', 'assets', 'assets', 'styles', 'platform-android.css');
+const androidPlatformCss = read('frontend-source', 'android', 'styles', 'platform-android.css');
 const webIndex = read('web', 'index.html');
 const androidIndex = read('android-app', 'app', 'src', 'main', 'assets', 'index.html');
 
@@ -26,9 +26,10 @@ assert.match(webAuth, /auth-keyboard-open/, 'Auth layout must handle the softwar
 assert.match(webPlatformCss, /overflow-y:auto!important/, 'Android auth must remain vertically scrollable');
 assert.doesNotMatch(webPlatformCss, /\bzoom\s*:/, 'Android auth must not use CSS zoom because it breaks WebView input geometry');
 
-for (const index of [webIndex, androidIndex]) {
-  assert.match(index, /auth\.js\?v=20260902-loginfix1/, 'Auth cache key must be refreshed');
-  assert.match(index, /platform-android\.css\?v=20260902-loginfix1/, 'Platform auth CSS cache key must be refreshed');
-}
+assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=20260903-combined1/, 'Web must load the combined script');
+assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=20260903-combined1/, 'Web must load the combined core styles');
+assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=20260903-optimized2/, 'Android must load the combined script');
+assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=20260903-optimized2/, 'Android must load the combined core styles');
+assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=20260903-optimized2/, 'Android must load the combined UI styles');
 
 console.log('login-auth-ui: all checks passed');
