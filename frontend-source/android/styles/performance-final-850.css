@@ -1,0 +1,85 @@
+/* Vyapar AI 8.5.0 — final Android compositor safeguards.
+   Loaded last so later visual layers cannot accidentally restore expensive
+   control blur or scroll-time effects. Business and interaction rules are untouched. */
+
+html.android-ui button,
+html.android-ui .btn,
+html.android-ui a,
+html.android-ui [role="button"],
+html.android-ui input,
+html.android-ui select,
+html.android-ui textarea{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* Small controls are numerous; live backdrop sampling on each one is expensive
+   and visually unnecessary because their solid/tinted backgrounds remain. */
+html.android-ui button,
+html.android-ui .btn,
+html.android-ui .pill,
+html.android-ui .badge,
+html.android-ui .glass-chip,
+html.android-ui .theme-toggle,
+html.android-ui input,
+html.android-ui select,
+html.android-ui textarea{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Bound repaint work to the existing scroll containers used by long ledgers,
+   invoices, stock tables and settings lists. */
+html.android-ui .scroll,
+html.android-ui .vx621-table-wrap,
+html.android-ui .p611-table,
+html.android-ui .vy6601-select-options{
+  contain:paint;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+}
+html.android-ui .scroll::-webkit-scrollbar,
+html.android-ui .vx621-table-wrap::-webkit-scrollbar,
+html.android-ui .p611-table::-webkit-scrollbar,
+html.android-ui .vy6601-select-options::-webkit-scrollbar{
+  width:0;
+  height:0;
+}
+
+/* Keep finger tracking cheap even when a later UI layer adds decoration. */
+html.android-ui.perf-scrolling button,
+html.android-ui.perf-scrolling .btn,
+html.android-ui.perf-scrolling .pill,
+html.android-ui.perf-scrolling .badge,
+html.android-ui.perf-scrolling .glass-chip,
+html.android-ui.perf-scrolling .theme-toggle,
+html.android-ui.perf-scrolling input,
+html.android-ui.perf-scrolling select,
+html.android-ui.perf-scrolling textarea{
+  transition:none!important;
+  box-shadow:none!important;
+}
+
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat,
+html.android-ui.perf-tier-legacy .settings-section,
+html.android-ui.perf-tier-legacy .production-account-card,
+html.android-ui.perf-low-ram .card,
+html.android-ui.perf-low-ram .stat,
+html.android-ui.perf-low-ram .settings-section,
+html.android-ui.perf-low-ram .production-account-card{
+  contain:paint;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html.android-ui button,
+  html.android-ui .btn,
+  html.android-ui .card,
+  html.android-ui .stat,
+  html.android-ui .nav,
+  html.android-ui .top,
+  html.android-ui .android-sheet{
+    animation:none!important;
+    transition-duration:.01ms!important;
+  }
+}

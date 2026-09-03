@@ -1,0 +1,110 @@
+/* Vyapar AI 6.4.2 — Android auth alignment refinement. */
+
+html.native-android #vyaparOtpGate,
+html.native-android #vyaparOtpGate .auth-page{background:var(--auth-card)!important}
+html.native-android #vyaparOtpGate{
+  overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+html.native-android #vyaparOtpGate .auth-page{
+  min-height:var(--auth-viewport-height,100dvh)!important;height:auto!important;align-items:center!important;justify-content:center!important;
+  padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))!important;
+  overflow:visible!important;
+}
+html.native-android #vyaparOtpGate .auth-card{
+  width:min(100%,448px)!important;max-width:448px!important;margin:auto!important;
+  padding:clamp(14px,2.5vh,22px) clamp(14px,4vw,22px)!important;
+  border:0!important;border-radius:0!important;background:var(--auth-card)!important;box-shadow:none!important;overflow:visible!important;
+}
+html.native-android #vyaparOtpGate.auth-dark .auth-card{box-shadow:none!important}
+
+html.native-android #vyaparOtpGate .auth-logo{height:clamp(54px,9vh,70px)!important;max-width:150px!important;border-radius:12px!important;overflow:hidden!important}
+html.native-android #vyaparOtpGate .auth-logo-wrap{margin-bottom:clamp(8px,1.5vh,13px)!important}
+html.native-android #vyaparOtpGate .auth-title{margin-top:4px!important;text-align:center!important;font-size:clamp(21px,5.8vw,25px)!important;line-height:1.16!important}
+html.native-android #vyaparOtpGate .auth-subtitle{margin-top:5px!important;text-align:center!important;font-size:clamp(11px,3.2vw,13px)!important;line-height:1.35!important}
+html.native-android #vyaparOtpGate .auth-space-5>*+*{margin-top:clamp(10px,1.7vh,15px)!important}
+html.native-android #vyaparOtpGate .auth-space-4>*+*{margin-top:clamp(8px,1.35vh,12px)!important}
+html.native-android #vyaparOtpGate .auth-space-3>*+*{margin-top:clamp(7px,1.05vh,10px)!important}
+html.native-android #vyaparOtpGate .auth-label-row{margin-bottom:3px!important}
+html.native-android #vyaparOtpGate .auth-label{font-size:11px!important;margin-bottom:3px!important}
+html.native-android #vyaparOtpGate .auth-input{min-height:40px!important;height:40px!important;padding:8px 12px!important;font-size:15px!important;margin:0!important}
+
+/* Compact selector: visibly narrower than the form fields. */
+html.native-android #vyaparOtpGate .auth-method-tabs{
+  position:relative!important;isolation:isolate!important;width:min(78vw,282px)!important;min-height:38px!important;
+  margin-left:auto!important;margin-right:auto!important;overflow:hidden!important;padding:3px!important;
+  border:1px solid rgba(74,155,255,.34)!important;border-radius:11px!important;
+  background:linear-gradient(180deg,rgba(22,54,83,.72),rgba(8,27,43,.58))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.12)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(145%)!important;backdrop-filter:blur(16px) saturate(145%)!important;
+}
+html.native-android #vyaparOtpGate .auth-method-tabs::before{
+  content:"";position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:8px;
+  background:linear-gradient(145deg,rgba(35,129,255,.96),rgba(15,69,139,.96) 58%,rgba(24,103,211,.94))!important;
+  border:1px solid rgba(112,185,255,.70)!important;
+  box-shadow:inset 0 1px 0 rgba(210,235,255,.25),0 0 12px rgba(45,133,255,.24),0 4px 10px rgba(0,0,0,.18)!important;
+  transition:transform .24s cubic-bezier(.2,.8,.2,1)!important;pointer-events:none!important;
+}
+html.native-android #vyaparOtpGate .auth-method-tabs.otp-selected::before{transform:translateX(100%)}
+html.native-android #vyaparOtpGate .auth-method-tab,
+html.native-android #vyaparOtpGate .auth-method-tab.active{
+  position:relative!important;z-index:1!important;min-height:30px!important;padding:4px 4px!important;border:0!important;border-radius:7px!important;
+  background:transparent!important;box-shadow:none!important;color:#a8c8e8!important;font-size:9.7px!important;font-weight:700!important;
+  letter-spacing:-.025em!important;text-shadow:none!important;white-space:nowrap!important;-webkit-tap-highlight-color:transparent!important;
+}
+html.native-android #vyaparOtpGate .auth-method-tab.active{color:#fff!important;text-shadow:0 0 8px rgba(178,219,255,.42)!important}
+
+html.native-android #vyaparOtpGate .auth-forgot,
+html.native-android #vyaparOtpGate .auth-switch button{
+  width:auto!important;min-width:0!important;height:auto!important;min-height:24px!important;padding:1px 2px!important;margin:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;background-image:none!important;box-shadow:none!important;
+  color:#55adff!important;text-shadow:0 0 7px rgba(54,151,255,.24)!important;
+}
+
+/* OTP email and button now share one exact baseline and one exact 40px height. */
+html.native-android #vyaparOtpGate .auth-otp-row{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 82px!important;align-items:center!important;gap:8px!important;
+  width:100%!important;margin:0!important;padding:0!important;
+}
+html.native-android #vyaparOtpGate .auth-otp-row .auth-input{
+  width:100%!important;min-width:0!important;height:40px!important;min-height:40px!important;margin:0!important;align-self:center!important;
+}
+html.native-android #vyaparOtpGate .auth-small-btn{
+  width:82px!important;min-width:82px!important;max-width:82px!important;height:40px!important;min-height:40px!important;
+  padding:6px 6px!important;margin:0!important;align-self:center!important;transform:none!important;
+  border:1px solid rgba(78,157,236,.34)!important;border-radius:9px!important;
+  background:linear-gradient(180deg,rgba(24,62,96,.64),rgba(10,31,49,.60))!important;color:#dceeff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;font-size:10.5px!important;line-height:1!important;
+}
+
+html.native-android #vyaparOtpGate .auth-primary{
+  min-height:41px!important;padding:8px 12px!important;border:1px solid rgba(73,158,255,.72)!important;
+  background:linear-gradient(150deg,rgba(26,103,204,.98),rgba(8,27,47,.98) 54%,rgba(20,82,169,.96))!important;
+  color:#fff!important;text-shadow:0 0 8px rgba(194,225,255,.30)!important;
+  box-shadow:inset 0 1px 0 rgba(217,237,255,.18),0 0 16px rgba(39,126,255,.16),0 7px 16px rgba(0,0,0,.18)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(145%)!important;backdrop-filter:blur(14px) saturate(145%)!important;
+}
+html.native-android #vyaparOtpGate .auth-primary:active{transform:translateY(1px)!important;border-color:rgba(119,190,255,.9)!important}
+html.native-android #vyaparOtpGate .auth-google{
+  min-height:41px!important;padding:8px 12px!important;background:var(--auth-card)!important;background-image:none!important;
+  color:var(--auth-body)!important;border:1px solid var(--auth-border)!important;box-shadow:0 2px 6px rgba(15,23,42,.05)!important;
+}
+html.native-android #vyaparOtpGate .auth-divider{margin:clamp(8px,1.2vh,13px) 0!important}
+html.native-android #vyaparOtpGate .auth-switch{font-size:11px!important}
+html.native-android #vyaparOtpGate.auth-keyboard-open .auth-page{align-items:flex-start!important}
+html.native-android #vyaparOtpGate.auth-keyboard-open .auth-card{margin-top:0!important;margin-bottom:12px!important}
+@media (max-height:680px){
+  html.native-android #vyaparOtpGate .auth-card{padding-top:12px!important;padding-bottom:12px!important}
+  html.native-android #vyaparOtpGate .auth-logo{height:50px!important;max-width:130px!important}
+  html.native-android #vyaparOtpGate .auth-logo-wrap{margin-bottom:8px!important}
+  html.native-android #vyaparOtpGate .auth-space-5>*+*{margin-top:9px!important}
+  html.native-android #vyaparOtpGate .auth-space-4>*+*{margin-top:8px!important}
+}
+@media (max-width:370px){
+  html.native-android #vyaparOtpGate .auth-card{padding-left:12px!important;padding-right:12px!important}
+  html.native-android #vyaparOtpGate .auth-method-tabs{width:min(76vw,270px)!important}
+  html.native-android #vyaparOtpGate .auth-method-tab,
+  html.native-android #vyaparOtpGate .auth-method-tab.active{font-size:9.2px!important;padding-left:3px!important;padding-right:3px!important}
+  html.native-android #vyaparOtpGate .auth-otp-row{grid-template-columns:minmax(0,1fr) 76px!important;gap:7px!important}
+  html.native-android #vyaparOtpGate .auth-small-btn{width:76px!important;min-width:76px!important;max-width:76px!important;font-size:10px!important}
+}

@@ -1,0 +1,158 @@
+/* Vyapar AI 6.7.5 visual stability hotfix — loading, Settings and Sales. */
+
+/* Both WebView loading phases use the same logo treatment, background, typography and bar. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background: linear-gradient(135deg, #061326 0%, #082b61 54%, #06172d 100%) !important;
+  color: #eef6ff !important;
+}
+
+#appLoader.android-loader {
+  gap: 0 !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  display: block !important;
+  width: 94px !important;
+  height: 94px !important;
+  margin: 0 auto 14px !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .28) !important;
+}
+
+#appLoader .android-loader-logo img,
+#vy647StartupSplash .vy647-splash-core img {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 28px !important;
+  object-fit: cover !important;
+}
+
+#appLoader .android-loader-shine,
+#appLoader .android-loader-spark {
+  display: none !important;
+}
+
+#appLoader > strong,
+#vy647StartupSplash .vy647-splash-core strong {
+  display: block !important;
+  margin: 0 !important;
+  color: #eef6ff !important;
+  font-size: 25px !important;
+  line-height: 1.16 !important;
+  font-weight: 800 !important;
+  letter-spacing: -.02em !important;
+}
+
+#appLoader > strong::after {
+  content: "Loading secure session…";
+  display: block;
+  margin-top: 8px;
+  color: #8397ac;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+#vy647StartupSplash .vy647-splash-core > span {
+  display: block !important;
+  margin-top: 8px !important;
+  color: #8397ac !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+#appLoader .android-loader-bar,
+#vy647StartupSplash .vy647-splash-bar {
+  width: 160px !important;
+  height: 4px !important;
+  margin: 18px auto 0 !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: rgba(104, 139, 176, .18) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  display: block !important;
+  width: 44% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: #2388eb !important;
+}
+
+/* The v6.7.5 Settings Center owns exactly one footer. */
+#screen-settings.vy675-settings-ready #appLegalFooter {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Compact Sales previews: title spans the row; metrics no longer leave giant empty cells. */
+html.native-android #screen-sales .p2-live-preview,
+html.commercial-ui-v1 #screen-sales .p2-live-preview {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  margin-top: 10px !important;
+  border-radius: 15px !important;
+}
+
+html.native-android #screen-sales .p2-preview-title,
+html.commercial-ui-v1 #screen-sales .p2-preview-title,
+html.native-android #screen-sales .p2-preview-status,
+html.commercial-ui-v1 #screen-sales .p2-preview-status,
+html.native-android #screen-sales .p2-preview-note,
+html.commercial-ui-v1 #screen-sales .p2-preview-note {
+  grid-column: 1 / -1 !important;
+}
+
+html.native-android #screen-sales .p2-preview-title,
+html.commercial-ui-v1 #screen-sales .p2-preview-title {
+  align-self: auto !important;
+  min-width: 0 !important;
+}
+
+html.native-android #screen-sales .p2-preview-note,
+html.commercial-ui-v1 #screen-sales .p2-preview-note {
+  margin-top: 1px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+}
+
+html.native-android #screen-sales .p2-preview-metric,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric {
+  min-height: 68px !important;
+  padding: 11px !important;
+  border-radius: 13px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+html.native-android #screen-sales .p2-preview-metric b,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric b {
+  display: block !important;
+  margin-top: 5px !important;
+  font-size: 16px !important;
+}
+
+@media (max-width: 380px) {
+  html.native-android #screen-sales .p2-live-preview,
+  html.commercial-ui-v1 #screen-sales .p2-live-preview {
+    gap: 7px !important;
+    padding: 9px !important;
+  }
+
+  html.native-android #screen-sales .p2-preview-metric,
+  html.commercial-ui-v1 #screen-sales .p2-preview-metric {
+    min-height: 64px !important;
+    padding: 10px !important;
+  }
+}

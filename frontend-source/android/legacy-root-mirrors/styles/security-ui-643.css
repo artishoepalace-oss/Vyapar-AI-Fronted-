@@ -1,0 +1,170 @@
+/* Vyapar AI 6.4.3 — Android navbar + unified settings + account password security */
+
+/* Bottom navigation: fixed tap navigation only, tighter and lower. */
+html.native-android .nav{
+  bottom:max(2px, env(safe-area-inset-bottom))!important;
+  width:calc(100% - 14px)!important;
+  min-height:64px!important;
+  padding:5px 6px!important;
+  gap:3px!important;
+  border-radius:22px!important;
+  touch-action:manipulation!important;
+  overscroll-behavior:none!important;
+}
+html.native-android .nav .android-nav-glass-indicator{
+  display:none!important;
+  opacity:0!important;
+  transform:none!important;
+  transition:none!important;
+}
+html.native-android .nav button[data-android-tab]{
+  min-height:52px!important;
+  padding:5px 3px!important;
+  transform:none!important;
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease!important;
+  touch-action:manipulation!important;
+}
+html.native-android .nav.android-nav-dragging,
+html.native-android .nav.android-nav-shine{
+  transform:translateX(-50%)!important;
+}
+
+/* Settings: one clean sheet instead of a pile of floating cards. */
+html.native-android #screen-settings .settings-stack{
+  display:block!important;
+  overflow:hidden!important;
+  padding:0 12px!important;
+  border:1px solid var(--line)!important;
+  border-radius:22px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.14)!important;
+}
+html.native-android #screen-settings .settings-stack > .card,
+html.native-android #screen-settings .settings-stack > .settings-section{
+  margin:0!important;
+  padding:17px 4px!important;
+  border:0!important;
+  border-bottom:1px solid var(--line)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.native-android #screen-settings .settings-stack > :last-child{
+  border-bottom:0!important;
+}
+html.native-android #screen-settings .settings-section-heading{
+  margin-bottom:12px!important;
+}
+html.native-android #screen-settings .vx622-settings-list{
+  overflow:hidden!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:rgba(6,22,39,.22)!important;
+}
+html.native-android #screen-settings .vx622-settings-row{
+  border:0!important;
+  border-bottom:1px solid var(--line)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.native-android #screen-settings .vx622-settings-row:last-child{border-bottom:0!important}
+
+/* Account-password security card replacing the old local PIN editor. */
+html.native-android #vx622AppLockSection .vx643-security-copy{display:grid;gap:3px}
+html.native-android #vx622AppLockSection .vx643-security-status{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:8px 0 12px!important;
+  padding:10px 0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.native-android #vx622AppLockSection .vx643-security-status span{display:grid;gap:2px}
+html.native-android #vx622AppLockSection .vx643-security-status small{color:var(--muted)}
+html.native-android #vx622AppLockSection .vx643-state{
+  flex:none;
+  padding:5px 9px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  font-size:11px;
+  font-weight:800;
+}
+html.native-android #vx622AppLockSection .vx643-state.on{color:#91c9ff;border-color:rgba(67,148,255,.48);background:rgba(45,126,236,.10)}
+html.native-android #vx622AppLockSection .vx643-state.off{color:var(--muted);background:rgba(255,255,255,.025)}
+html.native-android #vx622AppLockSection .vx643-security-actions{display:flex;gap:8px;flex-wrap:wrap}
+html.native-android #vx622AppLockSection .vx643-security-actions .btn{min-height:40px}
+
+/* Locked password tab on auth screen. */
+html.native-android #vyaparOtpGate .auth-method-tab.vx643-password-locked,
+html.native-android #vyaparOtpGate .auth-method-tab.vx643-password-locked.active{
+  color:#70879c!important;
+  opacity:.72!important;
+  cursor:not-allowed!important;
+  text-shadow:none!important;
+}
+html.native-android #vyaparOtpGate .auth-method-tab.vx643-password-locked::before{
+  content:'🔒';
+  display:inline-block;
+  margin-right:5px;
+  font-size:.88em;
+  filter:grayscale(1);
+}
+html.native-android #vyaparOtpGate .auth-method-tabs.vx643-password-disabled::before{
+  transform:translateX(100%)!important;
+}
+
+/* Change-password dialog. */
+.vx643-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:2147483646;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(1,8,15,.72);
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+}
+.vx643-modal{
+  width:min(100%,390px);
+  border:1px solid rgba(89,163,255,.34);
+  border-radius:20px;
+  padding:18px;
+  background:linear-gradient(180deg,#102235,#0a1724);
+  color:#eef7ff;
+  box-shadow:0 28px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.09);
+}
+.vx643-modal h2{margin:0 0 5px;font-size:20px}
+.vx643-modal p{margin:0 0 15px;color:#9fb0c1;font-size:12px;line-height:1.45}
+.vx643-modal label{display:block;margin:11px 0 4px;color:#b8c8d8;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.vx643-modal input{
+  width:100%;
+  min-height:44px;
+  margin:0!important;
+  padding:10px 12px;
+  border:1px solid #2a4660;
+  border-radius:11px;
+  outline:none;
+  background:#091725;
+  color:#fff;
+  font-size:15px;
+}
+.vx643-modal input:focus{border-color:#4b9cff;box-shadow:0 0 0 3px rgba(59,139,255,.14)}
+.vx643-modal .vx643-email{padding:10px 12px;border:1px solid #223c53;border-radius:11px;background:#0b1a28;color:#a9bed1;font-size:13px}
+.vx643-modal .vx643-error{min-height:18px;margin-top:8px;color:#ff9cab;font-size:11px}
+.vx643-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.vx643-modal-actions button{min-height:42px;border-radius:11px;border:1px solid #28445e;background:#10283d;color:#dcecff;font-weight:800}
+.vx643-modal-actions button.primary{border-color:#4b9cff;background:linear-gradient(180deg,#287ee9,#145ab8);color:#fff}
+
+@media(max-width:370px){
+  html.native-android .nav{width:calc(100% - 8px)!important;padding-left:3px!important;padding-right:3px!important}
+  html.native-android #screen-settings .settings-stack{padding-left:9px!important;padding-right:9px!important}
+}

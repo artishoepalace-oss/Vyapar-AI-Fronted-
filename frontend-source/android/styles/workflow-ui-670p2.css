@@ -1,0 +1,405 @@
+/*
+ * Vyapar AI 6.7.0-phase.2
+ * Production-readiness Phase 2: clear forms, inline validation and workflow feedback.
+ * Additive layer loaded after Phase 1. No business feature or data field is removed.
+ */
+
+html.workflow-ui-p2 {
+  --p2-info: #70aef7;
+  --p2-success: #45c7a0;
+  --p2-warning: #f0b84f;
+  --p2-error: #f06a78;
+  --p2-field-bg: rgba(3, 16, 29, .52);
+}
+
+html.workflow-ui-p2 .p2-form-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 8px 0 12px;
+  padding: 9px 10px;
+  border: 1px solid rgba(104, 164, 224, .17);
+  border-radius: 12px;
+  background: rgba(55, 125, 203, .075);
+  color: var(--p1-muted, #9cafc2);
+  font-size: 10.5px;
+  line-height: 1.42;
+}
+
+html.workflow-ui-p2 .p2-form-intro::before {
+  content: 'i';
+  display: grid;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(74, 145, 239, .18);
+  color: #83b9fb;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+html.workflow-ui-p2 .p2-required-mark {
+  margin-left: 3px;
+  color: #ff8b97;
+  font-weight: 850;
+}
+
+html.workflow-ui-p2 .p2-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 !important;
+}
+
+html.workflow-ui-p2 .p2-field-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 14px;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 10px;
+  font-weight: 760;
+  line-height: 1.2;
+}
+
+html.workflow-ui-p2 .p2-field-hint {
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+html.workflow-ui-p2 input.p2-input-error,
+html.workflow-ui-p2 select.p2-input-error,
+html.workflow-ui-p2 textarea.p2-input-error {
+  border-color: rgba(240, 90, 106, .85) !important;
+  box-shadow: 0 0 0 3px rgba(240, 90, 106, .12) !important;
+}
+
+html.workflow-ui-p2 .p2-error-text {
+  display: block;
+  margin: 3px 0 0;
+  color: #ff9da7 !important;
+  font-size: 9.5px;
+  font-weight: 670;
+  line-height: 1.35;
+}
+
+html.workflow-ui-p2 .p2-live-preview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin: 12px 0 2px;
+  padding: 9px;
+  border: 1px solid rgba(103, 164, 225, .18);
+  border-radius: 14px;
+  background: rgba(2, 14, 26, .34);
+}
+
+html.workflow-ui-p2 .p2-preview-title,
+html.workflow-ui-p2 .p2-preview-note {
+  grid-column: 1 / -1;
+}
+
+html.workflow-ui-p2 .p2-preview-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 10px;
+  font-weight: 780;
+}
+
+html.workflow-ui-p2 .p2-preview-title span:last-child {
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+html.workflow-ui-p2 .p2-preview-metric {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(126, 173, 216, .13);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .028);
+}
+
+html.workflow-ui-p2 .p2-preview-metric span {
+  display: block;
+  overflow: hidden;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 8.5px;
+  font-weight: 690;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.workflow-ui-p2 .p2-preview-metric b {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+html.workflow-ui-p2 .p2-preview-note {
+  margin: 1px 2px 0;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+html.workflow-ui-p2 .p2-live-preview.is-positive .p2-preview-title { color: #72ddbd; }
+html.workflow-ui-p2 .p2-live-preview.is-warning .p2-preview-title { color: #ffd27a; }
+html.workflow-ui-p2 .p2-live-preview.is-negative .p2-preview-title { color: #ff9ca6; }
+
+html.workflow-ui-p2 .p2-tx-form {
+  display: block !important;
+  margin: 12px 0 !important;
+}
+
+html.workflow-ui-p2 .p2-form-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+html.workflow-ui-p2 .p2-form-group-title {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 1px 1px 0;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 11px;
+  font-weight: 790;
+}
+
+html.workflow-ui-p2 .p2-form-group-title small {
+  color: var(--p1-muted, #9cafc2) !important;
+  font-size: 8.5px !important;
+  font-weight: 650;
+}
+
+html.workflow-ui-p2 .p2-advanced-fields {
+  margin-top: 10px;
+  border: 1px solid rgba(115, 168, 218, .16);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .022);
+  overflow: hidden;
+}
+
+html.workflow-ui-p2 .p2-advanced-fields > summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 11px;
+  color: var(--p1-text, #f3f7fb);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 760;
+  list-style: none;
+}
+
+html.workflow-ui-p2 .p2-advanced-fields > summary::-webkit-details-marker { display: none; }
+html.workflow-ui-p2 .p2-advanced-fields > summary::after {
+  content: '⌄';
+  color: #83b9fb;
+  font-size: 14px;
+  transition: transform .18s ease;
+}
+html.workflow-ui-p2 .p2-advanced-fields[open] > summary::after { transform: rotate(180deg); }
+html.workflow-ui-p2 .p2-advanced-fields[open] > summary { border-bottom: 1px solid rgba(115, 168, 218, .14); }
+html.workflow-ui-p2 .p2-advanced-fields .p2-form-group { padding: 10px; }
+
+html.workflow-ui-p2 .p2-tx-context {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 8px 9px;
+  border-left: 3px solid rgba(74, 145, 239, .74);
+  border-radius: 0 9px 9px 0;
+  background: rgba(74, 145, 239, .075);
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+html.workflow-ui-p2 .p2-platform-fields {
+  grid-column: 1 / -1;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px !important;
+  margin: 0 !important;
+  padding: 9px;
+  border: 1px dashed rgba(115, 168, 218, .16);
+  border-radius: 11px;
+}
+
+html.workflow-ui-p2 .p2-platform-fields::before {
+  content: 'Pricing & compliance options';
+  grid-column: 1 / -1;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 10px;
+  font-weight: 760;
+}
+
+html.workflow-ui-p2 .p2-platform-fields label {
+  min-height: 44px;
+  margin: 0 !important;
+}
+
+html.workflow-ui-p2 .p2-account-intro {
+  margin-bottom: 9px;
+}
+
+html.workflow-ui-p2 .p2-account-form {
+  align-items: start;
+}
+
+html.workflow-ui-p2 .p2-pos-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 10px 0 12px;
+}
+
+html.workflow-ui-p2 .p2-pos-step {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(115, 168, 218, .14);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .02);
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+html.workflow-ui-p2 .p2-pos-step i {
+  display: grid;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(116, 152, 190, .13);
+  color: inherit;
+  font-size: 9px;
+  font-style: normal;
+}
+
+html.workflow-ui-p2 .p2-pos-step.is-active,
+html.workflow-ui-p2 .p2-pos-step.is-done {
+  border-color: rgba(79, 151, 235, .28);
+  background: rgba(55, 124, 207, .10);
+  color: #8fc1ff;
+}
+html.workflow-ui-p2 .p2-pos-step.is-done { color: #71d7b8; }
+
+html.workflow-ui-p2 .p2-pos-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+html.workflow-ui-p2 .p2-empty-row > td,
+html.workflow-ui-p2 td.p2-empty-cell {
+  padding: 22px 12px !important;
+  text-align: center !important;
+}
+
+html.workflow-ui-p2 .p2-empty-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 10.5px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+html.workflow-ui-p2 .p2-empty-inline::before {
+  content: '○';
+  color: #6fa8ed;
+  font-size: 14px;
+}
+
+html.workflow-ui-p2 .p2-empty-copy {
+  padding: 12px !important;
+  border: 1px dashed rgba(119, 168, 215, .20);
+  border-radius: 12px;
+  text-align: center;
+}
+
+html.workflow-ui-p2 button.p2-busy {
+  opacity: .72 !important;
+  pointer-events: none !important;
+}
+
+html.workflow-ui-p2 button.p2-busy::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 7px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+  animation: p2Spin .65s linear infinite;
+}
+
+html.workflow-ui-p2 .p2-primary-action {
+  min-height: 44px !important;
+}
+
+html.workflow-ui-p2 .p2-live-region {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes p2Spin { to { transform: rotate(360deg); } }
+
+html.workflow-ui-p2.theme-light {
+  --p2-field-bg: rgba(244, 249, 253, .92);
+}
+
+html.workflow-ui-p2.theme-light .p2-live-preview,
+html.workflow-ui-p2.theme-light .p2-advanced-fields,
+html.workflow-ui-p2.theme-light .p2-preview-metric,
+html.workflow-ui-p2.theme-light .p2-pos-step {
+  background: rgba(230, 239, 248, .62) !important;
+}
+
+@media (max-width: 560px) {
+  html.workflow-ui-p2 .p2-live-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html.workflow-ui-p2 .p2-form-group,
+  html.workflow-ui-p2 .p2-pos-fields,
+  html.workflow-ui-p2 .p2-platform-fields { grid-template-columns: 1fr !important; }
+  html.workflow-ui-p2 .p2-form-group-title { position: sticky; left: 0; }
+  html.workflow-ui-p2 .p2-pos-step { flex-direction: column; justify-content: center; text-align: center; }
+  html.workflow-ui-p2 .p2-pos-step i { flex-basis: 19px; }
+  html.workflow-ui-p2 #screen-sales .actions .btn,
+  html.workflow-ui-p2 #screen-stock > .card > .btn.primary,
+  html.workflow-ui-p2 .p2-tx-form + .actions .btn.primary { width: 100% !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.workflow-ui-p2 button.p2-busy::after { animation: none !important; }
+  html.workflow-ui-p2 .p2-advanced-fields > summary::after { transition: none !important; }
+}

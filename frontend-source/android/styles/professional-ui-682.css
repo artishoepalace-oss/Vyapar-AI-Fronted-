@@ -1,0 +1,618 @@
+/* Vyapar AI 6.8.2 — authoritative professional UI and graphics polish.
+   Loaded last in web and Android so older theme layers cannot reintroduce
+   rainbow navigation, square loader artwork, or heavy nested containers. */
+
+html.vy-professional-ui {
+  --pro-bg: #07172a;
+  --pro-bg-deep: #04101f;
+  --pro-surface: rgba(13, 35, 59, .94);
+  --pro-surface-raised: rgba(18, 44, 72, .96);
+  --pro-surface-soft: rgba(33, 63, 94, .62);
+  --pro-text: #f7faff;
+  --pro-muted: #a9b9ca;
+  --pro-line: rgba(139, 181, 225, .18);
+  --pro-blue: #3b91f7;
+  --pro-blue-bright: #65afff;
+  --pro-blue-soft: rgba(59, 145, 247, .14);
+  --pro-green: #39c98f;
+  --pro-amber: #f0bd55;
+  --pro-red: #ec5c70;
+  --pro-shadow: 0 14px 34px rgba(0, 8, 20, .24);
+  --pro-shadow-soft: 0 8px 22px rgba(0, 8, 20, .16);
+  --pro-radius: 18px;
+  color-scheme: dark;
+}
+
+html.vy-professional-ui.theme-light {
+  --pro-bg: #f4f7fb;
+  --pro-bg-deep: #eef3f9;
+  --pro-surface: #ffffff;
+  --pro-surface-raised: #ffffff;
+  --pro-surface-soft: #f5f8fc;
+  --pro-text: #10243c;
+  --pro-muted: #60738a;
+  --pro-line: rgba(35, 76, 119, .13);
+  --pro-blue: #2477d4;
+  --pro-blue-bright: #3187e7;
+  --pro-blue-soft: rgba(36, 119, 212, .10);
+  --pro-green: #168b60;
+  --pro-amber: #a66b06;
+  --pro-red: #cb3f55;
+  --pro-shadow: 0 12px 30px rgba(34, 67, 103, .10);
+  --pro-shadow-soft: 0 6px 18px rgba(34, 67, 103, .08);
+  color-scheme: light;
+}
+
+html.vy-professional-ui:not(.theme-light) body {
+  color: var(--pro-text) !important;
+  background:
+    radial-gradient(38rem 24rem at 6% -4%, rgba(49, 127, 221, .24), transparent 68%),
+    radial-gradient(28rem 24rem at 100% 88%, rgba(25, 77, 137, .13), transparent 72%),
+    linear-gradient(180deg, var(--pro-bg-deep), var(--pro-bg) 44%, #061426) !important;
+}
+
+html.vy-professional-ui.theme-light body {
+  color: var(--pro-text) !important;
+  background:
+    radial-gradient(34rem 20rem at 3% -3%, rgba(49, 135, 231, .11), transparent 70%),
+    linear-gradient(180deg, #fbfdff, var(--pro-bg) 48%, #f8fbff) !important;
+}
+
+html.vy-professional-ui body {
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  letter-spacing: -.005em;
+}
+
+html.vy-professional-ui .app {
+  width: min(100%, 1120px) !important;
+}
+
+/* Header and brand */
+html.vy-professional-ui .top {
+  min-height: 68px !important;
+  padding: 9px 4px 11px !important;
+}
+
+html.vy-professional-ui .brand {
+  gap: 11px !important;
+}
+
+html.vy-professional-ui .logo {
+  width: 46px !important;
+  height: 46px !important;
+  flex-basis: 46px !important;
+  padding: 1px !important;
+  border: 1px solid rgba(255, 255, 255, .72) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 26px rgba(0, 20, 48, .22) !important;
+}
+
+html.vy-professional-ui .brand h1 {
+  font-size: clamp(20px, 4.7vw, 26px) !important;
+  font-weight: 820 !important;
+  letter-spacing: -.035em !important;
+}
+
+html.vy-professional-ui .tag {
+  color: var(--pro-muted) !important;
+  font-size: 11px !important;
+}
+
+html.vy-professional-ui .badge,
+html.vy-professional-ui .theme-toggle {
+  border-color: var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  color: var(--pro-text) !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+html.vy-professional-ui .badge {
+  color: var(--pro-blue-bright) !important;
+}
+
+/* Surfaces and type */
+html.vy-professional-ui .screen .card,
+html.vy-professional-ui .screen .stat,
+html.vy-professional-ui .screen .settings-section,
+html.vy-professional-ui .screen .vx621-feature-card,
+html.vy-professional-ui .screen .business-module-card,
+html.vy-professional-ui .screen .adv-module,
+html.vy-professional-ui .screen .p620-report-card,
+html.vy-professional-ui .screen .subscription-plan-card {
+  border: 1px solid var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  color: var(--pro-text) !important;
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html.vy-professional-ui .screen .card,
+html.vy-professional-ui .screen .settings-section,
+html.vy-professional-ui .screen .business-module-card,
+html.vy-professional-ui .screen .subscription-plan-card {
+  border-radius: var(--pro-radius) !important;
+}
+
+html.vy-professional-ui .screen .card .card,
+html.vy-professional-ui .screen .settings-section .card,
+html.vy-professional-ui #screen-business .vx621-group .card {
+  background: var(--pro-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui h1,
+html.vy-professional-ui h2,
+html.vy-professional-ui h3,
+html.vy-professional-ui h4,
+html.vy-professional-ui strong,
+html.vy-professional-ui b {
+  color: var(--pro-text) !important;
+}
+
+html.vy-professional-ui h2,
+html.vy-professional-ui h3,
+html.vy-professional-ui h4 {
+  letter-spacing: -.025em !important;
+}
+
+html.vy-professional-ui .muted,
+html.vy-professional-ui small,
+html.vy-professional-ui .small,
+html.vy-professional-ui .settings-field-note {
+  color: var(--pro-muted) !important;
+}
+
+/* Home graphics and information hierarchy */
+html.vy-professional-ui #screen-home .home-shell {
+  gap: 15px !important;
+}
+
+html.vy-professional-ui #screen-home .home-overview {
+  position: relative !important;
+  isolation: isolate;
+  border-color: rgba(93, 165, 246, .34) !important;
+  background:
+    radial-gradient(17rem 13rem at 92% 12%, rgba(100, 175, 255, .22), transparent 67%),
+    linear-gradient(145deg, rgba(34, 91, 153, .34), rgba(10, 34, 59, .92)) !important;
+  box-shadow: 0 18px 42px rgba(0, 20, 46, .27) !important;
+}
+
+html.vy-professional-ui #screen-home .home-overview::after {
+  content: "";
+  position: absolute;
+  right: -42px;
+  top: -54px;
+  z-index: -1;
+  width: 146px;
+  height: 146px;
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-radius: 50%;
+  box-shadow: 0 0 0 22px rgba(255, 255, 255, .025), 0 0 0 48px rgba(255, 255, 255, .018);
+}
+
+html.vy-professional-ui.theme-light #screen-home .home-overview {
+  background:
+    radial-gradient(19rem 13rem at 95% 4%, rgba(255, 255, 255, .20), transparent 66%),
+    linear-gradient(145deg, #135caa, #2781dc 62%, #3a92e7) !important;
+}
+
+html.vy-professional-ui #screen-home .home-overview h2,
+html.vy-professional-ui #screen-home .home-overview b,
+html.vy-professional-ui #screen-home .home-overview p {
+  color: #fff !important;
+}
+
+html.vy-professional-ui #screen-home .home-eyebrow,
+html.vy-professional-ui #screen-home .home-profit span,
+html.vy-professional-ui #screen-home .home-profit small {
+  color: #cce6ff !important;
+}
+
+html.vy-professional-ui #screen-home .home-goal-track {
+  height: 7px !important;
+  border: 0 !important;
+  background: rgba(255, 255, 255, .18) !important;
+}
+
+html.vy-professional-ui #screen-home .home-goal-track span {
+  background: linear-gradient(90deg, #fff, #91d5ff) !important;
+  box-shadow: 0 0 18px rgba(169, 220, 255, .50) !important;
+}
+
+html.vy-professional-ui #screen-home .android-quick-action {
+  min-height: 82px !important;
+  border-color: var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+html.vy-professional-ui #screen-home .android-quick-action-icon,
+html.vy-professional-ui #screen-home .home-metric-icon,
+html.vy-professional-ui .vx621-feature-icon {
+  border: 1px solid rgba(82, 157, 240, .20) !important;
+  border-radius: 13px !important;
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-blue-bright) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08) !important;
+}
+
+html.vy-professional-ui #screen-home .home-metrics .stat {
+  min-height: 104px !important;
+  border-top: 1px solid var(--pro-line) !important;
+  border-left: 1px solid var(--pro-line) !important;
+  background:
+    linear-gradient(135deg, var(--pro-blue-soft), transparent 58%),
+    var(--pro-surface) !important;
+}
+
+html.vy-professional-ui #screen-home .home-next {
+  border-color: rgba(57, 201, 143, .24) !important;
+  background:
+    linear-gradient(120deg, rgba(57, 201, 143, .10), transparent 46%),
+    var(--pro-surface) !important;
+}
+
+html.vy-professional-ui #screen-home .home-next-icon {
+  border-radius: 14px !important;
+  background: rgba(57, 201, 143, .13) !important;
+  color: var(--pro-green) !important;
+}
+
+/* Business and module graphics */
+html.vy-professional-ui #screen-business .vx621-hero {
+  border-color: rgba(82, 157, 240, .32) !important;
+  background:
+    radial-gradient(20rem 12rem at 100% 0, rgba(70, 152, 245, .18), transparent 65%),
+    var(--pro-surface-raised) !important;
+}
+
+html.vy-professional-ui #screen-business .vx621-group {
+  padding: 14px !important;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: var(--pro-radius) !important;
+  background: rgba(10, 31, 53, .50) !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui.theme-light #screen-business .vx621-group {
+  background: rgba(238, 244, 251, .72) !important;
+}
+
+html.vy-professional-ui #screen-business .vx621-feature-card,
+html.vy-professional-ui .vx621-sales-tools .vx621-feature-card,
+html.vy-professional-ui .vx621-stock-tools .vx621-feature-card {
+  border-top: 1px solid var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+html.vy-professional-ui .vx621-kpi,
+html.vy-professional-ui .stat {
+  border-color: var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+}
+
+/* Buttons and form controls */
+html.vy-professional-ui .btn,
+html.vy-professional-ui .android-sheet-close,
+html.vy-professional-ui .p620-report-card {
+  min-height: 43px !important;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 12px !important;
+  background: var(--pro-surface-soft) !important;
+  color: var(--pro-text) !important;
+  font-weight: 740 !important;
+}
+
+html.vy-professional-ui .btn.primary,
+html.vy-professional-ui button.primary {
+  border-color: rgba(111, 178, 255, .44) !important;
+  background: linear-gradient(135deg, #216cc5, #3b91f7) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px rgba(29, 105, 190, .25) !important;
+}
+
+/* Keep action-blue meaning identical in light/dark and Web/Android. */
+html.vy-professional-ui .btn.primary,
+html.vy-professional-ui button.primary,
+html.vy-professional-ui .vx621-action.primary,
+html.vy-professional-ui .vx621-action.blue,
+html.vy-professional-ui #screen-business .vx621-action.blue,
+html.vy-professional-ui #screen-sales .vx621-action.blue {
+  border-color: rgba(147, 197, 253, .66) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb 55%, #1e5fbf) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px rgba(30, 91, 205, .30), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+}
+
+html.vy-professional-ui .btn.primary:hover,
+html.vy-professional-ui button.primary:hover,
+html.vy-professional-ui .vx621-action.primary:hover,
+html.vy-professional-ui .vx621-action.blue:hover,
+html.vy-professional-ui .btn.primary:focus-visible,
+html.vy-professional-ui button.primary:focus-visible,
+html.vy-professional-ui .vx621-action.primary:focus-visible,
+html.vy-professional-ui .vx621-action.blue:focus-visible {
+  border-color: rgba(191, 219, 254, .82) !important;
+  background: linear-gradient(135deg, #1e40af, #1d4ed8 55%, #087ac2) !important;
+  color: #fff !important;
+}
+
+html.vy-professional-ui .btn.primary:active,
+html.vy-professional-ui button.primary:active,
+html.vy-professional-ui .vx621-action.primary:active,
+html.vy-professional-ui .vx621-action.blue:active {
+  transform: translateY(1px) scale(.985) !important;
+  box-shadow: 0 4px 12px rgba(30, 91, 205, .24) !important;
+}
+
+html.vy-professional-ui .p1-modebar button[aria-selected="true"] {
+  border-color: rgba(147, 197, 253, .58) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(30, 91, 205, .24) !important;
+}
+
+html.vy-professional-ui .btn.danger,
+html.vy-professional-ui button.danger {
+  border-color: rgba(255, 134, 151, .34) !important;
+  background: linear-gradient(135deg, #c83c53, #e95a6f) !important;
+  color: #fff !important;
+}
+
+html.vy-professional-ui input,
+html.vy-professional-ui select,
+html.vy-professional-ui textarea {
+  min-height: 46px !important;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 12px !important;
+  background: rgba(4, 18, 33, .62) !important;
+  color: var(--pro-text) !important;
+}
+
+html.vy-professional-ui.theme-light input,
+html.vy-professional-ui.theme-light select,
+html.vy-professional-ui.theme-light textarea {
+  background: #f8fafd !important;
+}
+
+html.vy-professional-ui input:focus,
+html.vy-professional-ui select:focus,
+html.vy-professional-ui textarea:focus {
+  border-color: var(--pro-blue) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px var(--pro-blue-soft) !important;
+}
+
+/* Settings and overlays */
+html.vy-professional-ui #screen-settings .vy675-settings-row {
+  min-height: 66px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--pro-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui #screen-settings .vy675-settings-row:last-child {
+  border-bottom: 0 !important;
+}
+
+html.vy-professional-ui #screen-settings .vy675-settings-row .vy675-row-icon {
+  border-color: rgba(64, 145, 237, .18) !important;
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-blue-bright) !important;
+}
+
+html.vy-professional-ui #screen-settings .vy675-settings-row:active,
+html.vy-professional-ui #screen-settings .vy675-settings-row:focus-visible {
+  background: var(--pro-blue-soft) !important;
+}
+
+html.vy-professional-ui .android-sheet,
+html.vy-professional-ui .modal-card,
+html.vy-professional-ui .glass-dialog,
+html.vy-professional-ui .subscription-dialog {
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 22px !important;
+  background: var(--pro-surface-raised) !important;
+  color: var(--pro-text) !important;
+  box-shadow: 0 24px 70px rgba(0, 6, 18, .42) !important;
+}
+
+html.vy-professional-ui .android-sheet-item {
+  border: 1px solid var(--pro-line) !important;
+  background: var(--pro-surface-soft) !important;
+}
+
+html.vy-professional-ui .android-sheet-item[data-tab] .android-sheet-item-icon {
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-blue-bright) !important;
+}
+
+/* Charts, tables and subscription artwork */
+html.vy-professional-ui .chart-wrap canvas {
+  border-radius: 14px !important;
+}
+
+html.vy-professional-ui table th {
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-muted) !important;
+}
+
+html.vy-professional-ui table tbody tr:nth-child(even) td {
+  background: rgba(74, 137, 202, .035) !important;
+}
+
+html.vy-professional-ui .subscription-plan-card img,
+html.vy-professional-ui .subscription-dialog img,
+html.vy-professional-ui [class*="plan"] img {
+  border-radius: 16px !important;
+  object-fit: cover !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+/* Bottom navigation: calm neutral bar with one blue active destination. */
+html.vy-professional-ui .nav {
+  border: 1px solid rgba(91, 151, 216, .28) !important;
+  background: rgba(6, 24, 43, .96) !important;
+  box-shadow: 0 16px 42px rgba(0, 6, 17, .34) !important;
+  backdrop-filter: blur(22px) saturate(118%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(118%) !important;
+}
+
+html.vy-professional-ui.theme-light .nav {
+  border-color: rgba(35, 76, 119, .14) !important;
+  background: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 13px 30px rgba(34, 67, 103, .14) !important;
+}
+
+html.vy-professional-ui .nav button[data-android-tab] {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui .nav button[data-android-tab] .android-nav-icon,
+html.vy-professional-ui .nav button[data-android-tab] .android-nav-label {
+  color: #8fa9c2 !important;
+}
+
+html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-icon,
+html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-label {
+  color: #60778e !important;
+}
+
+html.vy-professional-ui .nav button.active[data-android-tab] {
+  background: linear-gradient(145deg, #226fc9, #3b91f7) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(34, 111, 201, .28) !important;
+}
+
+html.vy-professional-ui .nav button.active[data-android-tab] .android-nav-icon,
+html.vy-professional-ui .nav button.active[data-android-tab] .android-nav-label {
+  color: #fff !important;
+}
+
+/* Unified, professional startup graphic. */
+html.vy-professional-ui #appLoader.android-loader,
+html.vy-professional-ui #vy647StartupSplash {
+  background:
+    radial-gradient(18rem 18rem at 50% 38%, rgba(54, 138, 235, .24), transparent 66%),
+    linear-gradient(160deg, #04101f, #092543 58%, #06172b) !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-logo,
+html.vy-professional-ui #vy647StartupSplash .vy647-splash-core img {
+  width: 106px !important;
+  min-width: 106px !important;
+  max-width: 106px !important;
+  height: 106px !important;
+  min-height: 106px !important;
+  max-height: 106px !important;
+  padding: 3px !important;
+  border: 1px solid rgba(255, 255, 255, .72) !important;
+  border-radius: 26px !important;
+  background: #fff !important;
+  box-shadow: 0 20px 52px rgba(0, 10, 28, .42), 0 0 0 8px rgba(85, 160, 245, .08) !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-logo > img {
+  border-radius: 22px !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-bar,
+html.vy-professional-ui #vy647StartupSplash .vy647-splash-bar {
+  overflow: hidden !important;
+  border: 1px solid rgba(128, 184, 243, .16) !important;
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-bar span,
+html.vy-professional-ui #vy647StartupSplash .vy647-splash-bar i {
+  background: linear-gradient(90deg, #2b78cf, #69b6ff, #2b78cf) !important;
+  box-shadow: 0 0 14px rgba(86, 172, 255, .52) !important;
+}
+
+@media (hover: hover) {
+  html.vy-professional-ui .btn:hover,
+  html.vy-professional-ui .android-quick-action:hover,
+  html.vy-professional-ui .vx621-feature-card:hover {
+    border-color: rgba(91, 164, 245, .38) !important;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 520px) {
+  html.vy-professional-ui .app {
+    padding-inline: 10px !important;
+  }
+
+  html.vy-professional-ui .top {
+    min-height: 61px !important;
+  }
+
+  html.vy-professional-ui .logo {
+    width: 42px !important;
+    height: 42px !important;
+    flex-basis: 42px !important;
+    border-radius: 13px !important;
+  }
+
+  html.vy-professional-ui #screen-home .home-overview {
+    padding: 17px !important;
+  }
+
+  html.vy-professional-ui #screen-home .android-quick-action {
+    min-height: 78px !important;
+  }
+
+  html.vy-professional-ui #screen-business .vx621-group {
+    padding: 12px !important;
+  }
+
+  html.vy-professional-ui .nav {
+    width: calc(100% - 12px) !important;
+    padding: 5px !important;
+    gap: 3px !important;
+    border-radius: 19px !important;
+  }
+
+  html.vy-professional-ui .nav button,
+  html.vy-professional-ui .nav .nav-item {
+    min-height: 50px !important;
+    border-radius: 12px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.vy-professional-ui *,
+  html.vy-professional-ui *::before,
+  html.vy-professional-ui *::after {
+    transition-duration: .001ms !important;
+    animation-duration: .001ms !important;
+  }
+}
+
+
+/* 6.8.2 maintenance: prevent top header actions from overflowing narrow screens. */
+.android-ui .top, .top{min-width:0;max-width:100%;}
+.android-ui .brand, .brand{min-width:0;flex:1 1 auto;overflow:hidden;}
+.android-ui .brand > div, .brand > div{min-width:0;}
+.android-ui .top-actions, .top-actions{min-width:0;flex:0 1 auto;max-width:48%;}
+.android-ui .top-actions .badge, .top-actions .badge{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.android-ui .theme-toggle, .theme-toggle{flex:0 0 auto;}
+@media (max-width:520px){
+  .top{gap:8px;}
+  .brand{gap:8px;}
+  .top-actions{gap:5px;max-width:46%;}
+  .android-ui .top-actions{max-width:46%;}
+  .android-ui .badge{max-width:82px;padding-inline:8px!important;}
+}
+@media (max-width:390px){
+  .android-ui .brand .tag,.brand .tag{display:none;}
+  .android-ui .brand h1,.brand h1{font-size:17px!important;}
+  .android-ui .logo,.logo{width:40px!important;height:40px!important;flex-basis:40px;}
+  .android-ui .top-actions,.top-actions{max-width:44%;}
+  .android-ui .badge{max-width:70px;}
+}

@@ -1,0 +1,148 @@
+/* Legal pages share the second UI bundle without affecting the main app. */
+html.legal-page {
+  min-height: 100%;
+  color-scheme: dark;
+}
+
+html.legal-page * {
+  box-sizing: border-box;
+}
+
+html.legal-page body {
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(30rem 22rem at 8% 5%, rgba(96, 145, 255, .18), transparent 62%),
+    radial-gradient(28rem 22rem at 92% 12%, rgba(62, 211, 195, .13), transparent 64%),
+    linear-gradient(145deg, #070d18, #0b1423 52%, #07101c) !important;
+  color: #e5eefb;
+  font: 15px/1.7 Inter, system-ui, sans-serif;
+}
+
+html.legal-page main {
+  width: min(920px, 92vw);
+  margin: 42px auto;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .035)) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .16) !important;
+  backdrop-filter: blur(26px) saturate(155%);
+  -webkit-backdrop-filter: blur(26px) saturate(155%);
+}
+
+html.legal-page h1 {
+  margin: 0 0 6px;
+  font-size: 34px;
+}
+
+html.legal-page h2 {
+  margin-top: 28px;
+  color: #7dd3fc;
+}
+
+html.legal-page p,
+html.legal-page li {
+  color: #b9c7d8;
+}
+
+html.legal-page a {
+  color: #67e8f9;
+}
+
+html.legal-page .meta {
+  color: #718096;
+  font-size: 12px;
+}
+
+html.legal-page .notice {
+  padding: 13px 15px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #111827;
+}
+
+html.legal-page .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+html.legal-page .btn {
+  display: inline-block;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0891b2, #2563eb);
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+html.legal-page .legal-footer {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, .10);
+  color: #91a8bd;
+  font-size: 11px;
+  text-align: center;
+}
+
+html.legal-page .legal-footer.vy659-legal-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px !important;
+  margin-top: 22px !important;
+  padding: 16px 10px 4px !important;
+  font-size: 12px;
+}
+
+html.legal-page .legal-footer-logo,
+html.legal-page .legal-footer.vy659-legal-footer .legal-footer-logo {
+  width: 54px !important;
+  height: 54px !important;
+  object-fit: contain;
+  opacity: .78 !important;
+}
+
+html.legal-page .legal-footer-links,
+html.legal-page .legal-footer.vy659-legal-footer .legal-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px !important;
+}
+
+html.legal-page .legal-footer-links a,
+html.legal-page .legal-footer.vy659-legal-footer .legal-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px !important;
+  font-size: 11px !important;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+html.legal-page .legal-footer .gupta-legacy-signature,
+html.legal-page .legal-footer.vy659-legal-footer .gupta-legacy-signature {
+  display: block;
+  margin-top: 7px;
+  color: #d7e6f5;
+  font-size: 10px !important;
+  font-style: normal !important;
+  font-weight: 850;
+  letter-spacing: .025em;
+  opacity: .72;
+}
+
+@media (max-width: 600px) {
+  html.legal-page main {
+    margin: 18px auto;
+    padding: 22px 17px;
+  }
+
+  html.legal-page h1 {
+    font-size: 28px;
+  }
+}

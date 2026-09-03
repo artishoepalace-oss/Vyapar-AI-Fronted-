@@ -1,0 +1,522 @@
+/*
+ * Vyapar AI commercial UI polish
+ * Additive presentation layer for v6.7.0.2026.
+ * No business logic, storage schema, formulas, routes or feature gates are changed.
+ */
+
+html.commercial-ui-v1 {
+  --cu-bg: #F8F9FA;
+  --cu-surface: #FFFFFF;
+  --cu-surface-soft: #F3F4F6;
+  --cu-border: #E5E7EB;
+  --cu-border-strong: #D1D5DB;
+  --cu-text: #111827;
+  --cu-text-2: #374151;
+  --cu-muted: #6B7280;
+  --cu-muted-2: #9CA3AF;
+  --cu-primary: #2457D6;
+  --cu-primary-hover: #1D4ED8;
+  --cu-primary-soft: #EAF0FF;
+  --cu-success: #047857;
+  --cu-success-soft: #ECFDF5;
+  --cu-warning: #B45309;
+  --cu-warning-soft: #FFF7ED;
+  --cu-danger: #DC2626;
+  --cu-danger-soft: #FEF2F2;
+  --cu-radius: 14px;
+  --cu-radius-sm: 12px;
+  --cu-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+  --cu-shadow-float: 0 10px 28px rgba(17, 24, 39, .10);
+  color-scheme: light;
+}
+
+html.commercial-ui-v1:not(.theme-light) {
+  --cu-bg: #0B1220;
+  --cu-surface: #121B2A;
+  --cu-surface-soft: #182334;
+  --cu-border: #263449;
+  --cu-border-strong: #34445B;
+  --cu-text: #F8FAFC;
+  --cu-text-2: #D7DEE8;
+  --cu-muted: #9AA8BA;
+  --cu-muted-2: #718096;
+  --cu-primary: #6EA8FF;
+  --cu-primary-hover: #83B5FF;
+  --cu-primary-soft: rgba(75, 135, 226, .16);
+  --cu-success: #5FD3AE;
+  --cu-success-soft: rgba(16, 185, 129, .12);
+  --cu-warning: #F4B75D;
+  --cu-warning-soft: rgba(245, 158, 11, .12);
+  --cu-danger: #FF7A85;
+  --cu-danger-soft: rgba(239, 68, 68, .12);
+  --cu-shadow: 0 4px 14px rgba(0, 0, 0, .16);
+  --cu-shadow-float: 0 12px 30px rgba(0, 0, 0, .28);
+  color-scheme: dark;
+}
+
+html.commercial-ui-v1,
+html.commercial-ui-v1 body,
+html.commercial-ui-v1 button,
+html.commercial-ui-v1 input,
+html.commercial-ui-v1 select,
+html.commercial-ui-v1 textarea {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+html.commercial-ui-v1 body {
+  background: var(--cu-bg) !important;
+  color: var(--cu-text) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+}
+
+html.commercial-ui-v1 .app {
+  max-width: 760px !important;
+  padding-inline: 16px !important;
+  padding-top: max(8px, env(safe-area-inset-top)) !important;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+}
+
+html.commercial-ui-v1 .top {
+  min-height: 56px !important;
+  margin: 0 0 16px !important;
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--cu-border) !important;
+  border-radius: 0 !important;
+  background: color-mix(in srgb, var(--cu-bg) 92%, transparent) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(12px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
+}
+
+html.commercial-ui-v1 .brand { gap: 10px !important; }
+html.commercial-ui-v1 .brand .logo {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .brand h1 {
+  margin: 0 !important;
+  color: var(--cu-text) !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.02em !important;
+}
+html.commercial-ui-v1 .brand .tag {
+  margin-top: 2px !important;
+  color: var(--cu-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+}
+html.commercial-ui-v1 .badge,
+html.commercial-ui-v1 #planBadge {
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 999px !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+  box-shadow: none !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+html.commercial-ui-v1 .theme-toggle {
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 12px !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+  box-shadow: none !important;
+  font-size: 0 !important;
+}
+html.commercial-ui-v1 .theme-toggle::before { content: "◐"; font-size: 17px; line-height: 1; }
+
+html.commercial-ui-v1 h1,
+html.commercial-ui-v1 h2,
+html.commercial-ui-v1 h3,
+html.commercial-ui-v1 h4 {
+  color: var(--cu-text) !important;
+  letter-spacing: -.02em !important;
+}
+html.commercial-ui-v1 h1 { font-size: clamp(24px, 6.5vw, 30px) !important; font-weight: 780 !important; }
+html.commercial-ui-v1 h2 { font-size: 18px !important; font-weight: 740 !important; line-height: 1.25 !important; }
+html.commercial-ui-v1 h3 { font-size: 15px !important; font-weight: 720 !important; line-height: 1.3 !important; }
+html.commercial-ui-v1 h4 { font-size: 13px !important; font-weight: 700 !important; }
+html.commercial-ui-v1 p,
+html.commercial-ui-v1 .muted,
+html.commercial-ui-v1 small,
+html.commercial-ui-v1 .p2-field-hint { color: var(--cu-muted) !important; }
+
+html.commercial-ui-v1 .card,
+html.commercial-ui-v1 .stat,
+html.commercial-ui-v1 .settings-section,
+html.commercial-ui-v1 .production-account-card,
+html.commercial-ui-v1 .vx621-group,
+html.commercial-ui-v1 .shop-growth-card,
+html.commercial-ui-v1 .home-overview,
+html.commercial-ui-v1 .home-next {
+  border: 1px solid var(--cu-border) !important;
+  border-radius: var(--cu-radius) !important;
+  background: var(--cu-surface) !important;
+  box-shadow: var(--cu-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.commercial-ui-v1 .card,
+html.commercial-ui-v1 .settings-section,
+html.commercial-ui-v1 .vx621-group,
+html.commercial-ui-v1 .shop-growth-card { padding: 16px !important; }
+html.commercial-ui-v1 .card::before,
+html.commercial-ui-v1 .card::after,
+html.commercial-ui-v1 .stat::before,
+html.commercial-ui-v1 .stat::after,
+html.commercial-ui-v1 .nav::after { display: none !important; content: none !important; }
+html.commercial-ui-v1 .card .card,
+html.commercial-ui-v1 .card .stat,
+html.commercial-ui-v1 .settings-section .card,
+html.commercial-ui-v1 .vx621-group .card,
+html.commercial-ui-v1 .shop-growth-card .card {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .grid,
+html.commercial-ui-v1 .grid3,
+html.commercial-ui-v1 .row,
+html.commercial-ui-v1 .stats,
+html.commercial-ui-v1 .settings-stack,
+html.commercial-ui-v1 .vx621-feature-grid { gap: 12px !important; }
+
+html.commercial-ui-v1 label,
+html.commercial-ui-v1 .p2-field-label {
+  color: var(--cu-text-2) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+}
+html.commercial-ui-v1 input,
+html.commercial-ui-v1 select,
+html.commercial-ui-v1 textarea {
+  min-height: 46px !important;
+  padding: 11px 12px !important;
+  border: 1px solid var(--cu-border-strong) !important;
+  border-radius: var(--cu-radius-sm) !important;
+  outline: 0 !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+html.commercial-ui-v1 textarea { min-height: 104px !important; resize: vertical !important; }
+html.commercial-ui-v1 input::placeholder,
+html.commercial-ui-v1 textarea::placeholder { color: var(--cu-muted-2) !important; opacity: 1 !important; }
+html.commercial-ui-v1 input:focus,
+html.commercial-ui-v1 select:focus,
+html.commercial-ui-v1 textarea:focus {
+  border-color: var(--cu-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cu-primary) 14%, transparent) !important;
+}
+html.commercial-ui-v1 input:disabled,
+html.commercial-ui-v1 select:disabled,
+html.commercial-ui-v1 textarea:disabled {
+  background: var(--cu-surface-soft) !important;
+  color: var(--cu-muted) !important;
+  opacity: .8 !important;
+}
+
+html.commercial-ui-v1 .btn,
+html.commercial-ui-v1 .vx621-action,
+html.commercial-ui-v1 .home-text-button,
+html.commercial-ui-v1 button.p2-busy {
+  min-height: 42px !important;
+  padding: 9px 14px !important;
+  border: 1px solid var(--cu-border-strong) !important;
+  border-radius: 12px !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  transform: none !important;
+}
+html.commercial-ui-v1 .btn:hover,
+html.commercial-ui-v1 .vx621-action:hover,
+html.commercial-ui-v1 .home-text-button:hover { background: var(--cu-surface-soft) !important; }
+html.commercial-ui-v1 .btn.primary,
+html.commercial-ui-v1 .vx621-action.primary,
+html.commercial-ui-v1 button.primary {
+  border-color: var(--cu-primary) !important;
+  background: var(--cu-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--cu-primary) 18%, transparent) !important;
+}
+html.commercial-ui-v1 .btn.primary:hover,
+html.commercial-ui-v1 .vx621-action.primary:hover,
+html.commercial-ui-v1 button.primary:hover { background: var(--cu-primary-hover) !important; }
+html.commercial-ui-v1 .btn.danger,
+html.commercial-ui-v1 .danger,
+html.commercial-ui-v1 .delete-solid {
+  border-color: var(--cu-danger) !important;
+  background: var(--cu-danger) !important;
+  color: #FFFFFF !important;
+}
+html.commercial-ui-v1 .btn.mini { min-height: 34px !important; padding: 6px 10px !important; font-size: 11px !important; }
+html.commercial-ui-v1 .actions { gap: 8px !important; margin-top: 12px !important; }
+
+html.commercial-ui-v1 .p1-modebar {
+  top: calc(max(6px, env(safe-area-inset-top)) + 58px) !important;
+  gap: 4px !important;
+  margin: 8px 0 16px !important;
+  padding: 4px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 13px !important;
+  background: var(--cu-surface-soft) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+html.commercial-ui-v1 .p1-modebar button {
+  min-height: 36px !important;
+  border-radius: 10px !important;
+  color: var(--cu-muted) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+}
+html.commercial-ui-v1 .p1-modebar button[aria-selected="true"] {
+  background: var(--cu-surface) !important;
+  color: var(--cu-primary) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06) !important;
+}
+
+html.commercial-ui-v1 .home-shell { gap: 16px !important; }
+html.commercial-ui-v1 .home-overview { padding: 18px !important; }
+html.commercial-ui-v1 .home-overview-copy h2 { margin: 4px 0 3px !important; font-size: 22px !important; }
+html.commercial-ui-v1 .home-overview-copy p { margin: 0 !important; font-size: 11.5px !important; }
+html.commercial-ui-v1 .home-eyebrow,
+html.commercial-ui-v1 .home-section-kicker,
+html.commercial-ui-v1 .settings-kicker {
+  color: var(--cu-primary) !important;
+  font-size: 9px !important;
+  font-weight: 780 !important;
+  letter-spacing: .08em !important;
+}
+html.commercial-ui-v1 .home-profit b { color: var(--cu-text) !important; font-size: 28px !important; font-weight: 780 !important; }
+html.commercial-ui-v1 .home-goal-track { height: 6px !important; background: var(--cu-surface-soft) !important; }
+html.commercial-ui-v1 .android-quick-actions { gap: 10px !important; }
+html.commercial-ui-v1 .android-quick-action {
+  min-height: 70px !important;
+  padding: 12px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 13px !important;
+  background: var(--cu-surface) !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .android-quick-action-copy b { color: var(--cu-text) !important; font-size: 12px !important; }
+html.commercial-ui-v1 .android-quick-action-copy small { color: var(--cu-muted) !important; font-size: 9.5px !important; }
+html.commercial-ui-v1 .home-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html.commercial-ui-v1 .home-metrics .stat { min-height: 96px !important; padding: 14px !important; }
+html.commercial-ui-v1 .home-metrics .stat b { color: var(--cu-text) !important; font-size: 19px !important; }
+html.commercial-ui-v1 .home-metrics .stat small { font-size: 9.5px !important; }
+
+html.commercial-ui-v1 .p2-form-intro,
+html.commercial-ui-v1 .p2-tx-context,
+html.commercial-ui-v1 .p2-empty-copy {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .p2-form-intro {
+  align-items: center !important;
+  margin: 4px 0 10px !important;
+  padding: 0 !important;
+  color: var(--cu-muted) !important;
+}
+html.commercial-ui-v1 .p2-form-intro::before { background: var(--cu-primary-soft) !important; color: var(--cu-primary) !important; }
+html.commercial-ui-v1 .p2-live-preview {
+  gap: 8px !important;
+  padding: 10px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 13px !important;
+  background: var(--cu-surface-soft) !important;
+}
+html.commercial-ui-v1 .p2-preview-title,
+html.commercial-ui-v1 .p2-preview-metric b,
+html.commercial-ui-v1 .p2-form-group-title { color: var(--cu-text) !important; }
+html.commercial-ui-v1 .p2-preview-metric {
+  padding: 8px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--cu-surface) !important;
+}
+html.commercial-ui-v1 .p2-advanced-fields {
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+}
+html.commercial-ui-v1 .p2-advanced-fields > summary { color: var(--cu-text-2) !important; }
+html.commercial-ui-v1 .p2-platform-fields {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 4px 0 !important;
+}
+html.commercial-ui-v1 .p2-pos-step { border: 0 !important; background: var(--cu-surface-soft) !important; color: var(--cu-muted) !important; }
+html.commercial-ui-v1 .p2-pos-step.is-active,
+html.commercial-ui-v1 .p2-pos-step.is-done { background: var(--cu-primary-soft) !important; color: var(--cu-primary) !important; }
+html.commercial-ui-v1 .p2-error-text { color: var(--cu-danger) !important; }
+html.commercial-ui-v1 input.p2-input-error,
+html.commercial-ui-v1 select.p2-input-error,
+html.commercial-ui-v1 textarea.p2-input-error {
+  border-color: var(--cu-danger) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cu-danger) 10%, transparent) !important;
+}
+
+html.commercial-ui-v1 table { border-collapse: separate !important; border-spacing: 0 !important; color: var(--cu-text-2) !important; }
+html.commercial-ui-v1 th {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid var(--cu-border) !important;
+  background: var(--cu-surface-soft) !important;
+  color: var(--cu-muted) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+html.commercial-ui-v1 td {
+  padding: 11px 12px !important;
+  border-bottom: 1px solid var(--cu-border) !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+}
+html.commercial-ui-v1 tr:last-child td { border-bottom: 0 !important; }
+
+html.commercial-ui-v1 .modal,
+html.commercial-ui-v1 .modal-card,
+html.commercial-ui-v1 .dialog,
+html.commercial-ui-v1 .menu-popover,
+html.commercial-ui-v1 .more-sheet,
+html.commercial-ui-v1 .sheet,
+html.commercial-ui-v1 [role="dialog"] {
+  border-color: var(--cu-border) !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text) !important;
+  box-shadow: var(--cu-shadow-float) !important;
+}
+html.commercial-ui-v1 .more-sheet,
+html.commercial-ui-v1 .sheet { border-radius: 18px 18px 0 0 !important; }
+html.commercial-ui-v1 .menu-popover { border-radius: 12px !important; }
+html.commercial-ui-v1 .menu-popover button,
+html.commercial-ui-v1 .more-sheet button { color: var(--cu-text-2) !important; }
+html.commercial-ui-v1 .menu-popover button:hover,
+html.commercial-ui-v1 .more-sheet button:hover { background: var(--cu-surface-soft) !important; }
+
+html.commercial-ui-v1 .nav {
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  min-height: 62px !important;
+  padding: 6px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--cu-surface) 94%, transparent) !important;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, .10) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+}
+html.commercial-ui-v1 .nav button,
+html.commercial-ui-v1 .nav .nav-item {
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: var(--cu-muted) !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .nav button.active,
+html.commercial-ui-v1 .nav .nav-item.active,
+html.commercial-ui-v1 .nav [aria-current="page"] { background: var(--cu-primary-soft) !important; color: var(--cu-primary) !important; }
+
+html.commercial-ui-v1 .cu-help { position: relative; display: inline-flex; margin-left: 5px; vertical-align: middle; }
+html.commercial-ui-v1 .cu-help-button {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--cu-border);
+  border-radius: 50%;
+  background: var(--cu-surface);
+  color: var(--cu-muted);
+  box-shadow: none;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+html.commercial-ui-v1 .cu-help-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 7px);
+  z-index: 240;
+  display: none;
+  width: min(280px, 78vw);
+  padding: 10px 11px;
+  border: 1px solid var(--cu-border);
+  border-radius: 11px;
+  background: var(--cu-surface);
+  color: var(--cu-text-2);
+  box-shadow: var(--cu-shadow-float);
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+html.commercial-ui-v1 .cu-help.is-open .cu-help-panel { display: block; }
+html.commercial-ui-v1 .cu-clamped-help {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+}
+
+html.commercial-ui-v1 button,
+html.commercial-ui-v1 [role="button"],
+html.commercial-ui-v1 a { -webkit-tap-highlight-color: transparent; }
+html.commercial-ui-v1 button:focus-visible,
+html.commercial-ui-v1 [role="button"]:focus-visible,
+html.commercial-ui-v1 a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--cu-primary) 24%, transparent) !important;
+  outline-offset: 2px !important;
+}
+html.commercial-ui-v1 button:disabled { opacity: .5 !important; cursor: not-allowed !important; }
+html.commercial-ui-v1 * { scrollbar-color: var(--cu-border-strong) transparent; }
+
+@media (max-width: 520px) {
+  html.commercial-ui-v1 .app { padding-inline: 12px !important; }
+  html.commercial-ui-v1 .top { margin-bottom: 12px !important; }
+  html.commercial-ui-v1 .brand .tag { max-width: 145px; }
+  html.commercial-ui-v1 .home-overview { padding: 16px !important; }
+  html.commercial-ui-v1 .p2-form-group,
+  html.commercial-ui-v1 .p2-platform-fields,
+  html.commercial-ui-v1 .p2-pos-fields { grid-template-columns: 1fr !important; }
+  html.commercial-ui-v1 .p2-live-preview { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.commercial-ui-v1 *,
+  html.commercial-ui-v1 *::before,
+  html.commercial-ui-v1 *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

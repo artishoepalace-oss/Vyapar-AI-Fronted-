@@ -1,0 +1,114 @@
+/* Vyapar AI 6.5.1 — Android-first stability, light mode, menus, and Gupta Legacy footer. */
+:root{--vy651-link:#1677d2;--vy651-danger:#c43d55}
+
+/* Bottom navigation: tap-first, compact, no accidental drag state. */
+html.android-ui .nav{touch-action:manipulation!important;overscroll-behavior:none!important}
+html.android-ui .nav button{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}
+html.android-ui .android-nav-glass-indicator{transition:transform .22s cubic-bezier(.22,1,.36,1),width .16s ease!important}
+html.android-ui .nav button.active .android-nav-label{animation-duration:.26s!important}
+
+/* Bulk boxes stay invisible until the three-dot button is deliberately opened. */
+html.android-ui .vx622-bulk-menu>.vx622-menu-panel,
+html.android-ui .vx621-bulk-actions.vx622-bulk-menu>.vx622-menu-panel{
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+html.android-ui .vx622-bulk-menu.is-open>.vx622-menu-panel,
+html.android-ui .vx621-bulk-actions.vx622-bulk-menu.is-open>.vx622-menu-panel{
+  display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;gap:5px!important;
+}
+html.android-ui .vx622-menu-trigger{font-size:23px!important;line-height:1!important;letter-spacing:1px!important}
+html.android-ui .vx622-menu-item{min-height:44px!important;font-size:13px!important}
+
+/* Strong Android light-mode readability across every primary screen. */
+html.android-ui.theme-light body,
+html.android-ui.theme-light .screen{color:#10273b!important}
+html.android-ui.theme-light .screen h1,
+html.android-ui.theme-light .screen h2,
+html.android-ui.theme-light .screen h3,
+html.android-ui.theme-light .screen h4,
+html.android-ui.theme-light .screen strong,
+html.android-ui.theme-light .screen b{color:#10273b}
+html.android-ui.theme-light .screen p,
+html.android-ui.theme-light .screen small,
+html.android-ui.theme-light .screen .muted,
+html.android-ui.theme-light .screen label{color:#5d748b!important}
+html.android-ui.theme-light input,
+html.android-ui.theme-light textarea,
+html.android-ui.theme-light select{
+  color:#10273b!important;background:rgba(255,255,255,.82)!important;border-color:rgba(75,111,145,.24)!important;
+}
+html.android-ui.theme-light input::placeholder,
+html.android-ui.theme-light textarea::placeholder{color:#8294a7!important;opacity:1}
+html.android-ui.theme-light .vx622-menu-panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(241,247,253,.99))!important;
+  border-color:rgba(75,111,145,.20)!important;box-shadow:0 18px 40px rgba(53,78,103,.18)!important;
+}
+html.android-ui.theme-light .vx622-menu-item{color:#203c56!important;background:rgba(69,123,176,.045)!important}
+html.android-ui.theme-light .vx622-menu-item.danger{color:#b2344a!important;background:rgba(194,57,80,.07)!important}
+
+/* Footer/signature is always the final identity line. */
+.app-legal-footer{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:center!important;gap:8px 12px!important}
+.app-legal-footer .gupta-legacy-signature,
+.android-sheet-legal .gupta-legacy-signature{
+  display:block!important;flex-basis:100%!important;margin-top:4px!important;text-align:center!important;
+  font-weight:850!important;font-style:italic!important;letter-spacing:.025em!important;color:var(--android-text,#0b2545)!important;
+}
+html.android-ui.theme-light .app-legal-footer .gupta-legacy-signature,
+html.android-ui.theme-light .android-sheet-legal .gupta-legacy-signature{color:#15324d!important}
+.android-sheet-legal .gupta-legacy-signature{padding-top:5px!important}
+
+@media(max-width:520px){
+  html.android-ui .nav{height:calc(var(--android-nav-h) + env(safe-area-inset-bottom))!important}
+  html.android-ui .nav button{min-height:58px!important}
+  .app-legal-footer{font-size:10px!important;padding-inline:12px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.android-ui .android-nav-glass-indicator,html.android-ui .nav button.active .android-nav-label{transition:none!important;animation:none!important}
+}
+
+
+/* 6.5.2 follow-up: rounded loading identity, true hidden selection mode, centered More signature, smoother theme. */
+html.android-ui .android-loader-logo{border-radius:34px!important}
+html.android-ui .android-loader-logo img{border-radius:30px!important;overflow:hidden!important}
+#vy647StartupSplash .vy647-splash-core img{border-radius:28px!important;background:#fff!important;overflow:hidden!important}
+
+/* More-sheet Gupta Legacy stays centered and visually secondary. */
+html.android-ui .android-sheet-legal .gupta-legacy-signature{
+  width:100%!important;flex:0 0 100%!important;align-self:center!important;justify-self:center!important;
+  margin:3px auto 0!important;padding-top:2px!important;text-align:center!important;
+  font-size:9px!important;line-height:1.25!important;font-weight:800!important;letter-spacing:.018em!important;
+}
+
+/* Checkbox/tick columns are not part of the normal screen. They appear only after the three-dot menu is activated. */
+html.android-ui .vx622-menu-card .vx622-check-col{
+  display:none!important;visibility:hidden!important;width:0!important;min-width:0!important;max-width:0!important;padding:0!important;border:0!important;
+}
+html.android-ui .vx622-menu-card.vx622-selection-open .vx622-check-col{
+  display:table-cell!important;visibility:visible!important;width:34px!important;min-width:34px!important;max-width:34px!important;padding:7px 5px!important;
+}
+html.android-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-recent-check,
+html.android-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-stock-check,
+html.android-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-data-check,
+html.android-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-platform-tx-check,
+html.android-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-generic-check,
+html.android-ui .vx622-menu-card:not(.vx622-selection-open) input.vx621-legacy-check{display:none!important}
+html.android-ui .vx622-menu-card.vx622-selection-open input[type="checkbox"]{accent-color:var(--android-accent,#1479ed)}
+
+/* Theme swap animates surfaces instead of forcing a complete screen rerender. */
+html.android-ui.theme-transitioning body,
+html.android-ui.theme-transitioning .top,
+html.android-ui.theme-transitioning .nav,
+html.android-ui.theme-transitioning .card,
+html.android-ui.theme-transitioning .stat,
+html.android-ui.theme-transitioning .screen,
+html.android-ui.theme-transitioning .settings-section,
+html.android-ui.theme-transitioning .android-sheet,
+html.android-ui.theme-transitioning input,
+html.android-ui.theme-transitioning textarea,
+html.android-ui.theme-transitioning select,
+html.android-ui.theme-transitioning button{
+  transition:background-color .30s ease,background .30s ease,color .24s ease,border-color .28s ease,box-shadow .30s ease!important;
+}
+html.android-ui .theme-ripple{animation-duration:.28s!important}
+@media(prefers-reduced-motion:reduce){html.android-ui.theme-transitioning *{transition:none!important}}
