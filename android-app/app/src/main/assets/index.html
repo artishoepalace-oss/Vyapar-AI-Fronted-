@@ -11,6 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin />
   <style>
     html, body { margin: 0; min-height: 100%; background: #06172D; }
   </style>
@@ -25,34 +26,10 @@
       }
     } catch (error) {}
   </script>
-  <link rel="stylesheet" href="assets/styles/app.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/platform-android.css?v=20260902-loginfix1" />
-  <link rel="stylesheet" href="assets/styles/security-ui-643.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/menu-popover-644.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/plan-badge-menu-645.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/android-session-flow-647.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/android-ui-fixes-651.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/shop-rewards.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/android-ui-fixes-657.css?v=20260829-657" />
-  <link rel="stylesheet" href="assets/styles/audit-fixes-658.css?v=20260830-658" />
-  <link rel="stylesheet" href="assets/styles/sales-theme-660.css?v=20260831-660" />
-  <link rel="stylesheet" href="assets/styles/audit-stage2-6601.css?v=20260902-loginfix1" />
-  <link rel="stylesheet" href="assets/styles/production-ui-670p1.css?v=20260902-loginfix1" />
-  <link rel="stylesheet" href="assets/styles/workflow-ui-670p2.css?v=20260902-loginfix1" />
-  <link rel="stylesheet" href="assets/styles/commercial-ui-6702026.css?v=20260831-commercial1" />
-  <link rel="stylesheet" href="assets/styles/native-shell-hotfix-6712026.css?v=20260831-native1" />
-  <link rel="stylesheet" href="assets/styles/performance-android7-16.css?v=20260901-perf1" />
-  <link rel="stylesheet" href="assets/styles/ui-hotfix-671.css?v=20260901-67101" />
-  <link rel="stylesheet" href="assets/styles/settings-center-675.css?v=20260901-67501" />
-  <link rel="stylesheet" href="assets/styles/latest-polish-675.css?v=20260901-675hotfix1" />
-  <link rel="stylesheet" href="assets/styles/complete-ui-680.css?v=20260901-68202" />
-  <link rel="stylesheet" href="assets/styles/professional-ui-682.css?v=20260902-professional1" />
+  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=20260903-optimized2" />
+  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=20260903-optimized2" />
 </head>
 <body>
-  <script src="assets/scripts/android-session-flow-647.js?v=20260829-657"></script>
-  <script src="assets/scripts/auth.js?v=20260902-loginfix1"></script>
-  <script src="assets/scripts/platform-android.js?v=20260902-loginfix1"></script>
-
   <div id="appLoader" class="android-loader" aria-label="Loading Vyapar AI">
     <div class="android-loader-logo" aria-hidden="true">
       <img src="assets/images/logo.png" alt="" />
@@ -101,21 +78,7 @@
     <nav class="nav" id="nav" aria-label="Main navigation"></nav>
   </div>
 
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="assets/scripts/performance-android7-16.js?v=20260901-perf1"></script>
-  <script src="assets/scripts/app.js?v=20260831-67003"></script>
-  <script src="assets/scripts/security-ui-643.js?v=20260829-657"></script>
-  <script src="assets/scripts/plan-badge-menu-645.js?v=20260829-657"></script>
-  <script src="assets/scripts/shop-rewards.js?v=20260829-657"></script>
-  <script src="assets/scripts/audit-fixes-658.js?v=20260831-6702026"></script>
-  <script src="assets/scripts/sales-theme-660.js?v=20260901-66002"></script>
-  <script src="assets/scripts/audit-stage2-6601.js?v=20260831-6702026"></script>
-  <script src="assets/scripts/production-ui-670p1.js?v=20260831-67001"></script>
-  <script src="assets/scripts/workflow-ui-670p2.js?v=20260831-67003"></script>
-  <script src="assets/scripts/commercial-ui-6702026.js?v=20260831-commercial1"></script>
-  <script src="assets/scripts/native-shell-hotfix-6712026.js?v=20260831-native1"></script>
-  <script src="assets/scripts/ui-hotfix-671.js?v=20260901-67101"></script>
-  <script src="assets/scripts/settings-center-675.js?v=20260901-67501"></script>
-  <script src="assets/scripts/complete-ui-680.js?v=20260901-68202"></script>
+  <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="assets/scripts/vyapar-app.js?v=20260903-optimized2"></script>
 </body>
 </html>

@@ -1,0 +1,5180 @@
+/* ===== STYLE SOURCE: production-ui-670p1.css ===== */
+
+/*
+ * Vyapar AI 6.7.0-phase.1
+ * Production-readiness Phase 1: visual foundation and simpler information architecture.
+ * Loaded last so older feature modules remain intact while sharing one coherent UI layer.
+ */
+
+html.production-ui-p1 {
+  --p1-bg: #06111f;
+  --p1-bg-deep: #030a13;
+  --p1-surface: rgba(15, 37, 59, .84);
+  --p1-surface-raised: rgba(20, 47, 73, .92);
+  --p1-surface-soft: rgba(255, 255, 255, .045);
+  --p1-border: rgba(137, 180, 219, .18);
+  --p1-border-strong: rgba(108, 169, 225, .32);
+  --p1-text: #f3f7fb;
+  --p1-muted: #9cafc2;
+  --p1-accent: #4a91ef;
+  --p1-accent-strong: #2f7ee8;
+  --p1-accent-soft: rgba(65, 139, 234, .16);
+  --p1-positive: #43c59e;
+  --p1-warning: #f2b84b;
+  --p1-danger: #e74f5f;
+  --p1-radius-card: 18px;
+  --p1-radius-control: 13px;
+  --p1-shadow: 0 12px 28px rgba(0, 5, 12, .20);
+  color-scheme: dark;
+}
+
+html.production-ui-p1 body {
+  background:
+    radial-gradient(circle at 88% -12%, rgba(48, 119, 194, .17), transparent 38%),
+    radial-gradient(circle at -12% 34%, rgba(29, 83, 132, .11), transparent 34%),
+    linear-gradient(180deg, var(--p1-bg) 0%, var(--p1-bg-deep) 100%) !important;
+  color: var(--p1-text) !important;
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+}
+
+html.production-ui-p1 body,
+html.production-ui-p1 button,
+html.production-ui-p1 input,
+html.production-ui-p1 select,
+html.production-ui-p1 textarea {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+html.production-ui-p1 .app {
+  width: 100% !important;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: 12px !important;
+  padding-top: max(8px, env(safe-area-inset-top)) !important;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+}
+
+html.production-ui-p1 .top {
+  position: sticky !important;
+  top: max(6px, env(safe-area-inset-top)) !important;
+  z-index: 90 !important;
+  min-height: 58px !important;
+  margin: 0 0 12px !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 17px !important;
+  background: rgba(9, 27, 44, .88) !important;
+  box-shadow: 0 9px 22px rgba(0, 5, 12, .18) !important;
+  backdrop-filter: blur(14px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+}
+
+html.production-ui-p1 .brand { gap: 9px !important; min-width: 0 !important; }
+html.production-ui-p1 .brand .logo {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .brand h1 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.025em !important;
+}
+html.production-ui-p1 .brand .tag {
+  max-width: 220px;
+  margin-top: 3px !important;
+  color: var(--p1-muted) !important;
+  font-size: 10.5px !important;
+  line-height: 1.2 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html.production-ui-p1 .theme-toggle {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 50% !important;
+  background: rgba(4, 16, 29, .58) !important;
+  box-shadow: none !important;
+}
+
+html.production-ui-p1 .screen {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 0 10px !important;
+}
+
+html.production-ui-p1 .card,
+html.production-ui-p1 .stat,
+html.production-ui-p1 .settings-section,
+html.production-ui-p1 .production-account-card,
+html.production-ui-p1 .vx621-group,
+html.production-ui-p1 .shop-growth-card {
+  border: 1px solid var(--p1-border) !important;
+  border-radius: var(--p1-radius-card) !important;
+  background: linear-gradient(180deg, rgba(23, 52, 79, .90), rgba(13, 34, 55, .88)) !important;
+  box-shadow: var(--p1-shadow) !important;
+  backdrop-filter: blur(10px) saturate(126%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(126%) !important;
+}
+
+html.production-ui-p1 .card,
+html.production-ui-p1 .settings-section,
+html.production-ui-p1 .vx621-group,
+html.production-ui-p1 .shop-growth-card {
+  padding: 15px !important;
+}
+
+html.production-ui-p1 .card::before,
+html.production-ui-p1 .card::after,
+html.production-ui-p1 .stat::before,
+html.production-ui-p1 .stat::after,
+html.production-ui-p1 .nav::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+
+html.production-ui-p1 h1,
+html.production-ui-p1 h2,
+html.production-ui-p1 h3,
+html.production-ui-p1 h4 {
+  color: var(--p1-text) !important;
+  letter-spacing: -.025em !important;
+}
+html.production-ui-p1 h1 { font-size: clamp(24px, 7vw, 32px) !important; }
+html.production-ui-p1 h2 { font-size: 18px !important; line-height: 1.25 !important; }
+html.production-ui-p1 h3 { font-size: 15px !important; line-height: 1.3 !important; }
+html.production-ui-p1 p,
+html.production-ui-p1 .muted,
+html.production-ui-p1 small { color: var(--p1-muted) !important; }
+html.production-ui-p1 p { line-height: 1.48 !important; }
+
+html.production-ui-p1 .grid,
+html.production-ui-p1 .grid3,
+html.production-ui-p1 .row,
+html.production-ui-p1 .stats,
+html.production-ui-p1 .vx621-feature-grid,
+html.production-ui-p1 .settings-stack {
+  gap: 10px !important;
+}
+html.production-ui-p1 .grid > .card,
+html.production-ui-p1 .grid3 > .card { margin: 0 !important; }
+html.production-ui-p1 .p1-grid-hidden { display: none !important; }
+
+html.production-ui-p1 label {
+  display: block;
+  margin: 10px 0 5px !important;
+  color: var(--p1-muted) !important;
+  font-size: 11px !important;
+  font-weight: 720 !important;
+  letter-spacing: .01em !important;
+}
+html.production-ui-p1 input,
+html.production-ui-p1 select,
+html.production-ui-p1 textarea {
+  width: 100%;
+  min-height: 46px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: var(--p1-radius-control) !important;
+  outline: none !important;
+  background: rgba(5, 20, 35, .66) !important;
+  color: var(--p1-text) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 textarea { min-height: 108px !important; }
+html.production-ui-p1 input:focus,
+html.production-ui-p1 select:focus,
+html.production-ui-p1 textarea:focus {
+  border-color: rgba(77, 151, 239, .72) !important;
+  box-shadow: 0 0 0 3px rgba(58, 132, 224, .15) !important;
+}
+html.production-ui-p1 input::placeholder,
+html.production-ui-p1 textarea::placeholder { color: #73889c !important; opacity: 1 !important; }
+
+html.production-ui-p1 .btn,
+html.production-ui-p1 .vx621-action,
+html.production-ui-p1 .home-text-button {
+  min-height: 42px !important;
+  padding: 9px 13px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 12px !important;
+  background: rgba(35, 72, 108, .56) !important;
+  color: var(--p1-text) !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 730 !important;
+  transform: none !important;
+}
+html.production-ui-p1 .btn.primary,
+html.production-ui-p1 .vx621-action.primary {
+  border-color: rgba(100, 166, 245, .42) !important;
+  background: linear-gradient(180deg, #397fda, #2869c4) !important;
+  color: #fff !important;
+}
+html.production-ui-p1 .btn.gold {
+  border-color: rgba(239, 188, 83, .42) !important;
+  background: rgba(134, 93, 26, .62) !important;
+  color: #ffe8b1 !important;
+}
+html.production-ui-p1 .btn.danger,
+html.production-ui-p1 .danger,
+html.production-ui-p1 .delete-solid {
+  border-color: #d84655 !important;
+  background: #d84655 !important;
+  color: #fff !important;
+}
+html.production-ui-p1 .btn.mini { min-height: 34px !important; padding: 6px 9px !important; font-size: 11px !important; }
+html.production-ui-p1 .actions { gap: 7px !important; margin-top: 11px !important; }
+
+/* Task mode switchers keep every feature while removing long, intimidating pages. */
+html.production-ui-p1 .p1-modebar {
+  position: sticky;
+  top: calc(max(6px, env(safe-area-inset-top)) + 66px);
+  z-index: 70;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(max-content, 1fr);
+  gap: 4px;
+  width: 100%;
+  margin: 10px 0 12px;
+  padding: 4px;
+  overflow-x: auto;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 15px;
+  background: rgba(5, 19, 33, .92);
+  box-shadow: 0 8px 20px rgba(0, 5, 12, .16);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  scrollbar-width: none;
+}
+html.production-ui-p1 .p1-modebar::-webkit-scrollbar { display: none; }
+html.production-ui-p1 .p1-modebar button {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--p1-muted);
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+html.production-ui-p1 .p1-modebar button[aria-selected="true"] {
+  background: var(--p1-accent-soft);
+  color: #8fc1ff;
+  box-shadow: inset 0 0 0 1px rgba(89, 157, 238, .26);
+}
+html.production-ui-p1 .p1-mode-section[hidden] { display: none !important; }
+
+/* Home */
+html.production-ui-p1 .home-shell { gap: 12px !important; }
+html.production-ui-p1 .home-overview { padding: 18px !important; }
+html.production-ui-p1 .home-overview-copy h2 { margin: 5px 0 4px !important; font-size: 24px !important; }
+html.production-ui-p1 .home-overview-copy p { margin: 0 !important; font-size: 12px !important; }
+html.production-ui-p1 .home-eyebrow,
+html.production-ui-p1 .home-section-kicker,
+html.production-ui-p1 .settings-kicker,
+html.production-ui-p1 .vx621-group-head + span {
+  color: #78adf3 !important;
+  font-size: 9px !important;
+  font-weight: 820 !important;
+  letter-spacing: .11em !important;
+}
+html.production-ui-p1 .home-profit { margin-top: 14px !important; }
+html.production-ui-p1 .home-profit b { margin-top: 3px !important; font-size: 29px !important; }
+html.production-ui-p1 .home-goal-track { height: 6px !important; margin-top: 11px !important; }
+html.production-ui-p1 .home-section-heading { margin-bottom: 8px !important; }
+html.production-ui-p1 .home-section-heading h3 { margin: 3px 0 0 !important; font-size: 16px !important; }
+html.production-ui-p1 .android-quick-actions { gap: 8px !important; }
+html.production-ui-p1 .android-quick-action {
+  min-height: 76px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 16px !important;
+  background: rgba(18, 44, 69, .76) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .android-quick-action-copy b { font-size: 12px !important; }
+html.production-ui-p1 .android-quick-action-copy small { font-size: 9.5px !important; line-height: 1.25 !important; }
+html.production-ui-p1 .home-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html.production-ui-p1 .home-metrics .stat { min-height: 104px !important; padding: 13px !important; }
+html.production-ui-p1 .home-metrics .stat b { margin-top: 10px !important; font-size: 20px !important; }
+html.production-ui-p1 .home-metrics .stat small { font-size: 9.5px !important; }
+html.production-ui-p1 .home-next { grid-template-columns: auto 1fr !important; padding: 14px !important; }
+html.production-ui-p1 .home-next .btn { grid-column: 1 / -1 !important; width: 100% !important; }
+
+/* Keep the shop-progress feature, but make its default card much lighter. */
+html.production-ui-p1 .shop-growth-card { margin: 0 !important; }
+html.production-ui-p1 .shop-growth-head { gap: 8px !important; }
+html.production-ui-p1 .shop-growth-head p { margin: 3px 0 0 !important; font-size: 10.5px !important; }
+html.production-ui-p1 .shop-streak { min-width: 62px !important; padding: 7px !important; border-radius: 13px !important; }
+html.production-ui-p1 .shop-reward-grid { gap: 7px !important; margin-top: 10px !important; }
+html.production-ui-p1 .shop-reward-stat { padding: 10px !important; border-radius: 13px !important; }
+html.production-ui-p1 .shop-reward-stat > b { font-size: 17px !important; }
+html.production-ui-p1 .shop-reward-stat > small { font-size: 9px !important; }
+html.production-ui-p1 .shop-level-row { margin-top: 9px !important; }
+
+/* Business */
+html.production-ui-p1 .vx621-business-shell { gap: 10px !important; }
+html.production-ui-p1 .vx621-hero { padding: 16px !important; }
+html.production-ui-p1 .vx621-hero h1 { margin: 5px 0 !important; font-size: 23px !important; }
+html.production-ui-p1 .vx621-hero p { max-width: 54ch !important; font-size: 11px !important; }
+html.production-ui-p1 .vx621-hero-actions { margin-top: 11px !important; }
+html.production-ui-p1 .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
+html.production-ui-p1 .vx621-kpi {
+  min-height: 69px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 15px !important;
+  background: rgba(16, 42, 67, .72) !important;
+}
+html.production-ui-p1 .vx621-kpi:last-child { grid-column: 1 / -1; }
+html.production-ui-p1 .vx621-kpi span { font-size: 9.5px !important; }
+html.production-ui-p1 .vx621-kpi b { margin-top: 5px !important; font-size: 17px !important; }
+html.production-ui-p1 .vx621-group { padding: 13px !important; }
+html.production-ui-p1 .vx621-group-head { margin-bottom: 9px !important; }
+html.production-ui-p1 .vx621-group-head h2 { font-size: 16px !important; }
+html.production-ui-p1 .vx621-group-head p { font-size: 10px !important; }
+html.production-ui-p1 .vx621-feature-grid,
+html.production-ui-p1 .vx621-feature-grid.compact { grid-template-columns: 1fr !important; }
+html.production-ui-p1 .vx621-feature-card {
+  gap: 10px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, .025) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .vx621-feature-card h3 { margin: 0 !important; font-size: 13px !important; }
+html.production-ui-p1 .vx621-feature-card p { margin: 4px 0 8px !important; font-size: 10px !important; }
+
+/* Sales, Stock, Settings, Insights and utility screens */
+html.production-ui-p1 #screen-sales > .card,
+html.production-ui-p1 #screen-stock > .card,
+html.production-ui-p1 #screen-analytics > .card,
+html.production-ui-p1 #screen-upload > .card,
+html.production-ui-p1 #screen-calculator > .card { margin-top: 10px !important; }
+html.production-ui-p1 #screen-sales .vy660-profit-head strong { font-size: 26px !important; }
+html.production-ui-p1 #screen-sales .vy660-live-grid { gap: 8px !important; }
+html.production-ui-p1 #screen-sales .vy660-live-box { padding: 11px !important; border-radius: 14px !important; }
+html.production-ui-p1 #screen-sales .vy660-note { font-size: 9.5px !important; }
+html.production-ui-p1 .settings-stack { display: grid !important; }
+html.production-ui-p1 .settings-section-heading { gap: 9px !important; }
+html.production-ui-p1 .settings-section-heading h2 { margin: 3px 0 !important; font-size: 17px !important; }
+html.production-ui-p1 .settings-section-heading p { margin: 0 !important; font-size: 10px !important; }
+html.production-ui-p1 .vx622-settings-row { min-height: 54px !important; padding: 10px 11px !important; }
+html.production-ui-p1 .vx622-settings-row b { font-size: 12px !important; }
+html.production-ui-p1 .vx622-settings-row small { font-size: 9.5px !important; }
+
+html.production-ui-p1 .scroll,
+html.production-ui-p1 .vx621-table-wrap,
+html.production-ui-p1 .p611-table {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 13px !important;
+  scrollbar-width: thin;
+}
+html.production-ui-p1 .table th {
+  padding: 10px !important;
+  color: #a9bdd1 !important;
+  font-size: 10px !important;
+  white-space: nowrap;
+}
+html.production-ui-p1 .table td { padding: 10px !important; font-size: 11px !important; }
+
+/* More sheet */
+html.production-ui-p1 .android-sheet-overlay { background: rgba(0, 7, 15, .70) !important; }
+html.production-ui-p1 .android-sheet {
+  max-width: 620px !important;
+  padding: 10px 14px calc(18px + env(safe-area-inset-bottom)) !important;
+  border: 1px solid var(--p1-border-strong) !important;
+  border-bottom: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
+  background: #102b45 !important;
+  box-shadow: 0 -18px 50px rgba(0, 5, 12, .38) !important;
+}
+html.production-ui-p1 .android-sheet-handle { width: 44px !important; height: 4px !important; margin-bottom: 12px !important; }
+html.production-ui-p1 .android-sheet-head h2 { font-size: 24px !important; }
+html.production-ui-p1 .android-sheet-head p { font-size: 11px !important; }
+html.production-ui-p1 .android-sheet-grid { gap: 8px !important; }
+html.production-ui-p1 .android-sheet-item {
+  min-height: 78px !important;
+  padding: 11px !important;
+  border: 1px solid var(--p1-border) !important;
+  border-radius: 15px !important;
+  background: rgba(255, 255, 255, .035) !important;
+  box-shadow: none !important;
+}
+html.production-ui-p1 .android-sheet-item b { font-size: 13px !important; }
+html.production-ui-p1 .android-sheet-item small { font-size: 9.5px !important; }
+
+/* Stable, tap-only bottom navigation. The sliding glass indicator is intentionally disabled. */
+html.production-ui-p1.android-ui .nav,
+html.production-ui-p1.native-android .nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(7px, env(safe-area-inset-bottom)) !important;
+  z-index: 120 !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 3px !important;
+  width: calc(100vw - 16px) !important;
+  max-width: 610px !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  padding: 4px !important;
+  border: 1px solid var(--p1-border-strong) !important;
+  border-radius: 20px !important;
+  background: rgba(12, 36, 58, .94) !important;
+  box-shadow: 0 13px 32px rgba(0, 5, 12, .38) !important;
+  transform: translateX(-50%) !important;
+  touch-action: manipulation !important;
+  overscroll-behavior: none !important;
+  backdrop-filter: blur(14px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(130%) !important;
+}
+html.production-ui-p1.android-ui .android-nav-glass-indicator,
+html.production-ui-p1.native-android .android-nav-glass-indicator { display: none !important; }
+html.production-ui-p1.android-ui .nav button,
+html.production-ui-p1.native-android .nav button {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  width: 100% !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  margin: 0 !important;
+  padding: 4px 2px !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  background: transparent !important;
+  color: #70869b !important;
+  box-shadow: none !important;
+  font-size: 9px !important;
+  transform: none !important;
+  touch-action: manipulation !important;
+}
+html.production-ui-p1.android-ui .nav button.active,
+html.production-ui-p1.native-android .nav button.active {
+  background: linear-gradient(180deg, rgba(57, 128, 221, .92), rgba(40, 103, 193, .92)) !important;
+  color: #fff !important;
+}
+html.production-ui-p1 .android-nav-icon { width: 20px !important; height: 20px !important; }
+html.production-ui-p1 .android-nav-label { font-size: 9px !important; font-weight: 750 !important; }
+html.production-ui-p1 .nav-plan-lock { top: 4px !important; right: 11% !important; font-size: 7px !important; }
+
+html.production-ui-p1.vyapar-keyboard-open .nav,
+html.production-ui-p1 body.vyapar-keyboard-open .nav {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translate(-50%, 16px) !important;
+}
+
+/* Light mode retains the same hierarchy and contrast. */
+html.production-ui-p1.theme-light {
+  --p1-bg: #edf3f8;
+  --p1-bg-deep: #e5edf5;
+  --p1-surface: rgba(255, 255, 255, .88);
+  --p1-surface-raised: rgba(255, 255, 255, .96);
+  --p1-surface-soft: rgba(21, 54, 87, .045);
+  --p1-border: rgba(52, 83, 112, .15);
+  --p1-border-strong: rgba(45, 103, 163, .26);
+  --p1-text: #102338;
+  --p1-muted: #62758a;
+  color-scheme: light;
+}
+html.production-ui-p1.theme-light body {
+  background: linear-gradient(180deg, #edf4fa, #e4edf5) !important;
+  color: var(--p1-text) !important;
+}
+html.production-ui-p1.theme-light .top,
+html.production-ui-p1.theme-light .card,
+html.production-ui-p1.theme-light .stat,
+html.production-ui-p1.theme-light .settings-section,
+html.production-ui-p1.theme-light .production-account-card,
+html.production-ui-p1.theme-light .vx621-group,
+html.production-ui-p1.theme-light .shop-growth-card {
+  background: rgba(255, 255, 255, .88) !important;
+  color: var(--p1-text) !important;
+}
+html.production-ui-p1.theme-light input,
+html.production-ui-p1.theme-light select,
+html.production-ui-p1.theme-light textarea,
+html.production-ui-p1.theme-light .p1-modebar {
+  background: rgba(245, 249, 253, .94) !important;
+  color: var(--p1-text) !important;
+}
+html.production-ui-p1.theme-light .android-sheet { background: #f4f8fc !important; }
+html.production-ui-p1.theme-light.android-ui .nav,
+html.production-ui-p1.theme-light.native-android .nav { background: rgba(248, 252, 255, .96) !important; }
+
+@media (max-width: 430px) {
+  html.production-ui-p1 .app { padding-inline: 9px !important; }
+  html.production-ui-p1 .card,
+  html.production-ui-p1 .settings-section,
+  html.production-ui-p1 .vx621-group,
+  html.production-ui-p1 .shop-growth-card { padding: 13px !important; }
+  html.production-ui-p1 .top { border-radius: 15px !important; }
+  html.production-ui-p1 .home-overview { padding: 16px !important; }
+  html.production-ui-p1 .android-sheet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  html.production-ui-p1 .android-sheet-item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 350px) {
+  html.production-ui-p1 .p1-modebar button { padding-inline: 9px; }
+  html.production-ui-p1 .home-metrics { grid-template-columns: 1fr !important; }
+  html.production-ui-p1 .android-sheet-grid { grid-template-columns: 1fr !important; }
+  html.production-ui-p1 .android-sheet-item:last-child:nth-child(odd) { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.production-ui-p1 *,
+  html.production-ui-p1 *::before,
+  html.production-ui-p1 *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ===== STYLE SOURCE: workflow-ui-670p2.css ===== */
+
+/*
+ * Vyapar AI 6.7.0-phase.2
+ * Production-readiness Phase 2: clear forms, inline validation and workflow feedback.
+ * Additive layer loaded after Phase 1. No business feature or data field is removed.
+ */
+
+html.workflow-ui-p2 {
+  --p2-info: #70aef7;
+  --p2-success: #45c7a0;
+  --p2-warning: #f0b84f;
+  --p2-error: #f06a78;
+  --p2-field-bg: rgba(3, 16, 29, .52);
+}
+
+html.workflow-ui-p2 .p2-form-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 8px 0 12px;
+  padding: 9px 10px;
+  border: 1px solid rgba(104, 164, 224, .17);
+  border-radius: 12px;
+  background: rgba(55, 125, 203, .075);
+  color: var(--p1-muted, #9cafc2);
+  font-size: 10.5px;
+  line-height: 1.42;
+}
+
+html.workflow-ui-p2 .p2-form-intro::before {
+  content: 'i';
+  display: grid;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(74, 145, 239, .18);
+  color: #83b9fb;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+html.workflow-ui-p2 .p2-required-mark {
+  margin-left: 3px;
+  color: #ff8b97;
+  font-weight: 850;
+}
+
+html.workflow-ui-p2 .p2-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 !important;
+}
+
+html.workflow-ui-p2 .p2-field-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 14px;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 10px;
+  font-weight: 760;
+  line-height: 1.2;
+}
+
+html.workflow-ui-p2 .p2-field-hint {
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+html.workflow-ui-p2 input.p2-input-error,
+html.workflow-ui-p2 select.p2-input-error,
+html.workflow-ui-p2 textarea.p2-input-error {
+  border-color: rgba(240, 90, 106, .85) !important;
+  box-shadow: 0 0 0 3px rgba(240, 90, 106, .12) !important;
+}
+
+html.workflow-ui-p2 .p2-error-text {
+  display: block;
+  margin: 3px 0 0;
+  color: #ff9da7 !important;
+  font-size: 9.5px;
+  font-weight: 670;
+  line-height: 1.35;
+}
+
+html.workflow-ui-p2 .p2-live-preview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin: 12px 0 2px;
+  padding: 9px;
+  border: 1px solid rgba(103, 164, 225, .18);
+  border-radius: 14px;
+  background: rgba(2, 14, 26, .34);
+}
+
+html.workflow-ui-p2 .p2-preview-title,
+html.workflow-ui-p2 .p2-preview-note {
+  grid-column: 1 / -1;
+}
+
+html.workflow-ui-p2 .p2-preview-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 10px;
+  font-weight: 780;
+}
+
+html.workflow-ui-p2 .p2-preview-title span:last-child {
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+html.workflow-ui-p2 .p2-preview-metric {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(126, 173, 216, .13);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .028);
+}
+
+html.workflow-ui-p2 .p2-preview-metric span {
+  display: block;
+  overflow: hidden;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 8.5px;
+  font-weight: 690;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.workflow-ui-p2 .p2-preview-metric b {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+html.workflow-ui-p2 .p2-preview-note {
+  margin: 1px 2px 0;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+html.workflow-ui-p2 .p2-live-preview.is-positive .p2-preview-title { color: #72ddbd; }
+html.workflow-ui-p2 .p2-live-preview.is-warning .p2-preview-title { color: #ffd27a; }
+html.workflow-ui-p2 .p2-live-preview.is-negative .p2-preview-title { color: #ff9ca6; }
+
+html.workflow-ui-p2 .p2-tx-form {
+  display: block !important;
+  margin: 12px 0 !important;
+}
+
+html.workflow-ui-p2 .p2-form-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+html.workflow-ui-p2 .p2-form-group-title {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 1px 1px 0;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 11px;
+  font-weight: 790;
+}
+
+html.workflow-ui-p2 .p2-form-group-title small {
+  color: var(--p1-muted, #9cafc2) !important;
+  font-size: 8.5px !important;
+  font-weight: 650;
+}
+
+html.workflow-ui-p2 .p2-advanced-fields {
+  margin-top: 10px;
+  border: 1px solid rgba(115, 168, 218, .16);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .022);
+  overflow: hidden;
+}
+
+html.workflow-ui-p2 .p2-advanced-fields > summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 11px;
+  color: var(--p1-text, #f3f7fb);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 760;
+  list-style: none;
+}
+
+html.workflow-ui-p2 .p2-advanced-fields > summary::-webkit-details-marker { display: none; }
+html.workflow-ui-p2 .p2-advanced-fields > summary::after {
+  content: '⌄';
+  color: #83b9fb;
+  font-size: 14px;
+  transition: transform .18s ease;
+}
+html.workflow-ui-p2 .p2-advanced-fields[open] > summary::after { transform: rotate(180deg); }
+html.workflow-ui-p2 .p2-advanced-fields[open] > summary { border-bottom: 1px solid rgba(115, 168, 218, .14); }
+html.workflow-ui-p2 .p2-advanced-fields .p2-form-group { padding: 10px; }
+
+html.workflow-ui-p2 .p2-tx-context {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 8px 9px;
+  border-left: 3px solid rgba(74, 145, 239, .74);
+  border-radius: 0 9px 9px 0;
+  background: rgba(74, 145, 239, .075);
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+html.workflow-ui-p2 .p2-platform-fields {
+  grid-column: 1 / -1;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px !important;
+  margin: 0 !important;
+  padding: 9px;
+  border: 1px dashed rgba(115, 168, 218, .16);
+  border-radius: 11px;
+}
+
+html.workflow-ui-p2 .p2-platform-fields::before {
+  content: 'Pricing & compliance options';
+  grid-column: 1 / -1;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 10px;
+  font-weight: 760;
+}
+
+html.workflow-ui-p2 .p2-platform-fields label {
+  min-height: 44px;
+  margin: 0 !important;
+}
+
+html.workflow-ui-p2 .p2-account-intro {
+  margin-bottom: 9px;
+}
+
+html.workflow-ui-p2 .p2-account-form {
+  align-items: start;
+}
+
+html.workflow-ui-p2 .p2-pos-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 10px 0 12px;
+}
+
+html.workflow-ui-p2 .p2-pos-step {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(115, 168, 218, .14);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .02);
+  color: var(--p1-muted, #9cafc2);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+html.workflow-ui-p2 .p2-pos-step i {
+  display: grid;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(116, 152, 190, .13);
+  color: inherit;
+  font-size: 9px;
+  font-style: normal;
+}
+
+html.workflow-ui-p2 .p2-pos-step.is-active,
+html.workflow-ui-p2 .p2-pos-step.is-done {
+  border-color: rgba(79, 151, 235, .28);
+  background: rgba(55, 124, 207, .10);
+  color: #8fc1ff;
+}
+html.workflow-ui-p2 .p2-pos-step.is-done { color: #71d7b8; }
+
+html.workflow-ui-p2 .p2-pos-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+html.workflow-ui-p2 .p2-empty-row > td,
+html.workflow-ui-p2 td.p2-empty-cell {
+  padding: 22px 12px !important;
+  text-align: center !important;
+}
+
+html.workflow-ui-p2 .p2-empty-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--p1-muted, #9cafc2);
+  font-size: 10.5px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+html.workflow-ui-p2 .p2-empty-inline::before {
+  content: '○';
+  color: #6fa8ed;
+  font-size: 14px;
+}
+
+html.workflow-ui-p2 .p2-empty-copy {
+  padding: 12px !important;
+  border: 1px dashed rgba(119, 168, 215, .20);
+  border-radius: 12px;
+  text-align: center;
+}
+
+html.workflow-ui-p2 button.p2-busy {
+  opacity: .72 !important;
+  pointer-events: none !important;
+}
+
+html.workflow-ui-p2 button.p2-busy::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 7px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+  animation: p2Spin .65s linear infinite;
+}
+
+html.workflow-ui-p2 .p2-primary-action {
+  min-height: 44px !important;
+}
+
+html.workflow-ui-p2 .p2-live-region {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes p2Spin { to { transform: rotate(360deg); } }
+
+html.workflow-ui-p2.theme-light {
+  --p2-field-bg: rgba(244, 249, 253, .92);
+}
+
+html.workflow-ui-p2.theme-light .p2-live-preview,
+html.workflow-ui-p2.theme-light .p2-advanced-fields,
+html.workflow-ui-p2.theme-light .p2-preview-metric,
+html.workflow-ui-p2.theme-light .p2-pos-step {
+  background: rgba(230, 239, 248, .62) !important;
+}
+
+@media (max-width: 560px) {
+  html.workflow-ui-p2 .p2-live-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html.workflow-ui-p2 .p2-form-group,
+  html.workflow-ui-p2 .p2-pos-fields,
+  html.workflow-ui-p2 .p2-platform-fields { grid-template-columns: 1fr !important; }
+  html.workflow-ui-p2 .p2-form-group-title { position: sticky; left: 0; }
+  html.workflow-ui-p2 .p2-pos-step { flex-direction: column; justify-content: center; text-align: center; }
+  html.workflow-ui-p2 .p2-pos-step i { flex-basis: 19px; }
+  html.workflow-ui-p2 #screen-sales .actions .btn,
+  html.workflow-ui-p2 #screen-stock > .card > .btn.primary,
+  html.workflow-ui-p2 .p2-tx-form + .actions .btn.primary { width: 100% !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.workflow-ui-p2 button.p2-busy::after { animation: none !important; }
+  html.workflow-ui-p2 .p2-advanced-fields > summary::after { transition: none !important; }
+}
+
+/* ===== STYLE SOURCE: commercial-ui-6702026.css ===== */
+
+/*
+ * Vyapar AI commercial UI polish
+ * Additive presentation layer for v6.7.0.2026.
+ * No business logic, storage schema, formulas, routes or feature gates are changed.
+ */
+
+html.commercial-ui-v1 {
+  --cu-bg: #F8F9FA;
+  --cu-surface: #FFFFFF;
+  --cu-surface-soft: #F3F4F6;
+  --cu-border: #E5E7EB;
+  --cu-border-strong: #D1D5DB;
+  --cu-text: #111827;
+  --cu-text-2: #374151;
+  --cu-muted: #6B7280;
+  --cu-muted-2: #9CA3AF;
+  --cu-primary: #2457D6;
+  --cu-primary-hover: #1D4ED8;
+  --cu-primary-soft: #EAF0FF;
+  --cu-success: #047857;
+  --cu-success-soft: #ECFDF5;
+  --cu-warning: #B45309;
+  --cu-warning-soft: #FFF7ED;
+  --cu-danger: #DC2626;
+  --cu-danger-soft: #FEF2F2;
+  --cu-radius: 14px;
+  --cu-radius-sm: 12px;
+  --cu-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+  --cu-shadow-float: 0 10px 28px rgba(17, 24, 39, .10);
+  color-scheme: light;
+}
+
+html.commercial-ui-v1:not(.theme-light) {
+  --cu-bg: #0B1220;
+  --cu-surface: #121B2A;
+  --cu-surface-soft: #182334;
+  --cu-border: #263449;
+  --cu-border-strong: #34445B;
+  --cu-text: #F8FAFC;
+  --cu-text-2: #D7DEE8;
+  --cu-muted: #9AA8BA;
+  --cu-muted-2: #718096;
+  --cu-primary: #6EA8FF;
+  --cu-primary-hover: #83B5FF;
+  --cu-primary-soft: rgba(75, 135, 226, .16);
+  --cu-success: #5FD3AE;
+  --cu-success-soft: rgba(16, 185, 129, .12);
+  --cu-warning: #F4B75D;
+  --cu-warning-soft: rgba(245, 158, 11, .12);
+  --cu-danger: #FF7A85;
+  --cu-danger-soft: rgba(239, 68, 68, .12);
+  --cu-shadow: 0 4px 14px rgba(0, 0, 0, .16);
+  --cu-shadow-float: 0 12px 30px rgba(0, 0, 0, .28);
+  color-scheme: dark;
+}
+
+html.commercial-ui-v1,
+html.commercial-ui-v1 body,
+html.commercial-ui-v1 button,
+html.commercial-ui-v1 input,
+html.commercial-ui-v1 select,
+html.commercial-ui-v1 textarea {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+html.commercial-ui-v1 body {
+  background: var(--cu-bg) !important;
+  color: var(--cu-text) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+}
+
+html.commercial-ui-v1 .app {
+  max-width: 760px !important;
+  padding-inline: 16px !important;
+  padding-top: max(8px, env(safe-area-inset-top)) !important;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+}
+
+html.commercial-ui-v1 .top {
+  min-height: 56px !important;
+  margin: 0 0 16px !important;
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--cu-border) !important;
+  border-radius: 0 !important;
+  background: color-mix(in srgb, var(--cu-bg) 92%, transparent) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(12px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
+}
+
+html.commercial-ui-v1 .brand { gap: 10px !important; }
+html.commercial-ui-v1 .brand .logo {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .brand h1 {
+  margin: 0 !important;
+  color: var(--cu-text) !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.02em !important;
+}
+html.commercial-ui-v1 .brand .tag {
+  margin-top: 2px !important;
+  color: var(--cu-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+}
+html.commercial-ui-v1 .badge,
+html.commercial-ui-v1 #planBadge {
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 999px !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+  box-shadow: none !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+html.commercial-ui-v1 .theme-toggle {
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 12px !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+  box-shadow: none !important;
+  font-size: 0 !important;
+}
+html.commercial-ui-v1 .theme-toggle::before { content: "◐"; font-size: 17px; line-height: 1; }
+
+html.commercial-ui-v1 h1,
+html.commercial-ui-v1 h2,
+html.commercial-ui-v1 h3,
+html.commercial-ui-v1 h4 {
+  color: var(--cu-text) !important;
+  letter-spacing: -.02em !important;
+}
+html.commercial-ui-v1 h1 { font-size: clamp(24px, 6.5vw, 30px) !important; font-weight: 780 !important; }
+html.commercial-ui-v1 h2 { font-size: 18px !important; font-weight: 740 !important; line-height: 1.25 !important; }
+html.commercial-ui-v1 h3 { font-size: 15px !important; font-weight: 720 !important; line-height: 1.3 !important; }
+html.commercial-ui-v1 h4 { font-size: 13px !important; font-weight: 700 !important; }
+html.commercial-ui-v1 p,
+html.commercial-ui-v1 .muted,
+html.commercial-ui-v1 small,
+html.commercial-ui-v1 .p2-field-hint { color: var(--cu-muted) !important; }
+
+html.commercial-ui-v1 .card,
+html.commercial-ui-v1 .stat,
+html.commercial-ui-v1 .settings-section,
+html.commercial-ui-v1 .production-account-card,
+html.commercial-ui-v1 .vx621-group,
+html.commercial-ui-v1 .shop-growth-card,
+html.commercial-ui-v1 .home-overview,
+html.commercial-ui-v1 .home-next {
+  border: 1px solid var(--cu-border) !important;
+  border-radius: var(--cu-radius) !important;
+  background: var(--cu-surface) !important;
+  box-shadow: var(--cu-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.commercial-ui-v1 .card,
+html.commercial-ui-v1 .settings-section,
+html.commercial-ui-v1 .vx621-group,
+html.commercial-ui-v1 .shop-growth-card { padding: 16px !important; }
+html.commercial-ui-v1 .card::before,
+html.commercial-ui-v1 .card::after,
+html.commercial-ui-v1 .stat::before,
+html.commercial-ui-v1 .stat::after,
+html.commercial-ui-v1 .nav::after { display: none !important; content: none !important; }
+html.commercial-ui-v1 .card .card,
+html.commercial-ui-v1 .card .stat,
+html.commercial-ui-v1 .settings-section .card,
+html.commercial-ui-v1 .vx621-group .card,
+html.commercial-ui-v1 .shop-growth-card .card {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .grid,
+html.commercial-ui-v1 .grid3,
+html.commercial-ui-v1 .row,
+html.commercial-ui-v1 .stats,
+html.commercial-ui-v1 .settings-stack,
+html.commercial-ui-v1 .vx621-feature-grid { gap: 12px !important; }
+
+html.commercial-ui-v1 label,
+html.commercial-ui-v1 .p2-field-label {
+  color: var(--cu-text-2) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+}
+html.commercial-ui-v1 input,
+html.commercial-ui-v1 select,
+html.commercial-ui-v1 textarea {
+  min-height: 46px !important;
+  padding: 11px 12px !important;
+  border: 1px solid var(--cu-border-strong) !important;
+  border-radius: var(--cu-radius-sm) !important;
+  outline: 0 !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+html.commercial-ui-v1 textarea { min-height: 104px !important; resize: vertical !important; }
+html.commercial-ui-v1 input::placeholder,
+html.commercial-ui-v1 textarea::placeholder { color: var(--cu-muted-2) !important; opacity: 1 !important; }
+html.commercial-ui-v1 input:focus,
+html.commercial-ui-v1 select:focus,
+html.commercial-ui-v1 textarea:focus {
+  border-color: var(--cu-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cu-primary) 14%, transparent) !important;
+}
+html.commercial-ui-v1 input:disabled,
+html.commercial-ui-v1 select:disabled,
+html.commercial-ui-v1 textarea:disabled {
+  background: var(--cu-surface-soft) !important;
+  color: var(--cu-muted) !important;
+  opacity: .8 !important;
+}
+
+html.commercial-ui-v1 .btn,
+html.commercial-ui-v1 .vx621-action,
+html.commercial-ui-v1 .home-text-button,
+html.commercial-ui-v1 button.p2-busy {
+  min-height: 42px !important;
+  padding: 9px 14px !important;
+  border: 1px solid var(--cu-border-strong) !important;
+  border-radius: 12px !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  transform: none !important;
+}
+html.commercial-ui-v1 .btn:hover,
+html.commercial-ui-v1 .vx621-action:hover,
+html.commercial-ui-v1 .home-text-button:hover { background: var(--cu-surface-soft) !important; }
+html.commercial-ui-v1 .btn.primary,
+html.commercial-ui-v1 .vx621-action.primary,
+html.commercial-ui-v1 button.primary {
+  border-color: var(--cu-primary) !important;
+  background: var(--cu-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--cu-primary) 18%, transparent) !important;
+}
+html.commercial-ui-v1 .btn.primary:hover,
+html.commercial-ui-v1 .vx621-action.primary:hover,
+html.commercial-ui-v1 button.primary:hover { background: var(--cu-primary-hover) !important; }
+html.commercial-ui-v1 .btn.danger,
+html.commercial-ui-v1 .danger,
+html.commercial-ui-v1 .delete-solid {
+  border-color: var(--cu-danger) !important;
+  background: var(--cu-danger) !important;
+  color: #FFFFFF !important;
+}
+html.commercial-ui-v1 .btn.mini { min-height: 34px !important; padding: 6px 10px !important; font-size: 11px !important; }
+html.commercial-ui-v1 .actions { gap: 8px !important; margin-top: 12px !important; }
+
+html.commercial-ui-v1 .p1-modebar {
+  top: calc(max(6px, env(safe-area-inset-top)) + 58px) !important;
+  gap: 4px !important;
+  margin: 8px 0 16px !important;
+  padding: 4px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 13px !important;
+  background: var(--cu-surface-soft) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+html.commercial-ui-v1 .p1-modebar button {
+  min-height: 36px !important;
+  border-radius: 10px !important;
+  color: var(--cu-muted) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+}
+html.commercial-ui-v1 .p1-modebar button[aria-selected="true"] {
+  background: var(--cu-surface) !important;
+  color: var(--cu-primary) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06) !important;
+}
+
+html.commercial-ui-v1 .home-shell { gap: 16px !important; }
+html.commercial-ui-v1 .home-overview { padding: 18px !important; }
+html.commercial-ui-v1 .home-overview-copy h2 { margin: 4px 0 3px !important; font-size: 22px !important; }
+html.commercial-ui-v1 .home-overview-copy p { margin: 0 !important; font-size: 11.5px !important; }
+html.commercial-ui-v1 .home-eyebrow,
+html.commercial-ui-v1 .home-section-kicker,
+html.commercial-ui-v1 .settings-kicker {
+  color: var(--cu-primary) !important;
+  font-size: 9px !important;
+  font-weight: 780 !important;
+  letter-spacing: .08em !important;
+}
+html.commercial-ui-v1 .home-profit b { color: var(--cu-text) !important; font-size: 28px !important; font-weight: 780 !important; }
+html.commercial-ui-v1 .home-goal-track { height: 6px !important; background: var(--cu-surface-soft) !important; }
+html.commercial-ui-v1 .android-quick-actions { gap: 10px !important; }
+html.commercial-ui-v1 .android-quick-action {
+  min-height: 70px !important;
+  padding: 12px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 13px !important;
+  background: var(--cu-surface) !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .android-quick-action-copy b { color: var(--cu-text) !important; font-size: 12px !important; }
+html.commercial-ui-v1 .android-quick-action-copy small { color: var(--cu-muted) !important; font-size: 9.5px !important; }
+html.commercial-ui-v1 .home-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html.commercial-ui-v1 .home-metrics .stat { min-height: 96px !important; padding: 14px !important; }
+html.commercial-ui-v1 .home-metrics .stat b { color: var(--cu-text) !important; font-size: 19px !important; }
+html.commercial-ui-v1 .home-metrics .stat small { font-size: 9.5px !important; }
+
+html.commercial-ui-v1 .p2-form-intro,
+html.commercial-ui-v1 .p2-tx-context,
+html.commercial-ui-v1 .p2-empty-copy {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .p2-form-intro {
+  align-items: center !important;
+  margin: 4px 0 10px !important;
+  padding: 0 !important;
+  color: var(--cu-muted) !important;
+}
+html.commercial-ui-v1 .p2-form-intro::before { background: var(--cu-primary-soft) !important; color: var(--cu-primary) !important; }
+html.commercial-ui-v1 .p2-live-preview {
+  gap: 8px !important;
+  padding: 10px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 13px !important;
+  background: var(--cu-surface-soft) !important;
+}
+html.commercial-ui-v1 .p2-preview-title,
+html.commercial-ui-v1 .p2-preview-metric b,
+html.commercial-ui-v1 .p2-form-group-title { color: var(--cu-text) !important; }
+html.commercial-ui-v1 .p2-preview-metric {
+  padding: 8px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--cu-surface) !important;
+}
+html.commercial-ui-v1 .p2-advanced-fields {
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+}
+html.commercial-ui-v1 .p2-advanced-fields > summary { color: var(--cu-text-2) !important; }
+html.commercial-ui-v1 .p2-platform-fields {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 4px 0 !important;
+}
+html.commercial-ui-v1 .p2-pos-step { border: 0 !important; background: var(--cu-surface-soft) !important; color: var(--cu-muted) !important; }
+html.commercial-ui-v1 .p2-pos-step.is-active,
+html.commercial-ui-v1 .p2-pos-step.is-done { background: var(--cu-primary-soft) !important; color: var(--cu-primary) !important; }
+html.commercial-ui-v1 .p2-error-text { color: var(--cu-danger) !important; }
+html.commercial-ui-v1 input.p2-input-error,
+html.commercial-ui-v1 select.p2-input-error,
+html.commercial-ui-v1 textarea.p2-input-error {
+  border-color: var(--cu-danger) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cu-danger) 10%, transparent) !important;
+}
+
+html.commercial-ui-v1 table { border-collapse: separate !important; border-spacing: 0 !important; color: var(--cu-text-2) !important; }
+html.commercial-ui-v1 th {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid var(--cu-border) !important;
+  background: var(--cu-surface-soft) !important;
+  color: var(--cu-muted) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+html.commercial-ui-v1 td {
+  padding: 11px 12px !important;
+  border-bottom: 1px solid var(--cu-border) !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text-2) !important;
+}
+html.commercial-ui-v1 tr:last-child td { border-bottom: 0 !important; }
+
+html.commercial-ui-v1 .modal,
+html.commercial-ui-v1 .modal-card,
+html.commercial-ui-v1 .dialog,
+html.commercial-ui-v1 .menu-popover,
+html.commercial-ui-v1 .more-sheet,
+html.commercial-ui-v1 .sheet,
+html.commercial-ui-v1 [role="dialog"] {
+  border-color: var(--cu-border) !important;
+  background: var(--cu-surface) !important;
+  color: var(--cu-text) !important;
+  box-shadow: var(--cu-shadow-float) !important;
+}
+html.commercial-ui-v1 .more-sheet,
+html.commercial-ui-v1 .sheet { border-radius: 18px 18px 0 0 !important; }
+html.commercial-ui-v1 .menu-popover { border-radius: 12px !important; }
+html.commercial-ui-v1 .menu-popover button,
+html.commercial-ui-v1 .more-sheet button { color: var(--cu-text-2) !important; }
+html.commercial-ui-v1 .menu-popover button:hover,
+html.commercial-ui-v1 .more-sheet button:hover { background: var(--cu-surface-soft) !important; }
+
+html.commercial-ui-v1 .nav {
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  min-height: 62px !important;
+  padding: 6px !important;
+  border: 1px solid var(--cu-border) !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--cu-surface) 94%, transparent) !important;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, .10) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+}
+html.commercial-ui-v1 .nav button,
+html.commercial-ui-v1 .nav .nav-item {
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: var(--cu-muted) !important;
+  box-shadow: none !important;
+}
+html.commercial-ui-v1 .nav button.active,
+html.commercial-ui-v1 .nav .nav-item.active,
+html.commercial-ui-v1 .nav [aria-current="page"] { background: var(--cu-primary-soft) !important; color: var(--cu-primary) !important; }
+
+html.commercial-ui-v1 .cu-help { position: relative; display: inline-flex; margin-left: 5px; vertical-align: middle; }
+html.commercial-ui-v1 .cu-help-button {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--cu-border);
+  border-radius: 50%;
+  background: var(--cu-surface);
+  color: var(--cu-muted);
+  box-shadow: none;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+html.commercial-ui-v1 .cu-help-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 7px);
+  z-index: 240;
+  display: none;
+  width: min(280px, 78vw);
+  padding: 10px 11px;
+  border: 1px solid var(--cu-border);
+  border-radius: 11px;
+  background: var(--cu-surface);
+  color: var(--cu-text-2);
+  box-shadow: var(--cu-shadow-float);
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+html.commercial-ui-v1 .cu-help.is-open .cu-help-panel { display: block; }
+html.commercial-ui-v1 .cu-clamped-help {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+}
+
+html.commercial-ui-v1 button,
+html.commercial-ui-v1 [role="button"],
+html.commercial-ui-v1 a { -webkit-tap-highlight-color: transparent; }
+html.commercial-ui-v1 button:focus-visible,
+html.commercial-ui-v1 [role="button"]:focus-visible,
+html.commercial-ui-v1 a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--cu-primary) 24%, transparent) !important;
+  outline-offset: 2px !important;
+}
+html.commercial-ui-v1 button:disabled { opacity: .5 !important; cursor: not-allowed !important; }
+html.commercial-ui-v1 * { scrollbar-color: var(--cu-border-strong) transparent; }
+
+@media (max-width: 520px) {
+  html.commercial-ui-v1 .app { padding-inline: 12px !important; }
+  html.commercial-ui-v1 .top { margin-bottom: 12px !important; }
+  html.commercial-ui-v1 .brand .tag { max-width: 145px; }
+  html.commercial-ui-v1 .home-overview { padding: 16px !important; }
+  html.commercial-ui-v1 .p2-form-group,
+  html.commercial-ui-v1 .p2-platform-fields,
+  html.commercial-ui-v1 .p2-pos-fields { grid-template-columns: 1fr !important; }
+  html.commercial-ui-v1 .p2-live-preview { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.commercial-ui-v1 *,
+  html.commercial-ui-v1 *::before,
+  html.commercial-ui-v1 *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ===== STYLE SOURCE: native-shell-hotfix-6712026.css ===== */
+
+/* Vyapar AI 6.7.1.2026 — Android shell hotfix.
+ * Presentation only: native feel, full-width chrome, footer placement and launch surface.
+ */
+
+html.native-android,
+html.native-android body {
+  min-height: 100%;
+  background: var(--cu-bg, #F8F9FA) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Native app text should not behave like a selectable web page. */
+html.native-android body,
+html.native-android .app,
+html.native-android .top,
+html.native-android main,
+html.native-android .screen,
+html.native-android .card,
+html.native-android .stat,
+html.native-android .nav,
+html.native-android button,
+html.native-android label,
+html.native-android p,
+html.native-android span,
+html.native-android small,
+html.native-android h1,
+html.native-android h2,
+html.native-android h3,
+html.native-android h4,
+html.native-android td,
+html.native-android th {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Editing must remain normal: cursor, select, paste and form interaction stay available. */
+html.native-android input,
+html.native-android textarea,
+html.native-android [contenteditable="true"],
+html.native-android .allow-copy {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
+
+/* Full-bleed Android shell. Content keeps 16px rhythm; top chrome reaches both screen edges. */
+html.native-android .app {
+  width: 100% !important;
+  max-width: none !important;
+  padding-top: 0 !important;
+  padding-inline: 16px !important;
+}
+
+html.native-android .top {
+  box-sizing: border-box !important;
+  width: calc(100% + 32px) !important;
+  max-width: none !important;
+  margin: 0 -16px 14px !important;
+  padding: 9px 16px !important;
+  top: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  border-radius: 0 !important;
+  background: rgba(248, 249, 250, .96) !important;
+  box-shadow: 0 1px 0 rgba(17, 24, 39, .02) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+}
+
+html.native-android:not(.theme-light) .top {
+  border-bottom-color: #263449 !important;
+  background: rgba(11, 18, 32, .96) !important;
+}
+
+/* Workspace bars align consistently on every screen. */
+html.native-android .p1-modebar {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Footer belongs to Settings only and sits at the true bottom of the page/viewport. */
+html.native-android #screen-settings .settings-stack {
+  display: flex !important;
+  min-height: calc(100dvh - 190px);
+  flex-direction: column !important;
+}
+
+html.native-android #screen-settings #appLegalFooter {
+  order: 9999 !important;
+  width: 100% !important;
+  margin-top: auto !important;
+  padding-top: 28px !important;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+}
+
+html.native-android .screen:not(#screen-settings) #appLegalFooter,
+html.native-android .android-sheet-legal {
+  display: none !important;
+}
+
+/* Android 7-16 seamless startup: this is the final CSS override loaded by
+   index.html, so it must match res/drawable/launch_screen.xml exactly. */
+html.native-android #appLoader {
+  background: linear-gradient(135deg, #061326 0%, #082B61 54%, #06172D 100%) !important;
+  color: #F4F9FF !important;
+}
+
+html.native-android #appLoader .android-loader-logo {
+  box-shadow: 0 20px 58px rgba(0,17,48,.42), 0 0 0 1px rgba(138,195,255,.16), 0 0 42px rgba(49,132,255,.18) !important;
+}
+
+html.native-android #appLoader .android-loader-bar {
+  background: rgba(139,195,255,.16) !important;
+}
+
+html.native-android #appLoader .android-loader-bar > span {
+  background: linear-gradient(90deg,#1A6FE8,#55B3FF,#D6EFFF,#3184FF) !important;
+}
+
+@media (max-width: 420px) {
+  html.native-android .top {
+    width: calc(100% + 32px) !important;
+    margin-inline: -16px !important;
+  }
+}
+
+/* ===== STYLE SOURCE: performance-android7-16.css ===== */
+
+/* Vyapar AI — Android 7–16 adaptive rendering pass (2026-09-01)
+   Goal: preserve the Liquid Glass look while reducing expensive live compositing,
+   especially while the finger is moving and on low-RAM / older WebView devices. */
+
+html.android-ui{
+  -webkit-tap-highlight-color:transparent;
+  text-rendering:optimizeLegibility;
+}
+html.android-ui body{
+  overscroll-behavior-y:none;
+}
+html.android-ui button,
+html.android-ui .btn,
+html.android-ui a,
+html.android-ui [role="button"]{
+  touch-action:manipulation;
+}
+html.android-ui main,
+html.android-ui .screen,
+html.android-ui .scroll,
+html.android-ui .p611-table,
+html.android-ui .android-sheet,
+html.android-ui .vy6601-select-options{
+  overscroll-behavior:contain;
+}
+html.android-ui img{
+  image-rendering:auto;
+}
+
+/* Android 7–8 / low-RAM: translucent surfaces instead of live backdrop sampling.
+   The visual hierarchy stays intact, but scrolling no longer has to re-blur the page. */
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat,
+html.android-ui.perf-tier-legacy .top,
+html.android-ui.perf-tier-legacy .nav,
+html.android-ui.perf-tier-legacy .android-sheet,
+html.android-ui.perf-tier-legacy .android-sheet-overlay,
+html.android-ui.perf-tier-legacy .android-sheet-item,
+html.android-ui.perf-tier-legacy .settings-section,
+html.android-ui.perf-tier-legacy .production-account-card,
+html.android-ui.perf-tier-legacy .btn,
+html.android-ui.perf-tier-legacy .pill,
+html.android-ui.perf-tier-legacy .glass-chip,
+html.android-ui.perf-tier-legacy .theme-toggle,
+html.android-ui.perf-tier-legacy .badge,
+html.android-ui.perf-tier-legacy input,
+html.android-ui.perf-tier-legacy select,
+html.android-ui.perf-tier-legacy textarea,
+html.android-ui.perf-low-ram .card,
+html.android-ui.perf-low-ram .stat,
+html.android-ui.perf-low-ram .top,
+html.android-ui.perf-low-ram .nav,
+html.android-ui.perf-low-ram .android-sheet,
+html.android-ui.perf-low-ram .android-sheet-overlay,
+html.android-ui.perf-low-ram .android-sheet-item{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat,
+html.android-ui.perf-tier-legacy .settings-section,
+html.android-ui.perf-tier-legacy .production-account-card{
+  box-shadow:0 5px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html.android-ui.perf-tier-legacy .nav{
+  box-shadow:0 8px 24px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html.android-ui.perf-tier-legacy body::before,
+html.android-ui.perf-tier-legacy body::after,
+html.android-ui.perf-tier-legacy .card::before,
+html.android-ui.perf-tier-legacy .card::after,
+html.android-ui.perf-tier-legacy .stat::before,
+html.android-ui.perf-tier-legacy .stat::after{
+  animation:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-tier-legacy [style*="background-attachment: fixed"],
+html.android-ui.perf-tier-legacy body{
+  background-attachment:scroll!important;
+}
+html.android-ui.perf-tier-legacy *{
+  scroll-behavior:auto!important;
+}
+html.android-ui.perf-tier-legacy .android-nav-glass-indicator,
+html.android-ui.perf-tier-legacy .android-sheet-item,
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat{
+  will-change:auto!important;
+}
+
+/* Android 9–11: retain a small amount of glass, cap blur/raster cost. */
+html.android-ui.perf-tier-mid .nav,
+html.android-ui.perf-tier-mid .top,
+html.android-ui.perf-tier-mid .android-sheet{
+  backdrop-filter:blur(6px) saturate(128%)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(128%)!important;
+}
+html.android-ui.perf-tier-mid .card,
+html.android-ui.perf-tier-mid .stat,
+html.android-ui.perf-tier-mid .settings-section,
+html.android-ui.perf-tier-mid .production-account-card{
+  backdrop-filter:blur(4px) saturate(122%)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(122%)!important;
+}
+html.android-ui.perf-tier-mid .btn,
+html.android-ui.perf-tier-mid .pill,
+html.android-ui.perf-tier-mid .glass-chip,
+html.android-ui.perf-tier-mid input,
+html.android-ui.perf-tier-mid select,
+html.android-ui.perf-tier-mid textarea{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Android 12–16+: higher visual quality, but avoid the original 20–34px live blur. */
+html.android-ui.perf-tier-modern .nav,
+html.android-ui.perf-tier-modern .top,
+html.android-ui.perf-tier-modern .android-sheet{
+  backdrop-filter:blur(10px) saturate(138%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(138%)!important;
+}
+html.android-ui.perf-tier-modern .card,
+html.android-ui.perf-tier-modern .stat,
+html.android-ui.perf-tier-modern .settings-section,
+html.android-ui.perf-tier-modern .production-account-card{
+  backdrop-filter:blur(8px) saturate(132%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(132%)!important;
+}
+html.android-ui.perf-tier-modern .btn,
+html.android-ui.perf-tier-modern .pill,
+html.android-ui.perf-tier-modern .glass-chip,
+html.android-ui.perf-tier-modern input,
+html.android-ui.perf-tier-modern select,
+html.android-ui.perf-tier-modern textarea{
+  backdrop-filter:blur(3px) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(3px) saturate(118%)!important;
+}
+
+/* The existing adaptive FPS governor toggles these classes on <html>.
+   These same-element selectors make the governor actually affect Android rendering. */
+html.android-ui.perf-adaptive-balanced .nav,
+html.android-ui.perf-adaptive-balanced .top,
+html.android-ui.perf-adaptive-balanced .android-sheet{
+  backdrop-filter:blur(6px) saturate(128%)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(128%)!important;
+}
+html.android-ui.perf-adaptive-balanced .card,
+html.android-ui.perf-adaptive-balanced .stat,
+html.android-ui.perf-adaptive-balanced .settings-section,
+html.android-ui.perf-adaptive-balanced .production-account-card{
+  backdrop-filter:blur(4px) saturate(122%)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(122%)!important;
+}
+html.android-ui.perf-adaptive-smooth .card,
+html.android-ui.perf-adaptive-smooth .stat,
+html.android-ui.perf-adaptive-smooth .top,
+html.android-ui.perf-adaptive-smooth .nav,
+html.android-ui.perf-adaptive-smooth .android-sheet,
+html.android-ui.perf-adaptive-smooth .android-sheet-overlay,
+html.android-ui.perf-adaptive-smooth .android-sheet-item,
+html.android-ui.perf-adaptive-smooth .settings-section,
+html.android-ui.perf-adaptive-smooth .production-account-card,
+html.android-ui.perf-adaptive-smooth .btn,
+html.android-ui.perf-adaptive-smooth .pill,
+html.android-ui.perf-adaptive-smooth input,
+html.android-ui.perf-adaptive-smooth select,
+html.android-ui.perf-adaptive-smooth textarea{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-adaptive-smooth .card::before,
+html.android-ui.perf-adaptive-smooth .card::after,
+html.android-ui.perf-adaptive-smooth .stat::before,
+html.android-ui.perf-adaptive-smooth .stat::after{
+  animation-play-state:paused!important;
+}
+
+/* Finger-down / scroll path: temporarily remove live blur and decorative work.
+   This class changes only at scroll start/end, not on every scroll event. */
+html.android-ui.perf-scrolling .card,
+html.android-ui.perf-scrolling .stat,
+html.android-ui.perf-scrolling .top,
+html.android-ui.perf-scrolling .nav,
+html.android-ui.perf-scrolling .android-sheet,
+html.android-ui.perf-scrolling .android-sheet-overlay,
+html.android-ui.perf-scrolling .android-sheet-item,
+html.android-ui.perf-scrolling .settings-section,
+html.android-ui.perf-scrolling .production-account-card{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-scrolling body::before,
+html.android-ui.perf-scrolling body::after,
+html.android-ui.perf-scrolling .card::before,
+html.android-ui.perf-scrolling .card::after,
+html.android-ui.perf-scrolling .stat::before,
+html.android-ui.perf-scrolling .stat::after,
+html.android-ui.perf-scrolling .android-nav-glass-indicator::before,
+html.android-ui.perf-scrolling .android-nav-glass-indicator::after{
+  animation-play-state:paused!important;
+}
+html.android-ui.perf-scrolling .card,
+html.android-ui.perf-scrolling .stat{
+  box-shadow:0 4px 14px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+
+/* Big local artwork should not block the first interactive frame. */
+html.android-ui img[loading="lazy"]{
+  content-visibility:auto;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html.android-ui *{
+    scroll-behavior:auto!important;
+  }
+}
+
+/* ===== STYLE SOURCE: ui-hotfix-671.css ===== */
+
+/* Vyapar AI 6.7.1 — mobile UI hotfixes for business cards, action buttons and help tooltips */
+
+/* Make business / sales / stock feature cards cleaner and less cramped on phones. */
+html.native-android .vx621-group,
+html.commercial-ui-v1 .vx621-group {
+  border-radius: 22px !important;
+}
+html.native-android .vx621-feature-grid,
+html.commercial-ui-v1 .vx621-feature-grid,
+html.commercial-ui-v1 .vx621-feature-grid.compact {
+  gap: 12px !important;
+}
+html.native-android .vx621-feature-card,
+html.commercial-ui-v1 .vx621-feature-card {
+  align-items: flex-start !important;
+  gap: 14px !important;
+  padding: 16px !important;
+  border-radius: 20px !important;
+  overflow: visible !important;
+}
+html.native-android .vx621-feature-icon,
+html.commercial-ui-v1 .vx621-feature-icon {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 15px !important;
+  font-size: 18px !important;
+}
+html.production-ui-p1 .vx621-feature-card h3,
+html.commercial-ui-v1 .vx621-feature-card h3 {
+  font-size: 15px !important;
+  line-height: 1.25 !important;
+}
+html.production-ui-p1 .vx621-feature-card p,
+html.commercial-ui-v1 .vx621-feature-card p {
+  margin: 6px 0 12px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+/* Stack card actions neatly and remove the awkward BUSINESS pill inside buttons. */
+html.native-android .vx621-card-actions,
+html.commercial-ui-v1 .vx621-card-actions {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+html.native-android .vx621-action,
+html.commercial-ui-v1 .vx621-action {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-height: 54px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+html.native-android .vx621-action > span,
+html.commercial-ui-v1 .vx621-action > span {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+html.native-android .vx621-action .vx621-tier,
+html.commercial-ui-v1 .vx621-action .vx621-tier {
+  display: none !important;
+}
+html.native-android .vx621-action.is-locked::after,
+html.commercial-ui-v1 .vx621-action.is-locked::after {
+  content: "🔒";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: .8;
+}
+html.native-android .vx621-action.primary,
+html.commercial-ui-v1 .vx621-action.primary {
+  box-shadow: 0 8px 24px rgba(94, 156, 255, .18) !important;
+}
+
+/* Fix cramped live sale preview. */
+html.native-android #screen-sales .p2-live-preview,
+html.commercial-ui-v1 #screen-sales .p2-live-preview {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  padding: 14px !important;
+  margin-top: 12px !important;
+  border-radius: 18px !important;
+}
+html.native-android #screen-sales .p2-preview-title,
+html.native-android #screen-sales .p2-preview-status,
+html.commercial-ui-v1 #screen-sales .p2-preview-title,
+html.commercial-ui-v1 #screen-sales .p2-preview-status {
+  grid-column: auto !important;
+  align-self: start !important;
+}
+html.native-android #screen-sales .p2-preview-note,
+html.commercial-ui-v1 #screen-sales .p2-preview-note {
+  grid-column: 1 / -1 !important;
+  margin-top: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+html.native-android #screen-sales .p2-preview-metric,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric {
+  min-height: 92px !important;
+  padding: 14px !important;
+  border-radius: 16px !important;
+}
+html.native-android #screen-sales .p2-preview-metric b,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric b {
+  display: block !important;
+  margin-top: 8px !important;
+  font-size: 17px !important;
+}
+
+/* Keep cards readable and values aligned on analytics / summary cards. */
+html.native-android .stat,
+html.commercial-ui-v1 .stat {
+  min-height: 96px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+html.native-android .stat span,
+html.commercial-ui-v1 .stat span {
+  line-height: 1.3 !important;
+}
+html.native-android .stat b,
+html.commercial-ui-v1 .stat b {
+  display: block !important;
+  white-space: normal !important;
+  line-height: 1.2 !important;
+}
+
+/* Better quick-tip / info buttons. */
+html.commercial-ui-v1 .p2-form-intro,
+html.native-android .p2-form-intro {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+html.commercial-ui-v1 .cu-help,
+html.native-android .cu-help {
+  position: relative !important;
+  display: inline-flex !important;
+  margin-left: 2px !important;
+  vertical-align: middle !important;
+}
+html.commercial-ui-v1 .cu-help-button,
+html.native-android .cu-help-button {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(111, 166, 255, .35) !important;
+  background: rgba(93, 154, 255, .16) !important;
+  color: #dcecff !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+html.theme-light.commercial-ui-v1 .cu-help-button,
+html.theme-light.native-android .cu-help-button {
+  background: rgba(36, 87, 214, .10) !important;
+  color: #2457d6 !important;
+  border-color: rgba(36, 87, 214, .20) !important;
+}
+html.commercial-ui-v1 .cu-help-panel,
+html.native-android .cu-help-panel {
+  position: fixed !important;
+  left: 12px;
+  top: 12px;
+  z-index: 2147483000 !important;
+  display: none;
+  width: min(320px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: min(40vh, 280px) !important;
+  overflow: auto !important;
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(126, 169, 218, .26) !important;
+  background: rgba(10, 24, 39, .98) !important;
+  color: #eef6ff !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .35) !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+html.theme-light.commercial-ui-v1 .cu-help-panel,
+html.theme-light.native-android .cu-help-panel {
+  background: rgba(255, 255, 255, .98) !important;
+  color: #1f3248 !important;
+}
+html.commercial-ui-v1 .cu-help.is-open .cu-help-panel,
+html.native-android .cu-help.is-open .cu-help-panel {
+  display: block !important;
+}
+html.commercial-ui-v1 .cu-help-panel::before,
+html.native-android .cu-help-panel::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-left: inherit;
+  border-top: inherit;
+  transform: rotate(45deg);
+  top: -6px;
+  left: var(--cu-tip-arrow-left, 20px);
+}
+html.commercial-ui-v1 .cu-help-panel.cu-help-panel-above::before,
+html.native-android .cu-help-panel.cu-help-panel-above::before {
+  top: auto;
+  bottom: -6px;
+  transform: rotate(225deg);
+}
+
+/* Ensure parents don't clip the tooltip. */
+html.commercial-ui-v1 .p2-field,
+html.commercial-ui-v1 .p2-platform-fields,
+html.commercial-ui-v1 .p2-live-preview,
+html.commercial-ui-v1 .vx621-feature-card,
+html.native-android .p2-field,
+html.native-android .p2-platform-fields,
+html.native-android .p2-live-preview,
+html.native-android .vx621-feature-card {
+  overflow: visible !important;
+}
+
+@media (max-width: 520px) {
+  html.native-android .vx621-feature-card,
+  html.commercial-ui-v1 .vx621-feature-card {
+    padding: 14px !important;
+  }
+  html.native-android #screen-sales .p2-live-preview,
+  html.commercial-ui-v1 #screen-sales .p2-live-preview {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+
+/* v6.7.4: user-requested global removal of information popup buttons. */
+.cu-help, .cu-help-button, .cu-help-panel { display:none !important; }
+
+/* ===== STYLE SOURCE: settings-center-675.css ===== */
+
+/* Vyapar AI 6.7.5 — clean, single-source Settings UI. */
+
+#screen-settings.vy675-settings-ready {
+  --vy675-bg: var(--cu-bg, #071423);
+  --vy675-surface: var(--cu-surface, rgba(15, 34, 52, .92));
+  --vy675-surface-soft: var(--cu-surface-soft, rgba(255, 255, 255, .055));
+  --vy675-border: var(--cu-border, rgba(139, 177, 214, .16));
+  --vy675-text: var(--cu-text, #f5f8fc);
+  --vy675-muted: var(--cu-muted, #94a6b9);
+  --vy675-blue: var(--cu-primary, #4f8ff7);
+  --vy675-blue-soft: rgba(79, 143, 247, .13);
+  padding-bottom: calc(108px + env(safe-area-inset-bottom)) !important;
+}
+
+#screen-settings > .p1-modebar[data-screen="settings"],
+#screen-settings > .vy672-settings-directory,
+#screen-settings > .vy672-settings-subpage,
+#screen-settings.vy675-settings-ready > .settings-stack,
+#screen-settings.vy675-settings-ready > #fs607Settings {
+  display: none !important;
+}
+
+#screen-settings .vy675-settings-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  color: var(--vy675-text);
+}
+
+#screen-settings .vy675-settings-home,
+#screen-settings .vy675-settings-page {
+  width: 100%;
+}
+
+#screen-settings .vy675-settings-home[hidden],
+#screen-settings .vy675-settings-page[hidden],
+#screen-settings .vy675-settings-row[hidden],
+#screen-settings .vy675-settings-group[hidden],
+#screen-settings .vy675-search-empty[hidden] {
+  display: none !important;
+}
+
+#screen-settings .vy675-settings-intro {
+  padding: 5px 2px 18px;
+}
+
+#screen-settings .vy675-settings-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--vy675-blue);
+  font-size: 10.5px;
+  font-weight: 850;
+  letter-spacing: .11em;
+}
+
+#screen-settings .vy675-settings-intro h2 {
+  margin: 0;
+  color: var(--vy675-text);
+  font-size: clamp(25px, 4.5vw, 32px) !important;
+  font-weight: 820;
+  letter-spacing: -.035em;
+  line-height: 1.15;
+}
+
+#screen-settings .vy675-settings-intro p {
+  margin: 7px 0 0;
+  color: var(--vy675-muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+#screen-settings .vy675-settings-search {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 34px;
+  align-items: center;
+  min-height: 50px;
+  margin-bottom: 20px;
+  padding: 0 8px 0 15px;
+  overflow: hidden;
+  border: 1px solid var(--vy675-border);
+  border-radius: 15px;
+  background: var(--vy675-surface-soft);
+  box-shadow: none;
+}
+
+#screen-settings .vy675-settings-search > span {
+  display: grid;
+  place-items: center;
+  color: var(--vy675-muted);
+}
+
+#screen-settings .vy675-settings-search svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#screen-settings .vy675-settings-search input {
+  width: 100% !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+#screen-settings .vy675-settings-search input::placeholder {
+  color: var(--vy675-muted) !important;
+  opacity: .9;
+}
+
+#screen-settings .vy675-settings-search button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(145, 164, 186, .14) !important;
+  color: var(--vy675-muted) !important;
+  box-shadow: none !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+#screen-settings .vy675-settings-groups {
+  display: grid;
+  gap: 22px;
+}
+
+#screen-settings .vy675-settings-group {
+  min-width: 0;
+}
+
+#screen-settings .vy675-settings-group > h3 {
+  margin: 0 0 8px;
+  padding: 0 4px;
+  color: var(--vy675-muted);
+  font-size: 11px !important;
+  font-weight: 820;
+  letter-spacing: .045em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+#screen-settings .vy675-settings-list {
+  overflow: hidden;
+  border: 1px solid var(--vy675-border);
+  border-radius: 18px;
+  background: var(--vy675-surface);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .08);
+}
+
+#screen-settings .vy675-settings-row {
+  appearance: none;
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 11px;
+  width: 100% !important;
+  min-height: 66px !important;
+  margin: 0 !important;
+  padding: 10px 13px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--vy675-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#screen-settings .vy675-settings-row:first-child {
+  border-top: 0 !important;
+}
+
+#screen-settings .vy675-settings-row:active,
+#screen-settings .vy675-settings-row:focus-visible {
+  background: var(--vy675-blue-soft) !important;
+  outline: 0;
+}
+
+#screen-settings .vy675-row-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(79, 143, 247, .17);
+  border-radius: 12px;
+  background: var(--vy675-blue-soft);
+  color: var(--vy675-blue);
+}
+
+#screen-settings .vy675-row-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#screen-settings .vy675-row-copy {
+  min-width: 0;
+}
+
+#screen-settings .vy675-row-copy b {
+  display: block;
+  margin: 0 0 3px;
+  color: var(--vy675-text);
+  font-size: 13.5px;
+  font-weight: 760;
+  line-height: 1.3;
+}
+
+#screen-settings .vy675-row-copy small {
+  display: block;
+  color: var(--vy675-muted);
+  font-size: 10.8px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+#screen-settings .vy675-row-meta {
+  max-width: 92px;
+  overflow: hidden;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--vy675-surface-soft);
+  color: var(--vy675-muted);
+  font-size: 9.5px;
+  font-weight: 760;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#screen-settings .vy675-row-meta[hidden] {
+  display: none !important;
+}
+
+#screen-settings .vy675-row-chevron {
+  color: var(--vy675-muted);
+  font-size: 24px;
+  font-weight: 350;
+  line-height: 1;
+  text-align: right;
+}
+
+#screen-settings .vy675-search-empty {
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  color: var(--vy675-muted);
+  text-align: center;
+}
+
+#screen-settings .vy675-search-empty span {
+  margin-bottom: 7px;
+  opacity: .65;
+}
+
+#screen-settings .vy675-search-empty svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+#screen-settings .vy675-search-empty b {
+  color: var(--vy675-text);
+  font-size: 14px;
+}
+
+#screen-settings .vy675-search-empty small {
+  font-size: 11px;
+}
+
+#screen-settings .vy675-settings-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 24px 0 0;
+  padding: 26px 12px 8px;
+  border-top: 1px solid var(--vy675-border);
+  background: transparent;
+  color: var(--vy675-muted);
+  text-align: center;
+}
+
+#screen-settings .vy675-settings-footer img {
+  width: 54px;
+  height: 54px;
+  margin-bottom: 3px;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: .64;
+}
+
+#screen-settings .vy675-settings-footer span {
+  font-size: 10.8px;
+  line-height: 1.35;
+}
+
+#screen-settings .vy675-settings-footer small {
+  font-size: 9.8px;
+  line-height: 1.35;
+  opacity: .82;
+}
+
+#screen-settings .vy675-page-header {
+  position: sticky;
+  top: max(0px, env(safe-area-inset-top));
+  z-index: 90;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  margin: 0 0 14px;
+  padding: 5px 0 9px;
+  background: var(--vy675-bg);
+}
+
+#screen-settings .vy675-page-back {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 13px !important;
+  background: var(--vy675-surface-soft) !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+}
+
+#screen-settings .vy675-page-back:active {
+  background: var(--vy675-blue-soft) !important;
+  color: var(--vy675-blue) !important;
+}
+
+#screen-settings .vy675-page-back svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#screen-settings .vy675-page-header h2 {
+  margin: 0;
+  color: var(--vy675-text);
+  font-size: 19px !important;
+  font-weight: 790;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+
+#screen-settings .vy675-page-header p {
+  margin: 3px 0 0;
+  color: var(--vy675-muted);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+#screen-settings .vy675-page-body {
+  display: grid;
+  gap: 13px;
+  width: 100%;
+}
+
+#screen-settings .vy675-page-body > .card,
+#screen-settings .vy675-page-body > .settings-section,
+#screen-settings .vy675-page-body > #fs607Settings {
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 15px !important;
+  overflow: hidden;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 18px !important;
+  background: var(--vy675-surface) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading {
+  align-items: center !important;
+  gap: 11px !important;
+  margin: 0 0 13px !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading .settings-kicker,
+#screen-settings .vy675-page-body .settings-section-icon {
+  display: none !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading h2,
+#screen-settings .vy675-page-body #fs607Settings h2 {
+  margin: 0 0 4px !important;
+  color: var(--vy675-text) !important;
+  font-size: 15px !important;
+  font-weight: 770 !important;
+  line-height: 1.3 !important;
+}
+
+#screen-settings .vy675-page-body .settings-section-heading p,
+#screen-settings .vy675-page-body #fs607Settings p {
+  margin: 0 !important;
+  color: var(--vy675-muted) !important;
+  font-size: 10.8px !important;
+  line-height: 1.45 !important;
+}
+
+/* A page title replaces repeated card titles where there is only one purpose. */
+#screen-settings[data-vy675-page="account"] .settings-account-section > .settings-section-heading,
+#screen-settings[data-vy675-page="profile"] .vy675-page-body > .settings-section > .settings-section-heading,
+#screen-settings[data-vy675-page="business"] #vx622AdminSettings > .settings-section-heading,
+#screen-settings[data-vy675-page="data"] .data-safety-section > .settings-section-heading,
+#screen-settings[data-vy675-page="legal"] .vy675-page-body > .settings-section > .settings-section-heading,
+#screen-settings[data-vy675-page="update"] #fs607Settings > h2,
+#screen-settings[data-vy675-page="update"] #fs607Settings > p {
+  display: none !important;
+}
+
+#screen-settings[data-vy675-page="account"] .settings-account-section {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+#screen-settings[data-vy675-page="account"] #productionAccountCardHost,
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  margin: 0 !important;
+}
+
+#screen-settings .vy675-page-body label:not(.vx622-switch):not(.vy675-switch) {
+  display: block;
+  margin: 0 0 6px !important;
+  color: var(--vy675-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 720 !important;
+}
+
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  min-height: 46px !important;
+  margin: 0 !important;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 13px !important;
+  background: var(--vy675-surface-soft) !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+}
+
+#screen-settings .vy675-page-body .settings-form-grid {
+  gap: 13px !important;
+}
+
+#screen-settings .vy675-page-body .settings-field-note {
+  display: block;
+  margin-top: 6px;
+  font-size: 9.8px !important;
+  line-height: 1.4 !important;
+}
+
+#screen-settings .vy675-page-body .btn,
+#screen-settings .vy675-page-body button:not(.vx622-switch):not(.vy675-switch) {
+  min-height: 43px !important;
+  border: 1px solid var(--vy675-border) !important;
+  border-radius: 12px !important;
+  background: var(--vy675-surface-soft) !important;
+  color: var(--vy675-text) !important;
+  box-shadow: none !important;
+  font-size: 11.5px !important;
+  font-weight: 730 !important;
+}
+
+#screen-settings .vy675-page-body .btn.primary,
+#screen-settings .vy675-page-body button.primary {
+  border-color: var(--vy675-blue) !important;
+  background: var(--vy675-blue) !important;
+  color: #fff !important;
+}
+
+#screen-settings .vy675-page-body .danger,
+#screen-settings .vy675-page-body button.danger {
+  border-color: #d92d20 !important;
+  background: #d92d20 !important;
+  color: #fff !important;
+}
+
+#screen-settings .vy675-page-body .segmented-settings .btn:not(.primary),
+#screen-settings .vy675-page-body .grid3 .btn:not(.primary) {
+  color: var(--vy675-muted) !important;
+}
+
+#screen-settings .vy675-page-body .settings-link-grid {
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+#screen-settings .vy675-page-body .settings-link-grid .btn {
+  justify-content: flex-start !important;
+  padding: 0 13px !important;
+  text-align: left !important;
+}
+
+#screen-settings .vy675-page-body .settings-actions {
+  gap: 8px !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-list {
+  display: grid;
+  gap: 0 !important;
+  overflow: hidden;
+  border: 1px solid var(--vy675-border);
+  border-radius: 14px;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row {
+  min-height: 58px !important;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--vy675-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row:first-child {
+  border-top: 0 !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row b {
+  font-size: 12px !important;
+}
+
+#screen-settings .vy675-page-body .vx622-settings-row small {
+  font-size: 10px !important;
+  line-height: 1.4 !important;
+}
+
+#screen-settings .vy675-navigation-card {
+  padding: 0 !important;
+}
+
+#screen-settings .vy675-option-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 68px;
+  padding: 13px 14px;
+}
+
+#screen-settings .vy675-option-copy b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--vy675-text);
+  font-size: 13px;
+  font-weight: 760;
+}
+
+#screen-settings .vy675-option-copy small {
+  display: block;
+  color: var(--vy675-muted);
+  font-size: 10.5px;
+  line-height: 1.42;
+}
+
+#screen-settings .vy675-switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex: none;
+  margin: 0 !important;
+}
+
+#screen-settings .vy675-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+#screen-settings .vy675-switch span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--vy675-border);
+  border-radius: 999px;
+  background: rgba(145, 164, 186, .22);
+  transition: background .18s ease, border-color .18s ease;
+}
+
+#screen-settings .vy675-switch span::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .22);
+  transition: transform .18s ease;
+}
+
+#screen-settings .vy675-switch input:checked + span {
+  border-color: var(--vy675-blue);
+  background: var(--vy675-blue);
+}
+
+#screen-settings .vy675-switch input:checked + span::after {
+  transform: translateX(20px);
+}
+
+#screen-settings .vy675-page-empty {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  color: var(--vy675-muted);
+  text-align: center;
+}
+
+#screen-settings .vy675-page-empty b {
+  color: var(--vy675-text);
+  font-size: 13px;
+}
+
+#screen-settings .vy675-page-empty small {
+  font-size: 10.5px;
+}
+
+/* Older footer managers may keep their source footer in the hidden repository. */
+#screen-settings .settings-stack #appLegalFooter,
+#screen-settings .vy675-page-body #appLegalFooter {
+  display: none !important;
+}
+
+html.theme-light #screen-settings.vy675-settings-ready {
+  --vy675-bg: var(--cu-bg, #f5f7fa);
+  --vy675-surface: #fff;
+  --vy675-surface-soft: #f1f4f8;
+  --vy675-border: rgba(44, 66, 90, .13);
+  --vy675-text: #172231;
+  --vy675-muted: #68788a;
+  --vy675-blue: #2864dc;
+  --vy675-blue-soft: #edf3ff;
+}
+
+html.theme-light #screen-settings .vy675-settings-list {
+  box-shadow: 0 8px 22px rgba(32, 55, 82, .055);
+}
+
+html.theme-light #screen-settings .vy675-settings-search input,
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  color-scheme: light;
+}
+
+@media (max-width: 520px) {
+  #screen-settings .vy675-settings-intro {
+    padding-top: 2px;
+  }
+
+  #screen-settings .vy675-settings-row {
+    grid-template-columns: 40px minmax(0, 1fr) auto 16px;
+    gap: 9px;
+    min-height: 64px !important;
+    padding: 9px 11px !important;
+  }
+
+  #screen-settings .vy675-row-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+
+  #screen-settings .vy675-row-copy b {
+    font-size: 13px;
+  }
+
+  #screen-settings .vy675-row-copy small {
+    font-size: 10.2px;
+  }
+
+  #screen-settings .vy675-row-meta {
+    max-width: 67px;
+    padding: 4px 6px;
+    font-size: 8.8px;
+  }
+
+  #screen-settings .vy675-page-header p {
+    max-width: 250px;
+  }
+
+  #screen-settings .vy675-page-body > .card,
+  #screen-settings .vy675-page-body > .settings-section,
+  #screen-settings .vy675-page-body > #fs607Settings {
+    padding: 13px !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #screen-settings .vy675-settings-row {
+    grid-template-columns: 38px minmax(0, 1fr) 15px;
+  }
+
+  #screen-settings .vy675-row-meta {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #screen-settings .vy675-switch span,
+  #screen-settings .vy675-switch span::after {
+    transition: none;
+  }
+}
+
+/* ===== STYLE SOURCE: latest-polish-675.css ===== */
+
+/* Vyapar AI 6.7.5 visual stability hotfix — loading, Settings and Sales. */
+
+/* Both WebView loading phases use the same logo treatment, background, typography and bar. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background: linear-gradient(135deg, #061326 0%, #082b61 54%, #06172d 100%) !important;
+  color: #eef6ff !important;
+}
+
+#appLoader.android-loader {
+  gap: 0 !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  display: block !important;
+  width: 94px !important;
+  height: 94px !important;
+  margin: 0 auto 14px !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .28) !important;
+}
+
+#appLoader .android-loader-logo img,
+#vy647StartupSplash .vy647-splash-core img {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 28px !important;
+  object-fit: cover !important;
+}
+
+#appLoader .android-loader-shine,
+#appLoader .android-loader-spark {
+  display: none !important;
+}
+
+#appLoader > strong,
+#vy647StartupSplash .vy647-splash-core strong {
+  display: block !important;
+  margin: 0 !important;
+  color: #eef6ff !important;
+  font-size: 25px !important;
+  line-height: 1.16 !important;
+  font-weight: 800 !important;
+  letter-spacing: -.02em !important;
+}
+
+#appLoader > strong::after {
+  content: "Loading secure session…";
+  display: block;
+  margin-top: 8px;
+  color: #8397ac;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+#vy647StartupSplash .vy647-splash-core > span {
+  display: block !important;
+  margin-top: 8px !important;
+  color: #8397ac !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+#appLoader .android-loader-bar,
+#vy647StartupSplash .vy647-splash-bar {
+  width: 160px !important;
+  height: 4px !important;
+  margin: 18px auto 0 !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: rgba(104, 139, 176, .18) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  display: block !important;
+  width: 44% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: #2388eb !important;
+}
+
+/* The v6.7.5 Settings Center owns exactly one footer. */
+#screen-settings.vy675-settings-ready #appLegalFooter {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Compact Sales previews: title spans the row; metrics no longer leave giant empty cells. */
+html.native-android #screen-sales .p2-live-preview,
+html.commercial-ui-v1 #screen-sales .p2-live-preview {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  margin-top: 10px !important;
+  border-radius: 15px !important;
+}
+
+html.native-android #screen-sales .p2-preview-title,
+html.commercial-ui-v1 #screen-sales .p2-preview-title,
+html.native-android #screen-sales .p2-preview-status,
+html.commercial-ui-v1 #screen-sales .p2-preview-status,
+html.native-android #screen-sales .p2-preview-note,
+html.commercial-ui-v1 #screen-sales .p2-preview-note {
+  grid-column: 1 / -1 !important;
+}
+
+html.native-android #screen-sales .p2-preview-title,
+html.commercial-ui-v1 #screen-sales .p2-preview-title {
+  align-self: auto !important;
+  min-width: 0 !important;
+}
+
+html.native-android #screen-sales .p2-preview-note,
+html.commercial-ui-v1 #screen-sales .p2-preview-note {
+  margin-top: 1px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+}
+
+html.native-android #screen-sales .p2-preview-metric,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric {
+  min-height: 68px !important;
+  padding: 11px !important;
+  border-radius: 13px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+html.native-android #screen-sales .p2-preview-metric b,
+html.commercial-ui-v1 #screen-sales .p2-preview-metric b {
+  display: block !important;
+  margin-top: 5px !important;
+  font-size: 16px !important;
+}
+
+@media (max-width: 380px) {
+  html.native-android #screen-sales .p2-live-preview,
+  html.commercial-ui-v1 #screen-sales .p2-live-preview {
+    gap: 7px !important;
+    padding: 9px !important;
+  }
+
+  html.native-android #screen-sales .p2-preview-metric,
+  html.commercial-ui-v1 #screen-sales .p2-preview-metric {
+    min-height: 64px !important;
+    padding: 10px !important;
+  }
+}
+
+/* ===== STYLE SOURCE: complete-ui-680.css ===== */
+
+/* Vyapar AI 6.8.0 — final authoritative colorful, English-first, responsive UI layer.
+   This file intentionally loads last so legacy hotfixes cannot reintroduce visual conflicts. */
+
+:root {
+  --vy-bg-0: #07111f;
+  --vy-bg-1: #0a1b30;
+  --vy-surface: rgba(15, 32, 53, .86);
+  --vy-surface-strong: rgba(19, 40, 65, .95);
+  --vy-surface-soft: rgba(25, 48, 76, .72);
+  --vy-text: #f4f8ff;
+  --vy-muted: #a8b8ca;
+  --vy-line: rgba(183, 208, 236, .16);
+  --vy-blue: #4d9cff;
+  --vy-cyan: #35d2ea;
+  --vy-green: #42d69b;
+  --vy-yellow: #f6c95c;
+  --vy-orange: #ff9b54;
+  --vy-pink: #f777b9;
+  --vy-purple: #a783ff;
+  --vy-red: #ff6478;
+  --vy-radius: 18px;
+  --vy-radius-sm: 13px;
+  --vy-shadow: 0 16px 38px rgba(0, 0, 0, .22);
+  --vy-nav-safe: calc(92px + env(safe-area-inset-bottom));
+}
+
+html.theme-light {
+  --vy-bg-0: #eef6ff;
+  --vy-bg-1: #f9fbff;
+  --vy-surface: rgba(255, 255, 255, .94);
+  --vy-surface-strong: #ffffff;
+  --vy-surface-soft: rgba(245, 249, 255, .96);
+  --vy-text: #13243a;
+  --vy-muted: #61748a;
+  --vy-line: rgba(75, 103, 136, .15);
+  --vy-shadow: 0 12px 30px rgba(47, 78, 111, .10);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden !important;
+  background: var(--vy-bg-0) !important;
+}
+
+html { color-scheme: dark; }
+html.theme-light { color-scheme: light; }
+
+body {
+  color: var(--vy-text) !important;
+  background:
+    radial-gradient(circle at 7% 2%, rgba(77, 156, 255, .22), transparent 27%),
+    radial-gradient(circle at 92% 11%, rgba(167, 131, 255, .16), transparent 24%),
+    radial-gradient(circle at 55% 78%, rgba(53, 210, 234, .11), transparent 29%),
+    linear-gradient(180deg, var(--vy-bg-0), var(--vy-bg-1)) !important;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(circle at 4% 0%, rgba(77, 156, 255, .16), transparent 27%),
+    radial-gradient(circle at 98% 9%, rgba(247, 119, 185, .10), transparent 22%),
+    radial-gradient(circle at 50% 82%, rgba(53, 210, 234, .09), transparent 27%),
+    linear-gradient(180deg, #f7fbff, #eef5fc 52%, #f8fbff) !important;
+}
+
+body::before,
+body::after { opacity: .38 !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+img, svg, canvas, video { max-width: 100%; }
+button, input, select, textarea { max-width: 100%; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button, .btn, a.btn { touch-action: manipulation; }
+
+.app {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  padding: 12px 14px calc(var(--vy-nav-safe) + 24px) !important;
+}
+
+main,
+.screen,
+.screen > *,
+.card,
+.stat,
+.notice,
+.actions,
+.settings-stack,
+.settings-section,
+.vy675-page-body,
+.p611-form,
+.p611-grid,
+.p620-settings,
+.adv-form-grid,
+.adv-module-grid,
+.business-calc-grid,
+.vx621-feature-grid,
+.vx621-kpis,
+.android-sheet,
+.android-sheet-item,
+.subscription-dialog,
+.modal-card,
+.glass-dialog {
+  min-width: 0 !important;
+}
+
+.screen:not(.hide) {
+  width: 100% !important;
+  animation: vyScreenIn .18s ease-out both;
+}
+
+@keyframes vyScreenIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Header */
+.top {
+  position: relative !important;
+  z-index: 20 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 70px !important;
+  margin: 0 0 12px !important;
+  padding: 9px 4px 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.brand { min-width: 0 !important; flex: 1 1 auto !important; }
+.logo {
+  width: 48px !important;
+  height: 48px !important;
+  flex: 0 0 48px !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18) !important;
+}
+
+.brand h1 {
+  color: var(--vy-text) !important;
+  font-size: clamp(21px, 4.8vw, 27px) !important;
+  line-height: 1.08 !important;
+  white-space: nowrap !important;
+}
+
+.tag {
+  color: var(--vy-muted) !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.top-actions { flex: 0 0 auto !important; gap: 7px !important; }
+.badge,
+.theme-toggle {
+  min-height: 38px !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .12) !important;
+  backdrop-filter: blur(18px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(130%) !important;
+}
+.badge { color: var(--vy-blue) !important; font-weight: 800 !important; }
+.theme-toggle { padding: 8px 12px !important; }
+
+/* Cards and content surfaces */
+.card,
+.stat,
+.settings-section,
+.vx621-feature-card,
+.business-module-card,
+.p620-report-card,
+.subscription-plan-card,
+.production-account-card,
+.shop-growth-card {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface) !important;
+  color: var(--vy-text) !important;
+  box-shadow: var(--vy-shadow) !important;
+  backdrop-filter: blur(16px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(125%) !important;
+}
+
+.card,
+.settings-section,
+.business-module-card,
+.subscription-plan-card,
+.production-account-card {
+  border-radius: var(--vy-radius) !important;
+  overflow: hidden !important;
+}
+
+.card::before,
+.card::after,
+.settings-section::before,
+.settings-section::after {
+  pointer-events: none !important;
+}
+
+/* Subtle colorful identity without turning every container into a box of gradients. */
+.screen > .card:nth-of-type(6n + 1),
+.settings-section:nth-of-type(6n + 1) { border-top: 2px solid rgba(77, 156, 255, .72) !important; }
+.screen > .card:nth-of-type(6n + 2),
+.settings-section:nth-of-type(6n + 2) { border-top: 2px solid rgba(53, 210, 234, .72) !important; }
+.screen > .card:nth-of-type(6n + 3),
+.settings-section:nth-of-type(6n + 3) { border-top: 2px solid rgba(66, 214, 155, .72) !important; }
+.screen > .card:nth-of-type(6n + 4),
+.settings-section:nth-of-type(6n + 4) { border-top: 2px solid rgba(246, 201, 92, .72) !important; }
+.screen > .card:nth-of-type(6n + 5),
+.settings-section:nth-of-type(6n + 5) { border-top: 2px solid rgba(167, 131, 255, .72) !important; }
+.screen > .card:nth-of-type(6n),
+.settings-section:nth-of-type(6n) { border-top: 2px solid rgba(247, 119, 185, .72) !important; }
+
+.card .card,
+.settings-section .card,
+.vx621-group .card,
+.shop-growth-card .card {
+  background: var(--vy-surface-soft) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--vy-line) !important;
+}
+
+h1, h2, h3, h4, h5, h6, strong, b { color: var(--vy-text); }
+.muted, small, .small, .settings-field-note, .android-sheet-item-copy small { color: var(--vy-muted) !important; }
+
+h2 { font-size: clamp(19px, 4.8vw, 24px) !important; line-height: 1.18 !important; }
+h3 { font-size: clamp(16px, 4vw, 19px) !important; line-height: 1.25 !important; }
+p { line-height: 1.5; }
+
+h1, h2, h3, h4, p, span, label, a, button, th, td, .muted, .notice {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Buttons: colorful hierarchy, neutral by default. */
+.btn,
+.nav button,
+.android-sheet-close,
+.p620-report-card {
+  min-height: 42px !important;
+  border-radius: var(--vy-radius-sm) !important;
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.nav button:focus-visible,
+.android-sheet-item:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(77, 156, 255, .24) !important;
+  outline-offset: 2px !important;
+}
+
+.btn.primary,
+.nav button.active,
+.nav .nav-item.active,
+.nav [aria-current="page"] {
+  color: #fff !important;
+  border-color: rgba(130, 187, 255, .46) !important;
+  background: linear-gradient(135deg, #347fe5, #4d9cff 56%, #45b8f4) !important;
+  box-shadow: 0 9px 22px rgba(52, 127, 229, .23) !important;
+}
+
+.btn.gold {
+  color: #251806 !important;
+  border-color: rgba(255, 222, 129, .55) !important;
+  background: linear-gradient(135deg, #ffd96a, #f6b944) !important;
+}
+
+.btn.danger,
+.danger.btn,
+button.danger {
+  color: #fff !important;
+  border-color: rgba(255, 126, 145, .4) !important;
+  background: linear-gradient(135deg, #dc4057, #ff6478) !important;
+}
+
+.btn.mini {
+  min-height: 34px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 10px !important;
+}
+
+.actions,
+.settings-actions,
+.segmented-settings {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.actions > *,
+.settings-actions > * { min-width: 0 !important; }
+
+/* Forms */
+input,
+select,
+textarea {
+  min-height: 44px !important;
+  margin: 6px 0 10px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 12px !important;
+  background: rgba(6, 18, 32, .68) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+html.theme-light input,
+html.theme-light select,
+html.theme-light textarea {
+  background: #f8fbff !important;
+  color: #14263b !important;
+}
+
+input::placeholder,
+textarea::placeholder { color: var(--vy-muted) !important; opacity: .82 !important; }
+select option { color: #13243a; background: #fff; }
+
+label {
+  color: var(--vy-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .04em !important;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 19px !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  margin: 0 8px 0 0 !important;
+  accent-color: var(--vy-blue) !important;
+}
+
+/* Status components */
+.notice {
+  border: 1px solid rgba(246, 201, 92, .18) !important;
+  border-left: 4px solid var(--vy-yellow) !important;
+  border-radius: 13px !important;
+  background: rgba(246, 201, 92, .09) !important;
+}
+.notice.success, .success.notice {
+  border-left-color: var(--vy-green) !important;
+  background: rgba(66, 214, 155, .09) !important;
+}
+.notice.bad, .notice.danger {
+  border-left-color: var(--vy-red) !important;
+  background: rgba(255, 100, 120, .09) !important;
+}
+
+.pill,
+.glass-chip {
+  border: 1px solid var(--vy-line) !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+  box-shadow: none !important;
+}
+
+.progress { border: 1px solid var(--vy-line) !important; background: rgba(255,255,255,.07) !important; }
+.bar { background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-green)) !important; }
+
+/* Metrics get visual distinction while remaining readable. */
+.stats,
+.p611-grid,
+.vx621-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.stat,
+.vx621-kpi {
+  min-height: 82px !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  overflow: hidden !important;
+}
+.stat b, .vx621-kpi b { font-size: clamp(18px, 5vw, 23px) !important; }
+.stats > :nth-child(4n + 1), .p611-grid > :nth-child(4n + 1) { border-left: 3px solid var(--vy-blue) !important; }
+.stats > :nth-child(4n + 2), .p611-grid > :nth-child(4n + 2) { border-left: 3px solid var(--vy-green) !important; }
+.stats > :nth-child(4n + 3), .p611-grid > :nth-child(4n + 3) { border-left: 3px solid var(--vy-yellow) !important; }
+.stats > :nth-child(4n), .p611-grid > :nth-child(4n) { border-left: 3px solid var(--vy-purple) !important; }
+
+/* Tables never push the full app sideways. */
+.scroll,
+.p611-table,
+.adv-table,
+.business-table,
+.vx621-table-wrap,
+[class*="table-wrap"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 12px !important;
+}
+
+.table,
+table {
+  max-width: none;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.table th,
+.table td,
+table th,
+table td {
+  border-color: var(--vy-line) !important;
+  vertical-align: middle !important;
+}
+.table th,
+table th {
+  color: var(--vy-muted) !important;
+  background: rgba(77, 156, 255, .07) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+
+/* Settings: one clean content surface per page, no huge nested box feeling. */
+#screen-settings .settings-stack:not(.vy675-settings-repository),
+#screen-settings .vy675-page-body {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+#screen-settings .settings-section {
+  padding: 15px !important;
+  margin: 0 !important;
+}
+
+#screen-settings .settings-section-heading {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+#screen-settings .settings-section-heading h2,
+#screen-settings .settings-section-heading h3 {
+  margin: 2px 0 4px !important;
+}
+
+#screen-settings .settings-section-icon {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 12px !important;
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+  border: 1px solid rgba(77, 156, 255, .18) !important;
+}
+
+#screen-settings .settings-kicker {
+  color: var(--vy-blue) !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+  letter-spacing: .08em !important;
+}
+
+#screen-settings .settings-form-grid,
+.p611-form,
+.adv-form-grid,
+.business-calc-grid,
+.p620-settings {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+#screen-settings .settings-field-wide { grid-column: 1 / -1 !important; }
+#screen-settings .settings-link-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+/* More sheet, dialogs and popups: centered, readable, never clipped. */
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay,
+.subscription-dialog-backdrop,
+[class*="overlay"] {
+  max-width: 100vw !important;
+}
+
+.android-sheet-overlay,
+.modal,
+.glass-dialog-overlay {
+  z-index: 10000 !important;
+}
+
+.android-sheet,
+.modal-card,
+.glass-dialog,
+.subscription-dialog {
+  width: min(94vw, 620px) !important;
+  max-width: min(94vw, 620px) !important;
+  max-height: min(88vh, 760px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 20px !important;
+  background: var(--vy-surface-strong) !important;
+  color: var(--vy-text) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .34) !important;
+}
+
+.android-sheet-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.android-sheet-item {
+  min-width: 0 !important;
+  min-height: 64px !important;
+  padding: 10px !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 14px !important;
+  background: var(--vy-surface-soft) !important;
+  color: var(--vy-text) !important;
+}
+.android-sheet-item-copy { min-width: 0 !important; overflow: visible !important; white-space: normal !important; }
+.android-sheet-item-copy small { display: block !important; white-space: normal !important; }
+.android-sheet-item-icon {
+  color: var(--vy-blue) !important;
+  background: rgba(77, 156, 255, .12) !important;
+}
+
+/* Subscription cards stay distinctive and premium. */
+.subscription-plan-card { position: relative !important; }
+.subscription-plan-card.pro,
+.subscription-plan-card[data-plan="pro"] { border-top: 3px solid #b9c7da !important; }
+.subscription-plan-card.business,
+.subscription-plan-card[data-plan="business"] { border-top: 3px solid var(--vy-yellow) !important; }
+.subscription-cta { min-height: 44px !important; }
+
+/* Calculator: avoid clipped keys/display on shorter Android screens. */
+#screen-calculator .calculator-head,
+#screen-calculator .calc-display-wrap,
+#screen-calculator .calc-keypad,
+#screen-calculator .calc-memory-row { max-width: 100% !important; }
+#screen-calculator .calc-key { min-width: 0 !important; }
+
+/* Bottom navigation owns the bottom safe area and never slides horizontally. */
+.nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100% - 16px), 760px) !important;
+  max-width: 760px !important;
+  min-height: 66px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  z-index: 9000 !important;
+  overflow: visible !important;
+  border: 1px solid var(--vy-line) !important;
+  border-radius: 21px !important;
+  background: rgba(8, 20, 35, .92) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .30) !important;
+  backdrop-filter: blur(22px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
+  touch-action: manipulation !important;
+}
+html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
+
+.nav button,
+.nav .nav-item {
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 6px 4px !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+}
+.nav .android-nav-label,
+.nav .nav-label {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.nav .android-nav-icon { flex: 0 0 auto !important; }
+
+/* Loading: one coherent colorful style for both loader phases. */
+#appLoader.android-loader,
+#vy647StartupSplash {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(77, 156, 255, .25), transparent 24%),
+    radial-gradient(circle at 76% 72%, rgba(167, 131, 255, .19), transparent 26%),
+    linear-gradient(145deg, #071323, #0b2d5a 56%, #08182d) !important;
+  color: #f4f8ff !important;
+}
+
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  border-radius: 24px !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .30) !important;
+}
+
+#appLoader .android-loader-bar span,
+#vy647StartupSplash .vy647-splash-bar i {
+  background: linear-gradient(90deg, var(--vy-blue), var(--vy-cyan), var(--vy-purple)) !important;
+}
+
+/* Legacy duplicate footer is always suppressed; Settings Center owns the final footer. */
+#screen-settings #appLegalFooter { display: none !important; }
+
+/*
+ * Settings 6.8.1: the legacy cards are a private repository used by the
+ * Settings Center sub-pages.  It must never become visible on the directory
+ * screen, even though older presentation layers assign display:grid to every
+ * .settings-stack.
+ */
+#screen-settings.vy675-settings-ready > .settings-stack.vy675-settings-repository,
+#screen-settings.vy675-settings-ready > .settings-stack.vy675-settings-repository[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Color-coded Settings destinations: lively, readable and consistent. */
+#screen-settings .vy675-settings-row {
+  --vy-row-accent: var(--vy-blue);
+  --vy-row-soft: rgba(77, 156, 255, .13);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="account"] {
+  --vy-row-accent: #a783ff;
+  --vy-row-soft: rgba(167, 131, 255, .15);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="profile"] {
+  --vy-row-accent: #35d2ea;
+  --vy-row-soft: rgba(53, 210, 234, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="business"] {
+  --vy-row-accent: #42d69b;
+  --vy-row-soft: rgba(66, 214, 155, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="security"] {
+  --vy-row-accent: #ff9b54;
+  --vy-row-soft: rgba(255, 155, 84, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="appearance"] {
+  --vy-row-accent: #f777b9;
+  --vy-row-soft: rgba(247, 119, 185, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="navigation"] {
+  --vy-row-accent: #4d9cff;
+  --vy-row-soft: rgba(77, 156, 255, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="data"] {
+  --vy-row-accent: #35d2ea;
+  --vy-row-soft: rgba(53, 210, 234, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="update"] {
+  --vy-row-accent: #f6c95c;
+  --vy-row-soft: rgba(246, 201, 92, .14);
+}
+#screen-settings .vy675-settings-row[data-vy675-page="legal"] {
+  --vy-row-accent: #ff6478;
+  --vy-row-soft: rgba(255, 100, 120, .14);
+}
+#screen-settings .vy675-settings-row .vy675-row-icon {
+  color: var(--vy-row-accent) !important;
+  border-color: var(--vy-row-soft) !important;
+  background: var(--vy-row-soft) !important;
+}
+#screen-settings .vy675-settings-row:active,
+#screen-settings .vy675-settings-row:focus-visible {
+  background: linear-gradient(90deg, var(--vy-row-soft), transparent 78%) !important;
+}
+#screen-settings .vy675-settings-search {
+  border-color: rgba(77, 156, 255, .26) !important;
+  background:
+    linear-gradient(var(--vy-surface-soft), var(--vy-surface-soft)) padding-box,
+    linear-gradient(105deg, rgba(77,156,255,.50), rgba(53,210,234,.32), rgba(167,131,255,.42)) border-box !important;
+}
+
+/* Android launch image and WebView loader now use the same exact logo scale. */
+#appLoader .android-loader-logo,
+#vy647StartupSplash .vy647-splash-core img {
+  width: 108px !important;
+  min-width: 108px !important;
+  max-width: 108px !important;
+  height: 108px !important;
+  min-height: 108px !important;
+  max-height: 108px !important;
+  flex: 0 0 108px !important;
+  margin: 0 auto 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  object-fit: contain !important;
+  box-shadow: 0 18px 44px rgba(0, 17, 48, .34) !important;
+}
+#appLoader .android-loader-logo > img {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+  box-shadow: none !important;
+}
+#appLoader .android-loader-shine,
+#appLoader .android-loader-spark {
+  display: none !important;
+}
+#vy647StartupSplash .vy647-splash-core {
+  width: min(100%, 280px) !important;
+  padding: 24px !important;
+}
+
+/* Accessibility and performance modes. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+html[data-performance="lite"] *,
+html.performance-lite * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 760px) {
+  :root { --vy-radius: 16px; --vy-nav-safe: calc(84px + env(safe-area-inset-bottom)); }
+  .app { padding: 9px 10px calc(var(--vy-nav-safe) + 18px) !important; }
+  .top { min-height: 64px !important; padding: 7px 2px 10px !important; }
+  .logo { width: 44px !important; height: 44px !important; flex-basis: 44px !important; border-radius: 14px !important; }
+  .badge { display: none !important; }
+  .theme-toggle { min-height: 36px !important; padding: 7px 9px !important; font-size: 11px !important; }
+  .card, .settings-section { padding: 13px !important; }
+  .grid, .grid3, .row, .hero, .code-layout { grid-template-columns: 1fr !important; }
+  .stats, .p611-grid, .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .android-sheet-grid { grid-template-columns: 1fr !important; }
+  #screen-settings .settings-form-grid,
+  .p611-form,
+  .adv-form-grid,
+  .business-calc-grid,
+  .p620-settings { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 390px) {
+  .brand h1 { font-size: 20px !important; }
+  .tag { font-size: 10.5px !important; }
+  .stats, .p611-grid, .vx621-kpis { gap: 7px !important; }
+  .stat, .vx621-kpi { min-height: 74px !important; padding: 10px !important; }
+  .nav { width: calc(100% - 10px) !important; gap: 3px !important; padding: 5px !important; border-radius: 18px !important; }
+  .nav button, .nav .nav-item { min-height: 50px !important; padding: 5px 2px !important; font-size: 9.5px !important; border-radius: 11px !important; }
+  .btn { padding-left: 10px !important; padding-right: 10px !important; }
+}
+
+@media (max-height: 650px) and (max-width: 760px) {
+  .top { min-height: 58px !important; margin-bottom: 6px !important; }
+  .nav { min-height: 60px !important; }
+  .nav button, .nav .nav-item { min-height: 46px !important; }
+  #screen-calculator .calc-key { min-height: 38px !important; height: 38px !important; }
+}
+
+/* ===== 6.8.2 — flatter Settings pages baseline ===== */
+:root {
+  --vy-blue: #3295ff;
+  --vy-cyan: #12d9ee;
+  --vy-green: #26db91;
+  --vy-yellow: #ffd047;
+  --vy-orange: #ff9142;
+  --vy-pink: #ff5fb2;
+  --vy-purple: #9b72ff;
+  --vy-red: #ff526d;
+}
+
+body {
+  background:
+    radial-gradient(circle at 4% 3%, rgba(37, 139, 255, .36), transparent 28%),
+    radial-gradient(circle at 96% 13%, rgba(155, 114, 255, .28), transparent 25%),
+    radial-gradient(circle at 52% 82%, rgba(18, 217, 238, .18), transparent 32%),
+    linear-gradient(180deg, #061426, #071a2c 52%, #061321) !important;
+}
+
+html.theme-light body {
+  background:
+    radial-gradient(circle at 4% 0%, rgba(50, 149, 255, .24), transparent 28%),
+    radial-gradient(circle at 98% 10%, rgba(255, 95, 178, .17), transparent 24%),
+    radial-gradient(circle at 50% 84%, rgba(18, 217, 238, .15), transparent 29%),
+    linear-gradient(180deg, #f8fbff, #eaf4ff 54%, #f7fbff) !important;
+}
+
+/* Each primary screen gets a recognisable, saturated color family. */
+#screen-home { --vy-screen-rgb: 50, 149, 255; --vy-screen-accent: #3295ff; }
+#screen-business { --vy-screen-rgb: 155, 114, 255; --vy-screen-accent: #9b72ff; }
+#screen-sales { --vy-screen-rgb: 255, 95, 178; --vy-screen-accent: #ff5fb2; }
+#screen-stock { --vy-screen-rgb: 38, 219, 145; --vy-screen-accent: #26db91; }
+#screen-upload,
+#screen-analytics,
+#screen-calculator,
+#screen-subscription,
+#screen-settings { --vy-screen-rgb: 18, 217, 238; --vy-screen-accent: #12d9ee; }
+
+#screen-home .card,
+#screen-home .stat,
+#screen-business .card,
+#screen-business .vx621-feature-card,
+#screen-business .vx621-group,
+#screen-sales .card,
+#screen-sales .stat,
+#screen-stock .card,
+#screen-stock .stat {
+  border-color: rgba(var(--vy-screen-rgb), .30) !important;
+  background:
+    radial-gradient(24rem 13rem at 104% -8%, rgba(var(--vy-screen-rgb), .19), transparent 66%),
+    linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
+    var(--vy-surface) !important;
+}
+
+#screen-home .home-overview,
+#screen-business .vx621-hero,
+#screen-sales > .card:first-child,
+#screen-stock > .card:first-child {
+  border-color: rgba(var(--vy-screen-rgb), .48) !important;
+  box-shadow: 0 18px 44px rgba(var(--vy-screen-rgb), .13) !important;
+}
+
+#screen-home .home-eyebrow,
+#screen-home .home-section-kicker,
+#screen-business .settings-kicker,
+#screen-business .vx621-group-kicker,
+#screen-sales .settings-kicker,
+#screen-stock .settings-kicker,
+#screen-business a,
+#screen-sales a,
+#screen-stock a {
+  color: var(--vy-screen-accent) !important;
+}
+
+#screen-home .home-metrics .stat:nth-child(4n + 1) { border-top: 3px solid #3295ff !important; }
+#screen-home .home-metrics .stat:nth-child(4n + 2) { border-top: 3px solid #12d9ee !important; }
+#screen-home .home-metrics .stat:nth-child(4n + 3) { border-top: 3px solid #26db91 !important; }
+#screen-home .home-metrics .stat:nth-child(4n) { border-top: 3px solid #ff9142 !important; }
+#screen-home .android-quick-action:nth-child(1) { border-color: rgba(50,149,255,.48) !important; background: linear-gradient(145deg,rgba(50,149,255,.29),rgba(50,149,255,.09)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(2) { border-color: rgba(255,95,178,.42) !important; background: linear-gradient(145deg,rgba(255,95,178,.24),rgba(255,95,178,.07)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(3) { border-color: rgba(255,208,71,.42) !important; background: linear-gradient(145deg,rgba(255,208,71,.20),rgba(255,208,71,.06)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(4) { border-color: rgba(38,219,145,.44) !important; background: linear-gradient(145deg,rgba(38,219,145,.24),rgba(38,219,145,.07)),var(--vy-surface) !important; }
+#screen-home .android-quick-action:nth-child(1) .android-quick-action-icon { color: #52adff !important; }
+#screen-home .android-quick-action:nth-child(2) .android-quick-action-icon { color: #ff75bd !important; }
+#screen-home .android-quick-action:nth-child(3) .android-quick-action-icon { color: #ffd75d !important; }
+#screen-home .android-quick-action:nth-child(4) .android-quick-action-icon { color: #3ce5a1 !important; }
+
+/* Persistent nav: every destination is colorful; active state stays unmistakable. */
+.nav {
+  border-color: rgba(71, 173, 255, .34) !important;
+  background: rgba(5, 23, 40, .94) !important;
+  backdrop-filter: blur(22px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
+}
+.nav button[data-android-tab] { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+.nav button[data-android-tab="home"] .android-nav-icon { color: #52adff !important; }
+.nav button[data-android-tab="business"] .android-nav-icon { color: #af91ff !important; }
+.nav button[data-android-tab="sales"] .android-nav-icon { color: #ff75bd !important; }
+.nav button[data-android-tab="stock"] .android-nav-icon { color: #3ce5a1 !important; }
+.nav button[data-android-tab="more"] .android-nav-icon { color: #ffd75d !important; }
+.nav button[data-android-tab] .android-nav-label { color: #aebed0 !important; opacity: 1 !important; }
+.nav button.active[data-android-tab] .android-nav-icon,
+.nav button.active[data-android-tab] .android-nav-label { color: #fff !important; }
+.nav button.active[data-android-tab="home"] { background: linear-gradient(145deg,#247fea,#45b0ff) !important; box-shadow: 0 9px 24px rgba(36,127,234,.34) !important; }
+.nav button.active[data-android-tab="business"] { background: linear-gradient(145deg,#704be6,#a77cff) !important; box-shadow: 0 9px 24px rgba(112,75,230,.34) !important; }
+.nav button.active[data-android-tab="sales"] { background: linear-gradient(145deg,#e83e91,#ff73bb) !important; box-shadow: 0 9px 24px rgba(232,62,145,.34) !important; }
+.nav button.active[data-android-tab="stock"] { background: linear-gradient(145deg,#0faa6b,#38df98) !important; box-shadow: 0 9px 24px rgba(15,170,107,.32) !important; }
+.nav button.active[data-android-tab="more"] { background: linear-gradient(145deg,#e59a18,#ffd04a) !important; box-shadow: 0 9px 24px rgba(229,154,24,.34) !important; color: #211707 !important; }
+.nav button.active[data-android-tab="more"] .android-nav-icon,
+.nav button.active[data-android-tab="more"] .android-nav-label { color: #211707 !important; }
+
+/* More sheet follows the same destination colors. */
+.android-sheet { backdrop-filter: blur(24px) saturate(165%) !important; -webkit-backdrop-filter: blur(24px) saturate(165%) !important; }
+.android-sheet-item[data-tab="analytics"] { --vy-sheet-color: #12d9ee; --vy-sheet-soft: rgba(18,217,238,.15); }
+.android-sheet-item[data-tab="upload"] { --vy-sheet-color: #9b72ff; --vy-sheet-soft: rgba(155,114,255,.16); }
+.android-sheet-item[data-tab="calculator"] { --vy-sheet-color: #ff9142; --vy-sheet-soft: rgba(255,145,66,.16); }
+.android-sheet-item[data-tab="subscription"] { --vy-sheet-color: #ffd047; --vy-sheet-soft: rgba(255,208,71,.15); }
+.android-sheet-item[data-tab="settings"] { --vy-sheet-color: #ff5fb2; --vy-sheet-soft: rgba(255,95,178,.15); }
+.android-sheet-item[data-tab] { border-color: var(--vy-sheet-soft) !important; background: linear-gradient(145deg,var(--vy-sheet-soft),rgba(255,255,255,.025)) !important; }
+.android-sheet-item[data-tab] .android-sheet-item-icon { color: var(--vy-sheet-color) !important; background: var(--vy-sheet-soft) !important; }
+
+/* Settings sub-pages: one content plane, not a stack of nested compartments. */
+#screen-settings .vy675-page-header {
+  min-height: 62px !important;
+  margin-bottom: 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+#screen-settings .vy675-page-back {
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  border: 1px solid rgba(18,217,238,.36) !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg,rgba(18,217,238,.22),rgba(50,149,255,.13)) !important;
+  color: #7deeff !important;
+}
+#screen-settings .vy675-page-body { gap: 10px !important; }
+#screen-settings .vy675-page-body > .card,
+#screen-settings .vy675-page-body > .settings-section,
+#screen-settings .vy675-page-body > #fs607Settings {
+  padding: 2px 0 16px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  border-color: rgba(18,217,238,.28) !important;
+  background: linear-gradient(145deg,rgba(18,217,238,.09),rgba(50,149,255,.055)),rgba(12,28,45,.78) !important;
+}
+#screen-settings .vy675-page-body input:focus,
+#screen-settings .vy675-page-body select:focus,
+#screen-settings .vy675-page-body textarea:focus {
+  border-color: #12d9ee !important;
+  box-shadow: 0 0 0 3px rgba(18,217,238,.14) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-list {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row {
+  min-height: 62px !important;
+  margin: 0 !important;
+  padding: 10px 8px 10px 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(155,114,255,.20) !important;
+  border-radius: 0 !important;
+  background: linear-gradient(90deg,rgba(155,114,255,.10),transparent 70%) !important;
+  box-shadow: inset 3px 0 0 rgba(155,114,255,.72) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:nth-child(2n) {
+  background: linear-gradient(90deg,rgba(18,217,238,.085),transparent 70%) !important;
+  box-shadow: inset 3px 0 0 rgba(18,217,238,.70) !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:last-child { border-bottom: 0 !important; }
+#screen-settings[data-vy675-page="update"] #fs607Settings > button,
+#screen-settings[data-vy675-page="update"] #fs607Settings .btn {
+  width: 100% !important;
+  min-height: 52px !important;
+  border: 0 !important;
+  background: linear-gradient(135deg,#247fea,#12cce2) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 28px rgba(36,127,234,.24) !important;
+}
+
+/* Account keeps one identity panel; inner stats become simple divided data. */
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  padding: 16px !important;
+  border: 1px solid rgba(255,208,71,.34) !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.15),transparent 62%),
+    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.16),transparent 66%),
+    rgba(12,35,55,.90) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.20) !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 0 !important;
+  margin: 14px 0 !important;
+  padding: 11px 0 !important;
+  border-top: 1px solid rgba(255,255,255,.13) !important;
+  border-bottom: 1px solid rgba(255,255,255,.13) !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid > div {
+  min-width: 0 !important;
+  padding: 3px 11px !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(255,255,255,.13) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#screen-settings[data-vy675-page="account"] .production-account-grid > div:first-child { border-left: 0 !important; }
+#screen-settings[data-vy675-page="account"] .production-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 8px !important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button {
+  min-height: 44px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: linear-gradient(135deg,rgba(50,149,255,.30),rgba(18,217,238,.18)) !important;
+  color: #eefdff !important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-child(3) { background: linear-gradient(135deg,rgba(255,145,66,.32),rgba(255,208,71,.18)) !important; }
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-last-child(2) { background: rgba(255,255,255,.09) !important; }
+#screen-settings[data-vy675-page="account"] .production-actions button.danger {
+  grid-column: 1 / -1 !important;
+  background: linear-gradient(135deg,#e83d59,#ff6077) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 24px rgba(232,61,89,.24) !important;
+}
+
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  background: linear-gradient(145deg,rgba(18,217,238,.10),rgba(50,149,255,.06)),#fff !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard {
+  background:
+    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.20),transparent 62%),
+    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.15),transparent 66%),
+    #fff !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid,
+html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid > div { border-color: rgba(44,66,90,.15) !important; }
+
+@media (max-width: 520px) {
+  #screen-settings .vy675-page-header { grid-template-columns: 44px minmax(0,1fr) !important; gap: 11px !important; }
+  #screen-settings[data-vy675-page="account"] .production-account-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  #screen-settings[data-vy675-page="account"] .production-account-grid > div:nth-child(3) {
+    grid-column: 1 / -1 !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid rgba(255,255,255,.13) !important;
+    border-left: 0 !important;
+  }
+}
+
+/* ===== 6.8.2 re-migration — dark blue and white major color system ===== */
+:root {
+  --vy-blue: #3187f5;
+  --vy-cyan: #5aa7ff;
+  --vy-green: #3187f5;
+  --vy-yellow: #7db7ff;
+  --vy-orange: #5b9cf2;
+  --vy-pink: #4f91ec;
+  --vy-purple: #397fe2;
+  --vy-red: #e14d61;
+}
+
+html:not(.theme-light) {
+  --vy-bg-0: #061326;
+  --vy-bg-1: #081b31;
+  --vy-surface: rgba(12, 31, 52, .92);
+  --vy-surface-strong: rgba(16, 39, 65, .98);
+  --vy-surface-soft: rgba(21, 46, 75, .88);
+  --vy-text: #f5f9ff;
+  --vy-muted: #aab9ca;
+  --vy-line: rgba(113, 166, 222, .20);
+  --vy-shadow: 0 16px 38px rgba(0, 5, 14, .28);
+}
+
+html:not(.theme-light) body {
+  background:
+    radial-gradient(36rem 25rem at 8% 0%, rgba(37, 112, 205, .22), transparent 68%),
+    linear-gradient(180deg, #061326 0%, #081b31 52%, #061426 100%) !important;
+}
+
+html.theme-light {
+  --vy-bg-0: #ffffff;
+  --vy-bg-1: #f7faff;
+  --vy-surface: #ffffff;
+  --vy-surface-strong: #ffffff;
+  --vy-surface-soft: #f7faff;
+  --vy-text: #14263d;
+  --vy-muted: #63758a;
+  --vy-line: rgba(51, 95, 143, .15);
+  --vy-shadow: 0 12px 28px rgba(39, 74, 113, .09);
+}
+
+html.theme-light body {
+  background: linear-gradient(180deg, #ffffff 0%, #f7faff 54%, #ffffff 100%) !important;
+}
+
+#screen-home,
+#screen-business,
+#screen-sales,
+#screen-stock,
+#screen-upload,
+#screen-analytics,
+#screen-calculator,
+#screen-subscription,
+#screen-settings {
+  --vy-screen-rgb: 49, 135, 245;
+  --vy-screen-accent: #3187f5;
+}
+
+#screen-home .card,
+#screen-home .stat,
+#screen-business .card,
+#screen-business .vx621-feature-card,
+#screen-business .vx621-group,
+#screen-sales .card,
+#screen-sales .stat,
+#screen-stock .card,
+#screen-stock .stat,
+.business-module-card,
+.adv-module,
+.p611-card,
+.p620-report-card {
+  border-color: rgba(74, 137, 202, .22) !important;
+  background:
+    linear-gradient(145deg, rgba(62,133,217,.075), rgba(255,255,255,.018)),
+    var(--vy-surface) !important;
+  box-shadow: var(--vy-shadow) !important;
+}
+
+html.theme-light #screen-home .card,
+html.theme-light #screen-home .stat,
+html.theme-light #screen-business .card,
+html.theme-light #screen-business .vx621-feature-card,
+html.theme-light #screen-business .vx621-group,
+html.theme-light #screen-sales .card,
+html.theme-light #screen-sales .stat,
+html.theme-light #screen-stock .card,
+html.theme-light #screen-stock .stat,
+html.theme-light .business-module-card,
+html.theme-light .adv-module,
+html.theme-light .p611-card,
+html.theme-light .p620-report-card {
+  color: #14263d !important;
+  border-color: rgba(51, 95, 143, .15) !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 28px rgba(39,74,113,.09) !important;
+}
+
+#screen-home .home-metrics .stat:nth-child(n),
+.vx621-feature-card,
+.business-module-card,
+.adv-module {
+  border-top-color: #3187f5 !important;
+}
+
+#screen-home .android-quick-action:nth-child(n) {
+  border-color: rgba(49,135,245,.30) !important;
+  background: linear-gradient(145deg,rgba(49,135,245,.16),rgba(49,135,245,.045)),var(--vy-surface) !important;
+}
+
+#screen-home .android-quick-action:nth-child(n) .android-quick-action-icon,
+.vx621-feature-icon,
+.adv-module b,
+.business-module-card h3 {
+  color: #5aa7ff !important;
+}
+
+html.theme-light #screen-home .android-quick-action:nth-child(n) {
+  background: #ffffff !important;
+}
+
+html.theme-light #screen-home .android-quick-action:nth-child(n) .android-quick-action-icon,
+html.theme-light .vx621-feature-icon,
+html.theme-light .adv-module b,
+html.theme-light .business-module-card h3 {
+  color: #236fc9 !important;
+}
+
+.nav {
+  border-color: rgba(75, 147, 220, .30) !important;
+  background: rgba(6, 27, 49, .96) !important;
+  backdrop-filter: blur(20px) saturate(110%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(110%) !important;
+}
+
+.nav button[data-android-tab] .android-nav-icon { color: #86a8ca !important; }
+.nav button[data-android-tab] .android-nav-label { color: #aebed0 !important; }
+.nav button.active[data-android-tab] {
+  background: linear-gradient(145deg, #246fca, #3c91ed) !important;
+  color: #ffffff !important;
+  box-shadow: 0 9px 24px rgba(36,111,202,.28) !important;
+}
+.nav button.active[data-android-tab] .android-nav-icon,
+.nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
+
+html.theme-light .nav {
+  border-color: rgba(51,95,143,.16) !important;
+  background: rgba(255,255,255,.97) !important;
+  box-shadow: 0 14px 32px rgba(39,74,113,.13) !important;
+}
+html.theme-light .nav button[data-android-tab] .android-nav-icon { color: #5c7b9b !important; }
+html.theme-light .nav button[data-android-tab] .android-nav-label { color: #60758b !important; }
+html.theme-light .nav button.active[data-android-tab] .android-nav-icon,
+html.theme-light .nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
+
+.android-sheet-item[data-tab] {
+  --vy-sheet-color: #5aa7ff;
+  --vy-sheet-soft: rgba(49,135,245,.12);
+  border-color: rgba(49,135,245,.18) !important;
+  background: linear-gradient(145deg,rgba(49,135,245,.12),rgba(255,255,255,.02)) !important;
+}
+.android-sheet-item[data-tab] .android-sheet-item-icon {
+  color: #5aa7ff !important;
+  background: rgba(49,135,245,.12) !important;
+}
+html.theme-light .android-sheet {
+  background: #ffffff !important;
+  border-color: rgba(51,95,143,.16) !important;
+}
+html.theme-light .android-sheet-item[data-tab] { background: #ffffff !important; }
+html.theme-light .android-sheet-item[data-tab] .android-sheet-item-icon { color: #236fc9 !important; }
+
+#screen-settings .vy675-settings-row {
+  --vy-row-accent: #3187f5 !important;
+  --vy-row-soft: rgba(49,135,245,.11) !important;
+}
+#screen-settings .vy675-settings-row .vy675-row-icon {
+  color: #5aa7ff !important;
+  border-color: rgba(49,135,245,.18) !important;
+  background: rgba(49,135,245,.11) !important;
+}
+html.theme-light #screen-settings .vy675-settings-row .vy675-row-icon { color: #236fc9 !important; }
+
+#screen-settings .vy675-page-back {
+  border-color: rgba(49,135,245,.32) !important;
+  background: rgba(49,135,245,.13) !important;
+  color: #72b4ff !important;
+}
+#screen-settings[data-vy675-page="business"] .vx622-settings-row,
+#screen-settings[data-vy675-page="business"] .vx622-settings-row:nth-child(2n) {
+  border-bottom-color: rgba(49,135,245,.16) !important;
+  background: linear-gradient(90deg,rgba(49,135,245,.09),transparent 72%) !important;
+  box-shadow: inset 3px 0 0 rgba(49,135,245,.65) !important;
+}
+
+#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+#screen-settings .vy675-page-body select,
+#screen-settings .vy675-page-body textarea {
+  border-color: rgba(49,135,245,.24) !important;
+  background: rgba(12,31,52,.82) !important;
+}
+html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
+html.theme-light #screen-settings .vy675-page-body select,
+html.theme-light #screen-settings .vy675-page-body textarea {
+  background: #ffffff !important;
+}
+
+#screen-settings[data-vy675-page="account"] #productionAccountCard {
+  border-color: rgba(49,135,245,.30) !important;
+  background: linear-gradient(145deg,rgba(49,135,245,.14),rgba(255,255,255,.025)),rgba(12,35,55,.94) !important;
+}
+html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard { background: #ffffff !important; }
+
+#screen-settings[data-vy675-page="account"] .production-actions button:nth-child(n),
+#screen-settings[data-vy675-page="update"] #fs607Settings > button,
+#screen-settings[data-vy675-page="update"] #fs607Settings .btn,
+.btn.primary,
+button.primary {
+  background: linear-gradient(135deg,#246fca,#3c91ed) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(36,111,202,.22) !important;
+}
+
+/* Red remains reserved only for destructive actions. */
+#screen-settings[data-vy675-page="account"] .production-actions button.danger,
+.btn.danger,
+button.danger {
+  background: #d94b5f !important;
+  color: #ffffff !important;
+}
+
+/* ===== STYLE SOURCE: professional-ui-682.css ===== */
+
+/* Vyapar AI 6.8.2 — authoritative professional UI and graphics polish.
+   Loaded last in web and Android so older theme layers cannot reintroduce
+   rainbow navigation, square loader artwork, or heavy nested containers. */
+
+html.vy-professional-ui {
+  --pro-bg: #07172a;
+  --pro-bg-deep: #04101f;
+  --pro-surface: rgba(13, 35, 59, .94);
+  --pro-surface-raised: rgba(18, 44, 72, .96);
+  --pro-surface-soft: rgba(33, 63, 94, .62);
+  --pro-text: #f7faff;
+  --pro-muted: #a9b9ca;
+  --pro-line: rgba(139, 181, 225, .18);
+  --pro-blue: #3b91f7;
+  --pro-blue-bright: #65afff;
+  --pro-blue-soft: rgba(59, 145, 247, .14);
+  --pro-green: #39c98f;
+  --pro-amber: #f0bd55;
+  --pro-red: #ec5c70;
+  --pro-shadow: 0 14px 34px rgba(0, 8, 20, .24);
+  --pro-shadow-soft: 0 8px 22px rgba(0, 8, 20, .16);
+  --pro-radius: 18px;
+  color-scheme: dark;
+}
+
+html.vy-professional-ui.theme-light {
+  --pro-bg: #f4f7fb;
+  --pro-bg-deep: #eef3f9;
+  --pro-surface: #ffffff;
+  --pro-surface-raised: #ffffff;
+  --pro-surface-soft: #f5f8fc;
+  --pro-text: #10243c;
+  --pro-muted: #60738a;
+  --pro-line: rgba(35, 76, 119, .13);
+  --pro-blue: #2477d4;
+  --pro-blue-bright: #3187e7;
+  --pro-blue-soft: rgba(36, 119, 212, .10);
+  --pro-green: #168b60;
+  --pro-amber: #a66b06;
+  --pro-red: #cb3f55;
+  --pro-shadow: 0 12px 30px rgba(34, 67, 103, .10);
+  --pro-shadow-soft: 0 6px 18px rgba(34, 67, 103, .08);
+  color-scheme: light;
+}
+
+html.vy-professional-ui:not(.theme-light) body {
+  color: var(--pro-text) !important;
+  background:
+    radial-gradient(38rem 24rem at 6% -4%, rgba(49, 127, 221, .24), transparent 68%),
+    radial-gradient(28rem 24rem at 100% 88%, rgba(25, 77, 137, .13), transparent 72%),
+    linear-gradient(180deg, var(--pro-bg-deep), var(--pro-bg) 44%, #061426) !important;
+}
+
+html.vy-professional-ui.theme-light body {
+  color: var(--pro-text) !important;
+  background:
+    radial-gradient(34rem 20rem at 3% -3%, rgba(49, 135, 231, .11), transparent 70%),
+    linear-gradient(180deg, #fbfdff, var(--pro-bg) 48%, #f8fbff) !important;
+}
+
+html.vy-professional-ui body {
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  letter-spacing: -.005em;
+}
+
+html.vy-professional-ui .app {
+  width: min(100%, 1120px) !important;
+}
+
+/* Header and brand */
+html.vy-professional-ui .top {
+  min-height: 68px !important;
+  padding: 9px 4px 11px !important;
+}
+
+html.vy-professional-ui .brand {
+  gap: 11px !important;
+}
+
+html.vy-professional-ui .logo {
+  width: 46px !important;
+  height: 46px !important;
+  flex-basis: 46px !important;
+  padding: 1px !important;
+  border: 1px solid rgba(255, 255, 255, .72) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 26px rgba(0, 20, 48, .22) !important;
+}
+
+html.vy-professional-ui .brand h1 {
+  font-size: clamp(20px, 4.7vw, 26px) !important;
+  font-weight: 820 !important;
+  letter-spacing: -.035em !important;
+}
+
+html.vy-professional-ui .tag {
+  color: var(--pro-muted) !important;
+  font-size: 11px !important;
+}
+
+html.vy-professional-ui .badge,
+html.vy-professional-ui .theme-toggle {
+  border-color: var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  color: var(--pro-text) !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+html.vy-professional-ui .badge {
+  color: var(--pro-blue-bright) !important;
+}
+
+/* Surfaces and type */
+html.vy-professional-ui .screen .card,
+html.vy-professional-ui .screen .stat,
+html.vy-professional-ui .screen .settings-section,
+html.vy-professional-ui .screen .vx621-feature-card,
+html.vy-professional-ui .screen .business-module-card,
+html.vy-professional-ui .screen .adv-module,
+html.vy-professional-ui .screen .p620-report-card,
+html.vy-professional-ui .screen .subscription-plan-card {
+  border: 1px solid var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  color: var(--pro-text) !important;
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html.vy-professional-ui .screen .card,
+html.vy-professional-ui .screen .settings-section,
+html.vy-professional-ui .screen .business-module-card,
+html.vy-professional-ui .screen .subscription-plan-card {
+  border-radius: var(--pro-radius) !important;
+}
+
+html.vy-professional-ui .screen .card .card,
+html.vy-professional-ui .screen .settings-section .card,
+html.vy-professional-ui #screen-business .vx621-group .card {
+  background: var(--pro-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui h1,
+html.vy-professional-ui h2,
+html.vy-professional-ui h3,
+html.vy-professional-ui h4,
+html.vy-professional-ui strong,
+html.vy-professional-ui b {
+  color: var(--pro-text) !important;
+}
+
+html.vy-professional-ui h2,
+html.vy-professional-ui h3,
+html.vy-professional-ui h4 {
+  letter-spacing: -.025em !important;
+}
+
+html.vy-professional-ui .muted,
+html.vy-professional-ui small,
+html.vy-professional-ui .small,
+html.vy-professional-ui .settings-field-note {
+  color: var(--pro-muted) !important;
+}
+
+/* Home graphics and information hierarchy */
+html.vy-professional-ui #screen-home .home-shell {
+  gap: 15px !important;
+}
+
+html.vy-professional-ui #screen-home .home-overview {
+  position: relative !important;
+  isolation: isolate;
+  border-color: rgba(93, 165, 246, .34) !important;
+  background:
+    radial-gradient(17rem 13rem at 92% 12%, rgba(100, 175, 255, .22), transparent 67%),
+    linear-gradient(145deg, rgba(34, 91, 153, .34), rgba(10, 34, 59, .92)) !important;
+  box-shadow: 0 18px 42px rgba(0, 20, 46, .27) !important;
+}
+
+html.vy-professional-ui #screen-home .home-overview::after {
+  content: "";
+  position: absolute;
+  right: -42px;
+  top: -54px;
+  z-index: -1;
+  width: 146px;
+  height: 146px;
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-radius: 50%;
+  box-shadow: 0 0 0 22px rgba(255, 255, 255, .025), 0 0 0 48px rgba(255, 255, 255, .018);
+}
+
+html.vy-professional-ui.theme-light #screen-home .home-overview {
+  background:
+    radial-gradient(19rem 13rem at 95% 4%, rgba(255, 255, 255, .20), transparent 66%),
+    linear-gradient(145deg, #135caa, #2781dc 62%, #3a92e7) !important;
+}
+
+html.vy-professional-ui #screen-home .home-overview h2,
+html.vy-professional-ui #screen-home .home-overview b,
+html.vy-professional-ui #screen-home .home-overview p {
+  color: #fff !important;
+}
+
+html.vy-professional-ui #screen-home .home-eyebrow,
+html.vy-professional-ui #screen-home .home-profit span,
+html.vy-professional-ui #screen-home .home-profit small {
+  color: #cce6ff !important;
+}
+
+html.vy-professional-ui #screen-home .home-goal-track {
+  height: 7px !important;
+  border: 0 !important;
+  background: rgba(255, 255, 255, .18) !important;
+}
+
+html.vy-professional-ui #screen-home .home-goal-track span {
+  background: linear-gradient(90deg, #fff, #91d5ff) !important;
+  box-shadow: 0 0 18px rgba(169, 220, 255, .50) !important;
+}
+
+html.vy-professional-ui #screen-home .android-quick-action {
+  min-height: 82px !important;
+  border-color: var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+html.vy-professional-ui #screen-home .android-quick-action-icon,
+html.vy-professional-ui #screen-home .home-metric-icon,
+html.vy-professional-ui .vx621-feature-icon {
+  border: 1px solid rgba(82, 157, 240, .20) !important;
+  border-radius: 13px !important;
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-blue-bright) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08) !important;
+}
+
+html.vy-professional-ui #screen-home .home-metrics .stat {
+  min-height: 104px !important;
+  border-top: 1px solid var(--pro-line) !important;
+  border-left: 1px solid var(--pro-line) !important;
+  background:
+    linear-gradient(135deg, var(--pro-blue-soft), transparent 58%),
+    var(--pro-surface) !important;
+}
+
+html.vy-professional-ui #screen-home .home-next {
+  border-color: rgba(57, 201, 143, .24) !important;
+  background:
+    linear-gradient(120deg, rgba(57, 201, 143, .10), transparent 46%),
+    var(--pro-surface) !important;
+}
+
+html.vy-professional-ui #screen-home .home-next-icon {
+  border-radius: 14px !important;
+  background: rgba(57, 201, 143, .13) !important;
+  color: var(--pro-green) !important;
+}
+
+/* Business and module graphics */
+html.vy-professional-ui #screen-business .vx621-hero {
+  border-color: rgba(82, 157, 240, .32) !important;
+  background:
+    radial-gradient(20rem 12rem at 100% 0, rgba(70, 152, 245, .18), transparent 65%),
+    var(--pro-surface-raised) !important;
+}
+
+html.vy-professional-ui #screen-business .vx621-group {
+  padding: 14px !important;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: var(--pro-radius) !important;
+  background: rgba(10, 31, 53, .50) !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui.theme-light #screen-business .vx621-group {
+  background: rgba(238, 244, 251, .72) !important;
+}
+
+html.vy-professional-ui #screen-business .vx621-feature-card,
+html.vy-professional-ui .vx621-sales-tools .vx621-feature-card,
+html.vy-professional-ui .vx621-stock-tools .vx621-feature-card {
+  border-top: 1px solid var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+html.vy-professional-ui .vx621-kpi,
+html.vy-professional-ui .stat {
+  border-color: var(--pro-line) !important;
+  background: var(--pro-surface) !important;
+}
+
+/* Buttons and form controls */
+html.vy-professional-ui .btn,
+html.vy-professional-ui .android-sheet-close,
+html.vy-professional-ui .p620-report-card {
+  min-height: 43px !important;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 12px !important;
+  background: var(--pro-surface-soft) !important;
+  color: var(--pro-text) !important;
+  font-weight: 740 !important;
+}
+
+html.vy-professional-ui .btn.primary,
+html.vy-professional-ui button.primary {
+  border-color: rgba(111, 178, 255, .44) !important;
+  background: linear-gradient(135deg, #216cc5, #3b91f7) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px rgba(29, 105, 190, .25) !important;
+}
+
+/* Keep action-blue meaning identical in light/dark and Web/Android. */
+html.vy-professional-ui .btn.primary,
+html.vy-professional-ui button.primary,
+html.vy-professional-ui .vx621-action.primary,
+html.vy-professional-ui .vx621-action.blue,
+html.vy-professional-ui #screen-business .vx621-action.blue,
+html.vy-professional-ui #screen-sales .vx621-action.blue {
+  border-color: rgba(147, 197, 253, .66) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb 55%, #1e5fbf) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px rgba(30, 91, 205, .30), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+}
+
+html.vy-professional-ui .btn.primary:hover,
+html.vy-professional-ui button.primary:hover,
+html.vy-professional-ui .vx621-action.primary:hover,
+html.vy-professional-ui .vx621-action.blue:hover,
+html.vy-professional-ui .btn.primary:focus-visible,
+html.vy-professional-ui button.primary:focus-visible,
+html.vy-professional-ui .vx621-action.primary:focus-visible,
+html.vy-professional-ui .vx621-action.blue:focus-visible {
+  border-color: rgba(191, 219, 254, .82) !important;
+  background: linear-gradient(135deg, #1e40af, #1d4ed8 55%, #087ac2) !important;
+  color: #fff !important;
+}
+
+html.vy-professional-ui .btn.primary:active,
+html.vy-professional-ui button.primary:active,
+html.vy-professional-ui .vx621-action.primary:active,
+html.vy-professional-ui .vx621-action.blue:active {
+  transform: translateY(1px) scale(.985) !important;
+  box-shadow: 0 4px 12px rgba(30, 91, 205, .24) !important;
+}
+
+html.vy-professional-ui .p1-modebar button[aria-selected="true"] {
+  border-color: rgba(147, 197, 253, .58) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(30, 91, 205, .24) !important;
+}
+
+html.vy-professional-ui .btn.danger,
+html.vy-professional-ui button.danger {
+  border-color: rgba(255, 134, 151, .34) !important;
+  background: linear-gradient(135deg, #c83c53, #e95a6f) !important;
+  color: #fff !important;
+}
+
+html.vy-professional-ui input,
+html.vy-professional-ui select,
+html.vy-professional-ui textarea {
+  min-height: 46px !important;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 12px !important;
+  background: rgba(4, 18, 33, .62) !important;
+  color: var(--pro-text) !important;
+}
+
+html.vy-professional-ui.theme-light input,
+html.vy-professional-ui.theme-light select,
+html.vy-professional-ui.theme-light textarea {
+  background: #f8fafd !important;
+}
+
+html.vy-professional-ui input:focus,
+html.vy-professional-ui select:focus,
+html.vy-professional-ui textarea:focus {
+  border-color: var(--pro-blue) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px var(--pro-blue-soft) !important;
+}
+
+/* Settings and overlays */
+html.vy-professional-ui #screen-settings .vy675-settings-row {
+  min-height: 66px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--pro-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui #screen-settings .vy675-settings-row:last-child {
+  border-bottom: 0 !important;
+}
+
+html.vy-professional-ui #screen-settings .vy675-settings-row .vy675-row-icon {
+  border-color: rgba(64, 145, 237, .18) !important;
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-blue-bright) !important;
+}
+
+html.vy-professional-ui #screen-settings .vy675-settings-row:active,
+html.vy-professional-ui #screen-settings .vy675-settings-row:focus-visible {
+  background: var(--pro-blue-soft) !important;
+}
+
+html.vy-professional-ui .android-sheet,
+html.vy-professional-ui .modal-card,
+html.vy-professional-ui .glass-dialog,
+html.vy-professional-ui .subscription-dialog {
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 22px !important;
+  background: var(--pro-surface-raised) !important;
+  color: var(--pro-text) !important;
+  box-shadow: 0 24px 70px rgba(0, 6, 18, .42) !important;
+}
+
+html.vy-professional-ui .android-sheet-item {
+  border: 1px solid var(--pro-line) !important;
+  background: var(--pro-surface-soft) !important;
+}
+
+html.vy-professional-ui .android-sheet-item[data-tab] .android-sheet-item-icon {
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-blue-bright) !important;
+}
+
+/* Charts, tables and subscription artwork */
+html.vy-professional-ui .chart-wrap canvas {
+  border-radius: 14px !important;
+}
+
+html.vy-professional-ui table th {
+  background: var(--pro-blue-soft) !important;
+  color: var(--pro-muted) !important;
+}
+
+html.vy-professional-ui table tbody tr:nth-child(even) td {
+  background: rgba(74, 137, 202, .035) !important;
+}
+
+html.vy-professional-ui .subscription-plan-card img,
+html.vy-professional-ui .subscription-dialog img,
+html.vy-professional-ui [class*="plan"] img {
+  border-radius: 16px !important;
+  object-fit: cover !important;
+  box-shadow: var(--pro-shadow-soft) !important;
+}
+
+/* Bottom navigation: calm neutral bar with one blue active destination. */
+html.vy-professional-ui .nav {
+  border: 1px solid rgba(91, 151, 216, .28) !important;
+  background: rgba(6, 24, 43, .96) !important;
+  box-shadow: 0 16px 42px rgba(0, 6, 17, .34) !important;
+  backdrop-filter: blur(22px) saturate(118%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(118%) !important;
+}
+
+html.vy-professional-ui.theme-light .nav {
+  border-color: rgba(35, 76, 119, .14) !important;
+  background: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 13px 30px rgba(34, 67, 103, .14) !important;
+}
+
+html.vy-professional-ui .nav button[data-android-tab] {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.vy-professional-ui .nav button[data-android-tab] .android-nav-icon,
+html.vy-professional-ui .nav button[data-android-tab] .android-nav-label {
+  color: #8fa9c2 !important;
+}
+
+html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-icon,
+html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-label {
+  color: #60778e !important;
+}
+
+html.vy-professional-ui .nav button.active[data-android-tab] {
+  background: linear-gradient(145deg, #226fc9, #3b91f7) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(34, 111, 201, .28) !important;
+}
+
+html.vy-professional-ui .nav button.active[data-android-tab] .android-nav-icon,
+html.vy-professional-ui .nav button.active[data-android-tab] .android-nav-label {
+  color: #fff !important;
+}
+
+/* Unified, professional startup graphic. */
+html.vy-professional-ui #appLoader.android-loader,
+html.vy-professional-ui #vy647StartupSplash {
+  background:
+    radial-gradient(18rem 18rem at 50% 38%, rgba(54, 138, 235, .24), transparent 66%),
+    linear-gradient(160deg, #04101f, #092543 58%, #06172b) !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-logo,
+html.vy-professional-ui #vy647StartupSplash .vy647-splash-core img {
+  width: 106px !important;
+  min-width: 106px !important;
+  max-width: 106px !important;
+  height: 106px !important;
+  min-height: 106px !important;
+  max-height: 106px !important;
+  padding: 3px !important;
+  border: 1px solid rgba(255, 255, 255, .72) !important;
+  border-radius: 26px !important;
+  background: #fff !important;
+  box-shadow: 0 20px 52px rgba(0, 10, 28, .42), 0 0 0 8px rgba(85, 160, 245, .08) !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-logo > img {
+  border-radius: 22px !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-bar,
+html.vy-professional-ui #vy647StartupSplash .vy647-splash-bar {
+  overflow: hidden !important;
+  border: 1px solid rgba(128, 184, 243, .16) !important;
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+html.vy-professional-ui #appLoader .android-loader-bar span,
+html.vy-professional-ui #vy647StartupSplash .vy647-splash-bar i {
+  background: linear-gradient(90deg, #2b78cf, #69b6ff, #2b78cf) !important;
+  box-shadow: 0 0 14px rgba(86, 172, 255, .52) !important;
+}
+
+@media (hover: hover) {
+  html.vy-professional-ui .btn:hover,
+  html.vy-professional-ui .android-quick-action:hover,
+  html.vy-professional-ui .vx621-feature-card:hover {
+    border-color: rgba(91, 164, 245, .38) !important;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 520px) {
+  html.vy-professional-ui .app {
+    padding-inline: 10px !important;
+  }
+
+  html.vy-professional-ui .top {
+    min-height: 61px !important;
+  }
+
+  html.vy-professional-ui .logo {
+    width: 42px !important;
+    height: 42px !important;
+    flex-basis: 42px !important;
+    border-radius: 13px !important;
+  }
+
+  html.vy-professional-ui #screen-home .home-overview {
+    padding: 17px !important;
+  }
+
+  html.vy-professional-ui #screen-home .android-quick-action {
+    min-height: 78px !important;
+  }
+
+  html.vy-professional-ui #screen-business .vx621-group {
+    padding: 12px !important;
+  }
+
+  html.vy-professional-ui .nav {
+    width: calc(100% - 12px) !important;
+    padding: 5px !important;
+    gap: 3px !important;
+    border-radius: 19px !important;
+  }
+
+  html.vy-professional-ui .nav button,
+  html.vy-professional-ui .nav .nav-item {
+    min-height: 50px !important;
+    border-radius: 12px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.vy-professional-ui *,
+  html.vy-professional-ui *::before,
+  html.vy-professional-ui *::after {
+    transition-duration: .001ms !important;
+    animation-duration: .001ms !important;
+  }
+}
+
+
+/* 6.8.2 maintenance: prevent top header actions from overflowing narrow screens. */
+.android-ui .top, .top{min-width:0;max-width:100%;}
+.android-ui .brand, .brand{min-width:0;flex:1 1 auto;overflow:hidden;}
+.android-ui .brand > div, .brand > div{min-width:0;}
+.android-ui .top-actions, .top-actions{min-width:0;flex:0 1 auto;max-width:48%;}
+.android-ui .top-actions .badge, .top-actions .badge{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.android-ui .theme-toggle, .theme-toggle{flex:0 0 auto;}
+@media (max-width:520px){
+  .top{gap:8px;}
+  .brand{gap:8px;}
+  .top-actions{gap:5px;max-width:46%;}
+  .android-ui .top-actions{max-width:46%;}
+  .android-ui .badge{max-width:82px;padding-inline:8px!important;}
+}
+@media (max-width:390px){
+  .android-ui .brand .tag,.brand .tag{display:none;}
+  .android-ui .brand h1,.brand h1{font-size:17px!important;}
+  .android-ui .logo,.logo{width:40px!important;height:40px!important;flex-basis:40px;}
+  .android-ui .top-actions,.top-actions{max-width:44%;}
+  .android-ui .badge{max-width:70px;}
+}
+
+/* ===== STYLE SOURCE: legal-scoped.css ===== */
+
+/* Legal pages share the second UI bundle without affecting the main app. */
+html.legal-page {
+  min-height: 100%;
+  color-scheme: dark;
+}
+
+html.legal-page * {
+  box-sizing: border-box;
+}
+
+html.legal-page body {
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(30rem 22rem at 8% 5%, rgba(96, 145, 255, .18), transparent 62%),
+    radial-gradient(28rem 22rem at 92% 12%, rgba(62, 211, 195, .13), transparent 64%),
+    linear-gradient(145deg, #070d18, #0b1423 52%, #07101c) !important;
+  color: #e5eefb;
+  font: 15px/1.7 Inter, system-ui, sans-serif;
+}
+
+html.legal-page main {
+  width: min(920px, 92vw);
+  margin: 42px auto;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .035)) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .16) !important;
+  backdrop-filter: blur(26px) saturate(155%);
+  -webkit-backdrop-filter: blur(26px) saturate(155%);
+}
+
+html.legal-page h1 {
+  margin: 0 0 6px;
+  font-size: 34px;
+}
+
+html.legal-page h2 {
+  margin-top: 28px;
+  color: #7dd3fc;
+}
+
+html.legal-page p,
+html.legal-page li {
+  color: #b9c7d8;
+}
+
+html.legal-page a {
+  color: #67e8f9;
+}
+
+html.legal-page .meta {
+  color: #718096;
+  font-size: 12px;
+}
+
+html.legal-page .notice {
+  padding: 13px 15px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #111827;
+}
+
+html.legal-page .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+html.legal-page .btn {
+  display: inline-block;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0891b2, #2563eb);
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+html.legal-page .legal-footer {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, .10);
+  color: #91a8bd;
+  font-size: 11px;
+  text-align: center;
+}
+
+html.legal-page .legal-footer.vy659-legal-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px !important;
+  margin-top: 22px !important;
+  padding: 16px 10px 4px !important;
+  font-size: 12px;
+}
+
+html.legal-page .legal-footer-logo,
+html.legal-page .legal-footer.vy659-legal-footer .legal-footer-logo {
+  width: 54px !important;
+  height: 54px !important;
+  object-fit: contain;
+  opacity: .78 !important;
+}
+
+html.legal-page .legal-footer-links,
+html.legal-page .legal-footer.vy659-legal-footer .legal-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px !important;
+}
+
+html.legal-page .legal-footer-links a,
+html.legal-page .legal-footer.vy659-legal-footer .legal-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px !important;
+  font-size: 11px !important;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+html.legal-page .legal-footer .gupta-legacy-signature,
+html.legal-page .legal-footer.vy659-legal-footer .gupta-legacy-signature {
+  display: block;
+  margin-top: 7px;
+  color: #d7e6f5;
+  font-size: 10px !important;
+  font-style: normal !important;
+  font-weight: 850;
+  letter-spacing: .025em;
+  opacity: .72;
+}
+
+@media (max-width: 600px) {
+  html.legal-page main {
+    margin: 18px auto;
+    padding: 22px 17px;
+  }
+
+  html.legal-page h1 {
+    font-size: 28px;
+  }
+}
+
+/* ===== STYLE SOURCE: performance-final-850.css ===== */
+
+/* Vyapar AI 8.5.0 — final Android compositor safeguards.
+   Loaded last so later visual layers cannot accidentally restore expensive
+   control blur or scroll-time effects. Business and interaction rules are untouched. */
+
+html.android-ui button,
+html.android-ui .btn,
+html.android-ui a,
+html.android-ui [role="button"],
+html.android-ui input,
+html.android-ui select,
+html.android-ui textarea{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* Small controls are numerous; live backdrop sampling on each one is expensive
+   and visually unnecessary because their solid/tinted backgrounds remain. */
+html.android-ui button,
+html.android-ui .btn,
+html.android-ui .pill,
+html.android-ui .badge,
+html.android-ui .glass-chip,
+html.android-ui .theme-toggle,
+html.android-ui input,
+html.android-ui select,
+html.android-ui textarea{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Bound repaint work to the existing scroll containers used by long ledgers,
+   invoices, stock tables and settings lists. */
+html.android-ui .scroll,
+html.android-ui .vx621-table-wrap,
+html.android-ui .p611-table,
+html.android-ui .vy6601-select-options{
+  contain:paint;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+}
+html.android-ui .scroll::-webkit-scrollbar,
+html.android-ui .vx621-table-wrap::-webkit-scrollbar,
+html.android-ui .p611-table::-webkit-scrollbar,
+html.android-ui .vy6601-select-options::-webkit-scrollbar{
+  width:0;
+  height:0;
+}
+
+/* Keep finger tracking cheap even when a later UI layer adds decoration. */
+html.android-ui.perf-scrolling button,
+html.android-ui.perf-scrolling .btn,
+html.android-ui.perf-scrolling .pill,
+html.android-ui.perf-scrolling .badge,
+html.android-ui.perf-scrolling .glass-chip,
+html.android-ui.perf-scrolling .theme-toggle,
+html.android-ui.perf-scrolling input,
+html.android-ui.perf-scrolling select,
+html.android-ui.perf-scrolling textarea{
+  transition:none!important;
+  box-shadow:none!important;
+}
+
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat,
+html.android-ui.perf-tier-legacy .settings-section,
+html.android-ui.perf-tier-legacy .production-account-card,
+html.android-ui.perf-low-ram .card,
+html.android-ui.perf-low-ram .stat,
+html.android-ui.perf-low-ram .settings-section,
+html.android-ui.perf-low-ram .production-account-card{
+  contain:paint;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html.android-ui button,
+  html.android-ui .btn,
+  html.android-ui .card,
+  html.android-ui .stat,
+  html.android-ui .nav,
+  html.android-ui .top,
+  html.android-ui .android-sheet{
+    animation:none!important;
+    transition-duration:.01ms!important;
+  }
+}

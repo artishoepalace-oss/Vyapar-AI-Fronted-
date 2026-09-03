@@ -81,6 +81,11 @@ public class MainActivity extends Activity {
     private final ExecutorService io = Executors.newSingleThreadExecutor();
     private AuthorizationClient authorizationClient;
     private PermissionRequest pendingWebPermissionRequest;
+    private final Runnable nativeResumeNotifier = () -> {
+        if (webView != null) {
+            webView.evaluateJavascript("window.onNativeAppResume && window.onNativeAppResume();", null);
+        }
+    };
 
     @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +104,8 @@ protected void onCreate(Bundle savedInstanceState) {
         // Keep WebView on the hardware accelerated render path for the Liquid Glass UI.
         webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
         webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setHorizontalScrollBarEnabled(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_BOUND, true);
         }
@@ -114,6 +121,9 @@ protected void onCreate(Bundle savedInstanceState) {
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
+        settings.setSupportZoom(false);
+        settings.setTextZoom(100);
+        settings.setDefaultTextEncodingName("UTF-8");
         settings.setMediaPlaybackRequiresUserGesture(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setLoadsImagesAutomatically(true);
@@ -181,9 +191,9 @@ protected void onCreate(Bundle savedInstanceState) {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                view.postDelayed(() -> {
+                view.postOnAnimation(() -> {
                     view.evaluateJavascript("window.onNativeAppReady && window.onNativeAppReady();", null);
-                }, 250);
+                });
             }
         });
 
@@ -194,9 +204,19 @@ protected void onCreate(Bundle savedInstanceState) {
     protected void onResume() {
         super.onResume();
         if (webView != null) {
-            webView.postDelayed(() -> webView.evaluateJavascript(
-                    "window.onNativeAppResume && window.onNativeAppResume();", null), 500);
+            webView.onResume();
+            webView.removeCallbacks(nativeResumeNotifier);
+            webView.postDelayed(nativeResumeNotifier, 80);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        if (webView != null) {
+            webView.removeCallbacks(nativeResumeNotifier);
+            webView.onPause();
+        }
+        super.onPause();
     }
 
     public class AndroidApp {
@@ -880,7 +900,22 @@ protected void onCreate(Bundle savedInstanceState) {
     @Override
     protected void onDestroy() {
         io.shutdownNow();
-        if (webView != null) webView.destroy();
+        if (filePathCallback != null) {
+            filePathCallback.onReceiveValue(null);
+            filePathCallback = null;
+        }
+        if (pendingWebPermissionRequest != null) {
+            pendingWebPermissionRequest.deny();
+            pendingWebPermissionRequest = null;
+        }
+        if (webView != null) {
+            webView.removeCallbacks(nativeResumeNotifier);
+            webView.stopLoading();
+            webView.removeJavascriptInterface("AndroidDownloads");
+            webView.removeJavascriptInterface("AndroidApp");
+            webView.destroy();
+            webView = null;
+        }
         super.onDestroy();
     }
 }
