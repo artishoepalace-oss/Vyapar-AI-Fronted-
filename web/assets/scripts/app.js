@@ -9859,7 +9859,7 @@ function tierBadge(tier){
 }
 function button(label,action,tier='business',kind=''){
   const locked=rank(plan())<rank(tier);
-  const blue=['Payment In','Suppliers','Purchase Return','Cheques & Loans','Currencies','Sale Return'].includes(String(label));
+  const blue=['Payment In','Purchase','Suppliers','Purchase Return','Cheques & Loans','Currencies','Sale Return'].includes(String(label));
   return `<button type="button" class="vx621-action ${kind} ${blue?'blue':''} ${locked?'is-locked':''}" onclick="${action}"><span>${E(label)}</span>${tierBadge(tier)}</button>`;
 }
 function featureCard(title,desc,actions,icon='◈'){
