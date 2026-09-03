@@ -312,6 +312,47 @@ html.vy-professional-ui button.primary {
   box-shadow: 0 9px 22px rgba(29, 105, 190, .25) !important;
 }
 
+/* Keep action-blue meaning identical in light/dark and Web/Android. */
+html.vy-professional-ui .btn.primary,
+html.vy-professional-ui button.primary,
+html.vy-professional-ui .vx621-action.primary,
+html.vy-professional-ui .vx621-action.blue,
+html.vy-professional-ui #screen-business .vx621-action.blue,
+html.vy-professional-ui #screen-sales .vx621-action.blue {
+  border-color: rgba(147, 197, 253, .66) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb 55%, #1e5fbf) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px rgba(30, 91, 205, .30), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+}
+
+html.vy-professional-ui .btn.primary:hover,
+html.vy-professional-ui button.primary:hover,
+html.vy-professional-ui .vx621-action.primary:hover,
+html.vy-professional-ui .vx621-action.blue:hover,
+html.vy-professional-ui .btn.primary:focus-visible,
+html.vy-professional-ui button.primary:focus-visible,
+html.vy-professional-ui .vx621-action.primary:focus-visible,
+html.vy-professional-ui .vx621-action.blue:focus-visible {
+  border-color: rgba(191, 219, 254, .82) !important;
+  background: linear-gradient(135deg, #1e40af, #1d4ed8 55%, #087ac2) !important;
+  color: #fff !important;
+}
+
+html.vy-professional-ui .btn.primary:active,
+html.vy-professional-ui button.primary:active,
+html.vy-professional-ui .vx621-action.primary:active,
+html.vy-professional-ui .vx621-action.blue:active {
+  transform: translateY(1px) scale(.985) !important;
+  box-shadow: 0 4px 12px rgba(30, 91, 205, .24) !important;
+}
+
+html.vy-professional-ui .p1-modebar button[aria-selected="true"] {
+  border-color: rgba(147, 197, 253, .58) !important;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(30, 91, 205, .24) !important;
+}
+
 html.vy-professional-ui .btn.danger,
 html.vy-professional-ui button.danger {
   border-color: rgba(255, 134, 151, .34) !important;
