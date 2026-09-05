@@ -1,0 +1,165 @@
+/* Vyapar AI 8.5.5 inspected glitch fix — Android 7–16.
+   Targets only visual/state-transition defects observed in the 2026-09-06 recording. */
+
+/* Never cover a theme change with an opaque full-screen layer. */
+html.vy855-inspected-fix .vy855-theme-curtain,
+html.vy855-inspected-fix .vy854-theme-wipe,
+html.vy855-inspected-fix .vy853-theme-reveal,
+html.vy855-inspected-fix .vy852-theme-bloom,
+html.vy855-inspected-fix .theme-ripple,
+html.vy855-inspected-fix .vx657-theme-crossfade{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
+/* During the two-frame theme commit, change surfaces atomically instead of
+   letting old WebViews animate unrelated background/opacity properties. */
+html.vy855-inspected-fix.vy855-theme-atomic *,
+html.vy855-inspected-fix.vy855-theme-atomic *::before,
+html.vy855-inspected-fix.vy855-theme-atomic *::after{
+  transition:none!important;
+}
+
+/* Login: the 8.5.5 active pill was being drawn on top of the older sliding
+   ::before lens, creating the tall/double blue block visible in the recording. */
+html.vy855-inspected-fix #vyaparOtpGate .auth-card{
+  width:min(100%,430px)!important;
+  max-width:430px!important;
+  padding:22px 18px 20px!important;
+  border-radius:28px!important;
+  box-shadow:0 16px 38px rgba(0,6,18,.22),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-card,
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-card{
+  box-shadow:0 14px 34px rgba(42,73,103,.11),inset 0 1px 0 #fff!important;
+}
+
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tabs{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:0!important;
+  height:auto!important;
+  margin:0!important;
+  padding:4px!important;
+  gap:4px!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tabs::before{
+  content:none!important;
+  display:none!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab,
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab.active{
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  width:100%!important;
+  min-width:0!important;
+  height:44px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0 8px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+  text-shadow:none!important;
+  opacity:1!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab:not(.active){
+  color:#a9bfd1!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab[disabled]:not(.active){
+  color:#9eb2c4!important;
+  opacity:.72!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab.active{
+  color:#fff!important;
+  background:linear-gradient(180deg,#2189f5,#0d6fd3)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 10px rgba(0,78,168,.22)!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-method-tab:not(.active),
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-method-tab:not(.active){
+  color:#5f7488!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-method-tab[disabled]:not(.active),
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-method-tab[disabled]:not(.active){
+  color:#71869a!important;
+}
+
+/* Keep the email field usable on ~360 CSS-pixel Android screens. 8.5.5 had
+   expanded Get OTP to 116/105px, which crushed and clipped the email input. */
+html.vy855-inspected-fix #vyaparOtpGate .auth-otp-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 92px!important;
+  gap:8px!important;
+  align-items:center!important;
+  width:100%!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-input,
+html.vy855-inspected-fix #vyaparOtpGate .auth-primary,
+html.vy855-inspected-fix #vyaparOtpGate .auth-google,
+html.vy855-inspected-fix #vyaparOtpGate .auth-small-btn{
+  height:48px!important;
+  min-height:48px!important;
+  border-radius:16px!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-input{
+  min-width:0!important;
+  padding:10px 14px!important;
+  font-size:14px!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-small-btn{
+  width:92px!important;
+  min-width:92px!important;
+  max-width:92px!important;
+  padding:0 8px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-input::placeholder{
+  color:rgba(196,213,227,.60)!important;
+  opacity:1!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-input::placeholder,
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-input::placeholder{
+  color:rgba(76,98,117,.62)!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-subtitle{
+  color:#91a8bb!important;
+  opacity:1!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-subtitle,
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-subtitle{
+  color:#657b8e!important;
+}
+
+@media(max-width:348px){
+  html.vy855-inspected-fix #vyaparOtpGate .auth-card{padding-left:14px!important;padding-right:14px!important}
+  html.vy855-inspected-fix #vyaparOtpGate .auth-otp-row{grid-template-columns:1fr!important}
+  html.vy855-inspected-fix #vyaparOtpGate .auth-small-btn{width:100%!important;min-width:0!important;max-width:none!important}
+}
+
+/* Settings must never enter as an empty/transparent page. Content still gets
+   the short directional transform, but its base screen remains paintable. */
+html.vy855-inspected-fix #screen-settings:not(.hide){
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+}
+html.vy855-inspected-fix #screen-settings.vy855-enter-forward,
+html.vy855-inspected-fix #screen-settings.vy855-enter-backward{
+  animation-duration:.14s!important;
+}
