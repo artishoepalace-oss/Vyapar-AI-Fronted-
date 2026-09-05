@@ -15,10 +15,6 @@
     <item
         android:width="112dp"
         android:height="112dp"
-        android:gravity="center">
-        <bitmap
-            android:src="@drawable/ic_launcher_round"
-            android:gravity="fill"
-            android:filter="true" />
-    </item>
+        android:gravity="center"
+        android:drawable="@drawable/ic_launcher_round" />
 </layer-list>
