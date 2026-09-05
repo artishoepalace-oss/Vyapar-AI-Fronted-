@@ -8,7 +8,6 @@
   root.classList.add('vy855-liquid-lens');
 
   const reduced=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const legacy=()=>root.classList.contains('perf-tier-legacy');
 
   function replayClass(node,name,duration){
     if(!node)return;
@@ -58,7 +57,7 @@
   }
 
   function spawnThemeLens(target,event){
-    if(reduced()||legacy())return;
+    if(reduced())return;
     document.querySelectorAll('.vy856-theme-lens').forEach(node=>node.remove());
     const center=themeButtonCenter(event);
     const lens=document.createElement('div');
