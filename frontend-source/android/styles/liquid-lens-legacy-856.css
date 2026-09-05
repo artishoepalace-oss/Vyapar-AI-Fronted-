@@ -1,0 +1,37 @@
+/* Vyapar AI 8.5.6 — Android 7/8 compatibility tail for the liquid-lens layer. */
+
+/* Android 8 (API 27) is intentionally classified as legacy by the performance
+   coordinator. Keep the lightweight chromatic halo there; it is transform-only
+   and does not use live backdrop blur. */
+html.vy855-liquid-lens.perf-tier-legacy .vy856-theme-lens{
+  display:block!important;
+  box-shadow:inset 1px 0 rgba(83,255,168,.17),inset -1px 0 rgba(255,91,75,.18)!important;
+  animation-duration:.34s!important;
+}
+
+/* Do not force clipping on ordinary content cards: some cards host menus,
+   tooltips or expanding rows. Radius stays iOS-like while overlays can escape. */
+html.vy855-liquid-lens .card,
+html.vy855-liquid-lens .stat,
+html.vy855-liquid-lens .settings-section,
+html.vy855-liquid-lens .production-account-card,
+html.vy855-liquid-lens .p2-card,
+html.vy855-liquid-lens .vx621-card,
+html.vy855-liquid-lens .vx622-menu-card,
+html.vy855-liquid-lens .data-safety-section{
+  overflow:visible!important;
+}
+
+/* Selector kept simple for old Chromium/WebView builds. */
+html.vy855-liquid-lens button:active:not([data-android-tab]),
+html.vy855-liquid-lens .btn:active{
+  transform:scale(.975)!important;
+  transition:transform .09s ease-out!important;
+}
+
+/* Slightly slower than the old .18s fallback: still cheap, but visibly smooth
+   on the Android 8 device shown in the reference screenshot. */
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-forward,
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-backward{
+  animation-duration:.22s!important;
+}
