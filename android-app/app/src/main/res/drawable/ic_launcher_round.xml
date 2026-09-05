@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Circular launcher/splash wrapper using the existing Vyapar AI artwork. -->
+<!-- Legacy (API 23–25) circular launcher wrapper. The square source bitmap is
+     kept fully inside the circular silhouette so its white corners can never
+     protrude beyond the icon mask. API 26+ uses the adaptive override. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
@@ -7,10 +9,9 @@
         </shape>
     </item>
     <item
-        android:left="16dp"
-        android:top="16dp"
-        android:right="16dp"
-        android:bottom="16dp">
+        android:width="34dp"
+        android:height="34dp"
+        android:gravity="center">
         <bitmap
             android:src="@drawable/ic_launcher"
             android:gravity="fill"
