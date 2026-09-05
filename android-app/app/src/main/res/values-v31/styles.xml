@@ -1,6 +1,5 @@
 <resources>
-    <!-- Android 12-16+: system splash is mandatory, so make it look like the
-         same Vyapar AI loader and hand off immediately to the WebView loader. -->
+    <!-- Android 12-16+: use the same circular Vyapar AI icon as launcher/native handoff. -->
     <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
@@ -12,7 +11,7 @@
         <item name="android:navigationBarColor">#06172D</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowSplashScreenBackground">#06172D</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/startup_logo</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_round</item>
         <item name="android:windowSplashScreenIconBackgroundColor">#06172D</item>
         <item name="android:windowSplashScreenAnimationDuration">0</item>
     </style>
