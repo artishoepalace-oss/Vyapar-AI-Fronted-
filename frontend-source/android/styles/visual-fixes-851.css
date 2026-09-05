@@ -1,0 +1,243 @@
+
+/* ========================================================================
+   8.5 Telegram-reference UI maintenance — visual/interaction only
+   ======================================================================== */
+
+/* Telegram-like compact top bar: fixed visual axis, square logo, one theme action. */
+html.android-ui .top,
+html.native-android .top{
+  position:sticky!important;
+  top:0!important;
+  z-index:850!important;
+  min-height:62px!important;
+  width:auto!important;
+  margin:0 -10px 12px!important;
+  padding:8px 12px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(129,160,190,.18)!important;
+  border-radius:0!important;
+  background:rgba(7,20,36,.96)!important;
+  box-shadow:0 4px 18px rgba(0,6,18,.16)!important;
+  backdrop-filter:blur(16px) saturate(120%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
+}
+html.android-ui.theme-light .top,
+html.native-android.theme-light .top{
+  background:rgba(250,252,255,.97)!important;
+  border-bottom-color:rgba(55,85,115,.13)!important;
+  box-shadow:0 4px 16px rgba(40,70,105,.08)!important;
+}
+html.android-ui .brand,
+html.native-android .brand{
+  min-width:0!important;
+  flex:1 1 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+html.android-ui .brand .logo,
+html.native-android .brand .logo{
+  width:40px!important;
+  min-width:40px!important;
+  max-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  flex:0 0 40px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:11px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#fff!important;
+  box-shadow:0 3px 12px rgba(0,20,48,.13)!important;
+  transform:none!important;
+}
+html.android-ui .brand h1,
+html.native-android .brand h1{
+  margin:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:21px!important;
+  line-height:1.08!important;
+  letter-spacing:-.02em!important;
+}
+html.android-ui .brand .tag,
+html.native-android .brand .tag{display:none!important;}
+html.android-ui .top-actions,
+html.native-android .top-actions{
+  flex:0 0 auto!important;
+  min-width:42px!important;
+  max-width:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:0!important;
+}
+html.android-ui .top-actions .badge,
+html.native-android .top-actions .badge{display:none!important;}
+html.android-ui #themeToggle,
+html.native-android #themeToggle{
+  width:42px!important;
+  min-width:42px!important;
+  max-width:42px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(93,151,212,.24)!important;
+  border-radius:13px!important;
+  background:rgba(30,74,116,.42)!important;
+  color:#d9edff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+  font-size:0!important;
+  line-height:1!important;
+  overflow:hidden!important;
+  transform:none!important;
+}
+html.android-ui.theme-light #themeToggle,
+html.native-android.theme-light #themeToggle{
+  border-color:rgba(45,100,155,.16)!important;
+  background:#fff!important;
+  color:#227fc8!important;
+  box-shadow:0 4px 13px rgba(43,78,112,.09)!important;
+}
+html.android-ui #themeToggle::before,
+html.native-android #themeToggle::before{display:none!important;content:none!important;}
+html.android-ui #themeToggle::after,
+html.native-android #themeToggle::after{
+  content:"☾"!important;
+  display:block!important;
+  font-size:23px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  color:currentColor!important;
+  transform:rotate(-10deg) scale(1)!important;
+  transform-origin:center!important;
+  transition:transform .24s cubic-bezier(.2,.75,.25,1),opacity .18s ease!important;
+}
+html.android-ui.theme-light #themeToggle::after,
+html.native-android.theme-light #themeToggle::after{
+  content:"☀"!important;
+  transform:rotate(12deg) scale(.96)!important;
+}
+
+/* Lightweight Telegram-style page switching: one transform + opacity only. */
+@keyframes vyTelegramPageFromRight{
+  from{opacity:.58;transform:translate3d(16px,0,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes vyTelegramPageFromLeft{
+  from{opacity:.58;transform:translate3d(-16px,0,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+html.android-ui .screen.vy-telegram-page-from-right,
+html.native-android .screen.vy-telegram-page-from-right{
+  animation:vyTelegramPageFromRight .24s cubic-bezier(.2,.75,.25,1) both!important;
+  will-change:transform,opacity;
+}
+html.android-ui .screen.vy-telegram-page-from-left,
+html.native-android .screen.vy-telegram-page-from-left{
+  animation:vyTelegramPageFromLeft .24s cubic-bezier(.2,.75,.25,1) both!important;
+  will-change:transform,opacity;
+}
+
+/* Theme switch: keep the requested animation but avoid animating hundreds of controls. */
+html.android-ui.theme-transitioning .top,
+html.android-ui.theme-transitioning .nav,
+html.android-ui.theme-transitioning .card,
+html.android-ui.theme-transitioning .stat,
+html.android-ui.theme-transitioning .settings-section,
+html.android-ui.theme-transitioning .android-sheet,
+html.android-ui.theme-transitioning .shop-growth-card,
+html.android-ui.theme-transitioning input,
+html.android-ui.theme-transitioning textarea,
+html.android-ui.theme-transitioning select,
+html.android-ui.theme-transitioning button{
+  transition:none!important;
+}
+html.android-ui .vx657-theme-crossfade,
+html.native-android .vx657-theme-crossfade{
+  opacity:.24!important;
+  transition:opacity .30s cubic-bezier(.2,.75,.25,1)!important;
+  contain:strict!important;
+  transform:translateZ(0)!important;
+}
+html.android-ui .vx657-theme-crossfade.is-fading,
+html.native-android .vx657-theme-crossfade.is-fading{opacity:0!important;}
+
+/* Sales light mode contrast repair: remove the accidental dark live-profit boxes. */
+html.android-ui.theme-light #screen-sales #vy660ProfitCard,
+html.native-android.theme-light #screen-sales #vy660ProfitCard{
+  background:#fff!important;
+  color:#14263d!important;
+  border-color:rgba(49,111,176,.16)!important;
+  box-shadow:0 12px 28px rgba(36,72,110,.09)!important;
+}
+html.android-ui.theme-light #screen-sales .vy660-live-box,
+html.native-android.theme-light #screen-sales .vy660-live-box{
+  background:linear-gradient(145deg,#f8fbff,#edf6ff)!important;
+  border-color:rgba(49,135,245,.20)!important;
+  color:#10263d!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+html.android-ui.theme-light #screen-sales .vy660-live-box>span,
+html.android-ui.theme-light #screen-sales .vy660-live-box>small,
+html.android-ui.theme-light #screen-sales .vy660-note,
+html.native-android.theme-light #screen-sales .vy660-live-box>span,
+html.native-android.theme-light #screen-sales .vy660-live-box>small,
+html.native-android.theme-light #screen-sales .vy660-note{
+  color:#61778d!important;
+  opacity:1!important;
+}
+html.android-ui.theme-light #screen-sales .vy660-live-box>b,
+html.native-android.theme-light #screen-sales .vy660-live-box>b{
+  color:#0c2b49!important;
+  opacity:1!important;
+}
+
+/* Exactly one verification badge; make the canonical gold/silver mark brighter. */
+.production-account-head .vy647-plan-mark{display:none!important;}
+.production-account-head .vy645-plan-tick{
+  width:23px!important;
+  height:23px!important;
+  flex:0 0 23px!important;
+  transform:translateY(-1px) translateZ(0)!important;
+}
+.production-account-head .vy645-plan-tick.business{
+  box-shadow:0 0 0 1px rgba(255,228,129,.22),0 0 14px rgba(255,194,48,.88),0 3px 9px rgba(80,47,0,.34)!important;
+}
+.production-account-head .vy645-plan-tick.pro{
+  box-shadow:0 0 0 1px rgba(225,239,255,.22),0 0 13px rgba(190,220,255,.64),0 3px 9px rgba(0,20,45,.28)!important;
+}
+.production-account-head .vy645-plan-tick::before{
+  animation-duration:2.35s!important;
+  filter:brightness(1.24)!important;
+}
+.production-account-head .vy645-plan-tick svg{width:14px!important;height:14px!important;}
+
+/* Account actions: keep cancellation destructive, but remove the awkward empty half-row. */
+#screen-settings[data-vy675-page="account"] .production-actions .cancel-subscription,
+#screen-settings[data-vy675-page="account"] .production-actions button[onclick*="vyaparCancelSubscription"]{
+  grid-column:auto!important;
+  background:#d94b5f!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(217,75,95,.20)!important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button.danger:last-child{
+  grid-column:1 / -1!important;
+  background:#cf3f55!important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button{
+  border-radius:13px!important;
+  font-weight:780!important;
+}
+

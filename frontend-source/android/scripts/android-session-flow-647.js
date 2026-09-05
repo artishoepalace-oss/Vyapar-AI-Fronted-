@@ -101,12 +101,11 @@
   }
 
   function decoratePlanIdentity(){
+    // plan-badge-menu-645 is the single owner of the paid verification mark.
+    // Older builds added .vy647-plan-mark from this observer as well, which
+    // produced two ticks and an endless mutation/paint loop on some WebViews.
     var card=document.getElementById('productionAccountCard');if(!card)return;
-    var title=card.querySelector('.production-account-head h3');if(!title)return;
-    var plan=resolvePlan(),badge=title.querySelector('.vy647-plan-mark');
-    if(!plan){if(badge)badge.remove();return}
-    if(!badge){badge=document.createElement('span');badge.className='vy647-plan-mark';badge.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m9.7 16.6-4.2-4.2 1.8-1.8 2.4 2.4 6.9-6.9 1.8 1.8z"/></svg>';title.appendChild(badge)}
-    badge.className='vy647-plan-mark '+plan;badge.title=plan==='business'?'Business verified':'Pro verified';badge.setAttribute('aria-label',badge.title);
+    card.querySelectorAll('.vy647-plan-mark').forEach(function(mark){mark.remove()});
   }
 
   var refreshQueued=false;

@@ -34,7 +34,9 @@ const uiStyles = [
   'complete-ui-680.css',
   'professional-ui-682.css',
   'legal-scoped.css',
-  'performance-final-850.css'
+  'performance-final-850.css',
+  'visual-fixes-851.css',
+  'telegram-shell-851.css'
 ];
 
 const scripts = [

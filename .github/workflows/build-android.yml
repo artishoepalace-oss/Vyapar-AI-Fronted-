@@ -74,6 +74,23 @@ jobs:
         with:
           gradle-version: '8.7'
 
+      - name: Apply 8.5.1 native stability patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          PATCH=release-patches/mainactivity-851.patch
+          if git apply --check "$PATCH"; then
+            git apply "$PATCH"
+          elif git apply --reverse --check "$PATCH"; then
+            echo "Native stability patch already applied."
+          else
+            echo "Native stability patch cannot be applied cleanly." >&2
+            exit 1
+          fi
+
+      - name: Rebuild Android frontend bundles
+        run: node tools/build-frontend-bundles.mjs
+
       - name: Validate Android bundled JavaScript
         run: |
           for f in android-app/app/src/main/assets/*.js; do

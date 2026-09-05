@@ -66,4 +66,60 @@
 
   window.addEventListener('orientationchange', scheduleHarden, { passive: true });
   window.addEventListener('resize', scheduleHarden, { passive: true });
+
+  /* 8.5 maintenance: Telegram-like tab transition, native theme bars and long-press guard. */
+  const reducedMotion = () => Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const currentVisibleTab = () => {
+    const screen = Array.from(document.querySelectorAll('.screen')).find(node => !node.classList.contains('hide'));
+    return screen ? screen.id.replace('screen-', '') : 'home';
+  };
+  const tabRank = tab => {
+    const ranks = { home: 0, business: 1, sales: 2, stock: 3, upload: 4, analytics: 4, calculator: 4, subscription: 4, settings: 4 };
+    return Object.prototype.hasOwnProperty.call(ranks, tab) ? ranks[tab] : 4;
+  };
+
+  const finalSetTab = typeof window.setTab === 'function' ? window.setTab : null;
+  if (finalSetTab) {
+    window.setTab = function (tab, withLoader) {
+      const previousTab = currentVisibleTab();
+      const result = finalSetTab.call(this, tab, withLoader);
+      if (result === false || previousTab === tab || reducedMotion()) return result;
+
+      const screen = document.getElementById('screen-' + tab);
+      if (!screen) return result;
+      screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
+      void screen.offsetWidth;
+      screen.classList.add(tabRank(tab) < tabRank(previousTab) ? 'vy-telegram-page-from-left' : 'vy-telegram-page-from-right');
+      clearTimeout(screen.__vyTelegramPageTimer);
+      screen.__vyTelegramPageTimer = setTimeout(() => {
+        screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
+      }, 320);
+      return result;
+    };
+  }
+
+  const syncNativeTheme = () => {
+    try {
+      const bridge = window.AndroidApp;
+      if (bridge && typeof bridge.setSystemTheme === 'function') {
+        bridge.setSystemTheme(document.documentElement.classList.contains('theme-light'));
+      }
+    } catch (_) {}
+  };
+  syncNativeTheme();
+
+  const nativeThemeObserver = new MutationObserver(syncNativeTheme);
+  nativeThemeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  nativeThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  // Old Android WebViews can freeze while creating selection/action-mode UI on
+  // long press. Native code consumes long-clicks too; this prevents the web
+  // context menu/drag fallback from starting before Android receives it.
+  if (document.documentElement.classList.contains('native-android')) {
+    document.addEventListener('contextmenu', event => event.preventDefault(), true);
+    document.addEventListener('dragstart', event => {
+      if (event.target && event.target.closest && event.target.closest('img, a, button')) event.preventDefault();
+    }, true);
+  }
+
 })();

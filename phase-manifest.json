@@ -1,13 +1,13 @@
 {
   "product": "Vyapar AI",
-  "phase": "5.1",
-  "phaseName": "Business Action Colour Polish",
-  "versionName": "8.5.0.2026",
-  "versionCode": 8502026,
+  "phase": "5.2",
+  "phaseName": "Telegram UI & Stability Hotfix",
+  "versionName": "8.5.1.2026",
+  "versionCode": 8512026,
   "baseVersion": "8.0.0.2026",
   "baseArchiveSha256": "7400902e2e3864df7253cba6042ca32a10bd2375b8ecd4adb99ed97589940563",
   "backendVersion": "2.5.2",
-  "released": "2026-09-02",
+  "released": "2026-09-06",
   "featureRemoval": false,
   "dataSchemaChanged": false,
   "financeLogicChanged": false,
@@ -16,9 +16,12 @@
   "uiHotfix": true,
   "releaseBranch": "main",
   "fixes": [
-    "Promoted the verified source to production version 8.5.0.2026.",
-    "Coloured Business workspace Payment In, Suppliers, Purchase Return, Cheques & Loans, Currencies and Sale Return actions blue.",
-    "Coloured Manage Cancellation and Delete Account actions red as destructive controls.",
-    "Preserved navigation, business logic, stored data schema, accounting logic and subscription flows."
+    "Promoted the Telegram-style Android UI and stability hotfix to production version 8.5.1.2026.",
+    "Fixed Sales light-mode card contrast and visual readability.",
+    "Removed duplicate verification tick rendering and polished the single verification badge.",
+    "Integrated the More surface with the app shell and refined Telegram-like bottom navigation and page transitions.",
+    "Added smoother light/dark theme transitions and corrected top-bar logo/theme-control alignment.",
+    "Hardened Android WebView long-press/context interactions to prevent selection hangs on older devices.",
+    "Preserved existing navigation, business logic, stored data schema, accounting logic and subscription flows."
   ]
 }

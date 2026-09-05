@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
 const androidSource = path.join(root, 'frontend-source/android');
-const expectedVersion = '8.5.0.2026';
+const expectedVersion = '8.5.1.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -90,10 +90,10 @@ const mainActivity = read(path.join(root, 'android-app/app/src/main/java/com/vya
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 8502026'), 'Android release code must match');
+assert(gradle.includes('versionCode 8512026'), 'Android release code must match');
 assert(mainActivity.includes('Color.rgb(6, 23, 45)'), 'first WebView frame must match the dark launch surface');
-assert(fs.existsSync(path.join(root, 'RELEASE_8.5.0.2026.md')), 'v8.5 release file must exist');
-assert(!fs.existsSync(path.join(root, 'VALIDATION_8.5.0.2026.md')), 'validation file should only exist after an explicit validation pass');
+assert(fs.existsSync(path.join(root, 'RELEASE_8.5.1.2026.md')), 'v8.5 release file must exist');
+assert(!fs.existsSync(path.join(root, 'VALIDATION_8.5.1.2026.md')), 'validation file should only exist after an explicit validation pass');
 assert(!fs.existsSync(path.join(web, 'startup-mark.svg')), 'deprecated web startup asset must remain removed');
 assert(!fs.existsSync(path.join(android, 'startup-mark.svg')), 'deprecated Android startup asset must remain removed');
 

@@ -1,0 +1,265 @@
+/* Telegram-style bottom navigation: active icon gets the blue pill, not a giant tile. */
+html.android-ui .nav,
+html.native-android .nav{
+  left:50%!important;
+  right:auto!important;
+  bottom:max(8px,env(safe-area-inset-bottom))!important;
+  width:min(calc(100% - 16px),620px)!important;
+  height:64px!important;
+  min-height:64px!important;
+  padding:4px 5px!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(110,151,190,.22)!important;
+  border-radius:18px!important;
+  background:rgba(10,31,50,.97)!important;
+  box-shadow:0 10px 30px rgba(0,6,18,.30)!important;
+  backdrop-filter:blur(16px) saturate(120%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
+  transform:translateX(-50%)!important;
+  touch-action:manipulation!important;
+}
+html.android-ui.theme-light .nav,
+html.native-android.theme-light .nav{
+  border-color:rgba(51,87,119,.13)!important;
+  background:rgba(255,255,255,.98)!important;
+  box-shadow:0 9px 24px rgba(37,69,102,.13)!important;
+}
+html.android-ui .android-nav-glass-indicator,
+html.native-android .android-nav-glass-indicator{display:none!important;}
+html.android-ui .nav button[data-android-tab],
+html.native-android .nav button[data-android-tab]{
+  position:relative!important;
+  z-index:1!important;
+  min-width:0!important;
+  width:100%!important;
+  height:56px!important;
+  min-height:56px!important;
+  padding:3px 2px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  color:#8da5ba!important;
+  box-shadow:none!important;
+  transform:none!important;
+  transition:color .16s ease!important;
+}
+html.android-ui.theme-light .nav button[data-android-tab],
+html.native-android.theme-light .nav button[data-android-tab]{color:#64798d!important;}
+html.android-ui .nav button.active[data-android-tab],
+html.native-android .nav button.active[data-android-tab]{
+  background:transparent!important;
+  color:#35a9f4!important;
+  box-shadow:none!important;
+}
+html.android-ui .nav .android-nav-icon,
+html.native-android .nav .android-nav-icon{
+  width:31px!important;
+  height:28px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:14px!important;
+  color:currentColor!important;
+  background:transparent!important;
+  filter:none!important;
+  transition:background .16s ease,transform .16s cubic-bezier(.2,.75,.25,1)!important;
+}
+html.android-ui .nav button.active .android-nav-icon,
+html.native-android .nav button.active .android-nav-icon{
+  background:rgba(53,169,244,.14)!important;
+  transform:translateY(-1px)!important;
+  filter:none!important;
+}
+html.android-ui.theme-light .nav button.active .android-nav-icon,
+html.native-android.theme-light .nav button.active .android-nav-icon{
+  background:rgba(34,158,217,.12)!important;
+}
+html.android-ui .nav .android-nav-icon svg,
+html.native-android .nav .android-nav-icon svg{width:21px!important;height:21px!important;stroke-width:2!important;}
+html.android-ui .nav .android-nav-label,
+html.native-android .nav .android-nav-label{
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  background:none!important;
+  color:currentColor!important;
+  font-size:9.5px!important;
+  line-height:1.05!important;
+  font-weight:720!important;
+  animation:none!important;
+}
+
+/* More stays inside Vyapar AI visually: one native-feeling Telegram-style list sheet. */
+html.android-ui .android-sheet-overlay,
+html.native-android .android-sheet-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:12000!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:0!important;
+  background:rgba(0,8,18,.44)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.android-ui .android-sheet,
+html.native-android .android-sheet{
+  width:min(100%,620px)!important;
+  max-width:620px!important;
+  max-height:min(72vh,660px)!important;
+  margin:0!important;
+  padding:8px 12px calc(16px + env(safe-area-inset-bottom))!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+  border:1px solid rgba(103,151,197,.23)!important;
+  border-bottom:0!important;
+  border-radius:22px 22px 0 0!important;
+  background:#102c45!important;
+  box-shadow:0 -16px 42px rgba(0,6,18,.32)!important;
+  backdrop-filter:blur(18px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(116%)!important;
+}
+html.android-ui.theme-light .android-sheet,
+html.native-android.theme-light .android-sheet{
+  border-color:rgba(47,89,127,.14)!important;
+  background:#f8fbff!important;
+  box-shadow:0 -14px 36px rgba(39,73,107,.17)!important;
+}
+html.android-ui .android-sheet-handle,
+html.native-android .android-sheet-handle{
+  width:42px!important;
+  height:4px!important;
+  margin:1px auto 10px!important;
+  border-radius:999px!important;
+  background:rgba(143,178,211,.42)!important;
+}
+html.android-ui .android-sheet-titlebar,
+html.native-android .android-sheet-titlebar{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  padding:0 2px 10px!important;
+}
+html.android-ui .android-sheet-titlebar h3,
+html.native-android .android-sheet-titlebar h3{margin:0!important;font-size:23px!important;}
+html.android-ui .android-sheet-titlebar p,
+html.native-android .android-sheet-titlebar p{margin:2px 0 0!important;font-size:11px!important;color:#91a8bb!important;}
+html.android-ui.theme-light .android-sheet-titlebar p,
+html.native-android.theme-light .android-sheet-titlebar p{color:#6a7e91!important;}
+html.android-ui .android-sheet-close,
+html.native-android .android-sheet-close{
+  width:40px!important;
+  min-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0!important;
+  border-radius:13px!important;
+  background:rgba(62,118,173,.16)!important;
+  border:1px solid rgba(105,160,211,.18)!important;
+  color:#eef8ff!important;
+  box-shadow:none!important;
+}
+html.android-ui.theme-light .android-sheet-close,
+html.native-android.theme-light .android-sheet-close{background:#eef6fd!important;color:#2d628d!important;border-color:rgba(54,95,131,.13)!important;}
+html.android-ui .android-sheet-grid,
+html.native-android .android-sheet-grid{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(105,151,194,.18)!important;
+  border-radius:17px!important;
+  background:rgba(7,25,42,.24)!important;
+}
+html.android-ui.theme-light .android-sheet-grid,
+html.native-android.theme-light .android-sheet-grid{background:#fff!important;border-color:rgba(53,91,126,.12)!important;}
+html.android-ui .android-sheet-item,
+html.native-android .android-sheet-item{
+  min-height:62px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:9px 12px!important;
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) 18px!important;
+  align-items:center!important;
+  gap:10px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(117,157,194,.15)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#f2f7fc!important;
+  box-shadow:none!important;
+  text-align:left!important;
+}
+html.android-ui .android-sheet-item:last-child,
+html.native-android .android-sheet-item:last-child{border-bottom:0!important;}
+html.android-ui.theme-light .android-sheet-item,
+html.native-android.theme-light .android-sheet-item{color:#172b3d!important;border-bottom-color:rgba(54,91,124,.11)!important;}
+html.android-ui .android-sheet-item:active,
+html.native-android .android-sheet-item:active{background:rgba(53,169,244,.10)!important;}
+html.android-ui .android-sheet-item-icon,
+html.native-android .android-sheet-item-icon{
+  width:38px!important;
+  height:38px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:12px!important;
+  background:rgba(53,169,244,.13)!important;
+  color:#45b0f5!important;
+}
+html.android-ui .android-sheet-item-icon svg,
+html.native-android .android-sheet-item-icon svg{width:22px!important;height:22px!important;}
+html.android-ui .android-sheet-item-copy,
+html.native-android .android-sheet-item-copy{
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:2px!important;
+  font-size:14px!important;
+  font-weight:760!important;
+  line-height:1.2!important;
+}
+html.android-ui .android-sheet-item-copy small,
+html.native-android .android-sheet-item-copy small{font-size:10px!important;font-weight:500!important;line-height:1.25!important;}
+html.android-ui .android-sheet-item-arrow,
+html.native-android .android-sheet-item-arrow{justify-self:end!important;color:#7e9ab2!important;font-size:22px!important;}
+
+/* Prevent browser-style long-press affordances in the native shell. */
+html.native-android,
+html.native-android body,
+html.native-android img,
+html.native-android a,
+html.native-android button,
+html.native-android .nav,
+html.native-android .top{
+  -webkit-touch-callout:none!important;
+}
+html.native-android img{-webkit-user-drag:none!important;user-drag:none!important;}
+
+@media(max-width:390px){
+  html.android-ui .top,html.native-android .top{margin-inline:-8px!important;padding-inline:10px!important;}
+  html.android-ui .brand h1,html.native-android .brand h1{font-size:19px!important;}
+  #screen-settings[data-vy675-page="account"] .production-actions button{font-size:11.5px!important;padding-inline:7px!important;}
+  html.android-ui .nav,html.native-android .nav{width:calc(100% - 10px)!important;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.android-ui .screen.vy-telegram-page-from-left,
+  html.android-ui .screen.vy-telegram-page-from-right,
+  html.native-android .screen.vy-telegram-page-from-left,
+  html.native-android .screen.vy-telegram-page-from-right{animation:none!important;}
+  html.android-ui #themeToggle::after,
+  html.native-android #themeToggle::after{transition:none!important;}
+}

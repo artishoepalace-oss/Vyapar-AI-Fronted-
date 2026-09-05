@@ -1,0 +1,60 @@
+--- a/android-app/app/src/main/java/com/vyaparai/app/MainActivity.java
++++ b/android-app/app/src/main/java/com/vyaparai/app/MainActivity.java
+@@ -106,6 +106,11 @@
+         webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+         webView.setVerticalScrollBarEnabled(false);
+         webView.setHorizontalScrollBarEnabled(false);
++        // Consume WebView long-press action mode. On older Android/WebView builds
++        // the selection toolbar can stall the renderer on complex pages. Normal
++        // tap/focus/typing behavior remains unchanged.
++        webView.setHapticFeedbackEnabled(false);
++        webView.setOnLongClickListener(view -> true);
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_BOUND, true);
+         }
+@@ -230,6 +235,11 @@
+         }
+ 
+         @JavascriptInterface
++        public void setSystemTheme(boolean light) {
++            runOnUiThread(() -> applySystemTheme(light));
++        }
++
++        @JavascriptInterface
+         public long getVersionCode() {
+             try {
+                 android.content.pm.PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+@@ -752,6 +762,33 @@
+         }
+     }
+ 
++    private void applySystemTheme(boolean light) {
++        final android.view.Window window = getWindow();
++        final android.view.View decor = window.getDecorView();
++        int flags = decor.getSystemUiVisibility();
++
++        if (light) {
++            window.setStatusBarColor(android.graphics.Color.rgb(248, 251, 255));
++            window.setNavigationBarColor(android.graphics.Color.rgb(248, 251, 255));
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
++                flags |= android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
++            }
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++                flags |= android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
++            }
++        } else {
++            window.setStatusBarColor(android.graphics.Color.rgb(6, 19, 38));
++            window.setNavigationBarColor(android.graphics.Color.rgb(6, 23, 45));
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
++                flags &= ~android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
++            }
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++                flags &= ~android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
++            }
++        }
++        decor.setSystemUiVisibility(flags);
++    }
++
+     private boolean openExternalIfNeeded(String url) {
+         if (url == null) return false;
+         String safeUrl = url.trim();
