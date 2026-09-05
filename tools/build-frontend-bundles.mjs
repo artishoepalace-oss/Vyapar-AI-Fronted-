@@ -37,7 +37,8 @@ const uiStyles = [
   'performance-final-850.css',
   'visual-fixes-851.css',
   'telegram-shell-851.css',
-  'apple-liquid-852.css'
+  'apple-liquid-852.css',
+  'apple-liquid-853.css'
 ];
 
 const scripts = [
@@ -59,7 +60,8 @@ const scripts = [
   'ui-hotfix-671.js',
   'settings-center-675.js',
   'complete-ui-680.js',
-  'apple-motion-852.js'
+  'apple-motion-852.js',
+  'apple-motion-853.js'
 ];
 
 function readSource(subdirectory, filename) {
