@@ -38,7 +38,15 @@ const uiStyles = [
   'visual-fixes-851.css',
   'telegram-shell-851.css',
   'apple-liquid-852.css',
-  'apple-liquid-853.css'
+  'apple-liquid-853.css',
+  'apple-unified-854-part1.css',
+  'apple-unified-854-part2.css',
+  'apple-unified-854-part3.css',
+  'apple-unified-854-part4.css',
+  'apple-unified-854-part5.css',
+  'apple-unified-854-part6.css',
+  'apple-unified-854-part7.css',
+  'apple-unified-854-part8.css'
 ];
 
 const scripts = [
@@ -61,7 +69,10 @@ const scripts = [
   'settings-center-675.js',
   'complete-ui-680.js',
   'apple-motion-852.js',
-  'apple-motion-853.js'
+  'apple-motion-853.js',
+  'apple-unified-854-js-part1.js',
+  'apple-unified-854-js-part2.js',
+  'apple-unified-854-js-part3.js'
 ];
 
 function readSource(subdirectory, filename) {

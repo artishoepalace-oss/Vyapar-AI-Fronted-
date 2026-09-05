@@ -2,7 +2,7 @@
 <html lang="en" class="vy-professional-ui">
 <head>
   <meta charset="UTF-8" />
-  <meta name="vyapar-ui-version" content="8.5.3.2026" />
+  <meta name="vyapar-ui-version" content="8.5.4.2026" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="icon" href="assets/images/logo.png" type="image/x-icon">
   <title>Vyapar AI</title>
@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin />
   <style>
     html, body { margin: 0; min-height: 100%; background: #06172D; }
+    html.theme-light, html.theme-light body { background: #eff6fb; }
   </style>
   <script>
     try {
@@ -23,11 +24,14 @@
       if (saved && saved.settings && saved.settings.theme === "light") {
         document.documentElement.classList.add("theme-light");
         document.documentElement.style.colorScheme = "light";
+        document.documentElement.style.background = "#eff6fb";
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", "#eff6fb");
       }
     } catch (error) {}
   </script>
-  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=20260906-apple853" />
-  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=20260906-apple853" />
+  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=20260906-unified854" />
+  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=20260906-unified854" />
 </head>
 <body>
   <div id="appLoader" class="android-loader" aria-label="Loading Vyapar AI">
@@ -79,6 +83,6 @@
   </div>
 
   <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="assets/scripts/vyapar-app.js?v=20260906-apple853"></script>
+  <script src="assets/scripts/vyapar-app.js?v=20260906-unified854"></script>
 </body>
 </html>

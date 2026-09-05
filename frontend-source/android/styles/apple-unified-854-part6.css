@@ -1,0 +1,80 @@
+  border-color:var(--vy854-line-light)!important;
+  background:radial-gradient(125% 95% at 14% -14%,#fff,transparent 48%),linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.70)),rgba(249,253,255,.72)!important;
+  box-shadow:0 26px 62px rgba(41,72,101,.18),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios .shop-sheet-score,
+html.vy854-unified-ios .shop-milestone,
+html.vy854-unified-ios .shop-next-target,
+html.vy854-unified-ios .shop-month-grid>div,
+html.vy854-unified-ios .shop-sheet-note{
+  border-radius:22px!important;
+}
+html.vy854-unified-ios .shop-sheet-close{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  border-radius:50%!important;
+}
+html.vy854-unified-ios .shop-progress-overlay.vy854-journey-closing{animation:vy854JourneyOverlayOut .20s ease-in both!important}
+html.vy854-unified-ios .shop-progress-overlay.vy854-journey-closing .shop-progress-sheet{animation:vy854JourneyOut .20s cubic-bezier(.4,0,.7,.2) both!important}
+@keyframes vy854JourneyOverlay{from{opacity:0}to{opacity:1}}
+@keyframes vy854JourneyIn{0%{opacity:0;transform:translate3d(0,34px,0) scale(.955)}68%{opacity:1;transform:translate3d(0,-2px,0) scale(1.006)}100%{opacity:1;transform:none}}
+@keyframes vy854JourneyOverlayOut{to{opacity:0}}
+@keyframes vy854JourneyOut{to{opacity:0;transform:translate3d(0,24px,0) scale(.97)}}
+
+/* Login/Create Account = same Apple liquid-glass language, no white flash. */
+html.vy854-unified-ios #vyaparOtpGate{
+  --auth-bg:#071525!important;
+  --auth-card:rgba(13,31,51,.76)!important;
+  --auth-soft:rgba(35,61,86,.62)!important;
+  --auth-soft-hover:rgba(46,77,105,.68)!important;
+  --auth-border:rgba(205,229,252,.14)!important;
+  --auth-text:#f4f8fc!important;
+  --auth-body:#e4edf6!important;
+  --auth-muted:#9fb2c4!important;
+  --auth-primary:#0a84ff!important;
+  --auth-primary-hover:#168cff!important;
+  --auth-accent:#55b7ff!important;
+  background:radial-gradient(36rem 28rem at -10% -8%,rgba(44,133,229,.22),transparent 68%),linear-gradient(180deg,#06111f,#08182a)!important;
+  color-scheme:dark!important;
+}
+html.vy854-unified-ios.theme-light #vyaparOtpGate,
+html.vy854-unified-ios #vyaparOtpGate:not(.auth-dark){
+  --auth-bg:#eff6fb!important;
+  --auth-card:rgba(255,255,255,.78)!important;
+  --auth-soft:rgba(238,246,252,.78)!important;
+  --auth-soft-hover:rgba(225,239,250,.82)!important;
+  --auth-border:rgba(45,85,121,.12)!important;
+  --auth-text:#10233a!important;
+  --auth-body:#243b52!important;
+  --auth-muted:#6a7e91!important;
+  --auth-primary:#0a84ff!important;
+  --auth-primary-hover:#007aff!important;
+  --auth-accent:#007aff!important;
+  background:radial-gradient(34rem 26rem at -10% -8%,rgba(84,171,255,.16),transparent 70%),linear-gradient(180deg,#fbfdff,#eef6fb)!important;
+  color-scheme:light!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-card{
+  max-width:448px!important;
+  padding:28px 24px 24px!important;
+  border-radius:32px!important;
+  border:1px solid var(--auth-border)!important;
+  background:var(--auth-card)!important;
+  box-shadow:0 24px 62px rgba(0,7,20,.22),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  backdrop-filter:blur(26px) saturate(160%)!important;
+  -webkit-backdrop-filter:blur(26px) saturate(160%)!important;
+}
+html.vy854-unified-ios.theme-light #vyaparOtpGate .auth-card,
+html.vy854-unified-ios #vyaparOtpGate:not(.auth-dark) .auth-card{
+  box-shadow:0 22px 54px rgba(43,75,106,.14),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-logo{
+  width:92px!important;
+  height:92px!important;
+  max-width:92px!important;
+  padding:8px!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  object-fit:contain!important;
+  box-shadow:none!important;
+}

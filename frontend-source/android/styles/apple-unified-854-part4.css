@@ -1,0 +1,85 @@
+  backdrop-filter:blur(8px) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(118%)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet-overlay{
+  background:rgba(47,72,98,.11)!important;
+}
+html.vy854-unified-ios .android-sheet{
+  width:min(calc(100% - 2px),596px)!important;
+  max-height:min(74vh,660px)!important;
+  padding:10px 12px 14px!important;
+  border-radius:34px!important;
+  border:1px solid rgba(204,230,255,.18)!important;
+  background:radial-gradient(125% 95% at 14% -14%,rgba(255,255,255,.18),transparent 47%),linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),rgba(10,27,46,.53)!important;
+  box-shadow:0 26px 62px rgba(0,5,16,.34),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(30px) saturate(180%)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(180%)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet{
+  border-color:rgba(45,86,123,.11)!important;
+  background:radial-gradient(125% 95% at 14% -14%,#fff,transparent 48%),linear-gradient(180deg,rgba(255,255,255,.93),rgba(255,255,255,.62)),rgba(249,253,255,.67)!important;
+  box-shadow:0 24px 56px rgba(41,72,101,.17),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios .android-sheet-grid{
+  border-radius:24px!important;
+  background:rgba(104,145,184,.07)!important;
+  border:1px solid rgba(196,224,249,.07)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet-grid{
+  background:rgba(255,255,255,.55)!important;
+  border-color:rgba(44,84,120,.07)!important;
+}
+html.vy854-unified-ios .android-sheet-item{
+  min-height:62px!important;
+  padding:9px 12px!important;
+  border-radius:0!important;
+}
+html.vy854-unified-ios .android-sheet-close{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  border-radius:50%!important;
+  background:rgba(122,162,199,.15)!important;
+  border:1px solid rgba(205,230,255,.12)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet-close{
+  background:rgba(255,255,255,.76)!important;
+  border-color:rgba(49,90,127,.10)!important;
+  color:#2b648f!important;
+}
+
+/* Settings is part of the same app shell. */
+html.vy854-unified-ios #screen-settings .vy675-settings-shell,
+html.vy854-unified-ios #screen-settings .vy675-settings-home,
+html.vy854-unified-ios #screen-settings .vy675-settings-page{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-shell{
+  padding-bottom:88px!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-eyebrow{display:none!important}
+html.vy854-unified-ios #screen-settings .vy675-settings-intro{
+  margin:0 0 14px!important;
+  padding:18px 18px 16px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  border-radius:28px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.02)),rgba(13,31,51,.48)!important;
+  box-shadow:0 12px 30px rgba(0,7,18,.16),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html.vy854-unified-ios.theme-light #screen-settings .vy675-settings-intro{
+  border-color:var(--vy854-line-light)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(248,252,255,.66)),rgba(255,255,255,.58)!important;
+  box-shadow:0 12px 28px rgba(47,80,111,.09),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-search{
+  border-radius:20px!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-list{
+  overflow:hidden!important;
+  border-radius:24px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  background:rgba(16,35,57,.42)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html.vy854-unified-ios.theme-light #screen-settings .vy675-settings-list{

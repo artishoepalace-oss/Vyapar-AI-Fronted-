@@ -1,0 +1,94 @@
+/* Vyapar AI 8.5.4.2026 — unified iOS/Apple liquid-glass polish.
+   Visual-only overrides: no accounting, auth, subscription or business logic changes. */
+
+html.vy854-unified-ios{
+  --vy854-blue:#0a84ff;
+  --vy854-blue-strong:#007aff;
+  --vy854-blue-soft:rgba(10,132,255,.18);
+  --vy854-red:#ff453a;
+  --vy854-r-xl:32px;
+  --vy854-r-card:26px;
+  --vy854-r-control:18px;
+  --vy854-r-small:14px;
+  --vy854-glass-dark:rgba(11,27,45,.58);
+  --vy854-glass-light:rgba(255,255,255,.72);
+  --vy854-line-dark:rgba(203,228,255,.17);
+  --vy854-line-light:rgba(44,84,120,.12);
+  --vy854-shadow-dark:0 18px 48px rgba(0,7,18,.28);
+  --vy854-shadow-light:0 16px 40px rgba(46,80,112,.13);
+}
+
+html.vy854-unified-ios main{
+  overflow-x:clip!important;
+  isolation:isolate!important;
+}
+
+/* Stop every older page-transition owner. 8.5.4 is the only page-motion layer. */
+html.vy854-unified-ios .screen.vy-telegram-page-from-left,
+html.vy854-unified-ios .screen.vy-telegram-page-from-right,
+html.vy854-unified-ios .screen.vy853-page-enter-forward,
+html.vy854-unified-ios .screen.vy853-page-enter-backward{
+  animation:none!important;
+  transform:none!important;
+  opacity:1!important;
+}
+
+html.vy854-unified-ios .screen.vy854-page-enter-forward{
+  animation:vy854PageForward .24s cubic-bezier(.22,.72,.18,1) both!important;
+}
+html.vy854-unified-ios .screen.vy854-page-enter-backward{
+  animation:vy854PageBack .24s cubic-bezier(.22,.72,.18,1) both!important;
+}
+@keyframes vy854PageForward{
+  0%{opacity:.975;transform:translate3d(9px,0,0) scale(.999)}
+  65%{opacity:1;transform:translate3d(-1px,0,0)}
+  100%{opacity:1;transform:none}
+}
+@keyframes vy854PageBack{
+  0%{opacity:.975;transform:translate3d(-9px,0,0) scale(.999)}
+  65%{opacity:1;transform:translate3d(1px,0,0)}
+  100%{opacity:1;transform:none}
+}
+html.vy854-unified-ios.vy854-local-switch #tabLoader,
+html.vy854-unified-ios.vy854-auth-handoff #tabLoader,
+html.vy854-unified-ios.vy854-auth-handoff #appLoader,
+html.vy854-unified-ios.vy854-auth-handoff #vy647StartupSplash{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* Remove the old visible dot/bloom/ripple theme effects. */
+html.vy854-unified-ios .vy853-theme-reveal,
+html.vy854-unified-ios .vy852-theme-bloom,
+html.vy854-unified-ios .theme-ripple,
+html.vy854-unified-ios .vx657-theme-crossfade{
+  display:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
+/* Full-screen clip reveal: starts at zero radius, so there is no tap-dot artifact. */
+.vy854-theme-wipe{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483300!important;
+  pointer-events:none!important;
+  opacity:1!important;
+  clip-path:circle(0 at var(--vy854-theme-x,calc(100% - 36px)) var(--vy854-theme-y,44px))!important;
+  -webkit-clip-path:circle(0 at var(--vy854-theme-x,calc(100% - 36px)) var(--vy854-theme-y,44px))!important;
+  will-change:clip-path,-webkit-clip-path,opacity!important;
+}
+.vy854-theme-wipe.to-light{
+  background:radial-gradient(120% 90% at 80% 0%,rgba(255,255,255,.98),rgba(244,249,254,.98) 52%,#edf5fb 100%)!important;
+}
+.vy854-theme-wipe.to-dark{
+  background:radial-gradient(120% 90% at 80% 0%,rgba(27,55,86,.99),rgba(8,25,43,.995) 52%,#06111f 100%)!important;
+}
+.vy854-theme-wipe.run{
+  animation:vy854ThemeWipe .56s cubic-bezier(.2,.72,.16,1) both!important;
+}
+@keyframes vy854ThemeWipe{
+  0%{clip-path:circle(0 at var(--vy854-theme-x) var(--vy854-theme-y));-webkit-clip-path:circle(0 at var(--vy854-theme-x) var(--vy854-theme-y));opacity:1}
+  70%{clip-path:circle(150vmax at var(--vy854-theme-x) var(--vy854-theme-y));-webkit-clip-path:circle(150vmax at var(--vy854-theme-x) var(--vy854-theme-y));opacity:1}

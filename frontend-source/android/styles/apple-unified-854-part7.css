@@ -1,0 +1,87 @@
+html.vy854-unified-ios #vyaparOtpGate .auth-method-tabs{border-radius:20px!important;padding:5px!important}
+html.vy854-unified-ios #vyaparOtpGate .auth-method-tab{border-radius:16px!important}
+html.vy854-unified-ios #vyaparOtpGate .auth-input,
+html.vy854-unified-ios #vyaparOtpGate .auth-primary,
+html.vy854-unified-ios #vyaparOtpGate .auth-google,
+html.vy854-unified-ios #vyaparOtpGate .auth-small-btn{
+  min-height:50px!important;
+  border-radius:18px!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-message{border-radius:16px!important}
+
+/* Successful login uses one compact handoff, never a second fullscreen loader. */
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-overlay{
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:0 16px max(24px,env(safe-area-inset-bottom))!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  pointer-events:none!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-card{
+  width:auto!important;
+  min-width:190px!important;
+  max-width:280px!important;
+  padding:11px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  border-radius:999px!important;
+  text-align:left!important;
+  background:rgba(13,31,51,.88)!important;
+  color:#fff!important;
+  border:1px solid rgba(205,230,255,.14)!important;
+  box-shadow:0 14px 34px rgba(0,7,18,.24)!important;
+  backdrop-filter:blur(18px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%)!important;
+}
+html.vy854-unified-ios.theme-light #vyaparOtpGate .auth-loading-card,
+html.vy854-unified-ios #vyaparOtpGate:not(.auth-dark) .auth-loading-card{
+  background:rgba(255,255,255,.90)!important;
+  color:#16304a!important;
+  border-color:rgba(38,81,119,.10)!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-spinner{
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  margin:0!important;
+  border-width:2px!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-card strong{font-size:12px!important;white-space:nowrap!important}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-card span{display:none!important}
+
+/* Startup surfaces stay theme-matched and circular instead of flashing white. */
+html.vy854-unified-ios #appLoader.android-loader,
+html.vy854-unified-ios #vy647StartupSplash{
+  background:linear-gradient(180deg,#06111f,#08182a)!important;
+}
+html.vy854-unified-ios.theme-light #appLoader.android-loader,
+html.vy854-unified-ios.theme-light #vy647StartupSplash{
+  background:linear-gradient(180deg,#fbfdff,#eef6fb)!important;
+}
+html.vy854-unified-ios #appLoader .android-loader-logo,
+html.vy854-unified-ios #vy647StartupSplash .vy647-splash-core>img{
+  border-radius:50%!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+
+/* Legacy/low-RAM devices: keep curves and blue state, drop expensive live blur. */
+html.vy854-unified-ios.perf-tier-legacy .top,
+html.vy854-unified-ios.perf-tier-legacy .nav,
+html.vy854-unified-ios.perf-tier-legacy .android-sheet,
+html.vy854-unified-ios.perf-tier-legacy .shop-progress-sheet,
+html.vy854-unified-ios.perf-low-ram .top,
+html.vy854-unified-ios.perf-low-ram .nav,
+html.vy854-unified-ios.perf-low-ram .android-sheet,
+html.vy854-unified-ios.perf-low-ram .shop-progress-sheet{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+
+@media(max-width:390px){
+  html.vy854-unified-ios .brand .logo{width:42px!important;height:42px!important;min-width:42px!important;max-width:42px!important;flex-basis:42px!important}
+  html.vy854-unified-ios .brand h1{font-size:19px!important}

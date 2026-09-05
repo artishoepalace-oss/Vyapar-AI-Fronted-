@@ -1,0 +1,18 @@
+  html.vy854-unified-ios #themeToggle{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important}
+  html.vy854-unified-ios.android-ui .nav,html.vy854-unified-ios.native-android .nav{width:calc(100% - 14px)!important}
+  html.vy854-unified-ios #screen-settings .vy675-settings-intro{padding:16px!important}
+  html.vy854-unified-ios #vyaparOtpGate .auth-card{padding:22px 17px 20px!important;border-radius:28px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy854-unified-ios .screen.vy854-page-enter-forward,
+  html.vy854-unified-ios .screen.vy854-page-enter-backward,
+  html.vy854-unified-ios #screen-settings .vy675-settings-page.vy854-settings-in,
+  html.vy854-unified-ios #screen-settings .vy675-settings-home.vy854-settings-back,
+  .vy854-theme-wipe,
+  html.vy854-unified-ios .shop-progress-sheet,
+  html.vy854-unified-ios .shop-progress-overlay{
+    animation:none!important;
+    transform:none!important;
+  }
+}
