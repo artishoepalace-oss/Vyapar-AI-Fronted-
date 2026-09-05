@@ -49,7 +49,8 @@ const uiStyles = [
   'apple-unified-854-part8.css',
   'apple-stability-855.css',
   'inspected-glitchfix-855.css',
-  'liquid-lens-motion-856.css'
+  'liquid-lens-motion-856.css',
+  'liquid-lens-legacy-856.css'
 ];
 
 const scripts = [
