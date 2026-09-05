@@ -1,0 +1,367 @@
+/* Vyapar AI 8.5.6 — liquid-lens motion + iOS geometry polish.
+   Presentation only. Designed to stay smooth on Android 7–16: motion uses
+   transform/opacity; expensive blur is disabled for the legacy perf tier. */
+
+html.vy855-liquid-lens{
+  --vy856-blue:#0a84ff;
+  --vy856-blue-2:#2f9bff;
+  --vy856-bg:#06172d;
+  --vy856-glass:rgba(12,34,56,.76);
+  --vy856-glass-soft:rgba(20,45,70,.60);
+  --vy856-line:rgba(187,220,248,.18);
+  --vy856-hi:rgba(255,255,255,.19);
+  --vy856-card-r:26px;
+  --vy856-control-r:18px;
+  --vy856-sheet-r:34px;
+  --vy856-spring:cubic-bezier(.16,1,.3,1);
+}
+html.vy855-liquid-lens.theme-light{
+  --vy856-bg:#eff6fb;
+  --vy856-glass:rgba(250,253,255,.78);
+  --vy856-glass-soft:rgba(255,255,255,.66);
+  --vy856-line:rgba(45,84,119,.13);
+  --vy856-hi:rgba(255,255,255,.94);
+}
+
+/* ---------- Apple-like continuous geometry ---------- */
+html.vy855-liquid-lens .card,
+html.vy855-liquid-lens .stat,
+html.vy855-liquid-lens .settings-section,
+html.vy855-liquid-lens .production-account-card,
+html.vy855-liquid-lens .home-overview,
+html.vy855-liquid-lens .shop-growth-card,
+html.vy855-liquid-lens .p2-card,
+html.vy855-liquid-lens .vx621-card,
+html.vy855-liquid-lens .vx622-menu-card,
+html.vy855-liquid-lens .data-safety-section,
+html.vy855-liquid-lens .subscription-result-card{
+  border-radius:var(--vy856-card-r)!important;
+  overflow:hidden;
+}
+html.vy855-liquid-lens input,
+html.vy855-liquid-lens select,
+html.vy855-liquid-lens textarea,
+html.vy855-liquid-lens .btn,
+html.vy855-liquid-lens .pill,
+html.vy855-liquid-lens .glass-chip,
+html.vy855-liquid-lens .auth-input,
+html.vy855-liquid-lens .auth-primary,
+html.vy855-liquid-lens .auth-google,
+html.vy855-liquid-lens .auth-small-btn{
+  border-radius:var(--vy856-control-r)!important;
+}
+html.vy855-liquid-lens .android-sheet,
+html.vy855-liquid-lens .shop-progress-sheet,
+html.vy855-liquid-lens .vx643-modal,
+html.vy855-liquid-lens .subscription-dialog,
+html.vy855-liquid-lens .menu-popover,
+html.vy855-liquid-lens .more-sheet,
+html.vy855-liquid-lens .sheet{
+  border-radius:var(--vy856-sheet-r)!important;
+}
+html.vy855-liquid-lens #screen-settings .vy675-settings-intro,
+html.vy855-liquid-lens #screen-settings .vy675-page-header{border-radius:30px!important}
+html.vy855-liquid-lens #screen-settings .vy675-settings-list{border-radius:24px!important;overflow:hidden!important}
+html.vy855-liquid-lens #screen-settings .vy675-page-back,
+html.vy855-liquid-lens .android-sheet-close,
+html.vy855-liquid-lens .shop-sheet-close{border-radius:999px!important}
+
+/* ---------- Convex liquid-glass edge ----------
+   The red/green/blue edge is intentionally subtle: it mimics the refractive
+   chromatic fringe shown in the user's reference without making text fuzzy. */
+html.vy855-liquid-lens.android-ui .top,
+html.vy855-liquid-lens.native-android .top,
+html.vy855-liquid-lens.android-ui .nav,
+html.vy855-liquid-lens.native-android .nav,
+html.vy855-liquid-lens .android-sheet,
+html.vy855-liquid-lens .shop-progress-sheet,
+html.vy855-liquid-lens .vx643-modal,
+html.vy855-liquid-lens .subscription-dialog{
+  border:1px solid var(--vy856-line)!important;
+  background:
+    radial-gradient(115% 90% at 15% -14%,rgba(255,255,255,.15),transparent 47%),
+    linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 52%),
+    var(--vy856-glass)!important;
+  box-shadow:
+    0 16px 38px rgba(0,7,20,.24),
+    inset 0 1px 0 var(--vy856-hi),
+    inset 1px 0 0 rgba(88,255,170,.10),
+    inset -1px 0 0 rgba(255,102,92,.11),
+    inset 0 -1px 0 rgba(74,147,255,.10)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(155%)!important;
+  backdrop-filter:blur(22px) saturate(155%)!important;
+}
+html.vy855-liquid-lens.theme-light.android-ui .top,
+html.vy855-liquid-lens.theme-light.native-android .top,
+html.vy855-liquid-lens.theme-light.android-ui .nav,
+html.vy855-liquid-lens.theme-light.native-android .nav,
+html.vy855-liquid-lens.theme-light .android-sheet,
+html.vy855-liquid-lens.theme-light .shop-progress-sheet,
+html.vy855-liquid-lens.theme-light .vx643-modal,
+html.vy855-liquid-lens.theme-light .subscription-dialog{
+  background:
+    radial-gradient(115% 90% at 15% -14%,#fff,transparent 49%),
+    linear-gradient(180deg,rgba(255,255,255,.82),rgba(247,251,255,.56) 54%),
+    var(--vy856-glass)!important;
+  box-shadow:
+    0 15px 34px rgba(42,72,102,.12),
+    inset 0 1px 0 #fff,
+    inset 1px 0 0 rgba(74,221,145,.11),
+    inset -1px 0 0 rgba(255,105,88,.10),
+    inset 0 -1px 0 rgba(45,127,232,.10)!important;
+}
+
+/* Top bar: rounded iOS capsule, no square bleed. */
+html.vy855-liquid-lens.android-ui .top,
+html.vy855-liquid-lens.native-android .top{
+  border-radius:30px!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+html.vy855-liquid-lens .top::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:1px!important;
+  border-radius:29px!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(80% 28% at 23% 0%,rgba(255,255,255,.17),transparent 72%),
+    radial-gradient(42% 70% at 0% 52%,rgba(76,255,159,.055),transparent 75%),
+    radial-gradient(42% 70% at 100% 52%,rgba(255,91,76,.06),transparent 75%)!important;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08)!important;
+}
+
+/* Keep every in-app rendition of the actual app mark clipped cleanly. */
+html.vy855-liquid-lens .brand .logo,
+html.vy855-liquid-lens #vyaparOtpGate .auth-logo,
+html.vy855-liquid-lens #vy647PasswordGate img,
+html.vy855-liquid-lens #appLoader .android-loader-logo img,
+html.vy855-liquid-lens #vy647StartupSplash .vy647-splash-core>img,
+html.vy855-liquid-lens #vy855BootGuard img{
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  -webkit-clip-path:circle(50%)!important;
+  overflow:hidden!important;
+  object-fit:contain!important;
+  background:#fff!important;
+}
+
+/* ---------- Floating tab lens ---------- */
+html.vy855-liquid-lens.android-ui .nav,
+html.vy855-liquid-lens.native-android .nav{
+  border-radius:32px!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+html.vy855-liquid-lens .nav::before{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:1px!important;
+  z-index:-1!important;
+  border-radius:31px!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(100% 56% at 15% -15%,rgba(255,255,255,.18),transparent 62%),
+    linear-gradient(90deg,rgba(90,255,173,.045),transparent 22%,transparent 78%,rgba(255,94,82,.05))!important;
+}
+html.vy855-liquid-lens .nav::after{content:none!important;display:none!important}
+html.vy855-liquid-lens .android-nav-glass-indicator{
+  display:block!important;
+  border-radius:26px!important;
+  border:1px solid rgba(117,190,255,.27)!important;
+  background:
+    radial-gradient(100% 88% at 30% -8%,rgba(255,255,255,.22),transparent 54%),
+    linear-gradient(180deg,rgba(42,151,255,.24),rgba(11,101,206,.115)),
+    rgba(10,132,255,.075)!important;
+  box-shadow:
+    0 7px 19px rgba(0,82,174,.14),
+    inset 0 1px 0 rgba(255,255,255,.25),
+    inset 1.2px 0 0 rgba(79,255,165,.17),
+    inset -1.2px 0 0 rgba(255,92,75,.19),
+    inset 0 -1px 0 rgba(70,142,255,.16)!important;
+  transition:
+    transform .34s var(--vy856-spring),
+    width .28s var(--vy856-spring),
+    box-shadow .22s ease!important;
+  will-change:transform,width!important;
+  overflow:hidden!important;
+}
+html.vy855-liquid-lens.theme-light .android-nav-glass-indicator{
+  background:
+    radial-gradient(100% 88% at 30% -8%,rgba(255,255,255,.82),transparent 54%),
+    linear-gradient(180deg,rgba(80,172,255,.27),rgba(17,119,224,.12)),
+    rgba(10,132,255,.08)!important;
+}
+html.vy855-liquid-lens .android-nav-glass-indicator::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:2px!important;
+  border-radius:24px!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(75% 28% at 28% 0%,rgba(255,255,255,.24),transparent 72%),
+    radial-gradient(18% 70% at 0% 55%,rgba(71,255,160,.13),transparent 80%),
+    radial-gradient(18% 70% at 100% 55%,rgba(255,88,72,.14),transparent 80%)!important;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08)!important;
+  opacity:.9!important;
+}
+html.vy855-liquid-lens .nav button[data-android-tab]{
+  transition:transform .14s var(--vy856-spring),color .20s ease!important;
+  transform:translateZ(0)!important;
+}
+html.vy855-liquid-lens .nav button[data-android-tab]:active{transform:scale(.92) translateZ(0)!important}
+html.vy855-liquid-lens .nav button.vy856-tab-pop .android-nav-icon{
+  animation:vy856TabPop .34s var(--vy856-spring) both!important;
+}
+@keyframes vy856TabPop{
+  0%{transform:scale(.88) translateY(1px)}
+  58%{transform:scale(1.10) translateY(-1px)}
+  100%{transform:scale(1) translateY(0)}
+}
+
+/* ---------- Page transitions ---------- */
+html.vy855-liquid-lens .screen.vy855-enter-forward{
+  animation:vy855Forward .26s var(--vy856-spring) both!important;
+  transform-origin:50% 45%!important;
+  will-change:transform,opacity!important;
+}
+html.vy855-liquid-lens .screen.vy855-enter-backward{
+  animation:vy855Back .26s var(--vy856-spring) both!important;
+  transform-origin:50% 45%!important;
+  will-change:transform,opacity!important;
+}
+@keyframes vy855Forward{
+  0%{opacity:.72;transform:translate3d(18px,0,0) scale(.988)}
+  72%{opacity:1;transform:translate3d(-1px,0,0) scale(1.001)}
+  100%{opacity:1;transform:none}
+}
+@keyframes vy855Back{
+  0%{opacity:.72;transform:translate3d(-18px,0,0) scale(.988)}
+  72%{opacity:1;transform:translate3d(1px,0,0) scale(1.001)}
+  100%{opacity:1;transform:none}
+}
+html.vy855-liquid-lens #screen-settings .vy675-settings-page.vy854-settings-in,
+html.vy855-liquid-lens #screen-settings .vy675-settings-page.vy856-settings-in{
+  animation:vy856SettingsIn .26s var(--vy856-spring) both!important;
+}
+html.vy855-liquid-lens #screen-settings .vy675-settings-home.vy856-settings-home-in{
+  animation:vy856SettingsBack .25s var(--vy856-spring) both!important;
+}
+@keyframes vy856SettingsIn{from{opacity:.70;transform:translate3d(18px,0,0) scale(.992)}to{opacity:1;transform:none}}
+@keyframes vy856SettingsBack{from{opacity:.70;transform:translate3d(-16px,0,0) scale(.992)}to{opacity:1;transform:none}}
+
+/* ---------- iOS-style popup/sheet entrance ---------- */
+html.vy855-liquid-lens .android-sheet-overlay,
+html.vy855-liquid-lens .shop-progress-overlay,
+html.vy855-liquid-lens .vx643-modal-overlay,
+html.vy855-liquid-lens .subscription-overlay{
+  animation:vy856BackdropIn .18s ease-out both!important;
+}
+html.vy855-liquid-lens .android-sheet-overlay .android-sheet,
+html.vy855-liquid-lens .shop-progress-overlay .shop-progress-sheet{
+  transform-origin:50% 100%!important;
+  animation:vy856SheetIn .38s var(--vy856-spring) both!important;
+  will-change:transform,opacity!important;
+}
+html.vy855-liquid-lens .vx643-modal-overlay .vx643-modal,
+html.vy855-liquid-lens .subscription-overlay .subscription-dialog,
+html.vy855-liquid-lens .menu-popover,
+html.vy855-liquid-lens .more-sheet,
+html.vy855-liquid-lens .sheet[role="dialog"]{
+  transform-origin:50% 50%!important;
+  animation:vy856PopupIn .34s var(--vy856-spring) both!important;
+  will-change:transform,opacity!important;
+}
+@keyframes vy856BackdropIn{from{opacity:0}to{opacity:1}}
+@keyframes vy856SheetIn{
+  0%{opacity:0;transform:translate3d(0,28px,0) scale(.965)}
+  68%{opacity:1;transform:translate3d(0,-1px,0) scale(1.002)}
+  100%{opacity:1;transform:none}
+}
+@keyframes vy856PopupIn{
+  0%{opacity:0;transform:scale(.90) translate3d(0,8px,0)}
+  68%{opacity:1;transform:scale(1.012) translate3d(0,-1px,0)}
+  100%{opacity:1;transform:none}
+}
+
+/* ---------- Theme lens: visible UI stays on screen while the new palette
+   commits. This is a refractive halo, never an opaque page-covering curtain. */
+.vy856-theme-lens{
+  position:fixed!important;
+  z-index:2147483450!important;
+  width:64px!important;
+  height:64px!important;
+  margin:-32px 0 0 -32px!important;
+  border-radius:50%!important;
+  pointer-events:none!important;
+  opacity:0!important;
+  transform:scale(.18) translateZ(0)!important;
+  will-change:transform,opacity!important;
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.22),transparent 38%),
+    radial-gradient(circle,transparent 54%,rgba(78,255,167,.13) 59%,rgba(80,154,255,.13) 63%,rgba(255,92,77,.15) 67%,transparent 73%)!important;
+  box-shadow:inset 1px 0 rgba(83,255,168,.23),inset -1px 0 rgba(255,91,75,.24),0 0 24px rgba(79,154,255,.11)!important;
+  animation:vy856ThemeLens .42s var(--vy856-spring) both!important;
+}
+.vy856-theme-lens.to-light{
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.30),transparent 38%),
+    radial-gradient(circle,transparent 54%,rgba(85,255,179,.12) 59%,rgba(84,170,255,.14) 63%,rgba(255,112,91,.13) 67%,transparent 73%)!important;
+}
+@keyframes vy856ThemeLens{
+  0%{opacity:.06;transform:scale(.18) translateZ(0)}
+  28%{opacity:.50}
+  72%{opacity:.22}
+  100%{opacity:0;transform:scale(var(--vy856-theme-scale,28)) translateZ(0)}
+}
+html.vy855-liquid-lens #themeToggle.vy856-theme-button-pop{
+  animation:vy856ThemeButton .38s var(--vy856-spring) both!important;
+}
+@keyframes vy856ThemeButton{
+  0%{transform:scale(1) rotate(0)}
+  36%{transform:scale(.86) rotate(-9deg)}
+  72%{transform:scale(1.08) rotate(3deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+
+/* Quick tap response across the UI — small enough not to cause layout shift. */
+html.vy855-liquid-lens button,
+html.vy855-liquid-lens .btn,
+html.vy855-liquid-lens [role="button"]{
+  -webkit-tap-highlight-color:transparent!important;
+}
+html.vy855-liquid-lens button:active:not(.nav button),
+html.vy855-liquid-lens .btn:active{
+  transform:scale(.975);
+}
+
+/* Old/low-power WebViews: keep geometry/motion, skip costly live blur. */
+html.vy855-liquid-lens.perf-tier-legacy .top,
+html.vy855-liquid-lens.perf-tier-legacy .nav,
+html.vy855-liquid-lens.perf-tier-legacy .android-sheet,
+html.vy855-liquid-lens.perf-tier-legacy .shop-progress-sheet,
+html.vy855-liquid-lens.perf-tier-legacy .vx643-modal,
+html.vy855-liquid-lens.perf-tier-legacy .subscription-dialog{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-forward,
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-backward{animation-duration:.18s!important}
+html.vy855-liquid-lens.perf-tier-legacy .vy856-theme-lens{display:none!important}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy855-liquid-lens .screen.vy855-enter-forward,
+  html.vy855-liquid-lens .screen.vy855-enter-backward,
+  html.vy855-liquid-lens .android-sheet-overlay,
+  html.vy855-liquid-lens .shop-progress-overlay,
+  html.vy855-liquid-lens .vx643-modal-overlay,
+  html.vy855-liquid-lens .subscription-overlay,
+  html.vy855-liquid-lens .android-sheet,
+  html.vy855-liquid-lens .shop-progress-sheet,
+  html.vy855-liquid-lens .vx643-modal,
+  html.vy855-liquid-lens .subscription-dialog,
+  .vy856-theme-lens{animation:none!important;transition:none!important}
+}
