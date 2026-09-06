@@ -1,0 +1,17 @@
+const fs=require('fs');
+const assert=require('assert');
+const css=fs.readFileSync('frontend-source/android/styles/liquid-glass-v2-859.css','utf8');
+const js=fs.readFileSync('frontend-source/android/scripts/liquid-glass-v2-859.js','utf8');
+const builder=fs.readFileSync('tools/build-frontend-bundles.mjs','utf8');
+const motion=fs.readFileSync('frontend-source/android/scripts/apple-motion-852.js','utf8');
+const stability=fs.readFileSync('frontend-source/android/scripts/apple-stability-855.js','utf8');
+assert(css.includes('perf-tier-legacy .top'),'legacy glass fallback must exist');
+assert(css.includes('.android-sheet-item[data-tab="settings"]{grid-column:1/-1'),'settings tile should balance More grid');
+assert(css.includes('backdrop-filter:blur(14px)'),'modern shell should have real glass blur');
+assert(js.includes("root.classList.add('vy859-liquid-v2')"),'coordinator class must be installed');
+assert(js.includes('event.stopImmediatePropagation()'),'final More owner must suppress duplicate bubble handlers');
+assert(motion.includes("classList.contains('vy859-liquid-v2')"),'8.5.2 More capture must yield to 8.5.9');
+assert(stability.includes("classList.contains('vy859-liquid-v2')"),'8.5.5 More capture must yield to 8.5.9');
+assert(builder.indexOf("'settings-overlap-858.css'") < builder.indexOf("'liquid-glass-v2-859.css'"),'8.5.9 CSS must be final');
+assert(builder.indexOf("'ios-liquid-unified-858.js'") < builder.indexOf("'liquid-glass-v2-859.js'"),'8.5.9 JS must be final');
+console.log('liquid-glass-v2-859: ok');
