@@ -43,8 +43,8 @@
 +                flags |= android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
 +            }
 +        } else {
-+            window.setStatusBarColor(android.graphics.Color.rgb(6, 19, 38));
-+            window.setNavigationBarColor(android.graphics.Color.rgb(6, 23, 45));
++            window.setStatusBarColor(android.graphics.Color.BLACK);
++            window.setNavigationBarColor(android.graphics.Color.BLACK);
 +            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 +                flags &= ~android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 +            }
