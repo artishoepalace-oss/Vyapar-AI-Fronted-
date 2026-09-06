@@ -42,7 +42,8 @@ const uiStyles = [
   'flat-black-ios-861.css',
   'dark-mode-pro-862.css',
   'ui-stability-862.css',
-  'graphite-maroon-863.css'
+  'graphite-maroon-863.css',
+  'profile-light-863.css'
 ];
 
 const scripts = [
