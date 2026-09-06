@@ -1,0 +1,23 @@
+/* Vyapar AI 8.6.3 — minimal light-mode support for the new profile shortcut.
+   Existing verified light surfaces remain unchanged. */
+html.vy861-flat-black.theme-light #themeToggle,
+html.vy861-flat-black.theme-light #planBadge{display:none!important}
+html.vy861-flat-black.theme-light .vy863-profile-chip{
+  width:46px!important;height:46px!important;min-width:46px!important;flex:0 0 46px!important;padding:0!important;
+  border-radius:50%!important;border:1px solid rgba(0,0,0,.10)!important;display:grid!important;place-items:center!important;
+  position:relative!important;overflow:visible!important;background:#f2f2f5!important;background-image:none!important;color:#111!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.08)!important;
+}
+html.vy861-flat-black.theme-light .vy863-profile-chip .vy863-profile-avatar{
+  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;overflow:hidden;
+  background:#d7d9dd;color:#111;font-weight:800;font-size:15px;border:1px solid rgba(0,0,0,.10);
+}
+html.vy861-flat-black.theme-light .vy863-profile-chip .vy863-profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+html.vy861-flat-black.theme-light .vy863-profile-chip .vy863-plan-dot{
+  position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;background:#8e949b;
+}
+html.vy861-flat-black.theme-light[data-vy863-plan="business"] .vy863-profile-chip{border-color:rgba(174,126,35,.35)!important}
+html.vy861-flat-black.theme-light[data-vy863-plan="business"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#b9862d,#f0c96d 58%,#a97827);color:#fff;border-color:rgba(153,106,26,.32)}
+html.vy861-flat-black.theme-light[data-vy863-plan="business"] .vy863-profile-chip .vy863-plan-dot{background:#d3a643}
+html.vy861-flat-black.theme-light[data-vy863-plan="pro"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#aeb4bb,#edf0f3 58%,#9da4ab);color:#111}
+html.vy861-flat-black.theme-light[data-vy863-plan="pro"] .vy863-profile-chip .vy863-plan-dot{background:#b8bec5}
