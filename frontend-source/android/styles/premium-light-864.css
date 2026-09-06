@@ -1,0 +1,33 @@
+/* Vyapar AI 8.6.4 — light-mode companion for the premium tier system. */
+html.vy861-flat-black.theme-light{
+  --vy864-tier-accent:#6f767e;
+  --vy864-tier-strong:#2e3237;
+  --vy864-tier-soft:rgba(111,118,126,.10);
+  --vy864-tier-line:rgba(111,118,126,.28);
+  --vy864-maroon:#68182a;
+}
+html.vy861-flat-black.theme-light[data-vy864-plan="pro"]{
+  --vy864-tier-accent:#8a9097;--vy864-tier-strong:#4d535a;--vy864-tier-soft:rgba(138,144,151,.12);--vy864-tier-line:rgba(138,144,151,.36);
+}
+html.vy861-flat-black.theme-light[data-vy864-plan="business"]{
+  --vy864-tier-accent:#9b7429;--vy864-tier-strong:#755618;--vy864-tier-soft:rgba(155,116,41,.11);--vy864-tier-line:rgba(155,116,41,.34);
+}
+html.vy861-flat-black.theme-light .nav{
+  background:rgba(250,250,252,.94)!important;border-color:rgba(15,23,42,.12)!important;box-shadow:0 12px 28px rgba(15,23,42,.13)!important;
+  backdrop-filter:blur(20px) saturate(110%)!important;-webkit-backdrop-filter:blur(20px) saturate(110%)!important;
+}
+html.vy861-flat-black.theme-light .nav button{background:transparent!important;color:#69717b!important}
+html.vy861-flat-black.theme-light .nav button.active{background:var(--vy864-tier-soft)!important;color:var(--vy864-tier-strong)!important;box-shadow:inset 0 0 0 1px var(--vy864-tier-line)!important}
+html.vy861-flat-black.theme-light .vy863-profile-chip{background:#fff!important;border-color:var(--vy864-tier-line)!important;box-shadow:0 3px 12px rgba(15,23,42,.08)!important}
+html.vy861-flat-black.theme-light .vy863-profile-chip .vy863-plan-dot{background:var(--vy864-tier-accent)!important;border-color:#fff!important}
+html.vy861-flat-black.theme-light #productionAccountCard,
+html.vy861-flat-black.theme-light .settings-account-section .production-account-card{background:#f5f6f7!important;border-color:var(--vy864-tier-line)!important;box-shadow:0 8px 22px rgba(15,23,42,.07)!important}
+html.vy861-flat-black.theme-light[data-vy864-plan="pro"] #productionAccountCard,
+html.vy861-flat-black.theme-light[data-vy864-plan="pro"] .settings-account-section .production-account-card{background:linear-gradient(145deg,#f0f1f2,#fafafa)!important}
+html.vy861-flat-black.theme-light[data-vy864-plan="business"] #productionAccountCard,
+html.vy861-flat-black.theme-light[data-vy864-plan="business"] .settings-account-section .production-account-card{background:linear-gradient(145deg,#fbf6e9,#fffdf7)!important}
+html.vy861-flat-black.theme-light #productionAccountCard .production-plan{background:var(--vy864-tier-soft)!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black.theme-light #screen-settings :is(.vy675-row-icon,.vx622-settings-icon){background:var(--vy864-tier-soft)!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black.theme-light :is(.home-section-kicker,.settings-kicker,.vy675-settings-eyebrow,.subscription-kicker,.plan-kicker,[class*="kicker"],[class*="eyebrow"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black.theme-light :is(.progress-bar,.bar,[class*="progress-fill"]){background:var(--vy864-tier-accent)!important;background-image:none!important}
+html.vy861-flat-black.theme-light :is(.btn.danger,button.danger,[data-danger="true"],#productionAccountCard .danger){background:#68182a!important;border-color:#8a2940!important;color:#fff!important}
