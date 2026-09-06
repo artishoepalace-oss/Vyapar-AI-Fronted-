@@ -1,0 +1,4 @@
+/* 8.5.7 convex-lens compatibility tail: avoid CSS calc multiplication on old WebViews. */
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge::after{
+  transform:translate3d(var(--vy857-red-shift,-2px),var(--vy857-red-edge-y,0px),0) scaleY(1.045)!important;
+}
