@@ -539,7 +539,11 @@
     saveSession(data,method);
     showMessage("Login successful. Opening home…","success");
     gate.classList.add("auth-loading");
-    setTimeout(()=>location.reload(),420);
+    document.documentElement.classList.add("vy861-auth-handoff");
+    try{ window.scrollTo(0,0); }catch(_){}
+    setTimeout(()=>{
+      try{ location.replace(location.href); }catch(_){ location.reload(); }
+    },180);
   }
   function needsPasswordSetup(data){ return Boolean((data?.user||data?.data?.user)?.password_configured===false); }
 

@@ -4,15 +4,15 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowBackground">@drawable/launch_screen</item>
-        <item name="android:colorBackground">#06172D</item>
+        <item name="android:colorBackground">#000000</item>
         <item name="android:colorAccent">#3184FF</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">#061326</item>
-        <item name="android:navigationBarColor">#06172D</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
         <item name="android:windowLightNavigationBar">false</item>
-        <item name="android:windowSplashScreenBackground">#06172D</item>
+        <item name="android:windowSplashScreenBackground">#000000</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_round</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">#06172D</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#000000</item>
         <item name="android:windowSplashScreenAnimationDuration">0</item>
     </style>
 </resources>

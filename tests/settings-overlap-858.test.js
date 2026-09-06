@@ -16,12 +16,12 @@ assert(hotfix.includes('clear:both!important;'), 'Settings page body must clear 
 assert(hotfix.includes('.vy854-settings-in:not(.vy856-settings-in)'), 'legacy Settings transition restart must be neutralized');
 assert(buildTool.includes("'settings-overlap-858.css'"), 'Settings hotfix must be bundled after the unified 8.5.8 layer');
 
-assert.strictEqual(version.versionName, '8.5.8.2026');
-assert.strictEqual(Number(version.versionCode), 8582026);
-assert(gradle.includes('versionCode 8582026'));
-assert(gradle.includes('versionName "8.5.8.2026"'));
-assert(index.includes('content="8.5.8.2026"'));
-assert(index.includes('vyapar-ui.css?v=20260906-settings858'));
-assert(index.includes('vyapar-app.js?v=20260906-settings858'));
+assert.strictEqual(version.versionName, '8.6.1.2026');
+assert.strictEqual(Number(version.versionCode), 8612026);
+assert(gradle.includes('versionCode 8612026'));
+assert(gradle.includes('versionName "8.6.1.2026"'));
+assert(index.includes('content="8.6.1.2026"'));
+assert(index.includes('vyapar-ui.css?v=20260906-flatblack861'));
+assert(index.includes('vyapar-app.js?v=20260906-flatblack861'));
 
-console.log('✓ Settings overlap regression checks passed for 8.5.8.2026');
+console.log('✓ Settings overlap regression checks passed for 8.6.1.2026');

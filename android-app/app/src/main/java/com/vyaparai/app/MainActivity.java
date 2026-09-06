@@ -100,8 +100,8 @@ protected void onCreate(Bundle savedInstanceState) {
     webView = new WebView(this);
         // Match the first WebView frame to the dark native launch surface so
         // Android never flashes a white frame between the two loading phases.
-        webView.setBackgroundColor(android.graphics.Color.rgb(6, 23, 45));
-        // Keep WebView on the hardware accelerated render path for the Liquid Glass UI.
+        webView.setBackgroundColor(android.graphics.Color.BLACK);
+        // Keep WebView on the hardware accelerated render path for the dense top/nav blur.
         webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
         webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         webView.setVerticalScrollBarEnabled(false);

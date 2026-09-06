@@ -26,10 +26,10 @@ assert.match(webAuth, /auth-keyboard-open/, 'Auth layout must handle the softwar
 assert.match(webPlatformCss, /overflow-y:auto!important/, 'Android auth must remain vertically scrollable');
 assert.doesNotMatch(webPlatformCss, /\bzoom\s*:/, 'Android auth must not use CSS zoom because it breaks WebView input geometry');
 
-assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=20260903-combined1/, 'Web must load the combined script');
-assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=20260903-combined1/, 'Web must load the combined core styles');
-assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=20260903-optimized2/, 'Android must load the combined script');
-assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=20260903-optimized2/, 'Android must load the combined core styles');
-assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=20260903-optimized2/, 'Android must load the combined UI styles');
+assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=20260906-flatblack861/, 'Web must load the combined script');
+assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=20260906-flatblack861/, 'Web must load the combined core styles');
+assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=20260906-flatblack861/, 'Android must load the combined script');
+assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=20260906-flatblack861/, 'Android must load the combined core styles');
+assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=20260906-flatblack861/, 'Android must load the combined UI styles');
 
 console.log('login-auth-ui: all checks passed');

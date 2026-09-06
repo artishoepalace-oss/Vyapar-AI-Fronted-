@@ -1,17 +1,23 @@
+'use strict';
 const fs=require('fs');
 const assert=require('assert');
-const css=fs.readFileSync('frontend-source/android/styles/liquid-glass-v2-859.css','utf8');
-const js=fs.readFileSync('frontend-source/android/scripts/liquid-glass-v2-859.js','utf8');
 const builder=fs.readFileSync('tools/build-frontend-bundles.mjs','utf8');
-const motion=fs.readFileSync('frontend-source/android/scripts/apple-motion-852.js','utf8');
-const stability=fs.readFileSync('frontend-source/android/scripts/apple-stability-855.js','utf8');
-assert(css.includes('perf-tier-legacy .top'),'legacy glass fallback must exist');
-assert(css.includes('.android-sheet-item[data-tab="settings"]{grid-column:1/-1'),'settings tile should balance More grid');
-assert(css.includes('backdrop-filter:blur(14px)'),'modern shell should have real glass blur');
-assert(js.includes("root.classList.add('vy859-liquid-v2')"),'coordinator class must be installed');
-assert(js.includes('event.stopImmediatePropagation()'),'final More owner must suppress duplicate bubble handlers');
-assert(motion.includes("classList.contains('vy859-liquid-v2')"),'8.5.2 More capture must yield to 8.5.9');
-assert(stability.includes("classList.contains('vy859-liquid-v2')"),'8.5.5 More capture must yield to 8.5.9');
-assert(builder.indexOf("'settings-overlap-858.css'") < builder.indexOf("'liquid-glass-v2-859.css'"),'8.5.9 CSS must be final');
-assert(builder.indexOf("'ios-liquid-unified-858.js'") < builder.indexOf("'liquid-glass-v2-859.js'"),'8.5.9 JS must be final');
-console.log('liquid-glass-v2-859: ok');
+const css=fs.readFileSync('frontend-source/android/styles/flat-black-ios-861.css','utf8');
+const js=fs.readFileSync('frontend-source/android/scripts/flat-black-ios-861.js','utf8');
+const bundle=fs.readFileSync('android-app/app/src/main/assets/assets/styles/vyapar-ui.css','utf8');
+
+for(const old of ['apple-liquid-852.css','apple-liquid-853.css','liquid-lens-motion-856.css','liquid-lens-legacy-856.css','ios27-convex-857.css','ios-liquid-unified-858.css','liquid-glass-v2-859.css','ios-hig-blur-860.css']){
+  assert(!builder.includes(`'${old}'`),`${old} must not be active in production bundle`);
+}
+for(const old of ['apple-motion-852.js','apple-motion-853.js','liquid-lens-motion-856.js','ios27-convex-857.js','ios-liquid-unified-858.js','liquid-glass-v2-859.js','ios-hig-blur-860.js']){
+  assert(!builder.includes(`'${old}'`),`${old} must not execute in production bundle`);
+}
+assert(builder.includes("'flat-black-ios-861.css'"),'flat black style layer must be bundled');
+assert(builder.includes("'flat-black-ios-861.js'"),'flat black coordinator must be bundled');
+assert(bundle.includes('STYLE SOURCE: flat-black-ios-861.css'),'final flat style must exist in runtime bundle');
+assert(css.includes('background:#000!important'),'dark root must be true black');
+assert(css.includes('backdrop-filter:blur(34px)'),'top bar must keep dense blur');
+assert(css.includes('backdrop-filter:blur(36px)'),'bottom nav must keep dense blur');
+assert(css.includes('UNIVERSAL POPUP / SHEET SYSTEM'),'popups must share one system');
+assert(js.includes("root.classList.add('vy861-flat-black')"),'final coordinator class must be installed');
+console.log('✓ 8.6.1 flat-black / no-liquid runtime checks passed');

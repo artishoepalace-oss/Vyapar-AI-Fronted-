@@ -6,20 +6,20 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 /**
- * Final Android 7-16 shell for Vyapar AI 8.5.0.2026.
+ * Final Android 7-16 shell for Vyapar AI 8.6.1.2026.
  *
  * MainActivity remains the authoritative feature implementation. This thin
  * subclass only aligns the first WebView compositor frame with the branded
- * dark-blue launch surface and applies a few safe rendering flags before the
+ * black launch surface and applies a few safe rendering flags before the
  * first frame is drawn. No business/auth/payment logic is changed.
  */
 public class FinalMainActivity extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Keep the system window on the same dark surface used by launch_screen
+        // Keep the system window on the same black surface used by launch_screen
         // before MainActivity creates the WebView.
-        getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 19, 38));
-        getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 23, 45));
+        getWindow().setStatusBarColor(android.graphics.Color.BLACK);
+        getWindow().setNavigationBarColor(android.graphics.Color.BLACK);
 
         super.onCreate(savedInstanceState);
 
@@ -28,7 +28,7 @@ public class FinalMainActivity extends MainActivity {
         // changes without duplicating MainActivity's feature code.
         WebView webView = findWebView(getWindow().getDecorView());
         if (webView != null) {
-            webView.setBackgroundColor(android.graphics.Color.rgb(6, 23, 45));
+            webView.setBackgroundColor(android.graphics.Color.BLACK);
             webView.setVerticalScrollBarEnabled(false);
             webView.setHorizontalScrollBarEnabled(false);
             webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);

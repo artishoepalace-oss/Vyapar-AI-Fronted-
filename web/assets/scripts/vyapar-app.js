@@ -1,3 +1,1073 @@
+/* ===== SCRIPT SOURCE: android-session-flow-647.js ===== */
+
+/* Vyapar AI 6.4.7 — Android startup/session routing + account-password app lock. */
+(function(){
+  'use strict';
+
+  var TOKEN_KEY='vyapar_ai_auth_token_v1';
+  var REFRESH_KEY='vyapar_ai_auth_refresh_token_v1';
+  var ACCOUNT_KEY='vyapar_ai_account_cache_v1';
+  var POLICY_KEY='vyapar_ai_password_login_policy_v1';
+  var UNLOCK_KEY='vyapar_ai_startup_unlocked_v1';
+  var API_BASE='https://vypar-backend.onrender.com';
+  var MIN_SPLASH_MS=1050;
+  var startedAt=Date.now();
+
+  function readJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback}catch(_){return fallback}}
+  function account(){return readJson(ACCOUNT_KEY,{})}
+  function accountEmail(){var a=account();return String((a.user&&a.user.email)||a.email||'').trim().toLowerCase()}
+  function token(){return String(localStorage.getItem(TOKEN_KEY)||'').trim()}
+  function passwordPolicy(){var p=readJson(POLICY_KEY,{});return p&&typeof p==='object'?p:{}}
+  function lockEnabled(email){email=String(email||'').trim().toLowerCase();return !!(email&&passwordPolicy()[email]===true)}
+  function sessionUnlocked(email){try{return sessionStorage.getItem(UNLOCK_KEY)===String(email||'').trim().toLowerCase()}catch(_){return false}}
+  function markUnlocked(email){try{sessionStorage.setItem(UNLOCK_KEY,String(email||'').trim().toLowerCase())}catch(_){}}
+  function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+
+  function ensureSplash(){
+    if(document.getElementById('vy647StartupSplash'))return;
+    var splash=document.createElement('div');
+    splash.id='vy647StartupSplash';
+    splash.innerHTML='<div class="vy647-splash-core"><img src="assets/images/logo.png" alt="Vyapar AI"><strong>Vyapar AI</strong><span>Loading secure session…</span><div class="vy647-splash-bar"><i></i></div></div>';
+    document.body.appendChild(splash);
+  }
+
+  function hideLegacyLoader(){var old=document.getElementById('appLoader');if(old)old.style.visibility='hidden'}
+  function removeSplash(){var splash=document.getElementById('vy647StartupSplash');if(!splash)return;splash.classList.add('out');setTimeout(function(){splash.remove()},220)}
+  function waitMinimum(fn){var delay=Math.max(0,MIN_SPLASH_MS-(Date.now()-startedAt));setTimeout(fn,delay)}
+
+  async function jsonResponse(response){
+    var text=await response.text(),data={};
+    try{data=text?JSON.parse(text):{}}catch(_){}
+    if(!response.ok||data.success===false)throw new Error(data.message||'Password verification failed');
+    return data;
+  }
+
+  function saveLogin(data){
+    var access=String(data.token||data.accessToken||data.access_token||data?.data?.token||data?.data?.accessToken||'').trim();
+    var refresh=String(data.refreshToken||data.refresh_token||data?.data?.refreshToken||'').trim();
+    if(access)localStorage.setItem(TOKEN_KEY,access);
+    if(refresh)localStorage.setItem(REFRESH_KEY,refresh);
+    var old=account();
+    localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:data.user||data?.data?.user||old.user||null,subscription:data.subscription||data?.data?.subscription||old.subscription||null}));
+  }
+
+  function showPasswordGate(){
+    var email=accountEmail();
+    if(!email||!token()||!lockEnabled(email)||sessionUnlocked(email)){removeSplash();return}
+    document.getElementById('vy647PasswordGate')?.remove();
+    var gate=document.createElement('div');
+    gate.id='vy647PasswordGate';
+    gate.innerHTML='<main class="vy647-lock-card" role="dialog" aria-modal="true" aria-labelledby="vy647LockTitle">'+
+      '<img src="assets/images/logo.png" alt="Vyapar AI"><h1 id="vy647LockTitle">Welcome Back</h1><p>Enter your account password to open Vyapar AI.</p>'+
+      '<label>Account</label><div class="vy647-email">'+esc(email)+'</div><label for="vy647Password">Password</label>'+
+      '<input id="vy647Password" type="password" autocomplete="current-password" placeholder="Enter password">'+
+      '<div id="vy647LockError" class="vy647-lock-error" aria-live="polite"></div><button id="vy647Unlock" type="button">Unlock App</button>'+
+      '<button id="vy647UseLogin" class="secondary" type="button">Use another login method</button></main>';
+    document.body.appendChild(gate);removeSplash();
+
+    var input=document.getElementById('vy647Password'),submit=document.getElementById('vy647Unlock'),error=document.getElementById('vy647LockError');
+    async function unlock(){
+      var password=String(input.value||'');
+      if(password.length<8||password.length>72){error.textContent='Enter your account password.';return}
+      error.textContent='';submit.disabled=true;submit.textContent='Checking…';
+      try{
+        var data=await jsonResponse(await fetch(API_BASE+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({email:email,password:password})}));
+        saveLogin(data);markUnlocked(email);gate.remove();
+      }catch(e){error.textContent=e&&e.message?e.message:'Wrong password';input.value='';input.focus()}
+      finally{submit.disabled=false;submit.textContent='Unlock App'}
+    }
+    submit.onclick=unlock;
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();unlock()}});
+    document.getElementById('vy647UseLogin').onclick=function(){
+      try{sessionStorage.removeItem(UNLOCK_KEY)}catch(_){}
+      localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(REFRESH_KEY);localStorage.removeItem(ACCOUNT_KEY);location.reload();
+    };
+    setTimeout(function(){input.focus()},80);
+  }
+
+  function routeAfterSplash(){
+    if(!token()){removeSplash();return}
+    var timeout=Date.now()+9000;
+    (function poll(){
+      var authGate=document.getElementById('vyaparOtpGate');
+      if(!token()){removeSplash();return}
+      if(!authGate){showPasswordGate();return}
+      if(Date.now()>timeout){removeSplash();return}
+      setTimeout(poll,80);
+    })();
+  }
+
+  function resolvePlan(){
+    var a=account(),p=String((a.subscription&&a.subscription.plan)||a.plan||(a.user&&a.user.plan)||'').toLowerCase();
+    if(p.indexOf('business')>=0)return 'business';if(p.indexOf('pro')>=0)return 'pro';return '';
+  }
+
+  function decoratePlanIdentity(){
+    // plan-badge-menu-645 is the single owner of the paid verification mark.
+    // Older builds added .vy647-plan-mark from this observer as well, which
+    // produced two ticks and an endless mutation/paint loop on some WebViews.
+    var card=document.getElementById('productionAccountCard');if(!card)return;
+    card.querySelectorAll('.vy647-plan-mark').forEach(function(mark){mark.remove()});
+  }
+
+  var refreshQueued=false;
+  function refresh(){if(refreshQueued)return;refreshQueued=true;requestAnimationFrame(function(){refreshQueued=false;decoratePlanIdentity()})}
+
+  ensureSplash();hideLegacyLoader();waitMinimum(routeAfterSplash);
+  new MutationObserver(function(){hideLegacyLoader();refresh()}).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('DOMContentLoaded',function(){hideLegacyLoader();refresh()},{once:true});
+  window.addEventListener('load',function(){hideLegacyLoader();refresh()},{once:true});
+})();
+
+/* ===== SCRIPT SOURCE: auth.js ===== */
+
+(function(){
+  "use strict";
+
+  const API_BASE = "https://vypar-backend.onrender.com";
+  const TOKEN_KEY = "vyapar_ai_auth_token_v1";
+  const REFRESH_TOKEN_KEY = "vyapar_ai_auth_refresh_token_v1";
+  const ACCOUNT_KEY = "vyapar_ai_account_cache_v1";
+  const AUTH_METHOD_KEY = "vyapar_ai_auth_method_v2";
+
+  function preferredLightTheme(){
+    try{
+      const data = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
+      const theme = data?.settings?.theme;
+      if(theme === "light") return true;
+      if(theme === "dark") return false;
+    }catch(_){}
+    try{return Boolean(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches)}catch(_){return false}
+  }
+
+  const style = document.createElement("style");
+  style.id = "vyaparAuthExact637";
+  style.textContent = `
+    #vyaparOtpGate{
+      --auth-bg:#f8fafc;
+      --auth-card:#ffffff;
+      --auth-soft:#f1f5f9;
+      --auth-soft-hover:#e2e8f0;
+      --auth-border:#e2e8f0;
+      --auth-text:#0b2545;
+      --auth-body:#334155;
+      --auth-muted:#64748b;
+      --auth-subtle:#94a3b8;
+      --auth-accent:#0f8f83;
+      --auth-primary:#0b2545;
+      --auth-primary-hover:#152f4c;
+      --auth-ring:rgba(15,143,131,.22);
+      --auth-error:#b4233d;
+      --auth-error-bg:#fff1f2;
+      --auth-success:#0c765f;
+      --auth-success-bg:#ecfdf5;
+      position:fixed;
+      inset:0;
+      z-index:2147483647;
+      min-height:100vh;
+      min-height:100dvh;
+      overflow-x:hidden;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      background:var(--auth-bg);
+      color:var(--auth-body);
+      font-family:Inter,Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      color-scheme:light;
+      scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+    }
+    #vyaparOtpGate::-webkit-scrollbar{display:none;width:0;height:0}
+    #vyaparOtpGate.auth-dark{
+      --auth-bg:#08131f;
+      --auth-card:#0e1d2b;
+      --auth-soft:#132638;
+      --auth-soft-hover:#193047;
+      --auth-border:#24394c;
+      --auth-text:#f1f5f9;
+      --auth-body:#e2e8f0;
+      --auth-muted:#9fb0c1;
+      --auth-subtle:#75899b;
+      --auth-accent:#36c3b2;
+      --auth-primary:#176d83;
+      --auth-primary-hover:#1c8098;
+      --auth-ring:rgba(54,195,178,.22);
+      --auth-error:#ff91a3;
+      --auth-error-bg:rgba(190,24,93,.12);
+      --auth-success:#70deb8;
+      --auth-success-bg:rgba(16,185,129,.10);
+      color-scheme:dark;
+    }
+    #vyaparOtpGate *{box-sizing:border-box}
+    #vyaparOtpGate button,#vyaparOtpGate input{font:inherit}
+    #vyaparOtpGate .auth-page{
+      min-height:var(--auth-viewport-height,100vh);
+      min-height:var(--auth-viewport-height,100dvh);
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+    }
+    #vyaparOtpGate .auth-card{
+      width:100%;
+      max-width:448px;
+      background:var(--auth-card);
+      border:1px solid var(--auth-border);
+      border-radius:16px;
+      box-shadow:0 20px 55px rgba(15,23,42,.12);
+      padding:32px;
+      margin:auto;
+    }
+    #vyaparOtpGate.auth-dark .auth-card{box-shadow:0 22px 60px rgba(0,0,0,.32)}
+    #vyaparOtpGate .auth-logo-wrap{text-align:center;margin-bottom:20px}
+    #vyaparOtpGate .auth-logo{
+      display:block;
+      height:80px;
+      width:auto;
+      max-width:180px;
+      margin:0 auto;
+      object-fit:contain;
+    }
+    #vyaparOtpGate .auth-title{
+      margin:8px 0 0;
+      color:var(--auth-text);
+      text-align:center;
+      font-size:24px;
+      line-height:1.25;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    #vyaparOtpGate .auth-subtitle{
+      margin:6px 0 0;
+      color:var(--auth-muted);
+      text-align:center;
+      font-size:14px;
+      line-height:1.45;
+    }
+    #vyaparOtpGate .auth-section{display:block}
+    #vyaparOtpGate .auth-section.hidden,#vyaparOtpGate .auth-form.hidden{display:none!important}
+    #vyaparOtpGate .auth-space-5>*+*{margin-top:20px}
+    #vyaparOtpGate .auth-space-4>*+*{margin-top:16px}
+    #vyaparOtpGate .auth-space-3>*+*{margin-top:12px}
+    #vyaparOtpGate .auth-method-tabs{
+      display:flex;
+      padding:4px;
+      background:var(--auth-soft);
+      border-radius:12px;
+      font-size:14px;
+      font-weight:650;
+    }
+    #vyaparOtpGate .auth-method-tab{
+      flex:1;
+      min-height:40px;
+      padding:8px 10px;
+      border:0;
+      border-radius:8px;
+      background:transparent;
+      color:var(--auth-muted);
+      cursor:pointer;
+      touch-action:manipulation;
+      transition:background-color .15s ease,color .15s ease,box-shadow .15s ease;
+    }
+    #vyaparOtpGate .auth-method-tab.active{
+      background:var(--auth-card);
+      color:var(--auth-text);
+      box-shadow:0 2px 7px rgba(15,23,42,.08);
+    }
+    #vyaparOtpGate .auth-label{
+      display:block;
+      margin-bottom:4px;
+      color:var(--auth-muted);
+      font-size:12px;
+      line-height:1.35;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.055em;
+    }
+    #vyaparOtpGate .auth-label-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+    #vyaparOtpGate .auth-label-row .auth-label{margin:0}
+    #vyaparOtpGate .auth-forgot{
+      min-height:28px;
+      padding:2px 0;
+      border:0;
+      background:transparent;
+      color:var(--auth-accent);
+      font-size:12px;
+      font-weight:650;
+      cursor:pointer;
+    }
+    #vyaparOtpGate .auth-input{
+      width:100%;
+      min-height:44px;
+      padding:10px 14px;
+      border:1px solid var(--auth-border);
+      border-radius:8px;
+      outline:none;
+      background:var(--auth-card);
+      color:var(--auth-body);
+      font-size:16px;
+      transition:border-color .15s ease,box-shadow .15s ease,background-color .15s ease;
+    }
+    #vyaparOtpGate.auth-dark .auth-input{background:#0b1824}
+    #vyaparOtpGate .auth-input::placeholder{color:var(--auth-subtle)}
+    #vyaparOtpGate .auth-input:focus{border-color:var(--auth-accent);box-shadow:0 0 0 3px var(--auth-ring)}
+    #vyaparOtpGate .auth-otp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;min-width:0;align-items:stretch}
+    #vyaparOtpGate .auth-otp-row .auth-input{min-width:0;width:100%}
+    #vyaparOtpGate .auth-small-btn{
+      flex:none;
+      min-height:44px;
+      padding:9px 12px;
+      border:1px solid var(--auth-border);
+      border-radius:8px;
+      background:var(--auth-soft);
+      color:var(--auth-text);
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+      cursor:pointer;
+      touch-action:manipulation;
+    }
+    #vyaparOtpGate .auth-small-btn:hover{background:var(--auth-soft-hover)}
+    #vyaparOtpGate .auth-primary{
+      width:100%;
+      min-height:44px;
+      padding:10px 14px;
+      border:0;
+      border-radius:8px;
+      background:var(--auth-primary);
+      color:#fff;
+      font-size:14px;
+      font-weight:700;
+      box-shadow:0 6px 14px rgba(15,23,42,.12);
+      cursor:pointer;
+      touch-action:manipulation;
+      transition:background-color .15s ease,opacity .15s ease;
+    }
+    #vyaparOtpGate .auth-primary:hover{background:var(--auth-primary-hover)}
+    #vyaparOtpGate .auth-divider{position:relative;display:flex;align-items:center;justify-content:center;margin:16px 0}
+    #vyaparOtpGate .auth-divider::before{content:"";width:100%;border-top:1px solid var(--auth-border)}
+    #vyaparOtpGate .auth-divider span{position:absolute;padding:0 12px;background:var(--auth-card);color:var(--auth-subtle);font-size:12px;text-transform:uppercase;letter-spacing:.055em}
+    #vyaparOtpGate .auth-google{
+      width:100%;
+      min-height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      padding:10px 14px;
+      border:1px solid var(--auth-border);
+      border-radius:8px;
+      background:var(--auth-card);
+      color:var(--auth-body);
+      font-size:14px;
+      font-weight:650;
+      box-shadow:0 2px 6px rgba(15,23,42,.05);
+      cursor:pointer;
+      touch-action:manipulation;
+    }
+    #vyaparOtpGate .auth-google:hover{background:var(--auth-soft)}
+    #vyaparOtpGate .auth-google svg{width:20px;height:20px;flex:none}
+    #vyaparOtpGate .auth-switch{text-align:center;color:var(--auth-muted);font-size:12px;line-height:1.5}
+    #vyaparOtpGate .auth-switch button{
+      min-height:30px;
+      padding:2px 3px;
+      border:0;
+      background:transparent;
+      color:var(--auth-accent);
+      font-size:12px;
+      font-weight:750;
+      cursor:pointer;
+    }
+    #vyaparOtpGate .auth-check{display:flex;align-items:flex-start;gap:8px;padding-top:4px}
+    #vyaparOtpGate .auth-check input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--auth-accent);flex:none}
+    #vyaparOtpGate .auth-check label{color:var(--auth-muted);font-size:12px;line-height:1.45}
+    #vyaparOtpGate .auth-check a{color:var(--auth-accent);text-decoration:none}
+    #vyaparOtpGate .auth-message{display:none;margin-top:14px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.4}
+    #vyaparOtpGate .auth-message.error{display:block;color:var(--auth-error);background:var(--auth-error-bg);border:1px solid rgba(180,35,61,.22)}
+    #vyaparOtpGate .auth-message.success{display:block;color:var(--auth-success);background:var(--auth-success-bg);border:1px solid rgba(12,118,95,.22)}
+    #vyaparOtpGate .auth-loading-overlay{position:fixed;inset:0;z-index:4;display:none;align-items:center;justify-content:center;padding:20px;background:var(--auth-bg);background:color-mix(in srgb,var(--auth-bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+    #vyaparOtpGate.auth-loading .auth-loading-overlay{display:flex}
+    #vyaparOtpGate .auth-loading-card{width:min(300px,88vw);padding:22px 20px;border:1px solid var(--auth-border);border-radius:18px;background:var(--auth-card);box-shadow:0 18px 46px rgba(15,23,42,.16);text-align:center;color:var(--auth-text)}
+    #vyaparOtpGate .auth-loading-spinner{width:34px;height:34px;margin:0 auto 12px;border-radius:50%;border:3px solid var(--auth-border);border-top-color:var(--auth-accent);animation:authSpin .72s linear infinite}
+    #vyaparOtpGate .auth-loading-card strong{display:block;font-size:15px}
+    #vyaparOtpGate .auth-loading-card span{display:block;margin-top:5px;color:var(--auth-muted);font-size:12px}
+    @keyframes authSpin{to{transform:rotate(360deg)}}
+    #vyaparOtpGate button:disabled{opacity:.55;cursor:wait}
+    #vyaparOtpGate .password-setup-copy{margin:0 0 16px;color:var(--auth-muted);font-size:13px;text-align:center;line-height:1.5}
+    @media(max-width:520px){
+      #vyaparOtpGate .auth-page{align-items:flex-start;padding:calc(10px + env(safe-area-inset-top)) 10px calc(14px + env(safe-area-inset-bottom))}
+      #vyaparOtpGate .auth-card{max-width:100%;padding:22px 18px 20px;border-radius:18px;box-shadow:0 12px 32px rgba(15,23,42,.11)}
+      #vyaparOtpGate .auth-logo{height:70px;max-width:158px}
+      #vyaparOtpGate .auth-logo-wrap{margin-bottom:16px}
+      #vyaparOtpGate .auth-title{font-size:24px}
+      #vyaparOtpGate .auth-subtitle{font-size:13px}
+      #vyaparOtpGate .auth-input,#vyaparOtpGate .auth-primary,#vyaparOtpGate .auth-google{min-height:50px}
+      #vyaparOtpGate .auth-method-tab{min-height:44px;font-size:13px}
+      #vyaparOtpGate .auth-otp-row{grid-template-columns:1fr}
+      #vyaparOtpGate .auth-small-btn{min-height:44px;min-width:118px;justify-self:end;padding:9px 14px}
+      #vyaparOtpGate .auth-forgot,#vyaparOtpGate .auth-switch button{color:#1677d2!important;background:transparent!important;border:0!important;box-shadow:none!important}
+    }
+    #vyaparOtpGate.auth-keyboard-open .auth-page{align-items:flex-start}
+    #vyaparOtpGate.auth-keyboard-open .auth-card{margin-top:0;margin-bottom:12px}
+    #vyaparOtpGate.auth-keyboard-open .auth-logo{height:52px;max-width:132px}
+    #vyaparOtpGate.auth-keyboard-open .auth-logo-wrap{margin-bottom:10px}
+    #vyaparOtpGate.auth-keyboard-open .auth-title{font-size:21px}
+    #vyaparOtpGate.auth-keyboard-open .auth-subtitle{font-size:12px}
+    @media(max-width:360px){
+      #vyaparOtpGate .auth-card{padding:18px 16px}
+      #vyaparOtpGate .auth-otp-row{align-items:stretch}
+      #vyaparOtpGate .auth-small-btn{padding-left:10px;padding-right:10px}
+    }
+    @media(prefers-reduced-motion:reduce){#vyaparOtpGate *{transition:none!important;scroll-behavior:auto!important}}
+  `;
+  document.head.appendChild(style);
+
+  const googleSvg = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.23v3.14C3.2 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.59H1.23C.44 8.16 0 9.99 0 12s.44 3.84 1.23 5.41l4.05-3.14z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.2 2.7 1.23 6.59l4.05 3.14c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>`;
+
+  const gate = document.createElement("div");
+  gate.id = "vyaparOtpGate";
+  gate.classList.toggle("auth-dark", !preferredLightTheme());
+  gate.innerHTML = `
+    <div class="auth-page">
+      <main class="auth-card" aria-labelledby="page-title">
+        <div class="auth-logo-wrap">
+          <img src="assets/images/logo.png" alt="Vyapar AI Logo" class="auth-logo">
+          <h1 id="page-title" class="auth-title">Welcome Back</h1>
+          <p id="page-subtitle" class="auth-subtitle">Sign in to manage your smart business growth</p>
+        </div>
+
+        <section id="login-section" class="auth-section auth-space-5">
+          <div class="auth-method-tabs" role="tablist" aria-label="Authentication method">
+            <button id="tab-login-pass" class="auth-method-tab active" type="button" role="tab" aria-selected="true">Login with Password</button>
+            <button id="tab-login-otp" class="auth-method-tab" type="button" role="tab" aria-selected="false">Login with OTP</button>
+          </div>
+
+          <form id="form-login-pass" class="auth-form auth-space-4" novalidate>
+            <div>
+              <label class="auth-label" for="login-email">Email Address</label>
+              <input id="login-email" class="auth-input" type="email" autocomplete="email" inputmode="email" placeholder="name@company.com">
+            </div>
+            <div>
+              <div class="auth-label-row">
+                <label class="auth-label" for="login-password">Password</label>
+                <button id="forgot-password" class="auth-forgot" type="button">Forgot password?</button>
+              </div>
+              <input id="login-password" class="auth-input" type="password" autocomplete="current-password" placeholder="••••••••">
+            </div>
+            <button id="login-password-submit" class="auth-primary" type="submit">Login with Password</button>
+          </form>
+
+          <form id="form-login-otp" class="auth-form auth-space-4 hidden" novalidate>
+            <div>
+              <label class="auth-label" for="login-otp-email">Email Address</label>
+              <div class="auth-otp-row">
+                <input id="login-otp-email" class="auth-input" type="email" autocomplete="email" inputmode="email" placeholder="name@company.com">
+                <button id="login-send-otp" class="auth-small-btn" type="button">Get OTP</button>
+              </div>
+            </div>
+            <div>
+              <label class="auth-label" for="login-otp-code">Enter OTP</label>
+              <input id="login-otp-code" class="auth-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
+            </div>
+            <button id="login-otp-submit" class="auth-primary" type="submit">Login with OTP</button>
+          </form>
+
+          <div class="auth-divider"><span>Or continue with</span></div>
+          <button id="google-login" class="auth-google" type="button">${googleSvg}<span>Sign in with Google</span></button>
+          <p class="auth-switch">Don't have an account? <button id="show-signup" type="button">Create account</button></p>
+        </section>
+
+        <section id="signup-section" class="auth-section auth-space-4 hidden">
+          <button id="google-signup" class="auth-google" type="button">${googleSvg}<span>Sign up with Google</span></button>
+          <div class="auth-divider"><span>Or register with email</span></div>
+
+          <form id="form-signup" class="auth-form auth-space-3" novalidate>
+            <div>
+              <label class="auth-label" for="signup-name">Full Name</label>
+              <input id="signup-name" class="auth-input" type="text" autocomplete="name" placeholder="John Doe">
+            </div>
+            <div>
+              <label class="auth-label" for="signup-email">Email Address</label>
+              <div class="auth-otp-row">
+                <input id="signup-email" class="auth-input" type="email" autocomplete="email" inputmode="email" placeholder="name@company.com">
+                <button id="signup-send-otp" class="auth-small-btn" type="button">Send OTP</button>
+              </div>
+            </div>
+            <div>
+              <label class="auth-label" for="signup-otp">Verify Email OTP</label>
+              <input id="signup-otp" class="auth-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Enter 6-digit code">
+            </div>
+            <div>
+              <label class="auth-label" for="signup-password">Create Password</label>
+              <input id="signup-password" class="auth-input" type="password" autocomplete="new-password" placeholder="At least 8 characters">
+            </div>
+            <div class="auth-check">
+              <input id="signup-terms" type="checkbox">
+              <label for="signup-terms">I agree to the <a href="pages/legal/terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="pages/legal/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>
+            </div>
+            <button id="signup-submit" class="auth-primary" type="submit">Create Account</button>
+          </form>
+          <p class="auth-switch">Already have an account? <button id="show-login" type="button">Sign In</button></p>
+        </section>
+
+        <section id="password-setup-section" class="auth-section hidden">
+          <p id="password-setup-copy" class="password-setup-copy">Email verified. Create a password to finish setup.</p>
+          <form id="form-password-setup" class="auth-form auth-space-4" novalidate>
+            <div>
+              <label class="auth-label" for="setup-password">Create Password</label>
+              <input id="setup-password" class="auth-input" type="password" autocomplete="new-password" placeholder="At least 8 characters">
+            </div>
+            <div>
+              <label class="auth-label" for="setup-password-confirm">Confirm Password</label>
+              <input id="setup-password-confirm" class="auth-input" type="password" autocomplete="new-password" placeholder="Repeat password">
+            </div>
+            <button id="setup-password-submit" class="auth-primary" type="submit">Save Password & Continue</button>
+          </form>
+        </section>
+
+        <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
+      </main>
+      <div class="auth-loading-overlay" role="status" aria-live="polite" aria-label="Opening Vyapar AI">
+        <div class="auth-loading-card"><div class="auth-loading-spinner" aria-hidden="true"></div><strong>Login successful</strong><span>Opening home…</span></div>
+      </div>
+    </div>`;
+  document.body.prepend(gate);
+
+  const $ = id => document.getElementById(id);
+  const els = {
+    title:$("page-title"), subtitle:$("page-subtitle"),
+    loginSection:$("login-section"), signupSection:$("signup-section"), setupSection:$("password-setup-section"),
+    passTab:$("tab-login-pass"), otpTab:$("tab-login-otp"),
+    passForm:$("form-login-pass"), otpForm:$("form-login-otp"), signupForm:$("form-signup"), setupForm:$("form-password-setup"),
+    loginEmail:$("login-email"), loginPassword:$("login-password"), loginOtpEmail:$("login-otp-email"), loginOtpCode:$("login-otp-code"),
+    signupName:$("signup-name"), signupEmail:$("signup-email"), signupOtp:$("signup-otp"), signupPassword:$("signup-password"), signupTerms:$("signup-terms"),
+    setupPassword:$("setup-password"), setupConfirm:$("setup-password-confirm"), setupCopy:$("password-setup-copy"),
+    googleLogin:$("google-login"), googleSignup:$("google-signup"), message:$("auth-message")
+  };
+
+  let pendingAuthData = null;
+  let pendingAuthMethod = null;
+
+  function syncAuthViewport(){
+    const viewport=window.visualViewport;
+    const height=Math.max(320,Math.round(viewport?.height||window.innerHeight||document.documentElement.clientHeight||640));
+    const keyboardOpen=Boolean(viewport&&window.innerHeight-height>120);
+    gate.style.setProperty("--auth-viewport-height",height+"px");
+    gate.classList.toggle("auth-keyboard-open",keyboardOpen);
+  }
+  function resetAuthScroll(){
+    requestAnimationFrame(()=>{gate.scrollTop=0});
+  }
+  syncAuthViewport();
+  window.addEventListener("resize",syncAuthViewport,{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",syncAuthViewport,{passive:true});
+    window.visualViewport.addEventListener("scroll",syncAuthViewport,{passive:true});
+  }
+  gate.addEventListener("focusin",event=>{
+    if(!event.target.matches("input"))return;
+    setTimeout(()=>event.target.scrollIntoView({block:"center",inline:"nearest"}),120);
+  });
+
+  function applyTheme(){
+    const light = document.body.classList.contains("theme-light") || document.documentElement.classList.contains("theme-light") || preferredLightTheme();
+    gate.classList.toggle("auth-dark", !light);
+  }
+  applyTheme();
+  const themeObserver=new MutationObserver(applyTheme);
+  themeObserver.observe(document.body,{attributes:true,attributeFilter:["class"]});
+  themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || "").trim()); }
+  function cleanOtp(v){ return String(v || "").replace(/\D/g,"").slice(0,6); }
+  function clearMessage(){ els.message.textContent=""; els.message.className="auth-message"; }
+  function showMessage(text,type="error"){
+    els.message.textContent=text || "";
+    els.message.className="auth-message " + type;
+  }
+  async function readResponse(response){
+    const text=await response.text();
+    let data={};
+    try{ data=text?JSON.parse(text):{}; }
+    catch(_){ const e=new Error("The server returned an invalid response"); e.status=response.status; throw e; }
+    if(!response.ok || data.success===false){ const e=new Error(data.message||"Request failed"); e.status=response.status; throw e; }
+    return data;
+  }
+  function accessTokenFrom(data){ return String(data?.token || data?.accessToken || data?.access_token || data?.data?.token || data?.data?.accessToken || data?.data?.access_token || "").trim(); }
+  function refreshTokenFrom(data){ return String(data?.refreshToken || data?.refresh_token || data?.data?.refreshToken || data?.data?.refresh_token || "").trim(); }
+  function currentAccessToken(){ return String(localStorage.getItem(TOKEN_KEY) || "").trim(); }
+  function storeSessionTokens(data){
+    const accessToken=accessTokenFrom(data), refreshToken=refreshTokenFrom(data);
+    if(accessToken)localStorage.setItem(TOKEN_KEY,accessToken);
+    if(refreshToken)localStorage.setItem(REFRESH_TOKEN_KEY,refreshToken);
+    return accessToken;
+  }
+  function clearSessionTokens(){ localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(REFRESH_TOKEN_KEY); }
+
+  let refreshPromise=null;
+  async function refreshAccessToken(){
+    if(refreshPromise)return refreshPromise;
+    refreshPromise=(async()=>{
+      const refreshToken=String(localStorage.getItem(REFRESH_TOKEN_KEY)||"").trim();
+      const accessToken=currentAccessToken();
+      if(!refreshToken&&!accessToken)return "";
+      try{
+        const headers={"Content-Type":"application/json","Accept":"application/json"};
+        if(accessToken)headers.Authorization="Bearer "+accessToken;
+        const response=await fetch(API_BASE+"/auth/refresh",{method:"POST",headers,body:JSON.stringify(refreshToken?{refreshToken}:{})});
+        if(!response.ok)return "";
+        const text=await response.text(); let data={};
+        try{data=text?JSON.parse(text):{}}catch(_){return ""}
+        if(data.success===false)return "";
+        const nextToken=storeSessionTokens(data); if(!nextToken)return "";
+        const refreshedUser=data.user||data?.data?.user||null;
+        const refreshedSubscription=data.subscription||data?.data?.subscription||null;
+        if(refreshedUser||refreshedSubscription){
+          let cached={}; try{cached=JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"{}")||{}}catch(_){}
+          localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:refreshedUser||cached.user||null,subscription:refreshedSubscription||cached.subscription||null}));
+        }
+        return nextToken;
+      }catch(_){return ""}
+    })();
+    try{return await refreshPromise}finally{refreshPromise=null}
+  }
+
+  async function authFetch(input,init={}){
+    const baseRequest=new Request(input,init);
+    const headers=new Headers(baseRequest.headers);
+    const token=currentAccessToken();
+    if(token&&!headers.has("Authorization"))headers.set("Authorization","Bearer "+token);
+    const firstRequest=new Request(baseRequest,{headers});
+    const retryTemplate=firstRequest.clone();
+    let response=await fetch(firstRequest);
+    const inputUrl=String(firstRequest.url||input);
+    if(response.status!==401||/\/auth\/(?:login|register|request-otp|verify-otp|google|refresh)(?:\?|$)/.test(inputUrl))return response;
+    const nextToken=await refreshAccessToken();
+    if(!nextToken)return response;
+    const retryHeaders=new Headers(retryTemplate.headers);
+    retryHeaders.set("Authorization","Bearer "+nextToken);
+    return fetch(new Request(retryTemplate,{headers:retryHeaders}));
+  }
+  window.vyaparAuthFetch=authFetch;
+  window.vyaparRefreshAuthToken=refreshAccessToken;
+
+  function saveSession(data,method){
+    const token=storeSessionTokens(data);
+    if(!token)throw new Error("Login response did not include a secure token");
+    localStorage.setItem(AUTH_METHOD_KEY,method||"account");
+    localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:data.user||data?.data?.user||null,subscription:data.subscription||data?.data?.subscription||null}));
+  }
+  function completeLogin(data,method){
+    saveSession(data,method);
+    showMessage("Login successful. Opening home…","success");
+    gate.classList.add("auth-loading");
+    document.documentElement.classList.add("vy861-auth-handoff");
+    try{ window.scrollTo(0,0); }catch(_){}
+    setTimeout(()=>{
+      try{ location.replace(location.href); }catch(_){ location.reload(); }
+    },180);
+  }
+  function needsPasswordSetup(data){ return Boolean((data?.user||data?.data?.user)?.password_configured===false); }
+
+  function showLogin(){
+    clearMessage();
+    els.loginSection.classList.remove("hidden");
+    els.signupSection.classList.add("hidden");
+    els.setupSection.classList.add("hidden");
+    els.title.textContent="Welcome Back";
+    els.subtitle.textContent="Sign in to manage your smart business growth";
+    resetAuthScroll();
+  }
+  function showSignup(){
+    clearMessage();
+    els.loginSection.classList.add("hidden");
+    els.signupSection.classList.remove("hidden");
+    els.setupSection.classList.add("hidden");
+    els.title.textContent="Create an Account";
+    els.subtitle.textContent="Start your smart business growth journey";
+    resetAuthScroll();
+  }
+  function switchLoginMode(mode){
+    const otp=mode==="otp";
+    els.passForm.classList.toggle("hidden",otp);
+    els.otpForm.classList.toggle("hidden",!otp);
+    els.passTab.classList.toggle("active",!otp);
+    els.otpTab.classList.toggle("active",otp);
+    els.passTab.setAttribute("aria-selected",String(!otp));
+    els.otpTab.setAttribute("aria-selected",String(otp));
+    els.passTab.tabIndex=otp?-1:0;
+    els.otpTab.tabIndex=otp?0:-1;
+    els.passTab.parentElement.classList.toggle("otp-selected",otp);
+    if(otp && els.loginEmail.value.trim() && !els.loginOtpEmail.value.trim())els.loginOtpEmail.value=els.loginEmail.value.trim();
+    clearMessage();
+  }
+  function showPasswordSetup(data,method,recovery){
+    saveSession(data,method);
+    pendingAuthData=data;
+    pendingAuthMethod=method;
+    els.loginSection.classList.add("hidden");
+    els.signupSection.classList.add("hidden");
+    els.setupSection.classList.remove("hidden");
+    els.title.textContent=recovery?"Recreate your password":"Create your password";
+    els.subtitle.textContent=recovery?"Email verified. Set a new password to continue.":"Email verified. Create a password to finish setup.";
+    els.setupCopy.textContent=els.subtitle.textContent;
+    els.setupPassword.value="";
+    els.setupConfirm.value="";
+    clearMessage();
+    resetAuthScroll();
+  }
+
+  els.passTab.addEventListener("click",()=>switchLoginMode("password"));
+  els.otpTab.addEventListener("click",()=>switchLoginMode("otp"));
+  $("show-signup").addEventListener("click",showSignup);
+  $("show-login").addEventListener("click",showLogin);
+  $("forgot-password").addEventListener("click",()=>{
+    if(els.loginEmail.value.trim())els.loginOtpEmail.value=els.loginEmail.value.trim();
+    switchLoginMode("otp");
+    showMessage("Use Email OTP to securely recover access.","success");
+  });
+
+  els.passForm.addEventListener("submit",async event=>{
+    event.preventDefault(); clearMessage();
+    const email=els.loginEmail.value.trim().toLowerCase();
+    const password=els.loginPassword.value;
+    if(!validEmail(email))return showMessage("Enter a valid email address");
+    if(password.length<8||password.length>72)return showMessage("Password must be 8-72 characters");
+    const button=$("login-password-submit");
+    button.disabled=true; button.textContent="Signing in…";
+    try{
+      const data=await readResponse(await fetch(API_BASE+"/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})}));
+      completeLogin(data,"password");
+    }catch(error){showMessage(error.message||"Unable to sign in")}
+    finally{button.disabled=false;button.textContent="Login with Password"}
+  });
+
+  $("login-send-otp").addEventListener("click",async function(){
+    clearMessage();
+    const email=els.loginOtpEmail.value.trim().toLowerCase();
+    if(!validEmail(email))return showMessage("Enter a valid email address");
+    this.disabled=true;this.textContent="Sending…";
+    try{
+      const data=await readResponse(await fetch(API_BASE+"/auth/request-otp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})}));
+      showMessage(data.message||"Verification code sent","success");
+      els.loginOtpCode.focus();
+    }catch(error){showMessage(error.message||"Unable to send verification code")}
+    finally{this.disabled=false;this.textContent="Get OTP"}
+  });
+
+  els.otpForm.addEventListener("submit",async event=>{
+    event.preventDefault();clearMessage();
+    const email=els.loginOtpEmail.value.trim().toLowerCase();
+    const code=cleanOtp(els.loginOtpCode.value);
+    if(!validEmail(email))return showMessage("Enter a valid email address");
+    if(code.length!==6)return showMessage("Enter the 6-digit verification code");
+    const button=$("login-otp-submit");button.disabled=true;button.textContent="Verifying…";
+    try{
+      const data=await readResponse(await fetch(API_BASE+"/auth/verify-otp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,code})}));
+      if(needsPasswordSetup(data))showPasswordSetup(data,"otp",true);
+      else completeLogin(data,"otp");
+    }catch(error){showMessage(error.message||"Verification failed")}
+    finally{button.disabled=false;button.textContent="Login with OTP"}
+  });
+
+  $("signup-send-otp").addEventListener("click",async function(){
+    clearMessage();
+    const name=els.signupName.value.trim();
+    const email=els.signupEmail.value.trim().toLowerCase();
+    if(name.length<2)return showMessage("Enter your full name");
+    if(!validEmail(email))return showMessage("Enter a valid email address");
+    this.disabled=true;this.textContent="Sending…";
+    try{
+      const data=await readResponse(await fetch(API_BASE+"/auth/request-otp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})}));
+      showMessage(data.message||"Verification code sent","success");
+      els.signupOtp.focus();
+    }catch(error){showMessage(error.message||"Unable to send verification code")}
+    finally{this.disabled=false;this.textContent="Send OTP"}
+  });
+
+  els.signupForm.addEventListener("submit",async event=>{
+    event.preventDefault();clearMessage();
+    const name=els.signupName.value.trim();
+    const email=els.signupEmail.value.trim().toLowerCase();
+    const code=cleanOtp(els.signupOtp.value);
+    const password=els.signupPassword.value;
+    if(name.length<2)return showMessage("Enter your full name");
+    if(!validEmail(email))return showMessage("Enter a valid email address");
+    if(code.length!==6)return showMessage("Enter the 6-digit verification code");
+    if(password.length<8||password.length>72)return showMessage("Password must be 8-72 characters");
+    if(!els.signupTerms.checked)return showMessage("Accept the Terms and Privacy Policy to continue");
+    const button=$("signup-submit");button.disabled=true;button.textContent="Creating account…";
+    try{
+      const verified=await readResponse(await fetch(API_BASE+"/auth/verify-otp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,code,name})}));
+      saveSession(verified,"otp");
+      const updated=await readResponse(await authFetch(API_BASE+"/auth/password",{method:"PUT",headers:{"Content-Type":"application/json","Authorization":"Bearer "+currentAccessToken()},body:JSON.stringify({password})}));
+      completeLogin({...verified,user:updated.user||verified.user,subscription:updated.subscription||verified.subscription},"password");
+    }catch(error){showMessage(error.message||"Unable to create account")}
+    finally{button.disabled=false;button.textContent="Create Account"}
+  });
+
+  els.setupForm.addEventListener("submit",async event=>{
+    event.preventDefault();clearMessage();
+    const password=els.setupPassword.value, confirm=els.setupConfirm.value;
+    if(password.length<8||password.length>72)return showMessage("Password must be 8-72 characters");
+    if(password!==confirm)return showMessage("Passwords do not match");
+    const token=currentAccessToken();
+    if(!token)return showMessage("Secure session missing. Verify your email again.");
+    const button=$("setup-password-submit");button.disabled=true;button.textContent="Saving…";
+    try{
+      const updated=await readResponse(await authFetch(API_BASE+"/auth/password",{method:"PUT",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({password})}));
+      completeLogin({...pendingAuthData,token,user:updated.user||pendingAuthData?.user||null,subscription:updated.subscription||pendingAuthData?.subscription||null},pendingAuthMethod||"password");
+    }catch(error){showMessage(error.message||"Unable to save password")}
+    finally{button.disabled=false;button.textContent="Save Password & Continue"}
+  });
+
+  function setGoogleBusy(busy,label){
+    [els.googleLogin,els.googleSignup].forEach(button=>{
+      if(!button)return;
+      button.disabled=busy;
+      const span=button.querySelector("span");
+      if(span&&label)span.textContent=label;
+    });
+  }
+  function resetGoogleLabels(){
+    const loginSpan=els.googleLogin?.querySelector("span"); if(loginSpan)loginSpan.textContent="Sign in with Google";
+    const signupSpan=els.googleSignup?.querySelector("span"); if(signupSpan)signupSpan.textContent="Sign up with Google";
+    setGoogleBusy(false);
+  }
+  function startGoogle(){
+    clearMessage();
+    if(window.AndroidApp&&typeof window.AndroidApp.startGoogleSignIn==="function"){
+      setGoogleBusy(true,"Opening Google…");
+      try{window.AndroidApp.startGoogleSignIn()}catch(_){resetGoogleLabels();showMessage("Could not open Google sign-in")}
+      return;
+    }
+    showMessage("Google sign-in is available in the Android app. On web, use Password or Email OTP.");
+  }
+  els.googleLogin.addEventListener("click",startGoogle);
+  els.googleSignup.addEventListener("click",startGoogle);
+
+  window.onNativeGoogleSignInResult=async function(payload){
+    let result=payload;
+    if(typeof payload==="string"){
+      try{result=JSON.parse(payload)}catch(_){result={success:false,message:"Google sign-in returned an invalid response"}}
+    }
+    if(!result||result.success===false||!result.idToken){resetGoogleLabels();return showMessage(result?.message||"Google sign-in was cancelled")}
+    showMessage("Google account verified. Finishing sign in…","success");
+    try{
+      const data=await readResponse(await fetch(API_BASE+"/auth/google",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idToken:result.idToken})}));
+      if(needsPasswordSetup(data))showPasswordSetup(data,"google",false);
+      else completeLogin(data,"google");
+    }catch(error){resetGoogleLabels();showMessage(error.message||"Google login is unavailable")}
+  };
+
+  function hasCachedLocalAccess(){
+    try{if(JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"null")?.user)return true}catch(_){}
+    try{const s=JSON.parse(localStorage.getItem("vyapar_ai_prod_v1")||"{}");return Boolean(s.sales?.length||s.stocks?.length||s.monthly?.length||s.daily?.length)}catch(_){return false}
+  }
+  async function restoreSession(){
+    const token=currentAccessToken();
+    if(!token)return;
+    els.subtitle.textContent="Checking your saved session…";
+    try{
+      const data=await readResponse(await authFetch(API_BASE+"/auth/me",{headers:{Authorization:"Bearer "+token}}));
+      localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:data.user,subscription:data.subscription}));
+      gate.remove();
+    }catch(error){
+      const rejected=error&&(error.status===401||error.status===403);
+      if(rejected){
+        clearSessionTokens();localStorage.removeItem(ACCOUNT_KEY);showLogin();showMessage("Your session expired. Sign in again.");return;
+      }
+      if(hasCachedLocalAccess()){console.warn("Session check unavailable; opening cached local app.",error);gate.remove();return;}
+      showLogin();showMessage("Server is temporarily unavailable. Check your internet connection and try again.");
+    }
+  }
+
+  switchLoginMode("password");
+  showLogin();
+  restoreSession();
+})();
+
+/* ===== SCRIPT SOURCE: platform-android.js ===== */
+
+/* Android auth tab indicator enhancer. Tabs remain tap-only to avoid accidental mode changes. */
+(function(){
+  'use strict';
+  if(!document.documentElement.classList.contains('native-android')) return;
+
+  function bind(){
+    var gate=document.getElementById('vyaparOtpGate');
+    if(!gate) return false;
+    var tabs=gate.querySelector('.auth-method-tabs');
+    var pass=gate.querySelector('#tab-login-pass');
+    var otp=gate.querySelector('#tab-login-otp');
+    if(!tabs||!pass||!otp||tabs.dataset.swipeBound==='1') return !!tabs;
+
+    tabs.dataset.swipeBound='1';
+    pass.textContent='Login with Password';
+    otp.textContent='Login with OTP';
+    function sync(){
+      tabs.classList.toggle('otp-selected',otp.classList.contains('active'));
+    }
+    sync();
+
+    new MutationObserver(sync).observe(tabs,{subtree:true,attributes:true,attributeFilter:['class','aria-selected']});
+
+    pass.addEventListener('click',function(){setTimeout(sync,0)});
+    otp.addEventListener('click',function(){setTimeout(sync,0)});
+    return true;
+  }
+
+  if(!bind()){
+    var observer=new MutationObserver(function(){ if(bind()) observer.disconnect(); });
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+  }
+})();
+
+/* ===== SCRIPT SOURCE: performance-android7-16.js ===== */
+
+/* Vyapar AI — Android 7–16 runtime performance profile (2026-09-01) */
+(function(){
+  'use strict';
+  var root=document.documentElement;
+  if(!root || !root.classList.contains('native-android')) return;
+
+  function n(v,d){ v=Number(v); return isFinite(v)?v:d; }
+  function androidApi(){
+    try{
+      if(window.AndroidApp && typeof window.AndroidApp.getAndroidSdkInt==='function'){
+        return n(window.AndroidApp.getAndroidSdkInt(),0);
+      }
+    }catch(e){}
+    var m=(navigator.userAgent||'').match(/Android\s([0-9]+)/i);
+    var major=m?n(m[1],0):0;
+    if(major===7) return 24;
+    if(major===8) return 26;
+    if(major===9) return 28;
+    if(major===10) return 29;
+    if(major===11) return 30;
+    if(major===12) return 31;
+    if(major===13) return 33;
+    if(major===14) return 34;
+    if(major===15) return 35;
+    if(major>=16) return 36;
+    return 0;
+  }
+  function nativeMemoryMb(){
+    try{
+      if(window.AndroidApp && typeof window.AndroidApp.getMemoryClassMb==='function'){
+        return n(window.AndroidApp.getMemoryClassMb(),0);
+      }
+    }catch(e){}
+    return 0;
+  }
+  function nativeLowRam(){
+    try{
+      if(window.AndroidApp && typeof window.AndroidApp.isLowRamDevice==='function'){
+        return !!window.AndroidApp.isLowRamDevice();
+      }
+    }catch(e){}
+    return false;
+  }
+
+  var api=androidApi();
+  var cores=n(navigator.hardwareConcurrency,0);
+  var deviceMemory=n(navigator.deviceMemory,0);
+  var memoryMb=nativeMemoryMb();
+  var lowRam=nativeLowRam() || (deviceMemory>0 && deviceMemory<=2) || (memoryMb>0 && memoryMb<=192);
+
+  var tier='modern';
+  if((api>0 && api<=27) || lowRam) tier='legacy';
+  else if((api>0 && api<=30) || (cores>0 && cores<=4) || (deviceMemory>0 && deviceMemory<=4)) tier='mid';
+
+  root.classList.remove('perf-tier-legacy','perf-tier-mid','perf-tier-modern','perf-low-ram');
+  root.classList.add('perf-tier-'+tier);
+  if(lowRam) root.classList.add('perf-low-ram');
+  if(api) root.setAttribute('data-android-api',String(api));
+  root.setAttribute('data-perf-tier',tier);
+  if(memoryMb) root.setAttribute('data-memory-class-mb',String(memoryMb));
+
+  /* Do not mutate layout continuously. Toggle one cheap class at gesture start/end. */
+  var scrollTimer=0;
+  var scrollFrame=0;
+  var scrolling=false;
+  function markScrolling(){
+    scrollFrame=0;
+    if(!scrolling){ scrolling=true; root.classList.add('perf-scrolling'); }
+  }
+  function beginScroll(){
+    if(!scrolling && !scrollFrame) scrollFrame=requestAnimationFrame(markScrolling);
+    if(scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(endScroll,140);
+  }
+  function endScroll(){
+    if(scrollFrame){ cancelAnimationFrame(scrollFrame); scrollFrame=0; }
+    if(scrollTimer){ clearTimeout(scrollTimer); scrollTimer=0; }
+    if(scrolling){ scrolling=false; root.classList.remove('perf-scrolling'); }
+  }
+  window.addEventListener('scroll',beginScroll,{passive:true});
+  /* One touchstart is cheaper than doing JS work on every touchmove frame. */
+  document.addEventListener('touchstart',beginScroll,{passive:true});
+  document.addEventListener('touchend',function(){
+    if(scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(endScroll,90);
+  },{passive:true});
+  document.addEventListener('touchcancel',endScroll,{passive:true});
+  document.addEventListener('visibilitychange',function(){ if(document.hidden) endScroll(); },{passive:true});
+  window.addEventListener('pagehide',endScroll,{passive:true});
+
+  /* Delay decoding of large, non-critical local artwork. The app logo remains eager. */
+  function tuneImages(){
+    var imgs=document.images||[];
+    for(var i=0;i<imgs.length;i++){
+      var img=imgs[i];
+      if(!img || img.closest && img.closest('#appLoader')) continue;
+      if(img.classList && (img.classList.contains('logo') || img.classList.contains('vy659-footer-logo'))) continue;
+      try{ img.decoding='async'; }catch(e){}
+      if(img.classList && img.classList.contains('upgrade-plan-reference-image')){
+        try{ img.loading='lazy'; }catch(e){}
+      }
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tuneImages,{once:true});
+  else tuneImages();
+
+  /* Razorpay downloads in parallel so it cannot hold the login/startup path.
+     If a user reaches Plans unusually quickly, wait for that same script rather
+     than showing a false "missing" error while it is still downloading. */
+  window.vyaparWaitForRazorpay=function(timeoutMs){
+    if(typeof window.Razorpay==='function') return Promise.resolve(window.Razorpay);
+    var script=document.querySelector('script[src*="checkout.razorpay.com/v1/checkout.js"]');
+    if(!script) return Promise.reject(new Error('Razorpay checkout script is unavailable'));
+    return new Promise(function(resolve,reject){
+      var settled=false;
+      var timer=setTimeout(function(){ finish(new Error('Razorpay checkout timed out')); },Math.max(1000,n(timeoutMs,12000)));
+      function cleanup(){
+        clearTimeout(timer);
+        script.removeEventListener('load',loaded);
+        script.removeEventListener('error',failed);
+      }
+      function finish(error){
+        if(settled) return;
+        settled=true;
+        cleanup();
+        if(!error && typeof window.Razorpay==='function') resolve(window.Razorpay);
+        else reject(error || new Error('Razorpay checkout did not initialize'));
+      }
+      function loaded(){ finish(null); }
+      function failed(){ finish(new Error('Razorpay checkout could not be loaded')); }
+      script.addEventListener('load',loaded,{once:true});
+      script.addEventListener('error',failed,{once:true});
+      if(typeof window.Razorpay==='function') finish(null);
+    });
+  };
+
+  /* Exposed only for diagnostics/settings UI; no polling. */
+  window.VyaparPerformanceProfile={api:api,tier:tier,lowRam:lowRam,cores:cores,memoryMb:memoryMb,deviceMemory:deviceMemory};
+})();
+
+/* ===== SCRIPT SOURCE: app.js ===== */
+
 /* Vyapar AI 6.3.4 consolidated runtime. Order preserves the previous script loading. */
 
 ;
@@ -4138,8 +5208,12 @@ async function startPayment(planName){
   }
 
   if(typeof Razorpay === 'undefined'){
-    alert('Razorpay script missing in index.html');
-    return;
+    try{
+      await window.vyaparWaitForRazorpay?.(12000);
+    }catch(error){
+      alert(error?.message || 'Razorpay checkout is unavailable');
+      return;
+    }
   }
 
   const API_BASE = (typeof API_BASE_URL !== 'undefined')
@@ -6769,12 +7843,16 @@ render();
       typeof Razorpay ===
       "undefined"
     ){
-      premiumToast(
-        "Razorpay checkout script missing in index.html",
-        "error"
-      );
+      try{
+        await window.vyaparWaitForRazorpay?.(12000);
+      }catch(error){
+        premiumToast(
+          error && error.message ? error.message : "Razorpay checkout is unavailable",
+          "error"
+        );
 
-      return;
+        return;
+      }
     }
 
     if(paymentBusy){
@@ -9887,7 +10965,7 @@ function tierBadge(tier){
 }
 function button(label,action,tier='business',kind=''){
   const locked=rank(plan())<rank(tier);
-  const blue=['Payment In','Suppliers','Purchase Return','Cheques & Loans','Currencies','Sale Return'].includes(String(label));
+  const blue=['Payment In','Purchase','Suppliers','Purchase Return','Cheques & Loans','Currencies','Sale Return'].includes(String(label));
   return `<button type="button" class="vx621-action ${kind} ${blue?'blue':''} ${locked?'is-locked':''}" onclick="${action}"><span>${E(label)}</span>${tierBadge(tier)}</button>`;
 }
 function featureCard(title,desc,actions,icon='◈'){
@@ -10710,4 +11788,3169 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 else setTimeout(init,0);
 
 window.VyaparUI622={version:VERSION,refresh:init};
+})();
+
+/* ===== SCRIPT SOURCE: security-ui-643.js ===== */
+
+/* Vyapar AI 6.5.7 — Android password verification + refresh-aware account password policy */
+(function(){
+  'use strict';
+
+  var POLICY_KEY='vyapar_ai_password_login_policy_v1';
+  var ACCOUNT_KEY='vyapar_ai_account_cache_v1';
+  var TOKEN_KEY='vyapar_ai_auth_token_v1';
+  var API_BASE='https://vypar-backend.onrender.com';
+
+  function readJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback}catch(_){return fallback}}
+  function account(){return readJson(ACCOUNT_KEY,{})}
+  function accountEmail(){
+    var a=account();
+    return String((a.user&&a.user.email)||a.email||'').trim().toLowerCase();
+  }
+  function policy(){var p=readJson(POLICY_KEY,{});return p&&typeof p==='object'?p:{}}
+  function savePolicy(p){try{localStorage.setItem(POLICY_KEY,JSON.stringify(p))}catch(_){}}
+  function enabledFor(email){email=String(email||'').trim().toLowerCase();return !!(email&&policy()[email]===true)}
+  function setEnabled(email,value){
+    email=String(email||'').trim().toLowerCase();
+    if(!email)return;
+    var p=policy();p[email]=value===true;savePolicy(p);
+  }
+  function token(){return String(localStorage.getItem(TOKEN_KEY)||'').trim()}
+  function notify(msg,type){
+    if(typeof window.showGlassToast==='function')window.showGlassToast(msg,type||'success');
+    else alert(msg);
+  }
+
+  /* Tap-only bottom navigation on both web and Android. Stops drag/swipe while preserving normal button clicks. */
+  function stopNavGesture(event){
+    var nav=event.target&&event.target.closest?event.target.closest('#nav'):null;
+    if(!nav)return;
+    if(event.type.indexOf('pointer')===0 || event.type.indexOf('touch')===0){
+      event.stopPropagation();
+    }
+  }
+  ['pointerdown','pointermove','pointerup','pointercancel','touchstart','touchmove','touchend'].forEach(function(type){
+    document.addEventListener(type,stopNavGesture,true);
+  });
+
+  function modal(enableAfter){
+    var email=accountEmail();
+    if(!email||!token()){
+      notify('Sign in with Email OTP first, then manage password login.','error');
+      return;
+    }
+    document.getElementById('vx643PasswordModal')?.remove();
+    var overlay=document.createElement('div');
+    overlay.id='vx643PasswordModal';
+    overlay.className='vx643-modal-overlay';
+    overlay.innerHTML='\
+      <div class="vx643-modal" role="dialog" aria-modal="true" aria-labelledby="vx643ModalTitle">\
+        <h2 id="vx643ModalTitle">Change account password</h2>\
+        <p>This is the same password used by “Login with Password”. Your email stays the same.</p>\
+        <label>Account email</label>\
+        <div class="vx643-email">'+email.replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})+'</div>\
+        <label for="vx643CurrentPassword">Current password</label>\
+        <input id="vx643CurrentPassword" type="password" autocomplete="current-password" placeholder="Enter current password">\
+        <small class="vx643-password-help">Required to securely change your account password.</small>\
+        <label for="vx643NewPassword">New password</label>\
+        <input id="vx643NewPassword" type="password" autocomplete="new-password" placeholder="8–72 characters">\
+        <label for="vx643ConfirmPassword">Confirm password</label>\
+        <input id="vx643ConfirmPassword" type="password" autocomplete="new-password" placeholder="Repeat new password">\
+        <div class="vx643-error" id="vx643ModalError"></div>\
+        <div class="vx643-modal-actions">\
+          <button type="button" data-cancel>Cancel</button>\
+          <button type="button" class="primary" data-save>Update password</button>\
+        </div>\
+      </div>';
+    document.body.appendChild(overlay);
+    var close=function(){overlay.remove()};
+    overlay.querySelector('[data-cancel]').onclick=close;
+    overlay.addEventListener('click',function(e){if(e.target===overlay)close()});
+    var save=overlay.querySelector('[data-save]');
+    save.onclick=async function(){
+      var current=String(document.getElementById('vx643CurrentPassword')?.value||'');
+      var pass=String(document.getElementById('vx643NewPassword')?.value||'');
+      var confirm=String(document.getElementById('vx643ConfirmPassword')?.value||'');
+      var err=document.getElementById('vx643ModalError');
+      if(!current){err.textContent='Enter your current password.';document.getElementById('vx643CurrentPassword')?.focus();return}
+      if(pass.length<8||pass.length>72){err.textContent='Password must be 8–72 characters.';return}
+      if(pass!==confirm){err.textContent='Passwords do not match.';return}
+      err.textContent='';save.disabled=true;save.textContent='Updating…';
+      try{
+        var authenticatedFetch=typeof window.vyaparAuthFetch==='function'?window.vyaparAuthFetch:fetch;
+        var response=await authenticatedFetch(API_BASE+'/auth/password',{
+          method:'PUT',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()},
+          body:JSON.stringify({currentPassword:current,newPassword:pass,password:pass})
+        });
+        var data={};
+        try{data=await response.json()}catch(_){data={}}
+        if(!response.ok||data.success===false)throw new Error(data.message||'Unable to update password');
+        if(enableAfter===true)setEnabled(email,true);
+        close();
+        refreshSecurityCard();
+        refreshAuthPolicy();
+        notify('Account password updated.','success');
+      }catch(error){
+        err.textContent=error&&error.message?error.message:'Unable to update password';
+        save.disabled=false;save.textContent='Update password';
+      }
+    };
+    setTimeout(function(){document.getElementById('vx643CurrentPassword')?.focus()},30);
+  }
+
+  window.vx643ChangeAccountPassword=function(){modal(false)};
+  window.vx643TogglePasswordLogin=function(input){
+    var email=accountEmail();
+    if(!email||!token()){
+      if(input)input.checked=false;
+      notify('Sign in with Email OTP first.','error');
+      return;
+    }
+    if(input&&input.checked){
+      input.checked=false;
+      modal(true);
+      return;
+    }
+    setEnabled(email,false);
+    refreshSecurityCard();
+    refreshAuthPolicy();
+    notify('Password login disabled. Email OTP remains available.','success');
+  };
+
+  function securityMarkup(){
+    var email=accountEmail();
+    var on=enabledFor(email);
+    return '\
+      <div class="settings-section-heading vx622-lock-heading">\
+        <div class="vx643-security-copy">\
+          <span class="settings-kicker">SECURITY</span>\
+          <h2>Inside app lock</h2>\
+          <p class="muted">Control account password login for this app.</p>\
+        </div>\
+        <label class="vx622-switch" aria-label="Password login on or off">\
+          <input id="vx643PasswordLoginToggle" type="checkbox" '+(on?'checked':'')+' onchange="vx643TogglePasswordLogin(this)">\
+          <span></span>\
+        </label>\
+      </div>\
+      <div class="vx643-security-status">\
+        <span><b>Password login</b><small>'+(on?'Your saved account email can use the account password.':'Locked. Email OTP is the only login method until enabled.')+'</small></span>\
+        <i class="vx643-state '+(on?'on':'off')+'">'+(on?'Enabled':'Locked')+'</i>\
+      </div>\
+      <div class="vx643-security-actions">\
+        <button type="button" class="btn" onclick="vx643ChangeAccountPassword()">Change Password</button>\
+      </div>';
+  }
+
+  function refreshSecurityCard(){
+    var section=document.getElementById('vx622AppLockSection');
+    if(!section)return false;
+    if(section.dataset.vx643Security==='1'){
+      var email=accountEmail(),on=enabledFor(email),toggle=document.getElementById('vx643PasswordLoginToggle');
+      if(toggle)toggle.checked=on;
+      var state=section.querySelector('.vx643-state');if(state){state.textContent=on?'Enabled':'Locked';state.className='vx643-state '+(on?'on':'off')}
+      var small=section.querySelector('.vx643-security-status small');if(small)small.textContent=on?'Your saved account email can use the account password.':'Locked. Email OTP is the only login method until enabled.';
+      return true;
+    }
+    section.dataset.vx643Security='1';
+    section.innerHTML=securityMarkup();
+    return true;
+  }
+
+  function authCandidateEmail(gate){
+    var pass=gate.querySelector('#login-email');
+    var otp=gate.querySelector('#login-otp-email');
+    return String((pass&&pass.value)||(otp&&otp.value)||accountEmail()||'').trim().toLowerCase();
+  }
+  function refreshAuthPolicy(){
+    var gate=document.getElementById('vyaparOtpGate');
+    if(!gate)return false;
+    var passTab=gate.querySelector('#tab-login-pass');
+    var otpTab=gate.querySelector('#tab-login-otp');
+    if(!passTab||!otpTab)return false;
+    var email=authCandidateEmail(gate);
+    var on=enabledFor(email);
+    var tabs=passTab.closest('.auth-method-tabs');
+    if(on){
+      passTab.disabled=false;
+      passTab.removeAttribute('aria-disabled');
+      passTab.classList.remove('vx643-password-locked');
+      if(tabs)tabs.classList.remove('vx643-password-disabled');
+      if(passTab.textContent.indexOf('Login with Password')<0)passTab.textContent='Login with Password';
+    }else{
+      if(passTab.classList.contains('active')&&!otpTab.classList.contains('active')){
+        passTab.disabled=false;
+        try{otpTab.click()}catch(_){}
+      }
+      passTab.disabled=true;
+      passTab.setAttribute('aria-disabled','true');
+      passTab.classList.add('vx643-password-locked');
+      if(tabs)tabs.classList.add('vx643-password-disabled');
+      passTab.textContent='Login with Password';
+    }
+    if(!gate.dataset.vx643EmailBound){
+      gate.dataset.vx643EmailBound='1';
+      ['#login-email','#login-otp-email'].forEach(function(sel){
+        var input=gate.querySelector(sel);
+        if(!input)return;
+        input.addEventListener('input',function(){
+          var other=gate.querySelector(sel==='#login-email'?'#login-otp-email':'#login-email');
+          if(other&&other.value!==input.value)other.value=input.value;
+          refreshAuthPolicy();
+        });
+      });
+    }
+    return true;
+  }
+
+  var scheduled=false;
+  function schedule(){
+    if(scheduled)return;scheduled=true;
+    requestAnimationFrame(function(){scheduled=false;refreshSecurityCard();refreshAuthPolicy()});
+  }
+  new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('DOMContentLoaded',schedule,{once:true});
+  window.addEventListener('load',schedule,{once:true});
+  schedule();
+})();
+
+/* ===== SCRIPT SOURCE: plan-badge-menu-645.js ===== */
+
+/* Vyapar AI — verified account badge + explicit Pro/Business plan-card targeting. */
+(function(){
+'use strict';
+const ACCOUNT_KEY='vyapar_ai_account_cache_v1',STATE_KEY='vyapar_ai_prod_v1';
+const tickSvg='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m9.7 16.6-4.2-4.2 1.8-1.8 2.4 2.4 6.9-6.9 1.8 1.8z"/></svg>';
+function readJson(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(_){return{}}}
+function normalizePlan(v){const p=String(v||'').trim().toLowerCase();if(p.includes('business'))return'business';if(p.includes('pro'))return'pro';return''}
+function resolvedPlan(){const a=readJson(ACCOUNT_KEY),s=readJson(STATE_KEY),token=String(localStorage.getItem('vyapar_ai_auth_token_v1')||'').trim();const statePlan=(s?.subscription?.verified===true&&String(s?.subscription?.token||token).trim())?normalizePlan(s?.subscription?.plan):'';if(statePlan)return statePlan;const accountPlan=normalizePlan(a?.subscription?.plan),status=String(a?.subscription?.status||'').trim().toLowerCase();const inactive=/^(cancelled|canceled|expired|failed|none|inactive)$/.test(status);if(token&&accountPlan&&!inactive)return accountPlan;return''}
+function decorateAccount(){const card=document.getElementById('productionAccountCard');if(!card)return;const title=card.querySelector('.production-account-head h3');if(!title)return;const plan=resolvedPlan();card.querySelectorAll('.vy647-plan-mark').forEach(el=>el.remove());let badge=title.querySelector('.vy645-plan-tick');if(!plan){if(badge)badge.remove()}else{if(!badge){badge=document.createElement('span');badge.className='vy645-plan-tick';badge.innerHTML=tickSvg;title.appendChild(badge)}badge.className='vy645-plan-tick '+plan;badge.setAttribute('role','img');badge.setAttribute('aria-label',plan==='business'?'Business verified':'Pro verified');badge.title=plan==='business'?'Business verified':'Pro verified'}const avatar=card.querySelector('.production-avatar, .account-avatar, .profile-avatar, .avatar');if(avatar){const wanted=plan||'';if(avatar.dataset.plan!==wanted){avatar.classList.remove('vy648-plan-avatar','pro','business');avatar.removeAttribute('data-plan');if(plan){avatar.classList.add('vy648-plan-avatar',plan);avatar.setAttribute('data-plan',plan)}}}}
+function decoratePlanCards(){document.querySelectorAll('.subscription-plan-grid .subscription-plan-card').forEach(card=>{card.classList.remove('vy649-pro-card','vy649-business-card');const name=String(card.querySelector('h2')?.textContent||'').trim().toLowerCase();if(name==='pro')card.classList.add('vy649-pro-card');if(name==='business')card.classList.add('vy649-business-card')})}
+function setMenu(m,o){if(!m)return;m.classList.toggle('is-open',!!o);const t=m.querySelector(':scope > .vx622-menu-trigger');if(t)t.setAttribute('aria-expanded',o?'true':'false')}
+function closeAll(ex){document.querySelectorAll('.vx622-bulk-menu.is-open').forEach(m=>{if(m!==ex)setMenu(m,false)})}
+document.addEventListener('click',e=>{const t=e.target.closest('.vx622-menu-trigger');if(!t)return;const m=t.closest('.vx622-bulk-menu');if(!m)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const o=!m.classList.contains('is-open');closeAll(m);setMenu(m,o)},true);
+document.addEventListener('click',e=>{const i=e.target.closest('.vx622-menu-item');if(i){setTimeout(()=>setMenu(i.closest('.vx622-bulk-menu'),false),0);return}if(!e.target.closest('.vx622-bulk-menu'))closeAll(null)},false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll(null)},true);window.addEventListener('scroll',()=>closeAll(null),{passive:true});
+let q=false;function refresh(){if(q)return;q=true;requestAnimationFrame(()=>{q=false;decorateAccount();decoratePlanCards()})}
+new MutationObserver(refresh).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('storage',refresh);window.addEventListener('load',refresh,{once:true});setTimeout(refresh,120);setTimeout(refresh,500);setTimeout(refresh,1200);
+})();
+
+/* ===== SCRIPT SOURCE: shop-rewards.js ===== */
+
+/* Vyapar AI Android-only small-shop growth & reward system. */
+(function(){
+  'use strict';
+
+  const REWARD_STORE = 'vyapar_ai_shop_rewards_v1';
+
+  function safeState(){
+    try { return typeof state !== 'undefined' && state ? state : {}; }
+    catch(error){ return {}; }
+  }
+
+  function n(value){
+    try { return typeof num === 'function' ? num(value) : Number(value || 0) || 0; }
+    catch(error){ return Number(value || 0) || 0; }
+  }
+
+  function moneyText(value){
+    try { return typeof money === 'function' ? money(value) : '₹' + Math.round(n(value)).toLocaleString('en-IN'); }
+    catch(error){ return '₹' + Math.round(n(value)).toLocaleString('en-IN'); }
+  }
+
+  function dayKey(value){
+    const d = value instanceof Date ? value : new Date(value);
+    if(Number.isNaN(d.getTime())) return '';
+    return [d.getFullYear(), String(d.getMonth() + 1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
+  }
+
+  function monthKeyLocal(value){
+    const d = value instanceof Date ? value : new Date(value);
+    if(Number.isNaN(d.getTime())) return '';
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0');
+  }
+
+  function shiftDays(date, delta){
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    d.setDate(d.getDate() + delta);
+    return d;
+  }
+
+  function dayMetrics(dateString){
+    const s = safeState();
+    let itemSale = 0;
+    let itemProfit = 0;
+    let itemRecords = 0;
+    let dailySale = 0;
+    let dailyProfit = 0;
+    let dailyRecords = 0;
+
+    (Array.isArray(s.sales) ? s.sales : []).forEach(item => {
+      if(String(item && item.date || '').trim() !== dateString) return;
+      const qty = Math.max(0, n(item.qty));
+      const selling = Math.max(0, n(item.sellingPrice));
+      const purchase = Math.max(0, n(item.purchasePrice));
+      itemSale += selling * qty;
+      itemProfit += (selling - purchase) * qty;
+      itemRecords += 1;
+    });
+
+    (Array.isArray(s.daily) ? s.daily : []).forEach(item => {
+      if(String(item && item.date || '').trim() !== dateString) return;
+      dailySale += Math.max(0, n(item.sale));
+      dailyProfit += n(item.profit);
+      dailyRecords += 1;
+    });
+
+    const hasDaily = dailyRecords > 0;
+    return {
+      sale: hasDaily ? dailySale : itemSale,
+      profit: hasDaily ? dailyProfit : itemProfit,
+      records: hasDaily ? dailyRecords : itemRecords,
+      active: hasDaily || itemRecords > 0
+    };
+  }
+
+  function activityDates(){
+    const s = safeState();
+    const set = new Set();
+    (Array.isArray(s.sales) ? s.sales : []).forEach(item => {
+      const d = String(item && item.date || '').trim();
+      if(/^\d{4}-\d{2}-\d{2}$/.test(d)) set.add(d);
+    });
+    (Array.isArray(s.daily) ? s.daily : []).forEach(item => {
+      const d = String(item && item.date || '').trim();
+      if(/^\d{4}-\d{2}-\d{2}$/.test(d)) set.add(d);
+    });
+    return set;
+  }
+
+  function currentStreak(){
+    const dates = activityDates();
+    if(!dates.size) return 0;
+    const today = new Date();
+    let cursor = today;
+    if(!dates.has(dayKey(cursor)) && dates.has(dayKey(shiftDays(cursor,-1)))) cursor = shiftDays(cursor,-1);
+    let count = 0;
+    while(count < 366 && dates.has(dayKey(cursor))){
+      count += 1;
+      cursor = shiftDays(cursor,-1);
+    }
+    return count;
+  }
+
+  function monthMetrics(month){
+    const s = safeState();
+    const dates = new Set();
+    (Array.isArray(s.sales) ? s.sales : []).forEach(item => {
+      const d = String(item && item.date || '').trim();
+      if(d.startsWith(month + '-')) dates.add(d);
+    });
+    (Array.isArray(s.daily) ? s.daily : []).forEach(item => {
+      const d = String(item && item.date || '').trim();
+      if(d.startsWith(month + '-')) dates.add(d);
+    });
+    let sale = 0;
+    let profit = 0;
+    let records = 0;
+    dates.forEach(d => {
+      const m = dayMetrics(d);
+      sale += m.sale;
+      profit += m.profit;
+      records += m.records;
+    });
+    return { sale, profit, records, activeDays: dates.size };
+  }
+
+  function stockHealth(){
+    const s = safeState();
+    const list = Array.isArray(s.stocks) ? s.stocks : [];
+    if(!list.length) return { score: 8, low: 0, total: 0, message: 'Stock records add karne par score aur accurate hoga.' };
+    let low = 0;
+    list.forEach(item => {
+      const qty = Math.max(0, n(item.qty !== undefined ? item.qty : item.availableQty));
+      const min = Math.max(0, n(item.lowStock !== undefined ? item.lowStock : item.minAlertQty));
+      if(min > 0 && qty <= min) low += 1;
+    });
+    const ratio = low / list.length;
+    const score = Math.max(0, Math.round(25 * (1 - ratio)));
+    return {
+      score,
+      low,
+      total: list.length,
+      message: low ? low + ' low-stock item' + (low === 1 ? '' : 's') + ' ko update/restock karein.' : 'Stock position healthy dikh rahi hai.'
+    };
+  }
+
+  function healthScore(streak, today, month){
+    const s = safeState();
+    const stock = stockHealth();
+    const consistency = Math.min(30, Math.round((Math.min(streak, 7) / 7) * 30));
+    const totalSale = month.sale;
+    const margin = totalSale > 0 ? (month.profit / totalSale) * 100 : 0;
+    const marginScore = totalSale <= 0 ? 5 : Math.max(0, Math.min(25, Math.round((Math.max(0, margin) / 25) * 25)));
+    const tracking = Math.min(20, Math.round((Math.min(month.activeDays, 8) / 8) * 20));
+    const score = Math.max(0, Math.min(100, consistency + marginScore + tracking + stock.score));
+    let next = 'Aaj ki sale ya daily entry save karke tracking start karein.';
+    if(streak < 7 && today.active) next = '7-day Hisaab Streak ke liye daily records continue rakhein.';
+    else if(stock.low > 0) next = stock.message;
+    else if(totalSale > 0 && margin < 20) next = 'Purchase price aur selling margin review karein.';
+    else if(month.activeDays < 8) next = 'Regular entries se Business Health aur reliable hoga.';
+    else next = 'Records healthy hain — stock rotation aur repeat customers par focus karein.';
+    return { score, margin, stock, next };
+  }
+
+  function growthData(){
+    const now = new Date();
+    const todayKey = dayKey(now);
+    const yesterdayKey = dayKey(shiftDays(now,-1));
+    const month = monthKeyLocal(now);
+    const today = dayMetrics(todayKey);
+    const yesterday = dayMetrics(yesterdayKey);
+    const monthData = monthMetrics(month);
+    const streak = currentStreak();
+    const s = safeState();
+    const yearGoal = Math.max(1, n(s.profile && s.profile.yearlyGoal) || 600000);
+    const monthlyPaceGoal = yearGoal / 12;
+    const monthlyProgress = Math.max(0, Math.min(100, monthlyPaceGoal ? monthData.sale / monthlyPaceGoal * 100 : 0));
+    const health = healthScore(streak, today, monthData);
+    let totalsData = { saleTotal: 0, profit: 0, margin: 0, year: String(now.getFullYear()) };
+    try { if(typeof totals === 'function') totalsData = totals(); } catch(error){}
+    const salesRecords = (Array.isArray(s.sales) ? s.sales.length : 0) + (Array.isArray(s.daily) ? s.daily.length : 0);
+    const milestones = [
+      { id:'sale10k', label:'₹10K Sales', detail:'Recorded yearly sales', done:n(totalsData.saleTotal) >= 10000 },
+      { id:'sale50k', label:'₹50K Sales', detail:'Recorded yearly sales', done:n(totalsData.saleTotal) >= 50000 },
+      { id:'sale1l', label:'₹1 Lakh Sales', detail:'Recorded yearly sales', done:n(totalsData.saleTotal) >= 100000 },
+      { id:'records50', label:'50 Records', detail:'Sales / daily records', done:salesRecords >= 50 },
+      { id:'records100', label:'100 Records', detail:'Consistent shop tracking', done:salesRecords >= 100 },
+      { id:'streak7', label:'7-Day Hisaab Streak', detail:'Consecutive record days', done:streak >= 7 },
+      { id:'streak30', label:'30-Day Hisaab Streak', detail:'Long-term consistency', done:streak >= 30 }
+    ];
+    const unlocked = milestones.filter(m => m.done).length;
+    const levels = ['Shuruaat','Growing Shop','Strong Business','Established'];
+    const levelIndex = unlocked >= 6 ? 3 : unlocked >= 4 ? 2 : unlocked >= 2 ? 1 : 0;
+    const change = today.sale - yesterday.sale;
+    let appreciation = 'Aaj ka hisaab record karte hi yahan aapki real progress dikhegi.';
+    if(today.sale > 0 && yesterday.sale > 0 && change > 0) appreciation = 'Aaj ki recorded sale kal se ' + moneyText(change) + ' zyada hai.';
+    else if(today.sale > 0 && yesterday.sale > 0 && change < 0) appreciation = 'Aaj ki sale kal se ' + moneyText(Math.abs(change)) + ' kam hai — daily trend track ho raha hai.';
+    else if(today.sale > 0) appreciation = 'Aaj ' + moneyText(today.sale) + ' ki sale record hui hai. Hisaab updated hai.';
+    else if(streak > 0) appreciation = streak + '-day Hisaab Streak active hai. Aaj ki entry se ise continue rakhein.';
+    return { now, today, yesterday, monthData, streak, monthlyPaceGoal, monthlyProgress, health, totalsData, salesRecords, milestones, unlocked, level:levels[levelIndex], appreciation, change };
+  }
+
+  function summaryMarkup(d){
+    const direction = d.change > 0 ? '↑ ' + moneyText(d.change) : d.change < 0 ? '↓ ' + moneyText(Math.abs(d.change)) : 'No change yet';
+    const progress = Math.round(d.monthlyProgress);
+    const unlockedText = d.unlocked + '/' + d.milestones.length;
+    return `
+      <section class="card shop-growth-card" id="shopGrowthSummary" aria-labelledby="shopGrowthTitle">
+        <div class="shop-growth-head">
+          <div>
+            <span class="home-section-kicker">YOUR SHOP PROGRESS</span>
+            <h3 id="shopGrowthTitle">Aaj ki Jeet</h3>
+            <p>${d.appreciation}</p>
+          </div>
+          <div class="shop-streak" aria-label="${d.streak} day Hisaab streak"><span>🔥</span><b>${d.streak}</b><small>day streak</small></div>
+        </div>
+        <div class="shop-reward-grid">
+          <div class="shop-reward-stat"><span>Sales today</span><b>${moneyText(d.today.sale)}</b><small>${d.yesterday.sale > 0 ? direction + ' vs yesterday' : 'Real saved sales only'}</small></div>
+          <div class="shop-reward-stat"><span>Health score</span><b>${d.health.score}<em>/100</em></b><small>${d.health.next}</small></div>
+          <div class="shop-reward-stat wide"><span>Monthly pace goal</span><b>${moneyText(d.monthData.sale)} <em>/ ${moneyText(d.monthlyPaceGoal)}</em></b><div class="shop-mini-track"><i style="width:${progress}%"></i></div><small>${progress}% of monthly pace derived from yearly goal</small></div>
+        </div>
+        <div class="shop-growth-foot">
+          <div><b>${d.level}</b><small>Shop level · real activity based</small></div>
+          <div><b>${unlockedText}</b><small>Milestones unlocked</small></div>
+          <button type="button" class="btn primary shop-progress-btn" id="openShopProgress">View Progress</button>
+        </div>
+      </section>`;
+  }
+
+  function milestoneMarkup(m){
+    return `<div class="shop-milestone ${m.done ? 'done' : ''}"><span class="shop-milestone-icon">${m.done ? '✓' : '○'}</span><div><b>${m.label}</b><small>${m.detail}</small></div></div>`;
+  }
+
+  function openProgress(){
+    const old = document.getElementById('shopProgressSheet');
+    if(old) old.remove();
+    const d = growthData();
+    const nextLocked = d.milestones.find(m => !m.done);
+    const sheet = document.createElement('div');
+    sheet.id = 'shopProgressSheet';
+    sheet.className = 'shop-progress-overlay';
+    sheet.innerHTML = `
+      <div class="shop-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="shopProgressHeading">
+        <div class="shop-sheet-handle"></div>
+        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Rewards sirf aapke saved business records se bante hain.</p></div><button type="button" class="shop-sheet-close" id="closeShopProgress" aria-label="Close">×</button></div>
+        <div class="shop-sheet-score"><div class="shop-score-ring" style="--score:${d.health.score}"><span><b>${d.health.score}</b><small>/100</small></span></div><div><h3>Business Health</h3><p>${d.health.next}</p><small>Consistency + margin + stock + record completeness</small></div></div>
+        <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Milestones</h3><span>${d.unlocked}/${d.milestones.length} unlocked</span></div><div class="shop-milestone-list">${d.milestones.map(milestoneMarkup).join('')}</div></div>
+        <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Next target</h3></div><div class="shop-next-target"><b>${nextLocked ? nextLocked.label : 'All current milestones complete 🎉'}</b><p>${nextLocked ? nextLocked.detail : 'Naye milestones future growth ke saath add ho sakte hain.'}</p></div></div>
+        <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>This month</h3></div><div class="shop-month-grid"><div><span>Sales</span><b>${moneyText(d.monthData.sale)}</b></div><div><span>Profit</span><b>${moneyText(d.monthData.profit)}</b></div><div><span>Active days</span><b>${d.monthData.activeDays}</b></div><div><span>Records</span><b>${d.monthData.records}</b></div></div></div>
+        <div class="shop-sheet-note"><b>No fake coins or paid XP.</b><span>Level aur milestones subscription se nahi, real shop activity se badhte hain.</span></div>
+      </div>`;
+    document.body.appendChild(sheet);
+    document.body.classList.add('shop-progress-open');
+    const close = () => { sheet.remove(); document.body.classList.remove('shop-progress-open'); };
+    sheet.querySelector('#closeShopProgress').addEventListener('click', close);
+    sheet.addEventListener('click', event => { if(event.target === sheet) close(); });
+  }
+
+  function persistMilestoneState(d){
+    try {
+      const prev = JSON.parse(localStorage.getItem(REWARD_STORE) || '{}');
+      const doneIds = d.milestones.filter(m => m.done).map(m => m.id);
+      const previousIds = Array.isArray(prev.doneIds) ? prev.doneIds : [];
+      const newlyUnlocked = doneIds.filter(id => !previousIds.includes(id));
+      localStorage.setItem(REWARD_STORE, JSON.stringify({ doneIds, updatedAt: Date.now() }));
+      if(previousIds.length && newlyUnlocked.length && typeof showGlassToast === 'function'){
+        const item = d.milestones.find(m => m.id === newlyUnlocked[0]);
+        if(item) showGlassToast('Milestone unlocked: ' + item.label, 'success', 3200);
+      }
+    } catch(error){}
+  }
+
+  function enhanceHome(){
+    const screen = document.getElementById('screen-home');
+    if(!screen || screen.querySelector('#shopGrowthSummary')) return;
+    const overview = screen.querySelector('.home-overview');
+    if(!overview) return;
+    const d = growthData();
+    overview.insertAdjacentHTML('afterend', summaryMarkup(d));
+    const button = screen.querySelector('#openShopProgress');
+    if(button) button.addEventListener('click', openProgress);
+    persistMilestoneState(d);
+  }
+
+  function boot(){
+    enhanceHome();
+    const screen = document.getElementById('screen-home');
+    if(!screen) return;
+    const observer = new MutationObserver(function(){
+      if(!screen.querySelector('#shopGrowthSummary')) enhanceHome();
+    });
+    observer.observe(screen, { childList:true, subtree:false });
+    window.openShopProgress = openProgress;
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once:true });
+  else boot();
+})();
+
+/* ===== SCRIPT SOURCE: audit-fixes-658.js ===== */
+
+/* Vyapar AI 6.5.8 — audit stability and financial clarity patch. */
+(function(){
+  'use strict';
+  const V='6.5.9';
+
+  function currentYear(){ return String(new Date().getFullYear()); }
+  function n(v){ const x=Number(v||0); return Number.isFinite(x)?x:0; }
+  function moneySafe(v){ return typeof window.money==='function' ? window.money(v) : '₹'+n(v).toLocaleString('en-IN'); }
+  function pctSafe(v){ return typeof window.pct==='function' ? window.pct(v) : n(v).toFixed(1)+'%'; }
+
+  function transactionProfitForYear(year){
+    try{
+      const prefix=String(year)+'-';
+      const detailed=typeof window.detailedBusinessData==='function' ? window.detailedBusinessData() : null;
+      if(detailed && detailed.profitByMonth){
+        return Object.entries(detailed.profitByMonth)
+          .filter(([month])=>String(month).startsWith(prefix))
+          .reduce((sum,[,value])=>sum+n(value),0);
+      }
+    }catch(_){}
+    return 0;
+  }
+  window.vy658TransactionProfitForYear=transactionProfitForYear;
+
+  // Keep manually recorded yearly profit separate from transaction-derived margin.
+  if(typeof window.totals==='function'){
+    window.totals=function(){
+      const year=typeof window.currentYearValue==='function' ? window.currentYearValue() : currentYear();
+      const profit=typeof window.yearlyProfitForYear==='function' ? window.yearlyProfitForYear(year) : 0;
+      const saleTotal=typeof window.yearlySalesForYear==='function' ? window.yearlySalesForYear(year) : 0;
+      const transactionProfit=transactionProfitForYear(year);
+      return {year,saleTotal,profit,transactionProfit,qty:0,margin:saleTotal?transactionProfit/saleTotal*100:0};
+    };
+  }
+
+  function enhanceHome(){
+    const screen=document.getElementById('screen-home'); if(!screen) return;
+    const stats=[...screen.querySelectorAll('.home-metrics .stat')];
+    const margin=stats.find(card=>/margin/i.test(card.textContent||''));
+    if(margin){
+      const small=margin.querySelector('small');
+      if(small) small.textContent='Recorded transaction profit vs sales';
+    }
+  }
+
+  function enhanceAnalytics(){
+    const screen=document.getElementById('screen-analytics'); if(!screen) return;
+    const year=typeof window.currentYearValue==='function'?window.currentYearValue():currentYear();
+    const declared=typeof window.yearlyProfitForYear==='function'?window.yearlyProfitForYear(year):0;
+    const revenue=typeof window.yearlySalesForYear==='function'?window.yearlySalesForYear(year):0;
+    const recordedProfit=transactionProfitForYear(year);
+    let trackedExpenses=0;
+    try{
+      const b=typeof window.analyticsExpenseBreakdown==='function'?window.analyticsExpenseBreakdown(year):{};
+      trackedExpenses=Object.values(b||{}).reduce((s,v)=>s+n(v),0);
+    }catch(_){}
+
+    const finance=screen.querySelector('.insight-finance-card');
+    if(finance){
+      const h=finance.querySelector('h2'); if(h) h.textContent='Transaction Snapshot';
+      const nums=finance.querySelector('.insight-finance-numbers');
+      if(nums) nums.innerHTML=
+        '<div><strong>'+moneySafe(revenue)+'</strong><span>Recorded revenue</span></div>'+ 
+        '<div><strong>'+moneySafe(recordedProfit)+'</strong><span>Recorded transaction profit</span></div>'+ 
+        '<div><strong>'+moneySafe(trackedExpenses)+'</strong><span>Tracked expenses</span></div>';
+      let note=finance.querySelector('.vy658-finance-note');
+      if(!note){ note=document.createElement('p'); note.className='muted vy658-finance-note'; finance.appendChild(note); }
+      note.textContent='Manual / historical yearly profit ('+moneySafe(declared)+') is kept separate so transaction revenue is never mixed with declared profit.';
+      const mini=finance.querySelector('.insight-mini-goal'); if(mini) mini.style.display='none';
+      const oldGoal=[...finance.querySelectorAll('small.muted')].find(x=>/yearly profit goal/i.test(x.textContent||'')); if(oldGoal) oldGoal.style.display='none';
+    }
+    const pnl=screen.querySelector('.insight-pnl-card');
+    if(pnl){
+      const h=pnl.querySelector('h2'); if(h) h.textContent='Recorded Revenue & Costs';
+      const kicker=pnl.querySelector('.home-section-kicker'); if(kicker) kicker.textContent='TRANSACTION DATA';
+    }
+  }
+
+  // Render wrappers are intentionally additive: no feature or core module is removed.
+  if(typeof window.renderHome==='function'){
+    const old=window.renderHome;
+    window.renderHome=function(){ const r=old.apply(this,arguments); enhanceHome(); return r; };
+  }
+  if(typeof window.renderAnalytics==='function'){
+    const old=window.renderAnalytics;
+    window.renderAnalytics=function(){ const r=old.apply(this,arguments); enhanceAnalytics(); return r; };
+  }
+
+  // Disable the heavy full-screen transition overlay. Screens are already rendered locally.
+  window.showTabLoader=function(){
+    const l=document.getElementById('tabLoader'); if(l) l.classList.remove('show');
+  };
+
+  // Update check persists metadata without calling the global save() render cycle.
+  window.fs607CheckUpdate=async function(manual){
+    try{
+      let currentCode=65900,currentName=V;
+      if(window.AndroidApp){
+        try{ if(typeof AndroidApp.getVersionCode==='function') currentCode=Number(AndroidApp.getVersionCode())||currentCode; }catch(_){}
+        try{ if(typeof AndroidApp.getVersionName==='function') currentName=String(AndroidApp.getVersionName()||currentName); }catch(_){}
+      }
+      const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
+      const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});
+      const data=await res.json();
+      if(!res.ok||!data.success) throw new Error(data.message||'Update check failed');
+      if(typeof state!=='undefined' && state){
+        state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};
+        try{
+          const key=(typeof window.STORAGE_KEY==='string'&&window.STORAGE_KEY)||'vyapar_ai_prod_v1';
+          localStorage.setItem(key,JSON.stringify(state));
+        }catch(_){}
+      }
+      if(Number(data.versionCode)>currentCode){
+        const force=currentCode<Number(data.minimumSupportedVersionCode||0);
+        const msg='Vyapar AI '+data.versionName+' available'+(force?' (required)':'')+'.';
+        if(data.apkUrl){
+          const ok=confirm(msg+'\n\nOpen the update download?');
+          if(ok){
+            if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function') AndroidApp.openExternalUrl(data.apkUrl);
+            else window.open(data.apkUrl,'_blank','noopener');
+          }
+        }else if(manual && typeof window.showGlassToast==='function') showGlassToast(msg+' Download link is not available yet.');
+      }else if(manual){
+        if(typeof window.showGlassToast==='function') showGlassToast('App is up to date: '+currentName);
+        else alert('App is up to date: '+currentName);
+      }
+      return data;
+    }catch(e){
+      if(manual){
+        if(typeof window.showGlassToast==='function') showGlassToast('Update check failed. Please try again.');
+        else alert('Update check failed. Please try again.');
+      }
+      return null;
+    }
+  };
+
+  function enhanceSettings(){
+    const screen=document.getElementById('screen-settings'); if(!screen) return;
+    [...screen.querySelectorAll('.card')].forEach(card=>{
+      const h=card.querySelector('h2');
+      if(h && /app update/i.test(h.textContent||'')){
+        const p=card.querySelector('p.muted');
+        if(p) p.textContent='Check whether a newer Vyapar AI version is available.';
+      }
+    });
+  }
+
+  function enhanceSales(){
+    const screen=document.getElementById('screen-sales'); if(!screen) return;
+    // Gold is reserved for premium status; normal save actions use primary blue.
+    [...screen.querySelectorAll('button.gold')].forEach(b=>{ b.classList.remove('gold'); b.classList.add('primary'); });
+    // Stage 2 owns the canonical Year filter. Remove the legacy injector so
+    // MutationObserver rerenders cannot create a second Year selector beside it.
+    const card=document.getElementById('monthly-profit-records');
+    if(card) card.querySelectorAll('.vy658-year-filter').forEach(node=>node.remove());
+  }
+
+  function enhanceStock(){
+    const screen=document.getElementById('screen-stock'); if(!screen) return;
+    const empty=[...screen.querySelectorAll('p.muted')].find(p=>(p.textContent||'').trim()==='No stock data yet.');
+    if(empty){
+      empty.className='vy658-empty-state';
+      empty.innerHTML='<b>No stock added yet</b><span>Add your first item to start quantity and low-stock tracking.</span><button type="button" class="btn primary">+ Add Stock Item</button>';
+      empty.querySelector('button').addEventListener('click',()=>{ const i=document.getElementById('stockItem'); if(i){i.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>i.focus(),250);} });
+    }
+  }
+
+  function enhanceBulkLabels(root=document){
+    [...root.querySelectorAll('button')].forEach(b=>{
+      const t=(b.textContent||'').trim();
+      const oc=b.getAttribute('onclick')||'';
+      if(t==='Clear Selected') b.textContent='Deselect All';
+      else if(t==='Clear' && /SelectAll|selectAll|SelectAllRecent|LegacySelectAll|StockSelectAll|DataSelectAll|PlatformTxSelectAll|GenericSelectAll/.test(oc)) b.textContent='Deselect All';
+    });
+  }
+
+  function enhanceFooter(root=document){
+    root.querySelectorAll('#appLegalFooter,.android-sheet-legal').forEach(footer=>{
+      if(!footer.querySelector('.vy658-footer-logo')){
+        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
+      }
+      [...footer.querySelectorAll('a')].forEach(a=>{ if(/delete account/i.test(a.textContent||'')) a.remove(); });
+    });
+  }
+
+  function polish(){ enhanceHome(); enhanceAnalytics(); enhanceSettings(); enhanceSales(); enhanceStock(); enhanceBulkLabels(); enhanceFooter(); }
+  const observer=new MutationObserver(()=>{ clearTimeout(window.__vy658PolishTimer); window.__vy658PolishTimer=setTimeout(polish,30); });
+  observer.observe(document.documentElement,{subtree:true,childList:true});
+  window.addEventListener('load',()=>setTimeout(polish,0),{once:true});
+  setTimeout(()=>{
+    // Re-render the two finance surfaces once so corrected totals are visible immediately.
+    try{ if(typeof window.renderHome==='function') window.renderHome(); }catch(_){}
+    try{ if(typeof window.renderAnalytics==='function') window.renderAnalytics(); }catch(_){}
+    polish();
+  },0);
+})();
+
+/* ===== SCRIPT SOURCE: sales-theme-660.js ===== */
+
+/* Vyapar AI 6.6.0 — consistent blue surfaces + corrected live Sales profit overview. */
+(function(){
+  'use strict';
+  const VERSION='6.7.0.2026';
+  const VERSION_CODE=6702026;
+  const n=(v)=>{const x=Number(v||0);return Number.isFinite(x)?x:0;};
+  const cash=(v)=>typeof window.money==='function'?window.money(v):'₹'+n(v).toLocaleString('en-IN');
+  const pad=(v)=>String(v).padStart(2,'0');
+  const nowParts=()=>{const d=new Date();return {year:String(d.getFullYear()),month:String(d.getFullYear())+'-'+pad(d.getMonth()+1),day:String(d.getFullYear())+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};};
+  function s(){try{return typeof state!=='undefined'&&state?state:{};}catch(_){return {};}}
+  function saleProfit(row){return (n(row.sellingPrice)-n(row.purchasePrice))*Math.max(0,n(row.qty));}
+  function itemProfitForPrefix(prefix){return (s().sales||[]).reduce((sum,row)=>String(row.date||'').startsWith(prefix)?sum+saleProfit(row):sum,0);}
+  function dailyProfitForPrefix(prefix){return (s().daily||[]).reduce((sum,row)=>String(row.date||'').startsWith(prefix)?sum+n(row.profit):sum,0);}
+  function monthlyManualForMonth(month){return (s().monthly||[]).reduce((sum,row)=>String(row.month||'').slice(0,7)===month?sum+n(row.profit):sum,0);}
+  function yearlyBreakdown(year){
+    const y=String(year||'');
+    const item=itemProfitForPrefix(y+'-');
+    const daily=dailyProfitForPrefix(y+'-');
+    const manual=(s().monthly||[]).reduce((sum,row)=>String(row.month||'').startsWith(y+'-')?sum+n(row.profit):sum,0);
+    return {year:y,item,daily,manual,total:item+daily+manual};
+  }
+  function monthlySeries(){
+    const map={};
+    const add=(m,v)=>{if(/^\d{4}-(0[1-9]|1[0-2])$/.test(m))map[m]=(map[m]||0)+n(v);};
+    (s().sales||[]).forEach(r=>{const d=String(r.date||'');if(/^\d{4}-\d{2}-\d{2}$/.test(d))add(d.slice(0,7),saleProfit(r));});
+    (s().daily||[]).forEach(r=>{const d=String(r.date||'');if(/^\d{4}-\d{2}-\d{2}$/.test(d))add(d.slice(0,7),n(r.profit));});
+    (s().monthly||[]).forEach(r=>add(String(r.month||'').slice(0,7),n(r.profit)));
+    return Object.entries(map).sort(([a],[b])=>a.localeCompare(b));
+  }
+  window.vy660YearlyProfitBreakdown=yearlyBreakdown;
+  window.resolvedMonthlyProfitSeries=monthlySeries;
+  window.yearlyProfitForYear=(year)=>yearlyBreakdown(year).total;
+  window.monthlyStatsForYear=(year)=>{const vals=monthlySeries().filter(([m])=>m.startsWith(String(year)+'-')).map(([,v])=>n(v));const total=vals.reduce((a,b)=>a+b,0);return {count:vals.length,avg:vals.length?total/vals.length:0,high:vals.length?Math.max(...vals):0,low:vals.length?Math.min(...vals):0,total};};
+
+  function footerMarkup(){return '<img class="vy660-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI"><span>© 2026 Vyapar AI. All Rights Reserved.</span><span class="app-legal-links"><a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a><a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a><a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a><a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a></span><strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';}
+  function placeFooter(){
+    document.querySelectorAll('.android-sheet-legal').forEach(x=>x.remove());
+    const settings=document.getElementById('screen-settings');
+    if(settings?.classList.contains('vy675-settings-ready')){
+      document.querySelectorAll('#appLegalFooter').forEach(x=>x.remove());
+      return;
+    }
+    document.querySelectorAll('#appLegalFooter').forEach((x,i)=>{if(i)x.remove();});
+    let f=document.getElementById('appLegalFooter');
+    if(!f){f=document.createElement('footer');f.id='appLegalFooter';f.className='app-legal-footer vy660-settings-footer';}
+    const markup=footerMarkup();
+    f.className='app-legal-footer vy660-settings-footer';
+    if(f.innerHTML!==markup)f.innerHTML=markup;
+    const stack=document.querySelector('#screen-settings .settings-stack')||settings;
+    if(stack){if(f.parentNode!==stack)stack.appendChild(f);if(f.style.display)f.style.display='';}
+    else if(f.style.display!=='none')f.style.display='none';
+  }
+
+  function enhanceSales(){
+    const screen=document.getElementById('screen-sales');if(!screen)return;
+    document.getElementById('vy659CombinedProfitCard')?.remove();
+    const p=nowParts();const yearly=yearlyBreakdown(p.year);
+    const monthManual=monthlyManualForMonth(p.month);
+    const monthDaily=dailyProfitForPrefix(p.month+'-');
+    const monthItem=itemProfitForPrefix(p.month+'-');
+    const monthLive=monthManual+monthDaily+monthItem;
+    const todayDaily=dailyProfitForPrefix(p.day);
+    let card=document.getElementById('vy660ProfitCard');
+    if(!card){card=document.createElement('div');card.id='vy660ProfitCard';card.className='card vy660-profit-card';screen.prepend(card);}
+    const cardMarkup='<div class="vy660-profit-head"><div><span class="home-section-kicker">PROFIT OVERVIEW</span><h2>Yearly Profit · '+p.year+'</h2><strong>'+cash(yearly.total)+'</strong></div></div>'+ 
+      '<div class="vy660-live-grid">'+
+        '<div class="vy660-live-box"><span>This month · live</span><b>'+cash(monthLive)+'</b><small>Monthly manual '+cash(monthManual)+' + daily '+cash(monthDaily)+' + item-sale '+cash(monthItem)+'</small></div>'+ 
+        '<div class="vy660-live-box"><span>Today\'s Daily Profit</span><b>'+cash(todayDaily)+'</b><small>Today only · Daily Quick Entry</small></div>'+ 
+      '</div><p class="muted vy660-note">The old yearly manual total is no longer shown as “Monthly Profit”. Monthly live value uses only the current month; Daily Profit shows only today.</p>';
+    if(card.innerHTML!==cardMarkup)card.innerHTML=cardMarkup;
+    const dailyCard=[...screen.querySelectorAll('.card')].find(c=>/Daily Quick Entry/i.test(c.querySelector('h2')?.textContent||''));
+    if(dailyCard){
+      dailyCard.querySelectorAll('.vy659-included-note').forEach(x=>x.remove());
+      let note=dailyCard.querySelector('.vy660-daily-note');
+      if(!note){note=document.createElement('div');note.className='vy660-daily-note';dailyCard.querySelector('h2')?.insertAdjacentElement('afterend',note);}
+      const noteMarkup='<b>Today\'s Daily Profit: '+cash(todayDaily)+'</b><span>Only entries dated '+p.day+' are counted here.</span>';
+      if(note.innerHTML!==noteMarkup)note.innerHTML=noteMarkup;
+    }
+    const monthlyCard=document.getElementById('monthly-profit-entry');
+    if(monthlyCard){
+      monthlyCard.querySelectorAll('.vy659-included-note').forEach(x=>x.remove());
+      let note=monthlyCard.querySelector('.vy660-month-note');
+      if(!note){note=document.createElement('small');note.className='muted vy660-month-note';monthlyCard.appendChild(note);}
+      const noteText='Monthly manual is counted only for its selected month. Current-month manual: '+cash(monthManual)+'.';
+      if(note.textContent!==noteText)note.textContent=noteText;
+    }
+  }
+
+  function closeUpdatePrompt(){
+    const popup=document.getElementById('vy670UpdatePrompt');
+    if(popup)popup.remove();
+    document.body.classList.remove('subscription-dialog-open');
+  }
+  function openUpdateUrl(url){
+    if(!url)return;
+    if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function')AndroidApp.openExternalUrl(url);
+    else window.open(url,'_blank','noopener');
+  }
+  function showUpdatePrompt(data,force){
+    const current=document.getElementById('vy670UpdatePrompt');
+    if(current){current.querySelector('[data-update-now]')?.focus();return current;}
+    const popup=document.createElement('div');
+    popup.id='vy670UpdatePrompt';
+    popup.className='subscription-overlay subscription-cancel-overlay';
+    popup.innerHTML='<section class="subscription-dialog subscription-result-card" role="dialog" aria-modal="true" aria-labelledby="vy670UpdateTitle">'+
+      '<div class="subscription-result-icon success" aria-hidden="true">↑</div>'+
+      '<h2 id="vy670UpdateTitle"></h2><p data-update-message></p>'+
+      '<button class="subscription-dialog-primary" data-update-now type="button">Update now</button>'+
+      (force?'':'<button class="subscription-dialog-secondary" data-update-later type="button">Not now</button>')+
+      '</section>';
+    popup.querySelector('#vy670UpdateTitle').textContent=force?'Update required':'Vyapar AI update available';
+    popup.querySelector('[data-update-message]').textContent='Version '+String(data.versionName||'new')+' is available.'+(force?' This version is required to continue safely.':'');
+    popup.querySelector('[data-update-now]').onclick=()=>{closeUpdatePrompt();openUpdateUrl(data.apkUrl);};
+    const later=popup.querySelector('[data-update-later]');if(later)later.onclick=closeUpdatePrompt;
+    popup.addEventListener('click',event=>{if(event.target===popup&&!force)closeUpdatePrompt();});
+    document.body.appendChild(popup);
+    document.body.classList.add('subscription-dialog-open');
+    setTimeout(()=>popup.querySelector('[data-update-now]')?.focus(),0);
+    return popup;
+  }
+
+  window.fs607CheckUpdate=async function(manual){
+    if(manual)window.__vy670ManualUpdateRequested=true;
+    if(window.__vy670UpdateCheckPromise)return window.__vy670UpdateCheckPromise;
+    window.__vy670UpdateCheckPromise=(async()=>{
+      try{
+        let currentCode=VERSION_CODE,currentName=VERSION;
+        if(window.AndroidApp){try{if(typeof AndroidApp.getVersionCode==='function')currentCode=Number(AndroidApp.getVersionCode())||currentCode;}catch(_){}try{if(typeof AndroidApp.getVersionName==='function')currentName=String(AndroidApp.getVersionName()||currentName);}catch(_){}}
+        const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
+        const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});const data=await res.json();if(!res.ok||!data.success)throw new Error(data.message||'Update check failed');
+        try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state));}}catch(_){}
+        const requested=()=>Boolean(window.__vy670ManualUpdateRequested);
+        if(Number(data.versionCode)>currentCode){
+          const force=currentCode<Number(data.minimumSupportedVersionCode||0);
+          const msg='Vyapar AI '+data.versionName+' available'+(force?' (required)':'')+'.';
+          if(data.apkUrl){
+            // Automatic checks stay silent unless the backend marks the update required.
+            // Manual checks and required updates use ONE Vyapar AI modal; no JS confirm dialog.
+            if(requested()||force)showUpdatePrompt(data,force);
+          }else if(requested()&&typeof window.showGlassToast==='function')showGlassToast(msg+' Download link is not available yet.');
+          else if(requested())alert(msg+' Download link is not available yet.');
+        }else if(requested()){
+          if(typeof window.showGlassToast==='function')showGlassToast('App is up to date: '+currentName);
+          else alert('App is up to date: '+currentName);
+        }
+        return data;
+      }catch(e){
+        if(window.__vy670ManualUpdateRequested){if(typeof window.showGlassToast==='function')showGlassToast('Update check failed. Please try again.');else alert('Update check failed. Please try again.');}
+        return null;
+      }
+    })();
+    try{return await window.__vy670UpdateCheckPromise;}
+    finally{window.__vy670UpdateCheckPromise=null;window.__vy670ManualUpdateRequested=false;}
+  };
+
+  if(typeof window.renderSales==='function'){const old=window.renderSales;window.renderSales=function(){const r=old.apply(this,arguments);enhanceSales();placeFooter();return r;};}
+  if(typeof window.renderSettings==='function'){const old=window.renderSettings;window.renderSettings=function(){const r=old.apply(this,arguments);setTimeout(placeFooter,0);return r;};}
+  const observer=new MutationObserver(()=>{
+    clearTimeout(window.__vy660Timer);
+    window.__vy660Timer=setTimeout(()=>{
+      observer.disconnect();
+      try{
+        placeFooter();
+        if(!document.getElementById('screen-sales')?.classList.contains('hide'))enhanceSales();
+      }finally{
+        observer.observe(document.documentElement,{subtree:true,childList:true});
+      }
+    },35);
+  });
+  observer.observe(document.documentElement,{subtree:true,childList:true});
+  setTimeout(()=>{try{if(typeof window.renderHome==='function')window.renderHome();}catch(_){}try{if(typeof window.renderSales==='function')window.renderSales();}catch(_){}try{if(typeof window.renderSettings==='function')window.renderSettings();}catch(_){}placeFooter();enhanceSales();},0);
+})();
+
+/* ===== SCRIPT SOURCE: audit-stage2-6601.js ===== */
+
+/* Vyapar AI 6.6.0.1 — Stage 2 audit repairs */
+(function(){'use strict';
+const VER='6.6.0.1',CODE=66001,N=v=>{const x=Number(String(v??'').replace(/[₹,\s]/g,''));return Number.isFinite(x)?x:0},M=v=>typeof money==='function'?money(v):'₹'+N(v).toLocaleString('en-IN'),P=v=>String(v).padStart(2,'0');
+function VK(v){const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return false;const y=N(m[1]),mo=N(m[2]),d=N(m[3]),leap=y%4===0&&(y%100!==0||y%400===0),days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];return mo>=1&&mo<=12&&d>=1&&d<=days[mo-1]}
+function DK(v){const r=String(v??'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(r)){const k=r.slice(0,10);return VK(k)?k:''}const d=new Date(r);return Number.isNaN(d.getTime())?'':d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate())}
+function key(x){return String(x?.id||[x?.date,x?.month,x?.number,x?.name,x?.type,x?.amount].join('|'))}
+function merge(a,b){const o=Array.isArray(a)?a.slice():[],s=new Set(o.map(key));(Array.isArray(b)?b:[]).forEach(x=>{const k=key(x);if(!s.has(k)){s.add(k);o.push(x)}});return o}
+function S(){try{if(typeof state==='undefined'||!state)return window.state||{};const w=window.state;if(w&&w!==state){Object.keys(w).forEach(k=>{const v=w[k],c=state[k];if(Array.isArray(v))state[k]=merge(c,v);else if(v&&typeof v==='object')state[k]={...(c&&typeof c==='object'?c:{}),...v};else if(state[k]===undefined)state[k]=v})}window.state=state;try{localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state))}catch(_){}return state}catch(_){return window.state||{}}}
+S();
+function bid(){const s=S();return String(s.activeBusinessId||s.currentStoreId||'MAIN')}
+function itemProfit(x){return (N(x.sellingPrice)-N(x.purchasePrice))*Math.max(0,N(x.qty))}function itemSale(x){return Math.max(0,N(x.sellingPrice))*Math.max(0,N(x.qty))}
+function dayMaps(y){const s=S(),pre=y+'-',item={},daily={},acc={};(s.sales||[]).forEach(x=>{const d=DK(x.date);if(!d.startsWith(pre))return;const r=item[d]||(item[d]={revenue:0,profit:0});r.revenue+=itemSale(x);r.profit+=itemProfit(x)});(s.daily||[]).forEach(x=>{const d=DK(x.date);if(!d.startsWith(pre))return;daily[d]={revenue:Math.max(0,N(x.sale)),profit:N(x.profit)}});(s.transactions611||[]).forEach(t=>{if(String(t.businessId||'MAIN')!==bid()||t.status==='cancelled'||!['SALE','SALE_RETURN'].includes(String(t.type).toUpperCase()))return;const d=DK(t.date);if(!d.startsWith(pre))return;const sign=String(t.type).toUpperCase()==='SALE_RETURN'?-1:1;let rev=0,cogs=0;(t.items||[]).forEach(i=>{const q=Math.max(0,N(i.qty||i.quantity)),rate=Math.max(0,N(i.rate||i.price)),disc=Math.max(0,N(i.discount));rev+=q*rate*(1-disc/100);cogs+=q*Math.max(0,N(i.purchaseRate||i.purchasePrice))});if(!(t.items||[]).length)rev=Math.max(0,N(t.baseAmount||t.total)-N(t.tax)-N(t.cess));const r=acc[d]||(acc[d]={revenue:0,profit:0});r.revenue+=sign*rev;r.profit+=sign*(rev-cogs)});return{item,daily,acc}}
+function FY(year){const y=String(year);if(!/^\d{4}$/.test(y))return{year:y,revenue:0,profit:0,expenses:0,net:0,months:{}};const s=S(),m=dayMaps(y),months={},days=new Set([...Object.keys(m.item),...Object.keys(m.daily),...Object.keys(m.acc)]);days.forEach(d=>{const c=m.acc[d]||m.daily[d]||m.item[d]||{revenue:0,profit:0},k=d.slice(0,7),r=months[k]||(months[k]={revenue:0,profit:0});r.revenue+=N(c.revenue);r.profit+=N(c.profit)});const manual={};(s.monthly||[]).forEach(x=>{const k=String(x.month||'').slice(0,7);if(k.startsWith(y+'-'))manual[k]=N(x.profit)});Object.entries(manual).forEach(([k,value])=>{const r=months[k]||(months[k]={revenue:0,profit:0});r.profit+=value});const revenue=Object.values(months).reduce((z,r)=>z+N(r.revenue),0),profit=Object.values(months).reduce((z,r)=>z+N(r.profit),0),expenses=(s.expenses||[]).filter(x=>DK(x.date).startsWith(y+'-')).reduce((z,x)=>z+N(x.amount),0);return{year:y,revenue,profit,expenses,net:profit-expenses,months}}
+function series(){const ys=new Set(),s=S();[s.sales,s.daily,s.monthly,s.transactions611].forEach(a=>(a||[]).forEach(x=>{const y=String(x.month||x.date||'').slice(0,4);if(/^\d{4}$/.test(y))ys.add(y)}));const out=[];[...ys].sort().forEach(y=>{const f=FY(y);Object.keys(f.months).sort().forEach(k=>out.push([k,N(f.months[k].profit)]))});return out}
+function yprofit(y){return FY(y).profit}function stats(y){const v=series().filter(([m])=>m.startsWith(String(y)+'-')).map(([,x])=>N(x)),t=v.reduce((a,b)=>a+b,0);return{count:v.length,avg:v.length?t/v.length:0,high:v.length?Math.max(...v):0,low:v.length?Math.min(...v):0,total:t}}
+window.VyaparFinance6601={version:VER,code:CODE,year:FY,monthlySeries:series};try{resolvedMonthlyProfitSeries=series;yearlyProfitForYear=yprofit;monthlyStatsForYear=stats;yearlySalesForYear=y=>FY(y).revenue;accountingTotals=()=>{const f=FY(String(new Date().getFullYear()));return{revenue:f.revenue,expenses:f.expenses,net:f.net,cogs:Math.max(0,f.revenue-f.profit),other:0}}}catch(_){}Object.assign(window,{resolvedMonthlyProfitSeries:series,yearlyProfitForYear:yprofit,monthlyStatsForYear:stats});
+function now(){const d=new Date();return{y:String(d.getFullYear()),m:d.getFullYear()+'-'+P(d.getMonth()+1),d:d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate())}}
+function monthBreak(k){const y=k.slice(0,4),m=dayMaps(y);let acc=0,daily=0,item=0,manual=0;Object.entries(m.acc).forEach(([d,v])=>{if(d.startsWith(k+'-'))acc+=N(v.profit)});Object.entries(m.daily).forEach(([d,v])=>{if(d.startsWith(k+'-')&&!m.acc[d])daily+=N(v.profit)});Object.entries(m.item).forEach(([d,v])=>{if(d.startsWith(k+'-')&&!m.acc[d]&&!m.daily[d])item+=N(v.profit)});(S().monthly||[]).forEach(x=>{if(String(x.month||'').slice(0,7)===k)manual=N(x.profit)});return{acc,daily,item,manual,total:acc+daily+item+manual}}
+function profitCard(){const c=document.getElementById('vy660ProfitCard');if(!c)return;const p=now(),f=FY(p.y),b=monthBreak(p.m),todays=(S().daily||[]).filter(x=>DK(x.date)===p.d),today=N(todays.length?todays[todays.length-1].profit:0),h='<div class="vy660-profit-head"><div><span class="home-section-kicker">PROFIT OVERVIEW</span><h2>Yearly Profit · '+p.y+'</h2><strong>'+M(f.profit)+'</strong></div></div><div class="vy660-live-grid"><div class="vy660-live-box"><span>This month · live</span><b>'+M(b.total)+'</b><small>Manual '+M(b.manual)+' + daily '+M(b.daily)+' + item '+M(b.item)+' + accounting '+M(b.acc)+'</small></div><div class="vy660-live-box"><span>Today\'s Daily Profit</span><b>'+M(today)+'</b><small>Today only · Daily Quick Entry</small></div></div><p class="muted vy660-note">Unified finance prevents duplicate sales on the same date: accounting transaction → Daily Quick Entry → item-wise sale. Monthly manual profit stays additive.</p>';if(c.innerHTML!==h)c.innerHTML=h}
+function yearFilter(){const c=document.getElementById('monthly-profit-records');if(!c)return;c.querySelectorAll('.vy658-year-filter').forEach(x=>x.remove());const existing=[...c.querySelectorAll('.vy6601-year-filter')];existing.slice(1).forEach(x=>x.remove());const title=c.querySelector('h2');if(title&&title.textContent!=='Monthly Manual Profit Records')title.textContent='Monthly Manual Profit Records';[...c.querySelectorAll('thead th')].forEach(x=>{if(/Net Profit/i.test(x.textContent))x.textContent='Manual Profit'});if(!c.querySelector('.vy6601-month-note')){const p=document.createElement('p');p.className='muted vy6601-month-note';p.textContent='Manual entries only. Live totals also include non-duplicate Daily, item-sale and accounting profit.';title?.after(p)}const ys=[...new Set((S().monthly||[]).map(x=>String(x.month||'').slice(0,4)).filter(x=>/^\d{4}$/.test(x)))].sort().reverse();let w=existing[0]||null;if(!ys.length){if(w)w.remove();return}if(!w){w=document.createElement('div');w.className='vy6601-year-filter';w.innerHTML='<label>Year</label><select><option value="all">All years</option>'+ys.map(y=>'<option>'+y+'</option>').join('')+'</select>';c.insertBefore(w,c.querySelector('.scroll'));w.querySelector('select').addEventListener('change',yearFilter)}const sel=w.querySelector('select');if(!sel)return;const options=[...sel.options].map(o=>o.value||o.textContent);if(options.length!==ys.length+1||!ys.every(y=>options.includes(y))){const previous=sel.value;sel.innerHTML='<option value="all">All years</option>'+ys.map(y=>'<option>'+y+'</option>').join('');sel.value=(previous==='all'||ys.includes(previous))?previous:'all'}const y=sel.value;[...c.querySelectorAll('tbody tr')].forEach(r=>{const t=[...r.querySelectorAll('td')].map(x=>x.textContent).join(' ');r.hidden=y!=='all'&&!t.includes(y)})}
+function business(){const s=document.getElementById('screen-business');if(!s)return;s.querySelectorAll('.vx621-group').forEach(g=>{const h=g.querySelector('h2')?.textContent;if(h==='Stock-related Tools'||h==='Sales-related Tools')g.remove()});s.querySelectorAll('.pill').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform'});const h=s.querySelector('.vx621-hero p'),ht='Advanced tools are grouped by job: Sales stays in Sales, inventory stays in Stock, while the accounting engine remains authoritative.';if(h&&h.textContent!==ht)h.textContent=ht;const f=FY(String(new Date().getFullYear()));s.querySelectorAll('.vx621-kpi').forEach(k=>{const l=k.querySelector('span')?.textContent,b=k.querySelector('b');if(!b)return;if(l==='Revenue')b.textContent=M(f.revenue);if(l==='Net Profit')b.textContent=M(f.net);if(l==='Expenses')b.textContent=M(f.expenses)});if(!s.querySelector('.vy6601-fin-note')){const n=document.createElement('div');n.className='notice vy6601-fin-note';n.innerHTML='<b>Unified finance:</b> Net Profit = '+M(f.profit)+' − '+M(f.expenses)+' expenses = '+M(f.net);s.querySelector('.vx621-kpis')?.after(n)}}
+function footer(){document.querySelectorAll('#appLegalFooter').forEach(f=>{const imgs=[...f.querySelectorAll('img')],keep=imgs.find(x=>x.classList.contains('vy660-footer-logo'))||imgs[0];if(keep){keep.classList.add('vy658-footer-logo','vy6601-footer-logo');imgs.forEach(x=>{if(x!==keep)x.remove()})}const sig=f.querySelector('.gupta-legacy-signature');if(sig&&sig.textContent!=='A Gupta Legacy product')sig.textContent='A Gupta Legacy product';const l=f.querySelector('.app-legal-links');if(l&&!l.querySelector('a[href*="delete-account"]')){const a=document.createElement('a');a.href='pages/legal/delete-account.html';a.target='_blank';a.textContent='Delete Account';l.appendChild(a)}})}
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];function dates(root=document){root.querySelectorAll('td,time').forEach(x=>{if(x.children.length)return;const t=x.textContent.trim(),m=t.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)x.textContent=Number(m[3])+' '+MN[Number(m[2])-1]+' '+m[1]})}
+function labels(root=document){root.querySelectorAll('.pill,.auth-help').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform';if(/^Vyapar AI\s+6\./.test(x.textContent))x.textContent='Vyapar AI '+VER});const sale=[...document.querySelectorAll('#screen-sales .card')].find(c=>c.querySelector('h2')?.textContent==='Sales Records'),td=sale&&[...sale.querySelectorAll('tbody td')].find(x=>/No sale records yet/.test(x.textContent));if(td)td.textContent='No item-wise sales yet. Daily Quick Entry and monthly manual records are tracked separately.'}
+function otp(){const g=document.getElementById('vyaparOtpGate');if(!g||g.dataset.v6601)return;g.dataset.v6601='1';const l=document.getElementById('login-otp-code'),u=document.getElementById('signup-otp');l?.parentElement?.classList.add('vy6601-login-step');document.getElementById('login-otp-submit')?.classList.add('vy6601-login-step');u?.parentElement?.classList.add('vy6601-signup-step');const tab=document.getElementById('tab-login-otp'),sub=document.getElementById('login-otp-submit');if(tab)tab.textContent='Email OTP';if(sub)sub.textContent='Verify & Sign In';const msg=document.getElementById('auth-message');if(msg)new MutationObserver(()=>{if(msg.classList.contains('success')&&/sent|verification code/i.test(msg.textContent)){const sign=!document.getElementById('signup-section')?.classList.contains('hidden');g.classList.add(sign?'vy6601-signup-sent':'vy6601-login-sent')}}).observe(msg,{attributes:true,childList:true,characterData:true,subtree:true});const tabs=g.querySelector('.auth-method-tabs');if(tabs){let sx=null;tabs.addEventListener('touchstart',e=>sx=e.touches?.[0]?.clientX??null,{capture:true,passive:true});tabs.addEventListener('touchend',e=>{if(sx===null)return;const dx=(e.changedTouches?.[0]?.clientX??sx)-sx;sx=null;if(Math.abs(dx)>=24){e.preventDefault();e.stopImmediatePropagation()}},{capture:true,passive:false})}}
+let last=0;function closeSel(){document.getElementById('vy6601Select')?.remove()}function openSel(s){if(!s||s.disabled)return;closeSel();last=Date.now();const o=document.createElement('div');o.id='vy6601Select';o.className='vy6601-select-overlay';o.innerHTML='<div class="vy6601-select-sheet"><div class="vy6601-select-head"><b>Choose an option</b><button>×</button></div><div class="vy6601-select-options"></div></div>';const list=o.querySelector('.vy6601-select-options');[...s.options].forEach(x=>{const b=document.createElement('button');b.textContent=x.textContent;b.disabled=x.disabled;b.className=x.selected?'selected':'';b.onclick=()=>{s.value=x.value;s.dispatchEvent(new Event('change',{bubbles:true}));closeSel()};list.appendChild(b)});o.querySelector('.vy6601-select-head button').onclick=closeSel;o.onclick=e=>{if(e.target===o)closeSel()};document.body.appendChild(o)}function selects(){if(!document.documentElement.classList.contains('native-android')||document.documentElement.dataset.v6601sel)return;document.documentElement.dataset.v6601sel='1';document.addEventListener('touchstart',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();openSel(s)},{capture:true,passive:false});document.addEventListener('click',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-last>600)openSel(s)},true)}
+function fix(root=document){S();profitCard();yearFilter();business();footer();labels(root);dates(root);otp();selects()}
+function wrap(n,fn){const old=window[n];if(typeof old!=='function'||old.__6601)return;const w=function(){S();const r=old.apply(this,arguments);fn();return r};w.__6601=1;window[n]=w}wrap('renderSales',()=>{profitCard();yearFilter();labels();dates(document.getElementById('screen-sales')||document)});wrap('renderBusiness',()=>{business();dates(document.getElementById('screen-business')||document)});wrap('renderSettings',footer);
+const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=setTimeout(()=>fix(document),55)});ob.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>{try{renderHome?.();renderSales?.();renderBusiness?.();renderSettings?.()}catch(_){}fix()},0);
+})();
+
+/* ===== SCRIPT SOURCE: production-ui-670p1.js ===== */
+
+/*
+ * Vyapar AI 6.7.0-phase.1
+ * Production-readiness Phase 1: task-based screen organisation.
+ * No feature handlers, data keys, formulas, routes or plan gates are replaced here.
+ */
+(function(){
+  'use strict';
+
+  const VERSION = '6.7.0-phase.1';
+  const memory = Object.create(null);
+  let scheduled = false;
+
+  document.documentElement.classList.add('production-ui-p1');
+  document.documentElement.dataset.productionUiVersion = VERSION;
+
+  function text(node){
+    return String(node && node.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
+  function heading(node){
+    return text(node && node.querySelector('h1,h2,h3,.settings-kicker'));
+  }
+
+  function savedMode(screenId, fallback){
+    if(memory[screenId]) return memory[screenId];
+    try{
+      const value = sessionStorage.getItem('vyapar_ui_p1_mode_' + screenId);
+      if(value) return (memory[screenId] = value);
+    }catch(_){ }
+    return (memory[screenId] = fallback);
+  }
+
+  function saveMode(screenId, mode){
+    memory[screenId] = mode;
+    try{ sessionStorage.setItem('vyapar_ui_p1_mode_' + screenId, mode); }catch(_){ }
+  }
+
+  function makeModeBar(screen, screenId, modes, beforeNode){
+    let bar = screen.querySelector(':scope > .p1-modebar[data-screen="' + screenId + '"]');
+    if(bar) return bar;
+
+    bar = document.createElement('div');
+    bar.className = 'p1-modebar';
+    bar.dataset.screen = screenId;
+    bar.setAttribute('role', 'tablist');
+    bar.setAttribute('aria-label', modes.label || 'Choose a view');
+    bar.innerHTML = modes.items.map(function(item){
+      return '<button type="button" role="tab" data-mode="' + item[0] + '">' + item[1] + '</button>';
+    }).join('');
+
+    bar.addEventListener('click', function(event){
+      const button = event.target.closest('button[data-mode]');
+      if(!button) return;
+      saveMode(screenId, button.dataset.mode);
+      applyMode(screen, screenId, modes);
+      button.scrollIntoView({block:'nearest', inline:'nearest'});
+    });
+
+    screen.insertBefore(bar, beforeNode || screen.firstChild);
+    return bar;
+  }
+
+  function setSectionMode(node, mode){
+    if(!node || !mode) return;
+    node.classList.add('p1-mode-section');
+    node.dataset.p1Mode = mode;
+  }
+
+  function applyMode(screen, screenId, modes){
+    let active = savedMode(screenId, modes.items[0][0]);
+    if(!modes.items.some(function(item){ return item[0] === active; })) active = modes.items[0][0];
+
+    const bar = screen.querySelector('.p1-modebar[data-screen="' + screenId + '"]');
+    if(bar){
+      bar.querySelectorAll('button[data-mode]').forEach(function(button){
+        const selected = button.dataset.mode === active;
+        button.setAttribute('aria-selected', String(selected));
+        button.tabIndex = selected ? 0 : -1;
+      });
+    }
+
+    screen.querySelectorAll('.p1-mode-section[data-p1-mode]').forEach(function(node){
+      const visible = node.dataset.p1Mode.split(' ').includes(active);
+      node.hidden = !visible;
+      node.setAttribute('aria-hidden', String(!visible));
+    });
+
+    screen.querySelectorAll('.grid').forEach(function(grid){
+      const sections = Array.from(grid.children).filter(function(child){
+        return child.classList && child.classList.contains('p1-mode-section');
+      });
+      grid.classList.toggle('p1-grid-hidden', sections.length > 0 && sections.every(function(child){ return child.hidden; }));
+    });
+  }
+
+  function salesCards(screen){
+    const result = [];
+    Array.from(screen.children).forEach(function(child){
+      if(child.classList.contains('grid')){
+        Array.from(child.children).forEach(function(item){ if(item.classList.contains('card')) result.push(item); });
+      }else if(child.classList.contains('card')) result.push(child);
+    });
+    return result;
+  }
+
+  function organiseSales(){
+    const screen = document.getElementById('screen-sales');
+    if(!screen || !screen.children.length) return;
+
+    salesCards(screen).forEach(function(card){
+      const title = heading(card);
+      card.classList.remove('p1-mode-section');
+      card.removeAttribute('data-p1-mode');
+      card.hidden = false;
+
+      if(/add item sale|edit sale|daily quick entry/.test(title)) setSectionMode(card, 'today');
+      else if(/monthly profit entry|edit monthly profit|monthly manual profit records|monthly profit records/.test(title)) setSectionMode(card, 'monthly');
+      else if(/advanced sales|billing/.test(title)) setSectionMode(card, 'billing');
+      else if(/daily records|sales records/.test(title)) setSectionMode(card, 'history');
+    });
+
+    const modes = {
+      label: 'Sales workspace',
+      items: [['today','Today'],['monthly','Monthly'],['billing','Billing'],['history','History']]
+    };
+    const profit = screen.querySelector('#vy660ProfitCard');
+    const insertionPoint = profit && profit.nextSibling ? profit.nextSibling : screen.firstChild;
+    makeModeBar(screen, 'sales', modes, insertionPoint);
+    if(screen.querySelector('h2') && /edit monthly profit/i.test(screen.textContent)) saveMode('sales', 'monthly');
+    applyMode(screen, 'sales', modes);
+  }
+
+  function organiseStock(){
+    const screen = document.getElementById('screen-stock');
+    if(!screen || !screen.children.length) return;
+
+    Array.from(screen.children).forEach(function(node){
+      if(!node.classList.contains('card')) return;
+      const title = heading(node);
+      node.classList.remove('p1-mode-section');
+      node.removeAttribute('data-p1-mode');
+      node.hidden = false;
+      if(/stock manager|stock alerts/.test(title)) setSectionMode(node, 'manage');
+      else if(/inventory workspace/.test(title)) setSectionMode(node, 'tools');
+      else if(/saved stock records/.test(title)) setSectionMode(node, 'records');
+    });
+
+    const modes = {
+      label: 'Stock workspace',
+      items: [['manage','Manage'],['tools','Tools'],['records','Records']]
+    };
+    makeModeBar(screen, 'stock', modes, screen.querySelector('.stats')?.nextSibling || screen.firstChild);
+    applyMode(screen, 'stock', modes);
+  }
+
+  function organiseBusiness(){
+    const screen = document.getElementById('screen-business');
+    const shell = screen && screen.querySelector('.vx621-business-shell');
+    if(!screen || !shell) return;
+
+    Array.from(shell.children).forEach(function(node){
+      node.classList.remove('p1-mode-section');
+      node.removeAttribute('data-p1-mode');
+      node.hidden = false;
+      const title = heading(node);
+      if(node.classList.contains('vx621-group')){
+        if(/daily business/.test(title)) setSectionMode(node, 'daily');
+        else if(/accounting|compliance/.test(title)) setSectionMode(node, 'accounts');
+        else if(/documents|communication/.test(title)) setSectionMode(node, 'documents');
+      }else if(node.classList.contains('vx621-recent')) setSectionMode(node, 'activity');
+    });
+
+    const modes = {
+      label: 'Business workspace',
+      items: [['daily','Daily'],['accounts','Accounts'],['documents','Documents'],['activity','Activity']]
+    };
+    const kpis = shell.querySelector('.vx621-kpis');
+    let bar = shell.querySelector(':scope > .p1-modebar[data-screen="business"]');
+    if(!bar){
+      bar = document.createElement('div');
+      bar.className = 'p1-modebar';
+      bar.dataset.screen = 'business';
+      bar.setAttribute('role','tablist');
+      bar.setAttribute('aria-label',modes.label);
+      bar.innerHTML = modes.items.map(function(item){ return '<button type="button" role="tab" data-mode="' + item[0] + '">' + item[1] + '</button>'; }).join('');
+      bar.addEventListener('click',function(event){
+        const button=event.target.closest('button[data-mode]');
+        if(!button) return;
+        saveMode('business',button.dataset.mode);
+        applyMode(screen,'business',modes);
+      });
+      shell.insertBefore(bar,kpis && kpis.nextSibling ? kpis.nextSibling : shell.firstChild);
+    }
+    applyMode(screen, 'business', modes);
+  }
+
+  function settingsGroup(card){
+    const value = text(card.querySelector('.settings-kicker')) + ' ' + heading(card);
+    if(/account|business profile|shop details/.test(value)) return 'account';
+    if(/business admin|company|app lock|inside app lock|security/.test(value)) return 'business';
+    if(/appearance|performance|motion/.test(value)) return 'appearance';
+    if(/data safety|backup/.test(value)) return 'data';
+    if(/support|legal|app update/.test(value)) return 'legal';
+    return '';
+  }
+
+  function organiseSettings(){
+    const screen = document.getElementById('screen-settings');
+    const stack = screen && screen.querySelector('.settings-stack');
+    if(!screen || !stack) return;
+
+    Array.from(stack.children).forEach(function(card){
+      if(card.id === 'appLegalFooter') return;
+      card.classList.remove('p1-mode-section');
+      card.removeAttribute('data-p1-mode');
+      card.hidden = false;
+      const group = settingsGroup(card);
+      if(group) setSectionMode(card, group);
+    });
+
+    const modes = {
+      label: 'Settings sections',
+      items: [['account','Account'],['business','Business'],['appearance','Appearance'],['data','Data'],['legal','Legal']]
+    };
+    makeModeBar(screen, 'settings', modes, stack);
+    applyMode(screen, 'settings', modes);
+  }
+
+  function improveSemantics(root){
+    root.querySelectorAll('button:not([type])').forEach(function(button){ button.type = 'button'; });
+    root.querySelectorAll('.scroll,.vx621-table-wrap,.p611-table').forEach(function(scroller){
+      if(!scroller.hasAttribute('tabindex')) scroller.tabIndex = 0;
+      if(!scroller.hasAttribute('aria-label')) scroller.setAttribute('aria-label','Scrollable records');
+    });
+    root.querySelectorAll('input[type="number"]').forEach(function(input){ input.inputMode = 'decimal'; });
+  }
+
+  function organise(){
+    scheduled = false;
+    organiseSales();
+    organiseStock();
+    organiseBusiness();
+    organiseSettings();
+    improveSemantics(document);
+  }
+
+  function schedule(){
+    if(scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(organise);
+  }
+
+  ['renderSales','renderStock','renderBusiness','renderSettings'].forEach(function(name){
+    const original = window[name];
+    if(typeof original !== 'function' || original.__productionUiP1) return;
+    const wrapped = function(){
+      const result = original.apply(this, arguments);
+      schedule();
+      return result;
+    };
+    wrapped.__productionUiP1 = true;
+    window[name] = wrapped;
+  });
+
+  const observer = new MutationObserver(function(mutations){
+    if(mutations.some(function(mutation){ return mutation.addedNodes.length > 0; })) schedule();
+  });
+  observer.observe(document.querySelector('main') || document.body, {childList:true, subtree:true});
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule, {once:true});
+  else schedule();
+
+  window.VyaparProductionUI = {
+    version: VERSION,
+    phase: 1,
+    refresh: schedule,
+    setView: function(screen, mode){ saveMode(screen, mode); schedule(); }
+  };
+})();
+
+/* ===== SCRIPT SOURCE: workflow-ui-670p2.js ===== */
+
+/*
+ * Vyapar AI 6.7.0-phase.2
+ * Production-readiness Phase 2: workflow guidance, validation and feedback.
+ * Existing save functions remain authoritative; this layer validates before calling them.
+ */
+(function(){
+  'use strict';
+
+  const VERSION = '6.7.0-phase.2';
+  let scheduled = false;
+
+  document.documentElement.classList.add('workflow-ui-p2');
+  document.documentElement.dataset.workflowUiVersion = VERSION;
+
+  const $ = function(id){ return document.getElementById(id); };
+  const number = function(value){
+    const parsed = Number(String(value == null ? '' : value).replace(/[₹,\s]/g, ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+  const raw = function(id){ return String($(id)?.value ?? '').trim(); };
+  const stateRef = function(){
+    try{ if(typeof state !== 'undefined' && state) return state; }catch(_){ }
+    return window.state || {};
+  };
+  const cash = function(value){
+    try{ if(typeof money === 'function') return money(number(value)); }catch(_){ }
+    return '₹' + number(value).toLocaleString('en-IN', {maximumFractionDigits:2});
+  };
+
+  function liveRegion(){
+    let node = document.getElementById('p2LiveRegion');
+    if(node) return node;
+    node = document.createElement('div');
+    node.id = 'p2LiveRegion';
+    node.className = 'p2-live-region';
+    node.setAttribute('role','status');
+    node.setAttribute('aria-live','polite');
+    document.body.appendChild(node);
+    return node;
+  }
+
+  function announce(message){
+    const node = liveRegion();
+    node.textContent = '';
+    setTimeout(function(){ node.textContent = message; }, 20);
+  }
+
+  function notify(message, type){
+    announce(message);
+    try{
+      if(typeof showGlassToast === 'function') showGlassToast(message, type || 'success');
+      else if(typeof advToast === 'function') advToast(message);
+    }catch(_){ }
+  }
+
+  function titleCase(value){
+    return String(value || '').replace(/[_-]+/g,' ').replace(/\b\w/g,function(char){ return char.toUpperCase(); });
+  }
+
+  function ensureIntro(card, key, message){
+    if(!card || card.querySelector('[data-p2-intro="' + key + '"]')) return;
+    const node = document.createElement('div');
+    node.className = 'p2-form-intro';
+    node.dataset.p2Intro = key;
+    node.textContent = message;
+    const heading = card.querySelector('h1,h2,h3,.calculator-head');
+    if(heading?.classList?.contains('calculator-head')) heading.insertAdjacentElement('afterend', node);
+    else if(heading) heading.insertAdjacentElement('afterend', node);
+    else card.prepend(node);
+  }
+
+  function associatedLabel(input){
+    if(!input) return null;
+    const parentLabel = input.closest('label');
+    if(parentLabel) return parentLabel;
+    let previous = input.previousElementSibling;
+    if(previous && previous.tagName === 'LABEL') return previous;
+    const card = input.closest('.card');
+    if(card){
+      const byFor = card.querySelector('label[for="' + input.id + '"]');
+      if(byFor) return byFor;
+    }
+    return null;
+  }
+
+  function markRequired(input){
+    if(!input) return;
+    input.required = true;
+    input.setAttribute('aria-required','true');
+    const label = associatedLabel(input);
+    if(label && !label.querySelector('.p2-required-mark')){
+      if(input.id && label.tagName === 'LABEL' && !label.contains(input)) label.htmlFor = input.id;
+      const mark = document.createElement('span');
+      mark.className = 'p2-required-mark';
+      mark.setAttribute('aria-hidden','true');
+      mark.textContent = '*';
+      label.appendChild(mark);
+    }
+  }
+
+  function setError(input, message){
+    if(!input) return;
+    const id = (input.id || 'field') + '-p2-error';
+    let node = document.getElementById(id);
+    input.classList.toggle('p2-input-error', Boolean(message));
+    input.setAttribute('aria-invalid', String(Boolean(message)));
+    if(!message){
+      input.removeAttribute('aria-describedby');
+      node?.remove();
+      return;
+    }
+    if(!node){
+      node = document.createElement('small');
+      node.id = id;
+      node.className = 'p2-error-text';
+      input.insertAdjacentElement('afterend', node);
+    }
+    node.textContent = message;
+    input.setAttribute('aria-describedby', id);
+  }
+
+  function fail(errors){
+    const list = errors.filter(function(item){ return item && item.input && item.message; });
+    if(!list.length) return true;
+    list.forEach(function(item){ setError(item.input, item.message); });
+    const first = list[0].input;
+    try{ first.focus({preventScroll:true}); }catch(_){ first.focus(); }
+    first.scrollIntoView({behavior:'smooth', block:'center'});
+    notify('Please fix ' + list.length + ' highlighted field' + (list.length === 1 ? '.' : 's.'), 'error');
+    return false;
+  }
+
+  function clearErrors(ids){
+    ids.forEach(function(id){ setError($(id), ''); });
+  }
+
+  function validDate(value){ return /^\d{4}-\d{2}-\d{2}$/.test(value); }
+  function validMonth(value){ return /^\d{4}-(0[1-9]|1[0-2])$/.test(value); }
+
+  function validateSale(){
+    if(!$('sproduct')) return true;
+    const ids = ['sdate','sproduct','sqty','sbuy','ssell'];
+    clearErrors(ids);
+    const errors = [];
+    const date = raw('sdate'), product = raw('sproduct');
+    const qtyText = raw('sqty'), buyText = raw('sbuy'), sellText = raw('ssell');
+    const qty = number(qtyText), buy = number(buyText), sell = number(sellText);
+    if(!validDate(date)) errors.push({input:$('sdate'),message:'Choose a valid sale date.'});
+    if(!product || /^(undefined|null|nan)$/i.test(product)) errors.push({input:$('sproduct'),message:'Enter the product name.'});
+    if(qtyText === '' || qty <= 0) errors.push({input:$('sqty'),message:'Quantity must be greater than zero.'});
+    if(buyText !== '' && buy < 0) errors.push({input:$('sbuy'),message:'Purchase price cannot be negative.'});
+    if(sellText !== '' && sell < 0) errors.push({input:$('ssell'),message:'Selling price cannot be negative.'});
+    if(buy === 0 && sell === 0){
+      errors.push({input:$('sbuy'),message:'Enter purchase or selling price.'});
+      errors.push({input:$('ssell'),message:'Enter purchase or selling price.'});
+    }
+    return fail(errors);
+  }
+
+  function validateDaily(){
+    if(!$('ddate')) return true;
+    const ids = ['ddate','dsale','dprofit'];
+    clearErrors(ids);
+    const errors = [];
+    const date = raw('ddate'), saleText = raw('dsale'), profitText = raw('dprofit');
+    const sale = number(saleText), profit = number(profitText);
+    if(!validDate(date)) errors.push({input:$('ddate'),message:'Choose a valid date.'});
+    if(saleText !== '' && sale < 0) errors.push({input:$('dsale'),message:'Daily sale cannot be negative.'});
+    if(sale === 0 && profit === 0){
+      errors.push({input:$('dsale'),message:'Enter sale or profit amount.'});
+      errors.push({input:$('dprofit'),message:'Enter sale or profit amount.'});
+    }
+    return fail(errors);
+  }
+
+  function validateMonthly(){
+    if(!$('mmonth')) return true;
+    clearErrors(['mmonth','mprofit']);
+    const errors = [];
+    if(!validMonth(raw('mmonth'))) errors.push({input:$('mmonth'),message:'Choose a valid month.'});
+    if(raw('mprofit') === '' || !Number.isFinite(Number(raw('mprofit')))) errors.push({input:$('mprofit'),message:'Enter the manual monthly profit or loss.'});
+    return fail(errors);
+  }
+
+  function validateStock(){
+    if(!$('stockItem')) return true;
+    clearErrors(['stockItem','stockQty','stockMin']);
+    const errors = [];
+    const item = raw('stockItem'), qtyText = raw('stockQty'), minText = raw('stockMin');
+    if(!item) errors.push({input:$('stockItem'),message:'Enter the stock item name.'});
+    if(qtyText === '' || number(qtyText) < 0) errors.push({input:$('stockQty'),message:'Quantity must be zero or more.'});
+    if(minText !== '' && number(minText) < 0) errors.push({input:$('stockMin'),message:'Alert quantity cannot be negative.'});
+    return fail(errors);
+  }
+
+  function validatePOSItem(){
+    if(!$('fs607Product')) return true;
+    clearErrors(['fs607Product','fs607Qty','fs607Discount']);
+    const errors = [];
+    if(!raw('fs607Product')) errors.push({input:$('fs607Product'),message:'Choose a product, SKU or barcode.'});
+    if(raw('fs607Qty') === '' || number(raw('fs607Qty')) <= 0) errors.push({input:$('fs607Qty'),message:'Quantity must be greater than zero.'});
+    const discount = number(raw('fs607Discount'));
+    if(discount < 0 || discount > 100) errors.push({input:$('fs607Discount'),message:'Discount must be between 0% and 100%.'});
+    return fail(errors);
+  }
+
+  function validatePOSCheckout(){
+    if(!$('fs607Cart')) return true;
+    clearErrors(['fs607Customer','fs607Discount']);
+    const cart = stateRef().posCart || [];
+    const errors = [];
+    if(!cart.length){
+      notify('Add at least one product before completing the sale.', 'error');
+      return false;
+    }
+    const discount = number(raw('fs607Discount'));
+    if(discount < 0 || discount > 100) errors.push({input:$('fs607Discount'),message:'Discount must be between 0% and 100%.'});
+    if(raw('fs607Payment') === 'Credit' && !raw('fs607Customer')){
+      errors.push({input:$('fs607Customer'),message:'Customer is required for a credit sale.'});
+    }
+    return fail(errors);
+  }
+
+  function validateTransaction(){
+    if(!$('pType')) return true;
+    const ids = ['pItem','pQty','pRate','pTax','pCess','pDisc','pPaid','pFx','pLinked'];
+    clearErrors(ids);
+    const errors = [];
+    const type = raw('pType') || 'SALE';
+    const needsItem = ['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type);
+    const amountTypes = ['PAYMENT_IN','PAYMENT_OUT','OTHER_INCOME','FIXED_ASSET'].includes(type);
+    if(needsItem && !raw('pItem')) errors.push({input:$('pItem'),message:'Choose an item, SKU or barcode.'});
+    if(needsItem && (raw('pQty') === '' || number(raw('pQty')) <= 0)) errors.push({input:$('pQty'),message:'Quantity must be greater than zero.'});
+    if(raw('pRate') !== '' && number(raw('pRate')) < 0) errors.push({input:$('pRate'),message:'Rate cannot be negative.'});
+    if(amountTypes && number(raw('pRate')) <= 0 && number(raw('pPaid')) <= 0) errors.push({input:$('pRate'),message:'Enter a transaction amount.'});
+    [['pTax','GST'],['pCess','CESS'],['pDisc','Discount']].forEach(function(pair){
+      const value = number(raw(pair[0]));
+      if(value < 0 || value > 100) errors.push({input:$(pair[0]),message:pair[1] + ' must be between 0% and 100%.'});
+    });
+    if(raw('pFx') !== '' && number(raw('pFx')) <= 0) errors.push({input:$('pFx'),message:'Exchange rate must be greater than zero.'});
+    return fail(errors);
+  }
+
+  function validateAccount(){
+    if(!$('pAccName')) return true;
+    clearErrors(['pAccName','pAccOpen']);
+    const errors = [];
+    if(!raw('pAccName')) errors.push({input:$('pAccName'),message:'Enter the account name.'});
+    if(raw('pAccOpen') !== '' && number(raw('pAccOpen')) < 0) errors.push({input:$('pAccOpen'),message:'Opening balance cannot be negative.'});
+    return fail(errors);
+  }
+
+  function previewNode(id, card, before){
+    let node = document.getElementById(id);
+    if(node) return node;
+    node = document.createElement('div');
+    node.id = id;
+    node.className = 'p2-live-preview';
+    card.insertBefore(node, before || null);
+    return node;
+  }
+
+  function metric(label, value){
+    return '<div class="p2-preview-metric"><span>' + label + '</span><b>' + value + '</b></div>';
+  }
+
+  function updateSalePreview(){
+    const input = $('sproduct'); if(!input) return;
+    const card = input.closest('.card'); if(!card) return;
+    const preview = previewNode('p2SalePreview', card, card.querySelector('.actions'));
+    const qty = Math.max(0, number(raw('sqty'))), buy = Math.max(0, number(raw('sbuy'))), sell = Math.max(0, number(raw('ssell')));
+    const revenue = qty * sell, cost = qty * buy, profit = revenue - cost;
+    const margin = revenue > 0 ? profit / revenue * 100 : 0;
+    preview.classList.toggle('is-positive', profit > 0);
+    preview.classList.toggle('is-negative', profit < 0);
+    preview.innerHTML = '<div class="p2-preview-title"><span>Live sale preview</span><span>Not saved yet</span></div>' +
+      metric('Revenue', cash(revenue)) + metric('Cost', cash(cost)) + metric('Profit', cash(profit)) + metric('Margin', revenue ? margin.toFixed(1) + '%' : '—') +
+      '<div class="p2-preview-note">Profit = (selling price − purchase price) × quantity.</div>';
+  }
+
+  function updateDailyPreview(){
+    const input = $('dsale'); if(!input) return;
+    const card = input.closest('.card'); if(!card) return;
+    const button = Array.from(card.querySelectorAll('button')).find(function(node){ return /addDaily/.test(node.getAttribute('onclick') || ''); });
+    const preview = previewNode('p2DailyPreview', card, button);
+    const sale = Math.max(0, number(raw('dsale'))), profit = number(raw('dprofit'));
+    const margin = sale > 0 ? profit / sale * 100 : 0;
+    preview.classList.toggle('is-positive', profit > 0 && profit <= sale);
+    preview.classList.toggle('is-warning', sale > 0 && profit > sale);
+    preview.classList.toggle('is-negative', profit < 0);
+    preview.innerHTML = '<div class="p2-preview-title"><span>Daily total preview</span><span>Today-only entry</span></div>' +
+      metric('Sale', cash(sale)) + metric('Profit / Loss', cash(profit)) + metric('Margin', sale ? margin.toFixed(1) + '%' : '—') + metric('Source', 'Daily') +
+      '<div class="p2-preview-note">Use this when the amount is the final total for the selected day. Negative profit records a loss.</div>';
+  }
+
+  function updateMonthlyPreview(){
+    const input = $('mprofit'); if(!input) return;
+    const card = input.closest('.card'); if(!card) return;
+    const preview = previewNode('p2MonthlyPreview', card, card.querySelector('.actions'));
+    const value = number(raw('mprofit')), month = raw('mmonth') || 'Selected month';
+    preview.classList.toggle('is-positive', value > 0);
+    preview.classList.toggle('is-negative', value < 0);
+    preview.innerHTML = '<div class="p2-preview-title"><span>Manual monthly record</span><span>' + month + '</span></div>' +
+      metric('Manual profit', cash(value)) + metric('Entry type', value < 0 ? 'Loss' : 'Profit') +
+      '<div class="p2-preview-note">Saving the same month updates its manual record. Daily, item-sale and accounting totals remain separate and non-duplicated.</div>';
+  }
+
+  function updateStockPreview(){
+    const input = $('stockItem'); if(!input) return;
+    const card = input.closest('.card'); if(!card) return;
+    const button = Array.from(card.querySelectorAll('button')).find(function(node){ return /addStock/.test(node.getAttribute('onclick') || ''); });
+    const preview = previewNode('p2StockPreview', card, button);
+    const qty = Math.max(0, number(raw('stockQty'))), min = raw('stockMin') === '' ? 5 : Math.max(0, number(raw('stockMin')));
+    const status = qty === 0 ? 'Out of stock' : qty <= min ? 'Reorder' : 'Healthy';
+    preview.classList.toggle('is-positive', qty > min);
+    preview.classList.toggle('is-warning', qty > 0 && qty <= min);
+    preview.classList.toggle('is-negative', qty === 0);
+    preview.innerHTML = '<div class="p2-preview-title"><span>Stock status preview</span><span>Manual record</span></div>' +
+      metric('Available', String(qty)) + metric('Alert at', String(min)) + metric('Status', status) +
+      '<div class="p2-preview-note">Zero quantity is allowed and immediately creates an out-of-stock alert.</div>';
+  }
+
+  function wrapField(control, label, required, hint){
+    if(!control) return null;
+    let wrapper = control.closest('.p2-field');
+    if(wrapper) return wrapper;
+    wrapper = document.createElement('div');
+    wrapper.className = 'p2-field';
+    const labelNode = document.createElement('span');
+    labelNode.className = 'p2-field-label';
+    labelNode.textContent = label;
+    if(required){
+      const mark = document.createElement('span');
+      mark.className = 'p2-required-mark';
+      mark.setAttribute('aria-hidden','true');
+      mark.textContent = '*';
+      labelNode.appendChild(mark);
+      control.required = true;
+      control.setAttribute('aria-required','true');
+    }
+    control.parentNode.insertBefore(wrapper, control);
+    wrapper.appendChild(labelNode);
+    wrapper.appendChild(control);
+    if(hint){
+      const hintNode = document.createElement('small');
+      hintNode.className = 'p2-field-hint';
+      hintNode.textContent = hint;
+      wrapper.appendChild(hintNode);
+    }
+    return wrapper;
+  }
+
+  function setFieldRequired(id, required){
+    const control = $(id); if(!control) return;
+    const label = control.closest('.p2-field')?.querySelector('.p2-field-label');
+    let mark = label?.querySelector('.p2-required-mark');
+    if(required && label && !mark){
+      mark = document.createElement('span');
+      mark.className = 'p2-required-mark';
+      mark.setAttribute('aria-hidden','true');
+      mark.textContent = '*';
+      label.appendChild(mark);
+    }else if(!required && mark){
+      mark.remove();
+    }
+    control.required = Boolean(required);
+    if(required) control.setAttribute('aria-required','true');
+    else control.removeAttribute('aria-required');
+  }
+
+  const transactionLabels = {
+    pType:['Transaction type',true,'Controls stock, ledger and document behavior.'],
+    pParty:['Customer / supplier',false,'Walk-in is allowed where supported.'],
+    pItem:['Item / SKU / barcode',false,'Required for sales, purchases and returns.'],
+    pQty:['Quantity',false,'Required for item-based transactions.'],
+    pRate:['Rate / amount',false,'Per-item rate or transaction amount.'],
+    pPaid:['Received / paid / refund',false,'Amount settled now.'],
+    pMode:['Payment mode',false,'Cash, UPI, bank, card, cheque or credit.'],
+    pTax:['GST %',false,'0–100.'],
+    pCess:['CESS %',false,'0–100.'],
+    pDisc:['Discount %',false,'0–100.'],
+    pAccount:['Payment account',false,'Auto uses the account mapped to payment mode.'],
+    pLinked:['Original document',false,'Required by linked return/payment rules.'],
+    pState:['State of supply',false,'Used for CGST/SGST/IGST decision.'],
+    pCurrency:['Currency',false,'Three-letter transaction currency.'],
+    pFx:['Exchange rate',false,'1 transaction currency in base currency.'],
+    pNotes:['Notes',false,'Optional internal transaction note.']
+  };
+
+  function transactionContext(type){
+    const map = {
+      SALE:'Posts revenue, tax, customer balance, stock-out and cost of goods sold.',
+      PURCHASE:'Posts purchase/input tax, supplier balance and stock-in.',
+      SALE_RETURN:'Link the original sale to prevent over-return and reverse stock/ledger correctly.',
+      PURCHASE_RETURN:'Link the original purchase to reverse stock and supplier accounting correctly.',
+      PAYMENT_IN:'Records money received and updates a linked receivable when selected.',
+      PAYMENT_OUT:'Records money paid and updates a linked payable when selected.',
+      ESTIMATE:'Non-posting document until converted to a sale.',
+      PROFORMA:'Non-posting proforma document until converted.',
+      SALE_ORDER:'Non-posting customer order until fulfilled.',
+      PURCHASE_ORDER:'Non-posting supplier order until received.',
+      DELIVERY_CHALLAN:'Delivery document; accounting posts only after conversion where applicable.',
+      OTHER_INCOME:'Posts non-sales business income.',
+      FIXED_ASSET:'Records a fixed-asset purchase or opening asset value.'
+    };
+    return map[type] || 'The accounting engine remains the authoritative source for this transaction.';
+  }
+
+  function updateTransactionPreview(){
+    const typeInput = $('pType'); if(!typeInput) return;
+    const form = typeInput.closest('.p611-form'); if(!form) return;
+    const preview = document.getElementById('p2TxPreview'); if(!preview) return;
+    const type = raw('pType') || 'SALE', qty = Math.max(0, number(raw('pQty'))), rate = Math.max(0, number(raw('pRate')));
+    const needsItem = ['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type);
+    setFieldRequired('pItem', needsItem);
+    setFieldRequired('pQty', needsItem);
+    const subtotal = ['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type) ? qty * rate : Math.max(rate, Math.max(0, number(raw('pPaid'))));
+    const discount = subtotal * Math.max(0, Math.min(100, number(raw('pDisc')))) / 100;
+    const taxable = Math.max(0, subtotal - discount);
+    const tax = taxable * (Math.max(0, number(raw('pTax'))) + Math.max(0, number(raw('pCess')))) / 100;
+    const total = taxable + tax, paid = Math.max(0, number(raw('pPaid'))), due = Math.max(0, total - paid);
+    const linkedWarning = ['SALE_RETURN','PURCHASE_RETURN'].includes(type) && !raw('pLinked');
+    preview.classList.toggle('is-warning', linkedWarning);
+    preview.innerHTML = '<div class="p2-preview-title"><span>' + titleCase(type) + ' preview</span><span>Not posted yet</span></div>' +
+      metric('Subtotal', cash(subtotal)) + metric('Discount', cash(discount)) + metric('Tax + CESS', cash(tax)) + metric('Balance', cash(due)) +
+      '<div class="p2-preview-note">' + (linkedWarning ? 'Choose the original invoice or purchase before saving this return. ' : '') + transactionContext(type) + '</div>';
+    const context = form.querySelector('.p2-tx-context');
+    if(context) context.textContent = transactionContext(type);
+    const details = form.querySelector('.p2-advanced-fields');
+    if(details && (linkedWarning || ['PAYMENT_IN','PAYMENT_OUT'].includes(type))) details.open = true;
+  }
+
+  function enhanceTransactionForm(){
+    const type = $('pType'); if(!type) return;
+    const form = type.closest('.p611-form'); if(!form || form.dataset.p2Enhanced === '1') return;
+    form.dataset.p2Enhanced = '1';
+    form.classList.add('p2-tx-form');
+
+    const core = document.createElement('section');
+    core.className = 'p2-form-group p2-core-fields';
+    core.innerHTML = '<div class="p2-form-group-title"><span>Transaction basics</span><small>Type, party, item and payment</small></div><p class="p2-tx-context"></p>';
+    const details = document.createElement('details');
+    details.className = 'p2-advanced-fields';
+    details.innerHTML = '<summary>Tax, document link, currency & notes</summary><section class="p2-form-group p2-detail-fields"><div class="p2-form-group-title"><span>Additional details</span><small>All existing fields retained</small></div></section>';
+    const advanced = details.querySelector('.p2-detail-fields');
+    form.prepend(core);
+    form.appendChild(details);
+
+    ['pType','pParty','pItem','pQty','pRate','pPaid','pMode'].forEach(function(id){
+      const control = $(id); if(!control || !form.contains(control)) return;
+      const meta = transactionLabels[id];
+      const wrapper = wrapField(control, meta[0], meta[1], meta[2]);
+      core.appendChild(wrapper);
+    });
+    ['pTax','pCess','pDisc','pAccount','pLinked','pState','pCurrency','pFx','pNotes'].forEach(function(id){
+      const control = $(id); if(!control || !form.contains(control)) return;
+      const meta = transactionLabels[id];
+      const wrapper = wrapField(control, meta[0], meta[1], meta[2]);
+      advanced.appendChild(wrapper);
+    });
+
+    const actions = form.nextElementSibling?.classList.contains('actions') ? form.nextElementSibling : form.parentElement?.querySelector('.actions');
+    const preview = document.createElement('div');
+    preview.id = 'p2TxPreview';
+    preview.className = 'p2-live-preview';
+    if(actions) actions.parentNode.insertBefore(preview, actions); else form.insertAdjacentElement('afterend', preview);
+
+    form.addEventListener('input', updateTransactionPreview);
+    form.addEventListener('change', updateTransactionPreview);
+    updateTransactionPreview();
+  }
+
+  function placeAdvancedTransactionFields(){
+    const extra = $('p620AdvancedFields'); if(!extra) return;
+    const form = extra.closest('.p611-form');
+    const target = form?.querySelector('.p2-detail-fields');
+    if(!target || target.contains(extra)) return;
+    extra.classList.add('p2-platform-fields');
+    target.appendChild(extra);
+  }
+
+  function enhanceAccountForm(){
+    const name = $('pAccName'); if(!name) return;
+    const form = name.closest('.p611-form'); if(!form || form.dataset.p2AccountEnhanced === '1') return;
+    form.dataset.p2AccountEnhanced = '1';
+    form.classList.add('p2-account-form');
+    const intro = document.createElement('div');
+    intro.className = 'p2-form-intro p2-account-intro';
+    intro.textContent = 'Create a cash, bank, UPI or liability account. Opening balance is posted through the existing balanced-ledger flow.';
+    form.parentNode.insertBefore(intro, form);
+    wrapField(name, 'Account name', true, 'Use a clear bank, UPI or loan name.');
+    wrapField($('pAccCat'), 'Account type', true, 'Asset for cash/bank; liability for loans.');
+    wrapField($('pAccOpen'), 'Opening balance', false, 'Optional and cannot be negative.');
+  }
+
+  function enhancePOS(){
+    const product = $('fs607Product'); if(!product) return;
+    const pos = product.closest('.fs607-pos');
+    const grid = product.closest('.adv-form-grid');
+    if(!pos || !grid) return;
+
+    if(!pos.querySelector('.p2-pos-steps')){
+      const steps = document.createElement('div');
+      steps.className = 'p2-pos-steps';
+      steps.innerHTML = '<div class="p2-pos-step" data-step="1"><i>1</i><span>Add items</span></div><div class="p2-pos-step" data-step="2"><i>2</i><span>Review bill</span></div><div class="p2-pos-step" data-step="3"><i>3</i><span>Payment</span></div>';
+      grid.parentNode.insertBefore(steps, grid);
+    }
+
+    grid.classList.add('p2-pos-fields');
+    const map = {
+      fs607Customer:['Customer / mobile',false,'Optional for walk-in sale.'],
+      fs607Payment:['Payment mode',true,'Credit creates customer due.'],
+      fs607Product:['Product / SKU / barcode',true,'Search the saved product catalog.'],
+      fs607Qty:['Quantity',true,'Cannot exceed available stock.'],
+      fs607Discount:['Bill discount %',false,'0–100 on the complete bill.']
+    };
+    Object.keys(map).forEach(function(id){
+      const control = $(id); if(!control || control.closest('.p2-field')) return;
+      const meta = map[id]; wrapField(control, meta[0], meta[1], meta[2]);
+    });
+    updatePOSSteps();
+  }
+
+  function updatePOSSteps(){
+    const pos = document.querySelector('.fs607-pos'); if(!pos) return;
+    const count = (stateRef().posCart || []).length;
+    pos.querySelectorAll('.p2-pos-step').forEach(function(step){
+      const index = number(step.dataset.step);
+      step.classList.toggle('is-done', count > 0 && index === 1);
+      step.classList.toggle('is-active', count === 0 ? index === 1 : index === 2 || index === 3);
+    });
+  }
+
+  function enhanceSales(){
+    const sale = $('sproduct');
+    if(sale){
+      const card = sale.closest('.card');
+      ensureIntro(card,'sale','Required: date, product, quantity and at least one price. The preview uses the same item-profit formula as the saved record.');
+      ['sdate','sproduct','sqty'].forEach(function(id){ markRequired($(id)); });
+      ['sdate','sproduct','sqty','sbuy','ssell'].forEach(function(id){
+        const input = $(id); if(input && input.dataset.p2Bound !== '1'){
+          input.dataset.p2Bound = '1';
+          input.addEventListener('input',function(){ setError(input,''); updateSalePreview(); });
+          input.addEventListener('change',updateSalePreview);
+        }
+      });
+      updateSalePreview();
+    }
+
+    const daily = $('dsale');
+    if(daily){
+      const card = daily.closest('.card');
+      ensureIntro(card,'daily','Use Daily Quick Entry for the final total of one date. Item-wise or accounting entries on that date are not counted twice.');
+      markRequired($('ddate'));
+      ['ddate','dsale','dprofit'].forEach(function(id){
+        const input = $(id); if(input && input.dataset.p2Bound !== '1'){
+          input.dataset.p2Bound = '1'; input.addEventListener('input',function(){ setError(input,''); updateDailyPreview(); }); input.addEventListener('change',updateDailyPreview);
+        }
+      });
+      updateDailyPreview();
+    }
+
+    const monthly = $('mprofit');
+    if(monthly){
+      const card = monthly.closest('.card');
+      ensureIntro(card,'monthly','This saves a manual monthly profit or loss. It does not replace sales records or accounting transactions.');
+      markRequired($('mmonth')); markRequired(monthly);
+      ['mmonth','mprofit'].forEach(function(id){
+        const input = $(id); if(input && input.dataset.p2Bound !== '1'){
+          input.dataset.p2Bound = '1'; input.addEventListener('input',function(){ setError(input,''); updateMonthlyPreview(); }); input.addEventListener('change',updateMonthlyPreview);
+        }
+      });
+      updateMonthlyPreview();
+    }
+  }
+
+  function enhanceStock(){
+    const item = $('stockItem'); if(!item) return;
+    const card = item.closest('.card');
+    ensureIntro(card,'stock','Save one manual stock record with its available quantity and reorder alert point. Zero quantity is valid.');
+    markRequired(item); markRequired($('stockQty'));
+    ['stockItem','stockQty','stockMin'].forEach(function(id){
+      const input = $(id); if(input && input.dataset.p2Bound !== '1'){
+        input.dataset.p2Bound = '1'; input.addEventListener('input',function(){ setError(input,''); updateStockPreview(); }); input.addEventListener('change',updateStockPreview);
+      }
+    });
+    updateStockPreview();
+  }
+
+  function enhanceEmptyStates(root){
+    root.querySelectorAll('tbody tr').forEach(function(row){
+      if(row.dataset.p2Empty === '1') return;
+      const cells = row.querySelectorAll('td');
+      if(cells.length !== 1) return;
+      const cell = cells[0], value = String(cell.textContent || '').trim();
+      if(!/^(no\b|cart is empty|nothing\b)/i.test(value)) return;
+      row.dataset.p2Empty = '1';
+      row.classList.add('p2-empty-row');
+      cell.classList.add('p2-empty-cell');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'p2-empty-inline';
+      wrapper.textContent = value;
+      cell.textContent = '';
+      cell.appendChild(wrapper);
+    });
+    root.querySelectorAll('p.muted').forEach(function(node){
+      if(/^(no\b|cart is empty|nothing\b)/i.test(String(node.textContent || '').trim())) node.classList.add('p2-empty-copy');
+    });
+  }
+
+  function markPrimaryButtons(root){
+    root.querySelectorAll('button').forEach(function(button){
+      const action = button.getAttribute('onclick') || '';
+      if(/addSale|updateSale|addDaily|addMonthly|updateMonthly|addStock|fs607AddPOSItem|fs607CheckoutPOS|p611CreateFromForm|p611AddAccount/.test(action)){
+        button.classList.add('p2-primary-action');
+      }
+    });
+  }
+
+  function enhance(){
+    scheduled = false;
+    liveRegion();
+    enhanceSales();
+    enhanceStock();
+    enhanceTransactionForm();
+    placeAdvancedTransactionFields();
+    enhanceAccountForm();
+    enhancePOS();
+    enhanceEmptyStates(document);
+    markPrimaryButtons(document);
+    updatePOSSteps();
+  }
+
+  function schedule(){
+    if(scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(enhance);
+  }
+
+  function wrap(name, validator, successMessage, before, changed){
+    const original = window[name];
+    if(typeof original !== 'function' || original.__workflowUiP2) return;
+    const wrapped = function(){
+      enhance();
+      if(validator && validator() === false) return false;
+      const snapshot = before ? before() : undefined;
+      const result = original.apply(this, arguments);
+      const didChange = changed ? changed(snapshot) : true;
+      if(successMessage && didChange) setTimeout(function(){ notify(successMessage, 'success'); }, 10);
+      schedule();
+      return result;
+    };
+    wrapped.__workflowUiP2 = true;
+    window[name] = wrapped;
+  }
+
+  function lengthOf(key){ const value = stateRef()[key]; return Array.isArray(value) ? value.length : 0; }
+  function fingerprint(key){
+    const value = stateRef()[key];
+    try{ return JSON.stringify(Array.isArray(value) ? value : []); }catch(_){ return String(lengthOf(key)); }
+  }
+  function posQuantity(){
+    return (stateRef().posCart || []).reduce(function(total, item){ return total + number(item?.qty); }, 0);
+  }
+
+  wrap('addSale', validateSale, 'Sale saved.', function(){ return lengthOf('sales'); }, function(before){ return lengthOf('sales') > before; });
+  wrap('updateSale', validateSale, 'Sale updated.', function(){ return fingerprint('sales'); }, function(before){ return fingerprint('sales') !== before; });
+  wrap('addDaily', validateDaily, 'Daily entry saved.', function(){ return fingerprint('daily'); }, function(before){ return fingerprint('daily') !== before; });
+  wrap('addMonthly', validateMonthly, 'Monthly manual profit saved.', function(){ return fingerprint('monthly'); }, function(before){ return fingerprint('monthly') !== before; });
+  wrap('updateMonthly', validateMonthly, 'Monthly manual profit updated.', function(){ return fingerprint('monthly'); }, function(before){ return fingerprint('monthly') !== before; });
+  wrap('addStock', validateStock, 'Stock record saved.', function(){ return lengthOf('stocks'); }, function(before){ return lengthOf('stocks') > before; });
+  wrap('fs607AddPOSItem', validatePOSItem, 'Item added to bill.', posQuantity, function(before){ return posQuantity() > before; });
+  wrap('fs607CheckoutPOS', validatePOSCheckout, 'Sale completed.', function(){ return lengthOf('invoices'); }, function(before){ return lengthOf('invoices') > before; });
+  wrap('p611CreateFromForm', validateTransaction, '');
+  wrap('p611AddAccount', validateAccount, 'Account saved.', function(){ return lengthOf('accounts611'); }, function(before){ return lengthOf('accounts611') > before; });
+
+  document.addEventListener('input', function(event){
+    const input = event.target;
+    if(input?.matches?.('input,select,textarea')) setError(input, '');
+  }, {passive:true});
+
+  document.addEventListener('click', function(event){
+    const button = event.target.closest('button');
+    if(!button) return;
+    const action = button.getAttribute('onclick') || '';
+    if(!/addSale|updateSale|addDaily|addMonthly|updateMonthly|addStock|fs607AddPOSItem|fs607CheckoutPOS|p611CreateFromForm|p611AddAccount/.test(action)) return;
+    if(button.dataset.p2Busy === '1'){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+    button.dataset.p2Busy = '1';
+    button.classList.add('p2-busy');
+    button.setAttribute('aria-busy','true');
+    setTimeout(function(){
+      button.dataset.p2Busy = '0';
+      button.classList.remove('p2-busy');
+      button.removeAttribute('aria-busy');
+    }, 700);
+  }, true);
+
+  const observer = new MutationObserver(function(mutations){
+    if(mutations.some(function(mutation){ return mutation.addedNodes.length > 0; })) schedule();
+  });
+  observer.observe(document.querySelector('main') || document.body, {childList:true, subtree:true});
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule, {once:true});
+  else schedule();
+
+  window.VyaparWorkflowUI = {
+    version: VERSION,
+    phase: 2,
+    refresh: schedule,
+    validate: {
+      sale: validateSale,
+      daily: validateDaily,
+      monthly: validateMonthly,
+      stock: validateStock,
+      transaction: validateTransaction,
+      posItem: validatePOSItem,
+      posCheckout: validatePOSCheckout,
+      account: validateAccount
+    }
+  };
+})();
+
+/* ===== SCRIPT SOURCE: commercial-ui-6702026.js ===== */
+
+(() => {
+  "use strict";
+
+  const ROOT_CLASS = "commercial-ui-v1";
+  const HELP_THRESHOLD = 86;
+
+  function readSavedTheme() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
+      return saved && saved.settings ? saved.settings.theme : "";
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function applyRootMode() {
+    const root = document.documentElement;
+    root.classList.add(ROOT_CLASS);
+
+    // Default to the cleaner light system only when the user has never
+    // explicitly chosen a theme. Existing light/dark preferences are kept.
+    if (!readSavedTheme() && !root.classList.contains("theme-light")) {
+      root.classList.add("theme-light");
+      root.style.colorScheme = "light";
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) themeMeta.setAttribute("content", "#F8F9FA");
+    }
+  }
+
+  function cleanStaticChrome() {
+    const tagline = document.querySelector(".brand .tag");
+    if (tagline && /clear business overview/i.test(tagline.textContent || "")) {
+      tagline.textContent = "Business overview";
+    }
+
+    const themeButton = document.getElementById("themeToggle");
+    if (themeButton) {
+      themeButton.setAttribute("aria-label", "Appearance");
+      themeButton.setAttribute("title", "Appearance");
+    }
+  }
+
+  function makeHelpControl(text, owner) {
+    // v6.7.4: information popup buttons are intentionally disabled.
+    // Keep the UI direct and readable; no hidden help affordances.
+    return;
+  }
+
+  function collapseLongHelp(scope = document) {
+    // Remove any legacy help controls created by earlier builds.
+    scope.querySelectorAll(".cu-help").forEach((node) => node.remove());
+
+    // Restore helper text that older builds clamped behind an info button.
+    scope.querySelectorAll(".cu-clamped-help").forEach((node) => {
+      node.classList.remove("cu-clamped-help");
+      const full = (node.getAttribute("title") || "").trim();
+      if (full && /quick tip/i.test((node.textContent || "").trim())) node.textContent = full;
+      node.removeAttribute("title");
+      node.dataset.cuProcessed = "1";
+    });
+
+    // Remove stale Quick tip placeholders that no longer have visible content.
+    scope.querySelectorAll(".p2-form-intro").forEach((node) => {
+      node.querySelectorAll(".cu-help").forEach((help) => help.remove());
+      const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+      if (/^quick tip$/i.test(text)) node.remove();
+      else node.dataset.cuProcessed = "1";
+    });
+  }
+
+  function improveButtonSemantics(scope = document) {
+    scope.querySelectorAll("button").forEach((button) => {
+      if (!button.getAttribute("aria-label")) {
+        const label = (button.textContent || "").replace(/\s+/g, " ").trim();
+        if (label && label.length <= 48) button.setAttribute("aria-label", label);
+      }
+    });
+  }
+
+  function polish(scope = document) {
+    cleanStaticChrome();
+    collapseLongHelp(scope);
+    improveButtonSemantics(scope);
+  }
+
+  function startObserver() {
+    if (!document.body || !window.MutationObserver) return;
+    let scheduled = false;
+
+    const observer = new MutationObserver((records) => {
+      if (scheduled) return;
+      const hasAddedNodes = records.some((record) => record.addedNodes && record.addedNodes.length);
+      if (!hasAddedNodes) return;
+
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        polish(document);
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  applyRootMode();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      polish(document);
+      startObserver();
+    }, { once: true });
+  } else {
+    polish(document);
+    startObserver();
+  }
+
+  // v6.7.4: legacy info controls are removed rather than opened/closed.
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".cu-help").forEach((node) => node.remove());
+  });
+})();
+
+/* ===== SCRIPT SOURCE: native-shell-hotfix-6712026.js ===== */
+
+/* Vyapar AI 6.7.1.2026 — Android native shell hotfix. */
+(() => {
+  "use strict";
+
+  if (!document.documentElement.classList.contains("native-android")) return;
+
+  function keepFooterInSettings() {
+    document.querySelectorAll(".android-sheet-legal").forEach((node) => node.remove());
+
+    const settings = document.getElementById("screen-settings");
+    const stack = settings && (settings.querySelector(".settings-stack") || settings);
+    if (!stack) return;
+
+    const footers = Array.from(document.querySelectorAll("#appLegalFooter"));
+    let footer = footers.shift() || null;
+    footers.forEach((node) => node.remove());
+
+    if (!footer) {
+      footer = document.createElement("footer");
+      footer.id = "appLegalFooter";
+      footer.className = "app-legal-footer vy660-settings-footer";
+      footer.innerHTML =
+        '<img class="vy660-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI">' +
+        '<span>© 2026 Vyapar AI. All Rights Reserved.</span>' +
+        '<span class="app-legal-links">' +
+          '<a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
+          '<a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a>' +
+          '<a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a>' +
+          '<a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>' +
+        '</span>' +
+        '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
+    }
+
+    if (footer.parentNode !== stack) stack.appendChild(footer);
+    footer.style.display = "";
+  }
+
+  function blockPageSelectionGestures() {
+    document.addEventListener("selectstart", (event) => {
+      const target = event.target;
+      if (!target || !target.closest) return;
+      if (target.closest("input, textarea, [contenteditable='true'], .allow-copy")) return;
+      event.preventDefault();
+    }, true);
+
+    document.addEventListener("contextmenu", (event) => {
+      const target = event.target;
+      if (!target || !target.closest) return;
+      if (target.closest("input, textarea, [contenteditable='true'], .allow-copy")) return;
+      event.preventDefault();
+    }, true);
+  }
+
+  function refresh() {
+    keepFooterInSettings();
+  }
+
+  blockPageSelectionGestures();
+
+  const observer = new MutationObserver(() => {
+    clearTimeout(window.__vy671NativeShellTimer);
+    window.__vy671NativeShellTimer = setTimeout(refresh, 24);
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      refresh();
+      observer.observe(document.body, { childList: true, subtree: true });
+    }, { once: true });
+  } else {
+    refresh();
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (typeof window.renderSettings === "function" && !window.renderSettings.__vy671NativeShell) {
+    const original = window.renderSettings;
+    const wrapped = function () {
+      const result = original.apply(this, arguments);
+      requestAnimationFrame(refresh);
+      return result;
+    };
+    wrapped.__vy671NativeShell = true;
+    window.renderSettings = wrapped;
+  }
+})();
+
+/* ===== SCRIPT SOURCE: ui-hotfix-671.js ===== */
+
+(() => {
+  'use strict';
+
+  function removeLegacyInfo(){
+    document.querySelectorAll('.cu-help').forEach(node => node.remove());
+    document.querySelectorAll('.p2-form-intro').forEach(node => {
+      const text=String(node.textContent||'').replace(/\s+/g,' ').trim();
+      if(/^quick tip$/i.test(text)) node.remove();
+    });
+  }
+
+  let queued=false;
+  const schedule=()=>{
+    if(queued) return;
+    queued=true;
+    requestAnimationFrame(()=>{queued=false;removeLegacyInfo();});
+  };
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{removeLegacyInfo();},{once:true});
+  else removeLegacyInfo();
+
+  if(window.MutationObserver){
+    const observer=new MutationObserver(records=>{
+      if(records.some(r=>r.addedNodes&&r.addedNodes.length)) schedule();
+    });
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+  }
+})();
+
+/* ===== SCRIPT SOURCE: settings-center-675.js ===== */
+
+/* Vyapar AI 6.7.5 — single, user-friendly Settings center. */
+(() => {
+  'use strict';
+
+  const ICONS = {
+    account: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg>',
+    store: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h18M5 10v10h14V10M4 4h16l1 6H3l1-6Zm5 16v-6h6v6"/></svg>',
+    controls: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5M14 4v4M6 10v4M11 16v4"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10h12v10H6V10Zm3 0V7a3 3 0 0 1 6 0v3M12 14v2"/></svg>',
+    appearance: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 1 1 8.5 4 7 7 0 0 0 20 15.5Z"/></svg>',
+    navigation: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 18-7-4-7 4 7-18Z"/></svg>',
+    backup: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 8.5 4.5 4.5 0 0 0 7 18Zm5-7v7m-3-3 3 3 3-3"/></svg>',
+    update: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5M4 18v-5h5M6.1 9A7 7 0 0 1 18.8 7M17.9 15A7 7 0 0 1 5.2 17"/></svg>',
+    legal: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-6v.01M9.8 9a2.3 2.3 0 1 1 3.7 1.8c-1 .7-1.5 1.2-1.5 2.2"/></svg>',
+    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>',
+    back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>'
+  };
+
+  const SECTIONS = [
+    {
+      group: 'Your account',
+      items: [
+        { id: 'account', icon: 'account', title: 'Account & plan', subtitle: 'Profile, subscription and sign-in', keywords: 'email login logout cloud session upgrade plan', match: card => card.classList.contains('settings-account-section') }
+      ]
+    },
+    {
+      group: 'Your business',
+      items: [
+        { id: 'profile', icon: 'store', title: 'Business profile', subtitle: 'Shop name, location and yearly goal', keywords: 'store firm name profit target', match: card => /shop details|business profile/i.test(card.textContent || '') && !card.id },
+        { id: 'business', icon: 'controls', title: 'Business controls', subtitle: 'Company, staff, transactions and data', keywords: 'roles team numbering prefix saved records', match: card => card.id === 'vx622AdminSettings' }
+      ]
+    },
+    {
+      group: 'App preferences',
+      items: [
+        { id: 'security', icon: 'lock', title: 'Privacy & security', subtitle: 'Password login and app protection', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
+        { id: 'appearance', icon: 'appearance', title: 'Appearance & performance', subtitle: 'Theme, motion and device speed', keywords: 'light dark auto smooth lite animation', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
+        { id: 'navigation', icon: 'navigation', title: 'Navigation', subtitle: 'Scrolling and page behaviour', keywords: 'auto scroll top remember page position', match: card => card.id === 'vy675NavigationSettings' },
+        { id: 'data', icon: 'backup', title: 'Backup & restore', subtitle: 'Device backup and Google Drive', keywords: 'download upload json cloud disconnect', match: card => card.classList.contains('data-safety-section') || /backup & data safety|data safety/i.test(card.textContent || '') }
+      ]
+    },
+    {
+      group: 'Support & about',
+      items: [
+        { id: 'update', icon: 'update', title: 'App updates', subtitle: 'Check for the latest version', keywords: 'apk release version newer', match: card => card.id === 'fs607Settings' || /app update/i.test(card.textContent || '') },
+        { id: 'legal', icon: 'legal', title: 'Help & legal', subtitle: 'Privacy, terms, refunds and account deletion', keywords: 'support policy delete account', match: card => /legal & support|privacy policy|refund policy/i.test(card.textContent || '') }
+      ]
+    }
+  ];
+
+  const ALL_ITEMS = SECTIONS.flatMap(section => section.items);
+  const scrollPositions = Object.create(null);
+  let activePage = '';
+  let scheduled = false;
+  let building = false;
+  let observer = null;
+
+  function screen() {
+    return document.getElementById('screen-settings');
+  }
+
+  function appState() {
+    try { if (typeof S === 'function') return S(); } catch (_) {}
+    try { if (typeof state !== 'undefined') return state; } catch (_) {}
+    return null;
+  }
+
+  function themeName() {
+    try { if (typeof activeTheme === 'function') return activeTheme() === 'light' ? 'Light' : 'Dark'; } catch (_) {}
+    return document.documentElement.classList.contains('theme-light') ? 'Light' : 'Dark';
+  }
+
+  function currentPlan() {
+    const node = document.querySelector('#productionAccountCard .production-plan, #planBadge');
+    const text = String(node?.textContent || '').replace(/\s+Plan$/i, '').trim();
+    if (text) return text;
+    const data = appState();
+    return String(data?.plan || data?.subscription?.plan || 'Free').replace(/^./, char => char.toUpperCase());
+  }
+
+  function autoTopEnabled() {
+    const data = appState();
+    return Boolean(data?.settings?.autoScrollTop === true);
+  }
+
+  function saveAutoTop(enabled) {
+    const data = appState();
+    if (!data) return;
+    data.settings = data.settings && typeof data.settings === 'object' ? data.settings : {};
+    data.settings.autoScrollTop = Boolean(enabled);
+    try { if (typeof save === 'function') { save(); return; } } catch (_) {}
+    try { localStorage.setItem('vyapar_ai_prod_v1', JSON.stringify(data)); } catch (_) {}
+  }
+
+  function navigationCard() {
+    const card = document.createElement('div');
+    card.id = 'vy675NavigationSettings';
+    card.className = 'card settings-section vy675-navigation-card';
+    const checked = autoTopEnabled();
+    card.innerHTML = `
+      <div class="vy675-option-row">
+        <span class="vy675-option-copy">
+          <b>Auto Scroll to Top</b>
+          <small>${checked ? 'Pages open at the top after navigation.' : 'Each section remembers its last position.'}</small>
+        </span>
+        <label class="vy675-switch" aria-label="Auto Scroll to Top">
+          <input type="checkbox" data-vy675-auto-top ${checked ? 'checked' : ''}>
+          <span></span>
+        </label>
+      </div>`;
+    card.querySelector('[data-vy675-auto-top]')?.addEventListener('change', event => {
+      const enabled = Boolean(event.target.checked);
+      saveAutoTop(enabled);
+      const description = card.querySelector('.vy675-option-copy small');
+      if (description) description.textContent = enabled ? 'Pages open at the top after navigation.' : 'Each section remembers its last position.';
+      updateStatuses();
+      try {
+        if (typeof toast === 'function') toast(enabled ? 'Auto Scroll to Top enabled.' : 'Page position memory enabled.');
+        else if (typeof showGlassToast === 'function') showGlassToast(enabled ? 'Auto Scroll to Top enabled.' : 'Page position memory enabled.');
+      } catch (_) {}
+    });
+    return card;
+  }
+
+  function shellMarkup() {
+    return `
+      <div class="vy675-settings-home">
+        <header class="vy675-settings-intro">
+          <span class="vy675-settings-eyebrow">VYAPAR AI</span>
+          <h2>Settings</h2>
+          <p>Manage your business, account and app preferences.</p>
+        </header>
+        <label class="vy675-settings-search">
+          <span>${ICONS.search}</span>
+          <input type="search" autocomplete="off" placeholder="Search settings" aria-label="Search settings">
+          <button type="button" aria-label="Clear search" hidden>×</button>
+        </label>
+        <div class="vy675-settings-groups">
+          ${SECTIONS.map(section => `
+            <section class="vy675-settings-group" data-vy675-group>
+              <h3>${section.group}</h3>
+              <div class="vy675-settings-list">
+                ${section.items.map(rowMarkup).join('')}
+              </div>
+            </section>`).join('')}
+        </div>
+        <div class="vy675-search-empty" hidden>
+          <span>${ICONS.search}</span>
+          <b>No setting found</b>
+          <small>Try another word.</small>
+        </div>
+        <footer class="vy675-settings-footer" id="vy675SettingsFooter">
+          <img src="assets/images/footer-logo.png" alt="Vyapar AI">
+          <span>© 2026 Vyapar AI. All Rights Reserved.</span>
+          <small>A Gupta Legacy product</small>
+        </footer>
+      </div>
+      <div class="vy675-settings-page" hidden>
+        <header class="vy675-page-header">
+          <button type="button" class="vy675-page-back" aria-label="Back to Settings">${ICONS.back}</button>
+          <div><h2>Settings</h2><p></p></div>
+        </header>
+        <div class="vy675-page-body"></div>
+      </div>`;
+  }
+
+  function rowMarkup(item) {
+    return `
+      <button type="button" class="vy675-settings-row" data-vy675-page="${item.id}" data-vy675-search="${item.title} ${item.subtitle} ${item.keywords}" aria-label="Open ${item.title}">
+        <span class="vy675-row-icon">${ICONS[item.icon]}</span>
+        <span class="vy675-row-copy"><b>${item.title}</b><small>${item.subtitle}</small></span>
+        <span class="vy675-row-meta" data-vy675-status></span>
+        <span class="vy675-row-chevron" aria-hidden="true">›</span>
+      </button>`;
+  }
+
+  function ensureShell(scr) {
+    let shell = scr.querySelector(':scope > .vy675-settings-shell');
+    if (shell) return shell;
+    shell = document.createElement('div');
+    shell.className = 'vy675-settings-shell';
+    shell.innerHTML = shellMarkup();
+    scr.prepend(shell);
+
+    shell.querySelectorAll('[data-vy675-page]').forEach(row => {
+      row.addEventListener('click', () => openPage(row.dataset.vy675Page, true));
+    });
+    shell.querySelector('.vy675-page-back')?.addEventListener('click', () => openHome(true));
+
+    const input = shell.querySelector('.vy675-settings-search input');
+    const clear = shell.querySelector('.vy675-settings-search button');
+    input?.addEventListener('input', () => filterRows(input.value));
+    clear?.addEventListener('click', () => {
+      input.value = '';
+      filterRows('');
+      input.focus();
+    });
+    return shell;
+  }
+
+  function filterRows(value) {
+    const shell = screen()?.querySelector(':scope > .vy675-settings-shell');
+    if (!shell) return;
+    const query = String(value || '').trim().toLowerCase();
+    const clear = shell.querySelector('.vy675-settings-search button');
+    if (clear) clear.hidden = !query;
+    let visibleCount = 0;
+    shell.querySelectorAll('.vy675-settings-row').forEach(row => {
+      const matches = !query || String(row.dataset.vy675Search || row.textContent || '').toLowerCase().includes(query);
+      row.hidden = !matches;
+      if (matches) visibleCount += 1;
+    });
+    shell.querySelectorAll('[data-vy675-group]').forEach(group => {
+      group.hidden = ![...group.querySelectorAll('.vy675-settings-row')].some(row => !row.hidden);
+    });
+    const empty = shell.querySelector('.vy675-search-empty');
+    if (empty) empty.hidden = visibleCount !== 0;
+  }
+
+  function ensureRepository(scr) {
+    let stack = scr.querySelector(':scope > .settings-stack');
+    if (!stack) {
+      stack = document.createElement('div');
+      stack.className = 'settings-stack';
+      scr.appendChild(stack);
+    }
+    stack.classList.add('vy675-settings-repository');
+    stack.hidden = true;
+    stack.setAttribute('aria-hidden', 'true');
+    return stack;
+  }
+
+  function collectCards(scr) {
+    const stack = ensureRepository(scr);
+    const body = scr.querySelector('.vy675-page-body');
+    if (body) [...body.children].forEach(node => stack.appendChild(node));
+    scr.querySelectorAll(':scope > #fs607Settings').forEach(node => stack.appendChild(node));
+    if (!stack.querySelector('#vy675NavigationSettings')) stack.appendChild(navigationCard());
+
+    const cards = [...stack.children].filter(node =>
+      node instanceof HTMLElement &&
+      node.id !== 'appLegalFooter' &&
+      !node.classList.contains('p1-modebar') &&
+      node.id !== 'vy675SettingsFooter'
+    );
+    const map = Object.fromEntries(ALL_ITEMS.map(item => [item.id, []]));
+    cards.forEach(card => {
+      card.classList.remove('p1-mode-section');
+      card.removeAttribute('data-p1-mode');
+      card.hidden = false;
+      card.removeAttribute('aria-hidden');
+      const item = ALL_ITEMS.find(candidate => {
+        try { return candidate.match(card); } catch (_) { return false; }
+      });
+      if (item) map[item.id].push(card);
+    });
+    return map;
+  }
+
+  function statusFor(id) {
+    if (id === 'account') return currentPlan();
+    if (id === 'profile') {
+      const data = appState();
+      const name = String(data?.profile?.businessName || '').trim();
+      return name && name.length <= 16 ? name : (name ? 'Configured' : 'Set up');
+    }
+    if (id === 'security') {
+      const toggle = document.querySelector('#vx643PasswordLoginToggle, #vx622LockToggle');
+      return toggle?.checked ? 'On' : 'Off';
+    }
+    if (id === 'appearance') return themeName();
+    if (id === 'navigation') return autoTopEnabled() ? 'Auto top' : 'Remember';
+    if (id === 'data') return localStorage.getItem('vyapar_ai_drive_connected_v1') === '1' ? 'Drive on' : 'Local';
+    if (id === 'update') return document.querySelector('meta[name="vyapar-ui-version"]')?.content || '';
+    return '';
+  }
+
+  function updateStatuses() {
+    const scr = screen();
+    if (!scr) return;
+    scr.querySelectorAll('.vy675-settings-row').forEach(row => {
+      const status = row.querySelector('[data-vy675-status]');
+      const value = statusFor(row.dataset.vy675Page);
+      if (status) {
+        status.textContent = value;
+        status.hidden = !value;
+      }
+    });
+  }
+
+  function openHome(scrollTop) {
+    const scr = screen();
+    if (!scr) return;
+    const shell = ensureShell(scr);
+    collectCards(scr);
+    activePage = '';
+    scr.dataset.vy675Page = '';
+    scr.classList.remove('vy675-page-open');
+    shell.querySelector('.vy675-settings-home').hidden = false;
+    shell.querySelector('.vy675-settings-page').hidden = true;
+    updateStatuses();
+    if (scrollTop) window.scrollTo(0, 0);
+  }
+
+  function openPage(id, scrollTop) {
+    const scr = screen();
+    const item = ALL_ITEMS.find(candidate => candidate.id === id);
+    if (!scr || !item) return;
+    const shell = ensureShell(scr);
+    const map = collectCards(scr);
+    const page = shell.querySelector('.vy675-settings-page');
+    const body = shell.querySelector('.vy675-page-body');
+    const title = shell.querySelector('.vy675-page-header h2');
+    const subtitle = shell.querySelector('.vy675-page-header p');
+    const cards = map[id] || [];
+    body.replaceChildren(...cards);
+    if (!cards.length) {
+      const empty = document.createElement('div');
+      empty.className = 'vy675-page-empty';
+      empty.innerHTML = `<b>This setting is not available yet.</b><small>Please reopen Settings and try again.</small>`;
+      body.appendChild(empty);
+    }
+    title.textContent = item.title;
+    subtitle.textContent = item.subtitle;
+    activePage = id;
+    scr.dataset.vy675Page = id;
+    scr.classList.add('vy675-page-open');
+    shell.querySelector('.vy675-settings-home').hidden = true;
+    page.hidden = false;
+    if (scrollTop) window.scrollTo(0, 0);
+  }
+
+  function removePreviousSettingsUi(scr) {
+    scr.querySelectorAll(':scope > .p1-modebar[data-screen="settings"], :scope > .vy672-settings-directory, :scope > .vy672-settings-subpage').forEach(node => node.remove());
+    scr.classList.remove('vy672-settings-ready', 'vy672-subpage-open');
+  }
+
+  function build() {
+    scheduled = false;
+    if (building) return;
+    const scr = screen();
+    if (!scr) return;
+    const stack = scr.querySelector(':scope > .settings-stack');
+    if (!stack) return;
+    building = true;
+    observer?.disconnect();
+    removePreviousSettingsUi(scr);
+    ensureShell(scr);
+    ensureRepository(scr);
+    collectCards(scr);
+    scr.classList.add('vy675-settings-ready');
+    if (activePage) openPage(activePage, false);
+    else openHome(false);
+    updateStatuses();
+    observer?.observe(scr, { childList: true, subtree: true });
+    building = false;
+  }
+
+  function scheduleBuild() {
+    if (scheduled || building) return;
+    scheduled = true;
+    requestAnimationFrame(build);
+  }
+
+  function installRenderWrapper() {
+    const current = window.renderSettings;
+    if (typeof current !== 'function' || current.__vy675SettingsCenter) return;
+    const wrapped = function () {
+      activePage = '';
+      const result = current.apply(this, arguments);
+      build();
+      return result;
+    };
+    wrapped.__vy675SettingsCenter = true;
+    window.renderSettings = wrapped;
+  }
+
+  function installScrollBehaviour() {
+    const current = window.setTab;
+    if (typeof current !== 'function' || current.__vy675ScrollBehaviour) return;
+    const wrapped = function (tab, withLoader) {
+      let previous = '';
+      try { previous = typeof currentTab === 'string' ? currentTab : ''; } catch (_) {}
+      const root = document.scrollingElement || document.documentElement;
+      const previousY = Math.max(0, Number(window.scrollY || root.scrollTop || document.body.scrollTop || 0));
+      const autoTop = autoTopEnabled();
+      if (!autoTop && previous) scrollPositions[previous] = previousY;
+      const result = current.call(this, tab, withLoader);
+      requestAnimationFrame(() => {
+        if (result === false) return;
+        if (autoTop) {
+          window.scrollTo(0, 0);
+          return;
+        }
+        const target = Object.prototype.hasOwnProperty.call(scrollPositions, tab)
+          ? scrollPositions[tab]
+          : (tab === previous ? previousY : 0);
+        window.scrollTo(0, Math.max(0, target));
+      });
+      return result;
+    };
+    wrapped.__vy675ScrollBehaviour = true;
+    window.setTab = wrapped;
+  }
+
+  function installNativeBack() {
+    const current = window.handleNativeBackPress;
+    if (typeof current === 'function' && current.__vy675SettingsBack) return;
+    const wrapped = function () {
+      if (screen()?.classList.contains('vy675-page-open')) {
+        openHome(true);
+        return true;
+      }
+      return typeof current === 'function' ? current.apply(this, arguments) : false;
+    };
+    wrapped.__vy675SettingsBack = true;
+    window.handleNativeBackPress = wrapped;
+  }
+
+  function init() {
+    installRenderWrapper();
+    installScrollBehaviour();
+    installNativeBack();
+    observer = new MutationObserver(records => {
+      if (building) return;
+      const needsBuild = records.some(record => {
+        const target = record.target;
+        if (target instanceof Element && target.closest('.vy675-settings-shell, .vy675-settings-repository')) return false;
+        return Boolean(record.addedNodes?.length || record.removedNodes?.length);
+      });
+      if (needsBuild) scheduleBuild();
+    });
+    const settingsScreen = screen();
+    if (settingsScreen) observer.observe(settingsScreen, { childList: true, subtree: true });
+    build();
+  }
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && screen()?.classList.contains('vy675-page-open')) openHome(false);
+  });
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
+
+  window.vy675SettingsHome = () => openHome(true);
+  window.vy675OpenSettingsPage = id => openPage(id, true);
+})();
+
+/* ===== SCRIPT SOURCE: complete-ui-680.js ===== */
+
+/* Vyapar AI 6.8.0 final UI stability layer. No business/data logic is changed here. */
+(function () {
+  'use strict';
+
+  document.documentElement.lang = 'en';
+  document.documentElement.classList.add('vy680-complete-ui');
+
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const syncThemeColor = () => {
+    if (!themeMeta) return;
+    themeMeta.setAttribute('content', document.documentElement.classList.contains('theme-light') ? '#f4f8ff' : '#07111f');
+  };
+
+  function removeConsecutiveDuplicateHeadings(root) {
+    if (!root) return;
+    const headings = Array.from(root.querySelectorAll('.settings-section h2, .settings-section h3, .vy675-page-body h2, .vy675-page-body h3'));
+    const seen = new Map();
+    headings.forEach((heading) => {
+      const label = (heading.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      if (!label) return;
+      const parent = heading.closest('.settings-section, .vy675-page-body, .card') || heading.parentElement;
+      const key = label + '::' + (parent && parent.dataset ? JSON.stringify(parent.dataset) : '');
+      const previous = seen.get(key);
+      if (previous && previous.parentElement === heading.parentElement) {
+        heading.setAttribute('aria-hidden', 'true');
+        heading.style.display = 'none';
+      } else {
+        seen.set(key, heading);
+      }
+    });
+  }
+
+  function hardenLayout() {
+    syncThemeColor();
+    const settings = document.getElementById('screen-settings');
+    removeConsecutiveDuplicateHeadings(settings);
+
+    document.querySelectorAll('img').forEach((img) => {
+      if (!img.hasAttribute('loading') && !img.closest('#appLoader, #vy647StartupSplash, .brand')) img.loading = 'lazy';
+      img.decoding = 'async';
+    });
+
+    document.querySelectorAll('button:not([type])').forEach((button) => button.setAttribute('type', 'button'));
+  }
+
+  let pending = false;
+  const scheduleHarden = () => {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      hardenLayout();
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hardenLayout, { once: true });
+  } else {
+    hardenLayout();
+  }
+
+  const observer = new MutationObserver(records => {
+    if (records.some(record => record.addedNodes.length > 0)) scheduleHarden();
+  });
+  observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+
+  window.addEventListener('orientationchange', scheduleHarden, { passive: true });
+  window.addEventListener('resize', scheduleHarden, { passive: true });
+
+  /* 8.5 maintenance: Telegram-like tab transition, native theme bars and long-press guard. */
+  const reducedMotion = () => Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const currentVisibleTab = () => {
+    const screen = Array.from(document.querySelectorAll('.screen')).find(node => !node.classList.contains('hide'));
+    return screen ? screen.id.replace('screen-', '') : 'home';
+  };
+  const tabRank = tab => {
+    const ranks = { home: 0, business: 1, sales: 2, stock: 3, upload: 4, analytics: 4, calculator: 4, subscription: 4, settings: 4 };
+    return Object.prototype.hasOwnProperty.call(ranks, tab) ? ranks[tab] : 4;
+  };
+
+  const finalSetTab = typeof window.setTab === 'function' ? window.setTab : null;
+  if (finalSetTab) {
+    window.setTab = function (tab, withLoader) {
+      const previousTab = currentVisibleTab();
+      const result = finalSetTab.call(this, tab, withLoader);
+      if (result === false || previousTab === tab || reducedMotion()) return result;
+
+      const screen = document.getElementById('screen-' + tab);
+      if (!screen) return result;
+      screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
+      void screen.offsetWidth;
+      screen.classList.add(tabRank(tab) < tabRank(previousTab) ? 'vy-telegram-page-from-left' : 'vy-telegram-page-from-right');
+      clearTimeout(screen.__vyTelegramPageTimer);
+      screen.__vyTelegramPageTimer = setTimeout(() => {
+        screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
+      }, 320);
+      return result;
+    };
+  }
+
+  const syncNativeTheme = () => {
+    try {
+      const bridge = window.AndroidApp;
+      if (bridge && typeof bridge.setSystemTheme === 'function') {
+        bridge.setSystemTheme(document.documentElement.classList.contains('theme-light'));
+      }
+    } catch (_) {}
+  };
+  syncNativeTheme();
+
+  const nativeThemeObserver = new MutationObserver(syncNativeTheme);
+  nativeThemeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  nativeThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  // Old Android WebViews can freeze while creating selection/action-mode UI on
+  // long press. Native code consumes long-clicks too; this prevents the web
+  // context menu/drag fallback from starting before Android receives it.
+  if (document.documentElement.classList.contains('native-android')) {
+    document.addEventListener('contextmenu', event => event.preventDefault(), true);
+    document.addEventListener('dragstart', event => {
+      if (event.target && event.target.closest && event.target.closest('img, a, button')) event.preventDefault();
+    }, true);
+  }
+
+})();
+
+/* ===== SCRIPT SOURCE: inspected-glitchfix-855.js ===== */
+
+/* Vyapar AI 8.5.5 inspected glitch fix — presentation only.
+   Removes full-screen theme flashes, holds first paint until real UI exists,
+   and primes Settings before navigation so old Android WebViews never show an
+   empty intermediate frame. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy855-inspected-fix');
+
+  const reduced=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  let themeBusy=false;
+
+  function removeThemeArtifacts(){
+    document.querySelectorAll(
+      '.vy855-theme-curtain,.vy854-theme-wipe,.vy853-theme-reveal,.vy852-theme-bloom,.theme-ripple,.vx657-theme-crossfade'
+    ).forEach(node=>node.remove());
+  }
+
+  function currentLight(){
+    return root.classList.contains('theme-light')||Boolean(document.body&&document.body.classList.contains('theme-light'));
+  }
+
+  function saveTheme(target){
+    const light=target==='light';
+    const body=document.body;
+
+    root.classList.toggle('theme-light',light);
+    if(body)body.classList.toggle('theme-light',light);
+    root.style.backgroundColor=light?'#eff6fb':'#06172d';
+    if(body)body.style.backgroundColor=light?'#eff6fb':'#06172d';
+
+    try{
+      const appState=window.state;
+      if(appState){
+        appState.settings=appState.settings&&typeof appState.settings==='object'?appState.settings:{};
+        appState.settings.theme=target;
+      }
+    }catch(_){}
+
+    try{if(typeof window.applyTheme==='function')window.applyTheme();}catch(_){}
+    try{if(typeof window.applyGlassControl==='function')window.applyGlassControl();}catch(_){}
+    try{
+      if(typeof window.persistThemeWithoutRender==='function')window.persistThemeWithoutRender();
+      else if(window.state)localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+    }catch(_){}
+
+    try{
+      const meta=document.querySelector('meta[name="theme-color"]');
+      if(meta)meta.setAttribute('content',light?'#eff6fb':'#06172d');
+    }catch(_){}
+
+    try{
+      const bridge=window.AndroidApp;
+      if(bridge&&typeof bridge.setSystemTheme==='function')bridge.setSystemTheme(light);
+    }catch(_){}
+  }
+
+  function runTheme(target){
+    const normalized=target==='light'?'light':'dark';
+    if(themeBusy)return false;
+    if((normalized==='light')===currentLight()){
+      removeThemeArtifacts();
+      return false;
+    }
+
+    themeBusy=true;
+    removeThemeArtifacts();
+    root.classList.add('vy855-theme-atomic');
+
+    const button=document.getElementById('themeToggle');
+    if(button&&!reduced()&&typeof button.animate==='function'){
+      try{
+        button.animate(
+          [{transform:'scale(1)'},{transform:'scale(.93)'},{transform:'scale(1)'}],
+          {duration:180,easing:'cubic-bezier(.2,.8,.2,1)'}
+        );
+      }catch(_){}
+    }
+
+    /* Commit the theme immediately. No opaque curtain, no blank handoff. */
+    saveTheme(normalized);
+    removeThemeArtifacts();
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      root.classList.remove('vy855-theme-atomic');
+      removeThemeArtifacts();
+      themeBusy=false;
+    }));
+    return false;
+  }
+
+  window.toggleTheme=function(){return runTheme(currentLight()?'dark':'light')};
+  window.setTheme=function(theme){return runTheme(theme==='light'?'light':'dark')};
+
+  /* Settings shell is deterministic and local. Build it before setTab hides the
+     previous screen, then let the existing business/navigation logic continue. */
+  function primeSettings(){
+    try{
+      const screen=document.getElementById('screen-settings');
+      if(!screen)return;
+      const ready=screen.querySelector('.vy675-settings-shell,.vy675-settings-home,.vy675-settings-page');
+      if(!ready&&typeof window.renderSettings==='function')window.renderSettings();
+    }catch(_){}
+  }
+
+  const previousSetTab=typeof window.setTab==='function'?window.setTab:null;
+  if(previousSetTab&&!previousSetTab.__vy855InspectedWrapped){
+    const wrapped=function(tab,withLoader){
+      if(tab==='settings')primeSettings();
+      const result=previousSetTab.call(this,tab,withLoader);
+      if(tab==='settings'){
+        const settle=()=>{
+          primeSettings();
+          const screen=document.getElementById('screen-settings');
+          if(screen&&!screen.classList.contains('hide')){
+            screen.style.opacity='1';
+            screen.style.visibility='visible';
+          }
+        };
+        settle();
+        requestAnimationFrame(settle);
+      }
+      return result;
+    };
+    wrapped.__vy855InspectedWrapped=true;
+    window.setTab=wrapped;
+  }
+
+  /* Continuous first paint: keep the WebView on a theme-matched surface until
+     either the auth gate or a populated app screen has actually laid out. */
+  function isPainted(node){
+    if(!node)return false;
+    const style=getComputedStyle(node);
+    if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)===0)return false;
+    const rect=node.getBoundingClientRect();
+    return rect.width>40&&rect.height>60;
+  }
+
+  function realUiVisible(){
+    const auth=document.getElementById('vyaparOtpGate');
+    if(isPainted(auth))return true;
+    const password=document.getElementById('vy647PasswordGate');
+    if(isPainted(password))return true;
+    const visible=Array.from(document.querySelectorAll('.screen')).find(screen=>!screen.classList.contains('hide')&&screen.children.length>0);
+    return isPainted(visible);
+  }
+
+  let bootDone=false;
+  function finishBoot(force){
+    if(bootDone)return;
+    const guard=document.getElementById('vy855BootGuard');
+    if(!guard){root.classList.remove('vy855-booting');bootDone=true;return}
+    if(!force&&!realUiVisible())return;
+    bootDone=true;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      guard.classList.add('is-ready');
+      root.classList.remove('vy855-booting');
+      setTimeout(()=>guard.remove(),140);
+    }));
+  }
+
+  let bootObserver=null;
+  function initBootGuard(){
+    finishBoot(false);
+    if(bootDone)return;
+    bootObserver=new MutationObserver(()=>finishBoot(false));
+    bootObserver.observe(document.body||document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+    setTimeout(()=>{
+      if(bootObserver)bootObserver.disconnect();
+      finishBoot(true);
+    },2400);
+  }
+
+  removeThemeArtifacts();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBootGuard,{once:true});
+  else initBootGuard();
+})();
+
+/* ===== SCRIPT SOURCE: flat-black-ios-861.js ===== */
+
+/* Vyapar AI 8.6.1.2026 — final flat black/white presentation coordinator. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy861-flat-black');
+  const OLD_CLASSES=[
+    'vy859-liquid-v2','vy858-unified','vy857-ios27','vy855-liquid-lens','vy855-stable-ios',
+    'vy860-hig-ios','vy854-apple-unified','vy853-apple-liquid','vy852-apple-liquid'
+  ];
+  OLD_CLASSES.forEach(name=>root.classList.remove(name));
+
+  function isLight(){
+    return root.classList.contains('theme-light') || Boolean(document.body&&document.body.classList.contains('theme-light'));
+  }
+
+  function cleanupOptics(){
+    document.querySelectorAll(
+      '.android-nav-glass-indicator,.vy852-theme-bloom,.vy853-theme-reveal,.vy854-theme-wipe,.vy855-theme-curtain,.theme-ripple,.vx657-theme-crossfade,.vy856-liquid-lens,.vy856-liquid-orb,[class*="liquid-lens"],[class*="glass-lens"],[class*="liquid-orb"]'
+    ).forEach(node=>node.remove());
+    if(document.body){
+      document.body.classList.remove('vy859-modal-open','more-sheet-open');
+    }
+  }
+
+  function applyThemeMeta(){
+    const light=isLight();
+    root.style.colorScheme=light?'light':'dark';
+    root.style.backgroundColor=light?'#f5f5f7':'#000000';
+    if(document.body)document.body.style.backgroundColor=light?'#f5f5f7':'#000000';
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.setAttribute('content',light?'#f5f5f7':'#000000');
+    const button=document.getElementById('themeToggle');
+    if(button){
+      button.setAttribute('aria-label',light?'Switch to dark mode':'Switch to light mode');
+      button.setAttribute('title',light?'Dark mode':'Light mode');
+      button.textContent='Theme';
+    }
+  }
+
+  function persistTheme(target){
+    const light=target==='light';
+    root.classList.toggle('theme-light',light);
+    if(document.body)document.body.classList.toggle('theme-light',light);
+    try{
+      if(window.state){
+        window.state.settings=window.state.settings&&typeof window.state.settings==='object'?window.state.settings:{};
+        window.state.settings.theme=target;
+        localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+      }else{
+        const saved=JSON.parse(localStorage.getItem('vyapar_ai_prod_v1')||'{}');
+        saved.settings=saved.settings&&typeof saved.settings==='object'?saved.settings:{};
+        saved.settings.theme=target;
+        localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(saved));
+      }
+    }catch(_){ }
+    try{if(typeof window.applyTheme==='function')window.applyTheme();}catch(_){ }
+    try{
+      const bridge=window.AndroidApp;
+      if(bridge&&typeof bridge.setSystemTheme==='function')bridge.setSystemTheme(light);
+    }catch(_){ }
+    cleanupOptics();
+    applyThemeMeta();
+  }
+
+  window.toggleTheme=function(){
+    persistTheme(isLight()?'dark':'light');
+    const button=document.getElementById('themeToggle');
+    if(button&&typeof button.animate==='function'){
+      try{button.animate([{transform:'scale(1)'},{transform:'scale(.90)'},{transform:'scale(1)'}],{duration:150,easing:'ease-out'});}catch(_){ }
+    }
+    return false;
+  };
+  window.setTheme=function(theme){persistTheme(theme==='light'?'light':'dark');return false;};
+
+  function decorateNav(){
+    const nav=document.getElementById('nav');
+    if(!nav)return;
+    nav.querySelectorAll('button').forEach(button=>{
+      const tab=button.dataset.androidTab||button.dataset.tab||'';
+      if(tab&&!button.dataset.androidTab)button.dataset.androidTab=tab;
+      if(tab&&!button.dataset.tab&&tab!=='more')button.dataset.tab=tab;
+      button.setAttribute('aria-pressed',button.classList.contains('active')?'true':'false');
+    });
+    nav.querySelectorAll('.android-nav-glass-indicator').forEach(node=>node.remove());
+  }
+
+  const popupOverlaySelector=[
+    '.glass-dialog-overlay','.subscription-overlay','.shop-progress-overlay','.vx643-modal-overlay',
+    '.production-overlay','.android-permission-overlay','.android-sheet-overlay',
+    '#vyaparDeleteConfirm','#vyaparAccountDeleteConfirm','.account-delete-overlay',
+    '.upgrade-plan-popup','.upgrade-plan-reference-popup'
+  ].join(',');
+
+  function visibleOverlays(){
+    return Array.from(document.querySelectorAll(popupOverlaySelector)).filter(node=>{
+      if(!node.isConnected)return false;
+      const style=getComputedStyle(node);
+      return style.display!=='none'&&style.visibility!=='hidden';
+    });
+  }
+
+  function syncModalState(){
+    const overlays=visibleOverlays();
+    if(document.body)document.body.classList.toggle('vy861-modal-open',overlays.length>0);
+    overlays.forEach(overlay=>overlay.classList.add('vy861-universal-popup'));
+    // Duplicate ids are a real source of double-action popups. Keep newest live instance.
+    const seen=new Map();
+    overlays.forEach(node=>{
+      if(!node.id)return;
+      if(seen.has(node.id))seen.get(node.id).remove();
+      seen.set(node.id,node);
+    });
+  }
+
+  function closeTopPopup(){
+    const overlays=visibleOverlays();
+    const top=overlays[overlays.length-1];
+    if(!top)return false;
+    const close=top.querySelector('.android-sheet-close,.shop-sheet-close,.production-close,[data-cancel],#closePlanSuccessPopup,#closeCancelPopup,#closeUpgradePopup,#accountDeleteCancel,[aria-label^="Close" i],[aria-label="Close" i]');
+    if(close){close.click();return true;}
+    if(top.id==='vyaparGlassDialog'&&typeof window.closeGlassDialog==='function'){window.closeGlassDialog(false);return true;}
+    return false;
+  }
+
+  document.addEventListener('keydown',event=>{
+    if(event.key!=='Escape')return;
+    if(closeTopPopup()){event.preventDefault();event.stopPropagation();}
+  },true);
+
+  // More must have exactly one live sheet. Existing app.js owns navigation semantics.
+  const previousOpenMore=typeof window.openMoreSheet==='function'?window.openMoreSheet:null;
+  if(previousOpenMore&&!previousOpenMore.__vy861Wrapped){
+    const wrapped=function(){
+      document.querySelectorAll('#androidMoreSheet').forEach(node=>node.remove());
+      if(document.body)document.body.classList.remove('android-sheet-open');
+      const result=previousOpenMore.apply(this,arguments);
+      requestAnimationFrame(()=>{decorateNav();syncModalState();cleanupOptics();});
+      return result;
+    };
+    wrapped.__vy861Wrapped=true;
+    window.openMoreSheet=wrapped;
+  }
+
+  const previousSetTab=typeof window.setTab==='function'?window.setTab:null;
+  if(previousSetTab&&!previousSetTab.__vy861Wrapped){
+    const wrapped=function(tab,withLoader){
+      const result=previousSetTab.call(this,tab,false);
+      if(result!==false){
+        const scroller=document.scrollingElement||document.documentElement;
+        scroller.scrollTop=0;
+        if(document.body)document.body.scrollTop=0;
+        try{window.scrollTo({top:0,left:0,behavior:'auto'});}catch(_){window.scrollTo(0,0);}
+      }
+      requestAnimationFrame(()=>{decorateNav();syncModalState();cleanupOptics();});
+      return result;
+    };
+    wrapped.__vy861Wrapped=true;
+    window.setTab=wrapped;
+  }
+
+  function fixAuthGate(){
+    const gate=document.getElementById('vyaparOtpGate');
+    if(!gate)return;
+    gate.classList.toggle('auth-dark',!isLight());
+    // Never allow stale loading state after a failed/returned login attempt.
+    const message=gate.querySelector('#auth-message');
+    if(gate.classList.contains('auth-loading')&&message&&/unable|failed|error|cancel/i.test(message.textContent||'')){
+      gate.classList.remove('auth-loading');
+    }
+  }
+
+  let queued=false;
+  const observer=new MutationObserver(()=>{
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{
+      queued=false;
+      cleanupOptics();
+      decorateNav();
+      syncModalState();
+      fixAuthGate();
+      applyThemeMeta();
+    });
+  });
+
+  function init(){
+    cleanupOptics();
+    decorateNav();
+    syncModalState();
+    fixAuthGate();
+    applyThemeMeta();
+    if(document.body)observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
 })();

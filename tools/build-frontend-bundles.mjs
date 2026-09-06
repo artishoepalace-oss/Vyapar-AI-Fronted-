@@ -37,26 +37,9 @@ const uiStyles = [
   'performance-final-850.css',
   'visual-fixes-851.css',
   'telegram-shell-851.css',
-  'apple-liquid-852.css',
-  'apple-liquid-853.css',
-  'apple-unified-854-part1.css',
-  'apple-unified-854-part2.css',
-  'apple-unified-854-part3.css',
-  'apple-unified-854-part4.css',
-  'apple-unified-854-part5.css',
-  'apple-unified-854-part6.css',
-  'apple-unified-854-part7.css',
-  'apple-unified-854-part8.css',
-  'apple-stability-855.css',
   'inspected-glitchfix-855.css',
-  'liquid-lens-motion-856.css',
-  'liquid-lens-legacy-856.css',
-  'ios27-convex-857.css',
-  'ios27-convex-857-fix.css',
-  'ios-liquid-unified-858.css',
   'settings-overlap-858.css',
-  'liquid-glass-v2-859.css',
-  'ios-hig-blur-860.css'
+  'flat-black-ios-861.css'
 ];
 
 const scripts = [
@@ -78,18 +61,8 @@ const scripts = [
   'ui-hotfix-671.js',
   'settings-center-675.js',
   'complete-ui-680.js',
-  'apple-motion-852.js',
-  'apple-motion-853.js',
-  'apple-unified-854-js-part1.js',
-  'apple-unified-854-js-part2.js',
-  'apple-unified-854-js-part3.js',
-  'apple-stability-855.js',
   'inspected-glitchfix-855.js',
-  'liquid-lens-motion-856.js',
-  'ios27-convex-857.js',
-  'ios-liquid-unified-858.js',
-  'liquid-glass-v2-859.js',
-  'ios-hig-blur-860.js'
+  'flat-black-ios-861.js'
 ];
 
 function readSource(subdirectory, filename) {

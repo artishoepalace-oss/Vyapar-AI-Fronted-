@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
 const androidSource = path.join(root, 'frontend-source/android');
-const expectedVersion = '8.5.1.2026';
+const expectedVersion = '8.6.1.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -51,9 +51,10 @@ for (const base of [web]) {
   assert(finalStyle.includes('settings-stack.vy675-settings-repository[hidden]'), 'hidden Settings repository needs an authoritative final override');
   assert(finalStyle.includes('data-vy675-page="account"'), 'Settings destinations must keep color-coded accents');
   assert(finalStyle.includes('width: 108px !important'), 'WebView loading logo must match the native 108dp logo scale');
-  assert(finalStyle.includes('dark blue and white major color system'), 'dark-blue and white UI migration must be present');
-  assert(finalStyle.includes('html:not(.theme-light) body'), 'dark mode needs an explicit dark-blue surface');
-  assert(finalStyle.includes('html.theme-light body'), 'light mode needs an explicit white surface');
+  const flatStyle = read(base, 'assets/styles/flat-black-ios-861.css');
+  assert(flatStyle.includes('--vy861-bg:#000000'), 'dark mode needs a true-black surface');
+  assert(flatStyle.includes('html.vy861-flat-black.theme-light'), 'light mode needs an explicit white/system-gray palette');
+  assert(flatStyle.includes('UNIVERSAL POPUP / SHEET SYSTEM'), 'popup styling must be universal');
   assert(finalStyle.includes('.nav button.active[data-android-tab]'), 'all primary nav destinations need the unified active style');
   assert(finalStyle.includes('production-actions {'), 'Account actions must use the compact layout');
   assert(finalStyle.includes('padding: 2px 0 16px !important'), 'Settings sub-page outer cards must be flattened');
@@ -65,8 +66,8 @@ const androidScript = read(androidSource, 'scripts/settings-center-675.js');
 const androidStyle = read(androidSource, 'styles/settings-center-675.css');
 const androidScriptBundle = read(android, 'assets/scripts/vyapar-app.js');
 const androidStyleBundle = read(android, 'assets/styles/vyapar-ui.css');
-assert(androidIndex.includes('vyapar-app.js?v=20260903-optimized2'), 'Android combined script must be loaded');
-assert(androidIndex.includes('vyapar-ui.css?v=20260903-optimized2'), 'Android combined stylesheet must be loaded');
+assert(androidIndex.includes('vyapar-app.js?v=20260906-flatblack861'), 'Android combined script must be loaded');
+assert(androidIndex.includes('vyapar-ui.css?v=20260906-flatblack861'), 'Android combined stylesheet must be loaded');
 assert(androidScriptBundle.includes('SCRIPT SOURCE: settings-center-675.js'), 'Settings logic must be included in the Android bundle');
 assert(androidStyleBundle.includes('STYLE SOURCE: settings-center-675.css'), 'Settings styles must be included in the Android bundle');
 assert(androidIndex.includes(`content="${expectedVersion}"`), 'Android UI version metadata must match the release');
@@ -90,10 +91,10 @@ const mainActivity = read(path.join(root, 'android-app/app/src/main/java/com/vya
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 8512026'), 'Android release code must match');
-assert(mainActivity.includes('Color.rgb(6, 23, 45)'), 'first WebView frame must match the dark launch surface');
-assert(fs.existsSync(path.join(root, 'RELEASE_8.5.1.2026.md')), 'v8.5 release file must exist');
-assert(!fs.existsSync(path.join(root, 'VALIDATION_8.5.1.2026.md')), 'validation file should only exist after an explicit validation pass');
+assert(gradle.includes('versionCode 8612026'), 'Android release code must match');
+assert(mainActivity.includes('Color.BLACK'), 'first WebView frame must match the black launch surface');
+assert(fs.existsSync(path.join(root, 'RELEASE_8.6.1.2026.md')), 'v8.6.1 release file must exist');
+assert(!fs.existsSync(path.join(root, 'VALIDATION_8.6.1.2026.md')), 'validation file should only exist after an explicit validation pass');
 assert(!fs.existsSync(path.join(web, 'startup-mark.svg')), 'deprecated web startup asset must remain removed');
 assert(!fs.existsSync(path.join(android, 'startup-mark.svg')), 'deprecated Android startup asset must remain removed');
 
