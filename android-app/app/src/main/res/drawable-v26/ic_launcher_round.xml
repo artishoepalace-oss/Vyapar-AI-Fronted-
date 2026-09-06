@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Adaptive launcher icon for Android 8.0+.
-     The launcher applies the device/OEM mask to the entire artwork, so the
-     source PNG can never escape as the square white tile seen on the OPPO home
-     screen. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@android:color/white" />
-    <foreground android:drawable="@drawable/ic_launcher" />
+    <background android:drawable="@android:color/black" />
+    <foreground android:drawable="@drawable/ic_launcher_mark_864" />
 </adaptive-icon>
