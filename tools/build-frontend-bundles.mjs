@@ -50,7 +50,8 @@ const uiStyles = [
   'apple-stability-855.css',
   'inspected-glitchfix-855.css',
   'liquid-lens-motion-856.css',
-  'liquid-lens-legacy-856.css'
+  'liquid-lens-legacy-856.css',
+  'ios27-convex-857.css'
 ];
 
 const scripts = [
@@ -79,7 +80,8 @@ const scripts = [
   'apple-unified-854-js-part3.js',
   'apple-stability-855.js',
   'inspected-glitchfix-855.js',
-  'liquid-lens-motion-856.js'
+  'liquid-lens-motion-856.js',
+  'ios27-convex-857.js'
 ];
 
 function readSource(subdirectory, filename) {
