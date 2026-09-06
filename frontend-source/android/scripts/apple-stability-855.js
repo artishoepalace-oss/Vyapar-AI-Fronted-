@@ -178,6 +178,7 @@
   }
 
   document.addEventListener('click',event=>{
+    if(document.documentElement.classList.contains('vy859-liquid-v2'))return;
     const item=event.target&&event.target.closest?event.target.closest('#androidMoreSheet .android-sheet-item[data-tab]'):null;
     if(item){
       event.preventDefault();
@@ -203,6 +204,7 @@
   },true);
 
   document.addEventListener('click',event=>{
+    if(document.documentElement.classList.contains('vy859-liquid-v2'))return;
     if(Date.now()>=moreSuppressedUntil)return;
     const candidate=event.target&&event.target.closest?event.target.closest('.nav button'):null;
     if(!candidate)return;
