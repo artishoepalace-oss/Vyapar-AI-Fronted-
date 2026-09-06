@@ -1,0 +1,304 @@
+/* Vyapar AI 8.5.7 preview — iOS-27-inspired water glass + behaving convex chromatic lens.
+   Presentation-only layer. Green/red accents are treated as refractive edge lenses,
+   not decorative flat borders. */
+
+html.vy857-ios27{
+  --vy857-water-dark:rgba(12,27,45,.78);
+  --vy857-water-dark-soft:rgba(18,35,56,.66);
+  --vy857-water-light:rgba(224,233,241,.64);
+  --vy857-water-light-soft:rgba(235,241,246,.58);
+  --vy857-line-dark:rgba(205,226,244,.16);
+  --vy857-line-light:rgba(67,91,115,.12);
+  --vy857-hi-dark:rgba(255,255,255,.17);
+  --vy857-hi-light:rgba(255,255,255,.58);
+  --vy857-green:rgba(77,255,164,.30);
+  --vy857-red:rgba(255,92,76,.30);
+  --vy857-blue:rgba(75,151,255,.18);
+  --vy857-spring:cubic-bezier(.16,1,.3,1);
+  --vy857-card-r:28px;
+  --vy857-sheet-r:36px;
+  --vy857-control-r:20px;
+}
+
+/* Water glass: smoky/translucent, never milky-white Windows/Aero blur. */
+html.vy857-ios27 .top,
+html.vy857-ios27 .nav,
+html.vy857-ios27 .android-sheet,
+html.vy857-ios27 .shop-progress-sheet,
+html.vy857-ios27 .vx643-modal,
+html.vy857-ios27 .subscription-dialog,
+html.vy857-ios27 .more-sheet,
+html.vy857-ios27 .menu-popover,
+html.vy857-ios27 #vyaparOtpGate .auth-card,
+html.vy857-ios27 #screen-settings .vy675-settings-list,
+html.vy857-ios27 #screen-settings .vy675-settings-intro,
+html.vy857-ios27 #screen-settings .vy675-page-header,
+html.vy857-ios27 #shopGrowthSummary{
+  position:relative!important;
+  isolation:isolate!important;
+  border:1px solid var(--vy857-line-dark)!important;
+  background:
+    radial-gradient(120% 86% at 18% -14%,rgba(255,255,255,.13),transparent 48%),
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012) 58%),
+    var(--vy857-water-dark)!important;
+  box-shadow:
+    0 16px 38px rgba(0,6,18,.22),
+    inset 0 1px 0 var(--vy857-hi-dark),
+    inset 0 -1px 0 rgba(53,116,184,.08)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%)!important;
+  backdrop-filter:blur(18px) saturate(140%)!important;
+}
+html.vy857-ios27.theme-light .top,
+html.vy857-ios27.theme-light .nav,
+html.vy857-ios27.theme-light .android-sheet,
+html.vy857-ios27.theme-light .shop-progress-sheet,
+html.vy857-ios27.theme-light .vx643-modal,
+html.vy857-ios27.theme-light .subscription-dialog,
+html.vy857-ios27.theme-light .more-sheet,
+html.vy857-ios27.theme-light .menu-popover,
+html.vy857-ios27.theme-light #vyaparOtpGate .auth-card,
+html.vy857-ios27.theme-light #screen-settings .vy675-settings-list,
+html.vy857-ios27.theme-light #screen-settings .vy675-settings-intro,
+html.vy857-ios27.theme-light #screen-settings .vy675-page-header,
+html.vy857-ios27.theme-light #shopGrowthSummary{
+  border-color:var(--vy857-line-light)!important;
+  background:
+    radial-gradient(120% 86% at 18% -14%,rgba(255,255,255,.38),transparent 49%),
+    linear-gradient(180deg,rgba(255,255,255,.14),rgba(210,222,232,.075) 58%),
+    var(--vy857-water-light)!important;
+  box-shadow:
+    0 15px 34px rgba(43,67,90,.12),
+    inset 0 1px 0 var(--vy857-hi-light),
+    inset 0 -1px 0 rgba(80,112,145,.08)!important;
+}
+
+html.vy857-ios27 .top{border-radius:32px!important}
+html.vy857-ios27 .nav{border-radius:34px!important}
+html.vy857-ios27 .android-sheet,
+html.vy857-ios27 .shop-progress-sheet,
+html.vy857-ios27 .vx643-modal,
+html.vy857-ios27 .subscription-dialog,
+html.vy857-ios27 .more-sheet,
+html.vy857-ios27 .menu-popover{border-radius:var(--vy857-sheet-r)!important}
+html.vy857-ios27 #vyaparOtpGate .auth-card,
+html.vy857-ios27 #shopGrowthSummary{border-radius:var(--vy857-card-r)!important}
+html.vy857-ios27 input,
+html.vy857-ios27 select,
+html.vy857-ios27 textarea,
+html.vy857-ios27 button,
+html.vy857-ios27 .btn,
+html.vy857-ios27 .auth-input,
+html.vy857-ios27 .auth-primary,
+html.vy857-ios27 .auth-google,
+html.vy857-ios27 .auth-small-btn{border-radius:var(--vy857-control-r)!important}
+
+/* Real convex-lens overlay inserted by JS. It has a clear center and
+   chromatic refraction at opposite edges. */
+html.vy857-ios27 .vy857-convex-edge{
+  --vy857-px:50%;
+  --vy857-py:18%;
+  position:absolute!important;
+  inset:0!important;
+  z-index:40!important;
+  border-radius:inherit!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  opacity:.82!important;
+  transform:translateZ(0)!important;
+  transition:opacity .18s ease,transform .26s var(--vy857-spring)!important;
+  background:
+    radial-gradient(74px 54px at var(--vy857-px) var(--vy857-py),rgba(255,255,255,.085),rgba(255,255,255,.022) 38%,transparent 72%)!important;
+  box-shadow:
+    inset 1.2px 0 0 rgba(77,255,164,.15),
+    inset -1.2px 0 0 rgba(255,92,76,.16),
+    inset 0 1px 0 rgba(255,255,255,.09),
+    inset 0 -1px 0 rgba(67,143,255,.07)!important;
+}
+html.vy857-ios27 .vy857-convex-edge::before,
+html.vy857-ios27 .vy857-convex-edge::after{
+  content:"";
+  position:absolute;
+  top:-9%;
+  bottom:-9%;
+  width:19px;
+  pointer-events:none;
+  opacity:.72;
+  transform:translate3d(0,0,0) scaleY(.96);
+  transition:transform .28s var(--vy857-spring),opacity .18s ease;
+}
+html.vy857-ios27 .vy857-convex-edge::before{
+  left:-8px;
+  background:
+    radial-gradient(17px 72px at 100% 12%,rgba(112,255,188,.33),transparent 72%),
+    radial-gradient(17px 82px at 100% 88%,rgba(60,243,151,.24),transparent 74%);
+  box-shadow:10px 0 18px -13px rgba(71,255,160,.58);
+}
+html.vy857-ios27 .vy857-convex-edge::after{
+  right:-8px;
+  background:
+    radial-gradient(17px 72px at 0% 12%,rgba(255,122,105,.32),transparent 72%),
+    radial-gradient(17px 82px at 0% 88%,rgba(255,83,70,.24),transparent 74%);
+  box-shadow:-10px 0 18px -13px rgba(255,90,76,.58);
+}
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge{
+  opacity:1!important;
+  transform:translateZ(0) scale(1.002)!important;
+}
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge::before{
+  transform:translate3d(var(--vy857-green-shift,2px),var(--vy857-edge-y,0px),0) scaleY(1.045)!important;
+  opacity:.94!important;
+}
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge::after{
+  transform:translate3d(var(--vy857-red-shift,-2px),calc(var(--vy857-edge-y,0px) * -1),0) scaleY(1.045)!important;
+  opacity:.94!important;
+}
+
+/* Unified popup language: More and Shop Journey must read as the same system. */
+html.vy857-ios27 .shop-progress-sheet,
+html.vy857-ios27 .android-sheet,
+html.vy857-ios27 .more-sheet{
+  padding-top:14px!important;
+}
+html.vy857-ios27 .shop-sheet-handle,
+html.vy857-ios27 .android-sheet-handle,
+html.vy857-ios27 .sheet-handle{
+  width:54px!important;
+  height:6px!important;
+  border-radius:999px!important;
+  background:rgba(119,157,189,.34)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html.vy857-ios27 .shop-sheet-close,
+html.vy857-ios27 .android-sheet-close,
+html.vy857-ios27 .more-sheet-close{
+  width:54px!important;
+  height:54px!important;
+  min-width:54px!important;
+  border-radius:50%!important;
+  background:rgba(22,43,67,.72)!important;
+  border:1px solid rgba(205,226,244,.14)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 7px 18px rgba(0,7,20,.12)!important;
+}
+html.vy857-ios27.theme-light .shop-sheet-close,
+html.vy857-ios27.theme-light .android-sheet-close,
+html.vy857-ios27.theme-light .more-sheet-close{
+  background:rgba(205,217,227,.66)!important;
+  border-color:rgba(70,96,122,.12)!important;
+  color:#18334d!important;
+}
+
+/* Login becomes one coherent rounded form rather than stacked independent boxes. */
+html.vy857-ios27 #vyaparOtpGate .auth-card{padding:24px 20px 22px!important}
+html.vy857-ios27 #vyaparOtpGate .auth-method-tabs{
+  border-radius:22px!important;
+  padding:4px!important;
+  gap:4px!important;
+  background:rgba(86,111,134,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;
+}
+html.vy857-ios27 #vyaparOtpGate .auth-method-tab,
+html.vy857-ios27 #vyaparOtpGate .auth-method-tab.active{border-radius:17px!important}
+html.vy857-ios27 #vyaparOtpGate .auth-input,
+html.vy857-ios27 #vyaparOtpGate .auth-primary,
+html.vy857-ios27 #vyaparOtpGate .auth-google,
+html.vy857-ios27 #vyaparOtpGate .auth-small-btn{
+  height:50px!important;
+  min-height:50px!important;
+  border-radius:20px!important;
+}
+html.vy857-ios27 #vyaparOtpGate .auth-small-btn:not(:disabled){
+  background:linear-gradient(180deg,rgba(43,148,245,.86),rgba(14,103,198,.84))!important;
+  color:#fff!important;
+  border:1px solid rgba(122,192,255,.26)!important;
+}
+html.vy857-ios27 #vyaparOtpGate .auth-small-btn:disabled{
+  background:rgba(101,126,149,.34)!important;
+  color:rgba(223,233,241,.72)!important;
+  border:1px solid rgba(176,202,224,.10)!important;
+}
+html.vy857-ios27.theme-light #vyaparOtpGate .auth-small-btn:disabled{
+  background:rgba(139,158,176,.30)!important;
+  color:rgba(56,78,97,.62)!important;
+}
+
+/* New recommendation surface. */
+html.vy857-ios27 .vy857-smart-rec{
+  position:relative;
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  margin-top:14px;
+  padding:13px 14px;
+  border-radius:22px;
+  border:1px solid rgba(161,201,233,.14);
+  background:
+    radial-gradient(120% 120% at 0% 0%,rgba(80,165,255,.12),transparent 45%),
+    rgba(17,37,59,.48);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  overflow:hidden;
+}
+html.vy857-ios27.theme-light .vy857-smart-rec{
+  border-color:rgba(62,93,122,.10);
+  background:
+    radial-gradient(120% 120% at 0% 0%,rgba(49,139,230,.10),transparent 46%),
+    rgba(208,220,230,.48);
+}
+html.vy857-ios27 .vy857-rec-orb{
+  width:44px;height:44px;border-radius:16px;display:grid;place-items:center;
+  font-size:20px;color:#dff1ff;
+  background:linear-gradient(180deg,rgba(38,143,241,.30),rgba(16,90,175,.15));
+  border:1px solid rgba(120,190,255,.18);
+  box-shadow:inset 1px 0 0 rgba(77,255,164,.12),inset -1px 0 0 rgba(255,92,76,.13);
+}
+html.vy857-ios27.theme-light .vy857-rec-orb{color:#075ca9;background:rgba(40,139,226,.12)}
+html.vy857-ios27 .vy857-rec-copy{min-width:0;display:grid;gap:2px}
+html.vy857-ios27 .vy857-rec-copy span{font-size:10px;letter-spacing:.12em;font-weight:800;color:#63adf5}
+html.vy857-ios27 .vy857-rec-copy b{font-size:14px;line-height:1.25;color:#f5fbff}
+html.vy857-ios27 .vy857-rec-copy small{font-size:11px;line-height:1.35;color:#91a8bb}
+html.vy857-ios27.theme-light .vy857-rec-copy b{color:#142c43}
+html.vy857-ios27.theme-light .vy857-rec-copy small{color:#60768a}
+html.vy857-ios27 .vy857-rec-action{
+  min-width:74px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0 12px!important;
+  border-radius:16px!important;
+  border:1px solid rgba(104,177,242,.18)!important;
+  background:rgba(30,111,190,.18)!important;
+  color:#d9efff!important;
+  font-size:11px!important;
+  font-weight:800!important;
+}
+html.vy857-ios27.theme-light .vy857-rec-action{color:#0a5a9f!important;background:rgba(36,128,210,.10)!important}
+
+/* Settings: no squared white sub-panels; keep one continuous water-glass family. */
+html.vy857-ios27 #screen-settings .vy675-settings-section,
+html.vy857-ios27 #screen-settings .vy675-settings-row,
+html.vy857-ios27 #screen-settings .settings-section{
+  border-radius:22px!important;
+}
+html.vy857-ios27 #screen-settings:not(.hide){opacity:1!important;visibility:visible!important;filter:none!important}
+
+/* Android 7/8: keep the convex behavior but avoid live blur cost. */
+html.vy857-ios27.perf-tier-legacy .top,
+html.vy857-ios27.perf-tier-legacy .nav,
+html.vy857-ios27.perf-tier-legacy .android-sheet,
+html.vy857-ios27.perf-tier-legacy .shop-progress-sheet,
+html.vy857-ios27.perf-tier-legacy .vx643-modal,
+html.vy857-ios27.perf-tier-legacy .subscription-dialog,
+html.vy857-ios27.perf-tier-legacy .more-sheet,
+html.vy857-ios27.perf-tier-legacy .menu-popover,
+html.vy857-ios27.perf-tier-legacy #vyaparOtpGate .auth-card{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html.vy857-ios27.perf-tier-legacy .vy857-convex-edge{transition-duration:.16s!important}
+html.vy857-ios27.perf-tier-legacy .vy857-convex-edge::before,
+html.vy857-ios27.perf-tier-legacy .vy857-convex-edge::after{transition-duration:.18s!important}
+
+@media(max-width:380px){
+  html.vy857-ios27 .vy857-smart-rec{grid-template-columns:40px minmax(0,1fr);padding:12px}
+  html.vy857-ios27 .vy857-rec-orb{width:40px;height:40px;border-radius:15px}
+  html.vy857-ios27 .vy857-rec-action{grid-column:2;width:max-content}
+}
