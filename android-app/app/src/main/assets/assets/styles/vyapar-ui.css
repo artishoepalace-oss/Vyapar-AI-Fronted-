@@ -5178,3 +5178,3004 @@ html.android-ui.perf-low-ram .production-account-card{
     transition-duration:.01ms!important;
   }
 }
+
+/* ===== STYLE SOURCE: visual-fixes-851.css ===== */
+
+
+/* ========================================================================
+   8.5 Telegram-reference UI maintenance — visual/interaction only
+   ======================================================================== */
+
+/* Telegram-like compact top bar: fixed visual axis, square logo, one theme action. */
+html.android-ui .top,
+html.native-android .top{
+  position:sticky!important;
+  top:0!important;
+  z-index:850!important;
+  min-height:62px!important;
+  width:auto!important;
+  margin:0 -10px 12px!important;
+  padding:8px 12px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(129,160,190,.18)!important;
+  border-radius:0!important;
+  background:rgba(7,20,36,.96)!important;
+  box-shadow:0 4px 18px rgba(0,6,18,.16)!important;
+  backdrop-filter:blur(16px) saturate(120%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
+}
+html.android-ui.theme-light .top,
+html.native-android.theme-light .top{
+  background:rgba(250,252,255,.97)!important;
+  border-bottom-color:rgba(55,85,115,.13)!important;
+  box-shadow:0 4px 16px rgba(40,70,105,.08)!important;
+}
+html.android-ui .brand,
+html.native-android .brand{
+  min-width:0!important;
+  flex:1 1 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+html.android-ui .brand .logo,
+html.native-android .brand .logo{
+  width:40px!important;
+  min-width:40px!important;
+  max-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  flex:0 0 40px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:11px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#fff!important;
+  box-shadow:0 3px 12px rgba(0,20,48,.13)!important;
+  transform:none!important;
+}
+html.android-ui .brand h1,
+html.native-android .brand h1{
+  margin:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:21px!important;
+  line-height:1.08!important;
+  letter-spacing:-.02em!important;
+}
+html.android-ui .brand .tag,
+html.native-android .brand .tag{display:none!important;}
+html.android-ui .top-actions,
+html.native-android .top-actions{
+  flex:0 0 auto!important;
+  min-width:42px!important;
+  max-width:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:0!important;
+}
+html.android-ui .top-actions .badge,
+html.native-android .top-actions .badge{display:none!important;}
+html.android-ui #themeToggle,
+html.native-android #themeToggle{
+  width:42px!important;
+  min-width:42px!important;
+  max-width:42px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(93,151,212,.24)!important;
+  border-radius:13px!important;
+  background:rgba(30,74,116,.42)!important;
+  color:#d9edff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+  font-size:0!important;
+  line-height:1!important;
+  overflow:hidden!important;
+  transform:none!important;
+}
+html.android-ui.theme-light #themeToggle,
+html.native-android.theme-light #themeToggle{
+  border-color:rgba(45,100,155,.16)!important;
+  background:#fff!important;
+  color:#227fc8!important;
+  box-shadow:0 4px 13px rgba(43,78,112,.09)!important;
+}
+html.android-ui #themeToggle::before,
+html.native-android #themeToggle::before{display:none!important;content:none!important;}
+html.android-ui #themeToggle::after,
+html.native-android #themeToggle::after{
+  content:"☾"!important;
+  display:block!important;
+  font-size:23px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  color:currentColor!important;
+  transform:rotate(-10deg) scale(1)!important;
+  transform-origin:center!important;
+  transition:transform .24s cubic-bezier(.2,.75,.25,1),opacity .18s ease!important;
+}
+html.android-ui.theme-light #themeToggle::after,
+html.native-android.theme-light #themeToggle::after{
+  content:"☀"!important;
+  transform:rotate(12deg) scale(.96)!important;
+}
+
+/* Lightweight Telegram-style page switching: one transform + opacity only. */
+@keyframes vyTelegramPageFromRight{
+  from{opacity:.58;transform:translate3d(16px,0,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes vyTelegramPageFromLeft{
+  from{opacity:.58;transform:translate3d(-16px,0,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+html.android-ui .screen.vy-telegram-page-from-right,
+html.native-android .screen.vy-telegram-page-from-right{
+  animation:vyTelegramPageFromRight .24s cubic-bezier(.2,.75,.25,1) both!important;
+  will-change:transform,opacity;
+}
+html.android-ui .screen.vy-telegram-page-from-left,
+html.native-android .screen.vy-telegram-page-from-left{
+  animation:vyTelegramPageFromLeft .24s cubic-bezier(.2,.75,.25,1) both!important;
+  will-change:transform,opacity;
+}
+
+/* Theme switch: keep the requested animation but avoid animating hundreds of controls. */
+html.android-ui.theme-transitioning .top,
+html.android-ui.theme-transitioning .nav,
+html.android-ui.theme-transitioning .card,
+html.android-ui.theme-transitioning .stat,
+html.android-ui.theme-transitioning .settings-section,
+html.android-ui.theme-transitioning .android-sheet,
+html.android-ui.theme-transitioning .shop-growth-card,
+html.android-ui.theme-transitioning input,
+html.android-ui.theme-transitioning textarea,
+html.android-ui.theme-transitioning select,
+html.android-ui.theme-transitioning button{
+  transition:none!important;
+}
+html.android-ui .vx657-theme-crossfade,
+html.native-android .vx657-theme-crossfade{
+  opacity:.24!important;
+  transition:opacity .30s cubic-bezier(.2,.75,.25,1)!important;
+  contain:strict!important;
+  transform:translateZ(0)!important;
+}
+html.android-ui .vx657-theme-crossfade.is-fading,
+html.native-android .vx657-theme-crossfade.is-fading{opacity:0!important;}
+
+/* Sales light mode contrast repair: remove the accidental dark live-profit boxes. */
+html.android-ui.theme-light #screen-sales #vy660ProfitCard,
+html.native-android.theme-light #screen-sales #vy660ProfitCard{
+  background:#fff!important;
+  color:#14263d!important;
+  border-color:rgba(49,111,176,.16)!important;
+  box-shadow:0 12px 28px rgba(36,72,110,.09)!important;
+}
+html.android-ui.theme-light #screen-sales .vy660-live-box,
+html.native-android.theme-light #screen-sales .vy660-live-box{
+  background:linear-gradient(145deg,#f8fbff,#edf6ff)!important;
+  border-color:rgba(49,135,245,.20)!important;
+  color:#10263d!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+html.android-ui.theme-light #screen-sales .vy660-live-box>span,
+html.android-ui.theme-light #screen-sales .vy660-live-box>small,
+html.android-ui.theme-light #screen-sales .vy660-note,
+html.native-android.theme-light #screen-sales .vy660-live-box>span,
+html.native-android.theme-light #screen-sales .vy660-live-box>small,
+html.native-android.theme-light #screen-sales .vy660-note{
+  color:#61778d!important;
+  opacity:1!important;
+}
+html.android-ui.theme-light #screen-sales .vy660-live-box>b,
+html.native-android.theme-light #screen-sales .vy660-live-box>b{
+  color:#0c2b49!important;
+  opacity:1!important;
+}
+
+/* Exactly one verification badge; make the canonical gold/silver mark brighter. */
+.production-account-head .vy647-plan-mark{display:none!important;}
+.production-account-head .vy645-plan-tick{
+  width:23px!important;
+  height:23px!important;
+  flex:0 0 23px!important;
+  transform:translateY(-1px) translateZ(0)!important;
+}
+.production-account-head .vy645-plan-tick.business{
+  box-shadow:0 0 0 1px rgba(255,228,129,.22),0 0 14px rgba(255,194,48,.88),0 3px 9px rgba(80,47,0,.34)!important;
+}
+.production-account-head .vy645-plan-tick.pro{
+  box-shadow:0 0 0 1px rgba(225,239,255,.22),0 0 13px rgba(190,220,255,.64),0 3px 9px rgba(0,20,45,.28)!important;
+}
+.production-account-head .vy645-plan-tick::before{
+  animation-duration:2.35s!important;
+  filter:brightness(1.24)!important;
+}
+.production-account-head .vy645-plan-tick svg{width:14px!important;height:14px!important;}
+
+/* Account actions: keep cancellation destructive, but remove the awkward empty half-row. */
+#screen-settings[data-vy675-page="account"] .production-actions .cancel-subscription,
+#screen-settings[data-vy675-page="account"] .production-actions button[onclick*="vyaparCancelSubscription"]{
+  grid-column:auto!important;
+  background:#d94b5f!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(217,75,95,.20)!important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button.danger:last-child{
+  grid-column:1 / -1!important;
+  background:#cf3f55!important;
+}
+#screen-settings[data-vy675-page="account"] .production-actions button{
+  border-radius:13px!important;
+  font-weight:780!important;
+}
+
+/* ===== STYLE SOURCE: telegram-shell-851.css ===== */
+
+/* Telegram-style bottom navigation: active icon gets the blue pill, not a giant tile. */
+html.android-ui .nav,
+html.native-android .nav{
+  left:50%!important;
+  right:auto!important;
+  bottom:max(8px,env(safe-area-inset-bottom))!important;
+  width:min(calc(100% - 16px),620px)!important;
+  height:64px!important;
+  min-height:64px!important;
+  padding:4px 5px!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(110,151,190,.22)!important;
+  border-radius:18px!important;
+  background:rgba(10,31,50,.97)!important;
+  box-shadow:0 10px 30px rgba(0,6,18,.30)!important;
+  backdrop-filter:blur(16px) saturate(120%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
+  transform:translateX(-50%)!important;
+  touch-action:manipulation!important;
+}
+html.android-ui.theme-light .nav,
+html.native-android.theme-light .nav{
+  border-color:rgba(51,87,119,.13)!important;
+  background:rgba(255,255,255,.98)!important;
+  box-shadow:0 9px 24px rgba(37,69,102,.13)!important;
+}
+html.android-ui .android-nav-glass-indicator,
+html.native-android .android-nav-glass-indicator{display:none!important;}
+html.android-ui .nav button[data-android-tab],
+html.native-android .nav button[data-android-tab]{
+  position:relative!important;
+  z-index:1!important;
+  min-width:0!important;
+  width:100%!important;
+  height:56px!important;
+  min-height:56px!important;
+  padding:3px 2px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  color:#8da5ba!important;
+  box-shadow:none!important;
+  transform:none!important;
+  transition:color .16s ease!important;
+}
+html.android-ui.theme-light .nav button[data-android-tab],
+html.native-android.theme-light .nav button[data-android-tab]{color:#64798d!important;}
+html.android-ui .nav button.active[data-android-tab],
+html.native-android .nav button.active[data-android-tab]{
+  background:transparent!important;
+  color:#35a9f4!important;
+  box-shadow:none!important;
+}
+html.android-ui .nav .android-nav-icon,
+html.native-android .nav .android-nav-icon{
+  width:31px!important;
+  height:28px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:14px!important;
+  color:currentColor!important;
+  background:transparent!important;
+  filter:none!important;
+  transition:background .16s ease,transform .16s cubic-bezier(.2,.75,.25,1)!important;
+}
+html.android-ui .nav button.active .android-nav-icon,
+html.native-android .nav button.active .android-nav-icon{
+  background:rgba(53,169,244,.14)!important;
+  transform:translateY(-1px)!important;
+  filter:none!important;
+}
+html.android-ui.theme-light .nav button.active .android-nav-icon,
+html.native-android.theme-light .nav button.active .android-nav-icon{
+  background:rgba(34,158,217,.12)!important;
+}
+html.android-ui .nav .android-nav-icon svg,
+html.native-android .nav .android-nav-icon svg{width:21px!important;height:21px!important;stroke-width:2!important;}
+html.android-ui .nav .android-nav-label,
+html.native-android .nav .android-nav-label{
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  background:none!important;
+  color:currentColor!important;
+  font-size:9.5px!important;
+  line-height:1.05!important;
+  font-weight:720!important;
+  animation:none!important;
+}
+
+/* More stays inside Vyapar AI visually: one native-feeling Telegram-style list sheet. */
+html.android-ui .android-sheet-overlay,
+html.native-android .android-sheet-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:12000!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:0!important;
+  background:rgba(0,8,18,.44)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.android-ui .android-sheet,
+html.native-android .android-sheet{
+  width:min(100%,620px)!important;
+  max-width:620px!important;
+  max-height:min(72vh,660px)!important;
+  margin:0!important;
+  padding:8px 12px calc(16px + env(safe-area-inset-bottom))!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+  border:1px solid rgba(103,151,197,.23)!important;
+  border-bottom:0!important;
+  border-radius:22px 22px 0 0!important;
+  background:#102c45!important;
+  box-shadow:0 -16px 42px rgba(0,6,18,.32)!important;
+  backdrop-filter:blur(18px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(116%)!important;
+}
+html.android-ui.theme-light .android-sheet,
+html.native-android.theme-light .android-sheet{
+  border-color:rgba(47,89,127,.14)!important;
+  background:#f8fbff!important;
+  box-shadow:0 -14px 36px rgba(39,73,107,.17)!important;
+}
+html.android-ui .android-sheet-handle,
+html.native-android .android-sheet-handle{
+  width:42px!important;
+  height:4px!important;
+  margin:1px auto 10px!important;
+  border-radius:999px!important;
+  background:rgba(143,178,211,.42)!important;
+}
+html.android-ui .android-sheet-titlebar,
+html.native-android .android-sheet-titlebar{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  padding:0 2px 10px!important;
+}
+html.android-ui .android-sheet-titlebar h3,
+html.native-android .android-sheet-titlebar h3{margin:0!important;font-size:23px!important;}
+html.android-ui .android-sheet-titlebar p,
+html.native-android .android-sheet-titlebar p{margin:2px 0 0!important;font-size:11px!important;color:#91a8bb!important;}
+html.android-ui.theme-light .android-sheet-titlebar p,
+html.native-android.theme-light .android-sheet-titlebar p{color:#6a7e91!important;}
+html.android-ui .android-sheet-close,
+html.native-android .android-sheet-close{
+  width:40px!important;
+  min-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0!important;
+  border-radius:13px!important;
+  background:rgba(62,118,173,.16)!important;
+  border:1px solid rgba(105,160,211,.18)!important;
+  color:#eef8ff!important;
+  box-shadow:none!important;
+}
+html.android-ui.theme-light .android-sheet-close,
+html.native-android.theme-light .android-sheet-close{background:#eef6fd!important;color:#2d628d!important;border-color:rgba(54,95,131,.13)!important;}
+html.android-ui .android-sheet-grid,
+html.native-android .android-sheet-grid{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(105,151,194,.18)!important;
+  border-radius:17px!important;
+  background:rgba(7,25,42,.24)!important;
+}
+html.android-ui.theme-light .android-sheet-grid,
+html.native-android.theme-light .android-sheet-grid{background:#fff!important;border-color:rgba(53,91,126,.12)!important;}
+html.android-ui .android-sheet-item,
+html.native-android .android-sheet-item{
+  min-height:62px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:9px 12px!important;
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) 18px!important;
+  align-items:center!important;
+  gap:10px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(117,157,194,.15)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#f2f7fc!important;
+  box-shadow:none!important;
+  text-align:left!important;
+}
+html.android-ui .android-sheet-item:last-child,
+html.native-android .android-sheet-item:last-child{border-bottom:0!important;}
+html.android-ui.theme-light .android-sheet-item,
+html.native-android.theme-light .android-sheet-item{color:#172b3d!important;border-bottom-color:rgba(54,91,124,.11)!important;}
+html.android-ui .android-sheet-item:active,
+html.native-android .android-sheet-item:active{background:rgba(53,169,244,.10)!important;}
+html.android-ui .android-sheet-item-icon,
+html.native-android .android-sheet-item-icon{
+  width:38px!important;
+  height:38px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:12px!important;
+  background:rgba(53,169,244,.13)!important;
+  color:#45b0f5!important;
+}
+html.android-ui .android-sheet-item-icon svg,
+html.native-android .android-sheet-item-icon svg{width:22px!important;height:22px!important;}
+html.android-ui .android-sheet-item-copy,
+html.native-android .android-sheet-item-copy{
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:2px!important;
+  font-size:14px!important;
+  font-weight:760!important;
+  line-height:1.2!important;
+}
+html.android-ui .android-sheet-item-copy small,
+html.native-android .android-sheet-item-copy small{font-size:10px!important;font-weight:500!important;line-height:1.25!important;}
+html.android-ui .android-sheet-item-arrow,
+html.native-android .android-sheet-item-arrow{justify-self:end!important;color:#7e9ab2!important;font-size:22px!important;}
+
+/* Prevent browser-style long-press affordances in the native shell. */
+html.native-android,
+html.native-android body,
+html.native-android img,
+html.native-android a,
+html.native-android button,
+html.native-android .nav,
+html.native-android .top{
+  -webkit-touch-callout:none!important;
+}
+html.native-android img{-webkit-user-drag:none!important;user-drag:none!important;}
+
+@media(max-width:390px){
+  html.android-ui .top,html.native-android .top{margin-inline:-8px!important;padding-inline:10px!important;}
+  html.android-ui .brand h1,html.native-android .brand h1{font-size:19px!important;}
+  #screen-settings[data-vy675-page="account"] .production-actions button{font-size:11.5px!important;padding-inline:7px!important;}
+  html.android-ui .nav,html.native-android .nav{width:calc(100% - 10px)!important;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.android-ui .screen.vy-telegram-page-from-left,
+  html.android-ui .screen.vy-telegram-page-from-right,
+  html.native-android .screen.vy-telegram-page-from-left,
+  html.native-android .screen.vy-telegram-page-from-right{animation:none!important;}
+  html.android-ui #themeToggle::after,
+  html.native-android #themeToggle::after{transition:none!important;}
+}
+
+/* ===== STYLE SOURCE: apple-liquid-852.css ===== */
+
+/* Vyapar AI 8.5.2.2026 — Apple-inspired Liquid Glass shell.
+   Presentation/motion only: no accounting, auth, subscription or business logic changes. */
+
+html.vy852-apple-liquid {
+  --vy852-blue: #0a84ff;
+  --vy852-blue-2: #3aa0ff;
+  --vy852-red: #ff453a;
+  --vy852-text: #f5f7fb;
+  --vy852-muted: rgba(220, 230, 241, .66);
+  --vy852-page: #06111f;
+  --vy852-glass: rgba(15, 34, 56, .62);
+  --vy852-glass-strong: rgba(18, 42, 69, .74);
+  --vy852-glass-soft: rgba(31, 55, 82, .46);
+  --vy852-line: rgba(196, 224, 255, .16);
+  --vy852-line-strong: rgba(210, 232, 255, .25);
+  --vy852-highlight: rgba(255, 255, 255, .16);
+  --vy852-shadow: 0 18px 46px rgba(0, 7, 20, .30);
+  --vy852-shadow-soft: 0 10px 28px rgba(0, 7, 20, .20);
+  --vy852-card-radius: 24px;
+  --vy852-control-radius: 16px;
+  --vy852-sheet-radius: 32px;
+  --vy852-nav-radius: 29px;
+  color-scheme: dark;
+}
+
+html.vy852-apple-liquid.theme-light {
+  --vy852-text: #102033;
+  --vy852-muted: rgba(66, 84, 104, .68);
+  --vy852-page: #eef5fb;
+  --vy852-glass: rgba(255, 255, 255, .66);
+  --vy852-glass-strong: rgba(255, 255, 255, .78);
+  --vy852-glass-soft: rgba(248, 252, 255, .58);
+  --vy852-line: rgba(44, 87, 126, .12);
+  --vy852-line-strong: rgba(64, 112, 157, .18);
+  --vy852-highlight: rgba(255, 255, 255, .94);
+  --vy852-shadow: 0 18px 44px rgba(45, 78, 112, .14);
+  --vy852-shadow-soft: 0 9px 26px rgba(45, 78, 112, .10);
+  color-scheme: light;
+}
+
+html.vy852-apple-liquid body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Inter, "Segoe UI", sans-serif !important;
+  background:
+    radial-gradient(34rem 26rem at -8% -10%, rgba(29, 117, 219, .20), transparent 68%),
+    radial-gradient(28rem 24rem at 108% 82%, rgba(39, 92, 168, .14), transparent 72%),
+    linear-gradient(180deg, #04101d 0%, var(--vy852-page) 46%, #071525 100%) !important;
+  color: var(--vy852-text) !important;
+}
+
+html.vy852-apple-liquid.theme-light body {
+  background:
+    radial-gradient(32rem 25rem at -9% -8%, rgba(78, 164, 255, .15), transparent 70%),
+    radial-gradient(28rem 22rem at 108% 88%, rgba(122, 190, 255, .10), transparent 70%),
+    linear-gradient(180deg, #fbfdff 0%, var(--vy852-page) 50%, #f4f9fd 100%) !important;
+}
+
+/* ---------- Apple-like top glass bar ---------- */
+html.vy852-apple-liquid.android-ui .top,
+html.vy852-apple-liquid.native-android .top {
+  position: sticky !important;
+  top: max(6px, env(safe-area-inset-top)) !important;
+  z-index: 900 !important;
+  width: calc(100% - 14px) !important;
+  min-height: 64px !important;
+  margin: 6px auto 14px !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--vy852-line) !important;
+  border-radius: 23px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.025) 42%, rgba(255,255,255,.015)),
+    var(--vy852-glass) !important;
+  box-shadow: var(--vy852-shadow-soft), inset 0 1px 0 var(--vy852-highlight), inset 0 -1px 0 rgba(0,0,0,.08) !important;
+  backdrop-filter: blur(26px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(165%) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+html.vy852-apple-liquid .top::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+  background: radial-gradient(115% 90% at 18% -18%, rgba(255,255,255,.20), transparent 45%) !important;
+}
+
+html.vy852-apple-liquid .brand { align-items: center !important; gap: 10px !important; }
+html.vy852-apple-liquid .brand .logo {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  flex: 0 0 42px !important;
+  padding: 1px !important;
+  border: 1px solid rgba(255,255,255,.72) !important;
+  border-radius: 15px !important;
+  background: rgba(255,255,255,.96) !important;
+  box-shadow: 0 7px 18px rgba(0, 15, 36, .18), inset 0 1px 0 #fff !important;
+  object-fit: contain !important;
+  transform: none !important;
+}
+html.vy852-apple-liquid .brand h1 {
+  font-size: 21px !important;
+  line-height: 1.05 !important;
+  font-weight: 760 !important;
+  letter-spacing: -.035em !important;
+}
+
+/* ---------- Apple-like animated appearance control ---------- */
+html.vy852-apple-liquid #themeToggle {
+  position: relative !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  border: 1px solid var(--vy852-line-strong) !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 38%),
+    rgba(20, 52, 82, .62) !important;
+  color: #dff1ff !important;
+  box-shadow: 0 8px 18px rgba(0, 8, 22, .22), inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.12) !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  transform: translateZ(0) !important;
+  touch-action: manipulation !important;
+}
+html.vy852-apple-liquid.theme-light #themeToggle {
+  background:
+    radial-gradient(circle at 28% 18%, #fff 0 14%, rgba(255,255,255,.70) 32%, transparent 45%),
+    rgba(245, 251, 255, .76) !important;
+  color: #0a84ff !important;
+  box-shadow: 0 8px 18px rgba(47, 86, 123, .12), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(43,88,130,.08) !important;
+}
+html.vy852-apple-liquid #themeToggle::before,
+html.vy852-apple-liquid #themeToggle::after {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  line-height: 1 !important;
+  pointer-events: none !important;
+  transform-origin: center !important;
+  transition: opacity .30s cubic-bezier(.2,.8,.2,1), transform .42s cubic-bezier(.16,1,.3,1) !important;
+}
+html.vy852-apple-liquid #themeToggle::before {
+  content: "☀" !important;
+  font-size: 22px !important;
+  opacity: 0 !important;
+  transform: rotate(-80deg) scale(.55) !important;
+}
+html.vy852-apple-liquid #themeToggle::after {
+  content: "☾" !important;
+  font-size: 25px !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  transform: rotate(-12deg) scale(1) !important;
+}
+html.vy852-apple-liquid.theme-light #themeToggle::before {
+  opacity: 1 !important;
+  transform: rotate(0deg) scale(1) !important;
+}
+html.vy852-apple-liquid.theme-light #themeToggle::after {
+  opacity: 0 !important;
+  transform: rotate(82deg) scale(.48) !important;
+}
+html.vy852-apple-liquid #themeToggle.vy852-theme-pop {
+  animation: vy852ThemeButtonPop .52s cubic-bezier(.16,1,.3,1) both !important;
+}
+@keyframes vy852ThemeButtonPop {
+  0% { transform: scale(1) rotate(0deg) translateZ(0); }
+  38% { transform: scale(.88) rotate(-8deg) translateZ(0); }
+  72% { transform: scale(1.08) rotate(3deg) translateZ(0); }
+  100% { transform: scale(1) rotate(0deg) translateZ(0); }
+}
+
+.vy852-theme-bloom {
+  position: fixed !important;
+  z-index: 2147482500 !important;
+  width: 44px !important;
+  height: 44px !important;
+  margin: -22px 0 0 -22px !important;
+  border-radius: 999px !important;
+  pointer-events: none !important;
+  transform: scale(.22) translateZ(0) !important;
+  opacity: .96 !important;
+  will-change: transform, opacity !important;
+  background: var(--vy852-bloom-bg, #071525) !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 0 36px rgba(80,160,255,.14) !important;
+  animation: vy852ThemeBloom .52s cubic-bezier(.22,.72,.18,1) forwards !important;
+}
+@keyframes vy852ThemeBloom {
+  0% { transform: scale(.22) translateZ(0); opacity: .98; }
+  58% { transform: scale(var(--vy852-bloom-scale, 38)) translateZ(0); opacity: .98; }
+  100% { transform: scale(var(--vy852-bloom-scale, 38)) translateZ(0); opacity: 0; }
+}
+html.vy852-theme-animation .vx657-theme-crossfade,
+html.vy852-theme-animation .theme-ripple { opacity: 0 !important; transition: none !important; }
+html.vy852-theme-animation::view-transition-old(root),
+html.vy852-theme-animation::view-transition-new(root) { animation: none !important; }
+
+/* ---------- Floating iOS-style Liquid Glass tab bar ---------- */
+html.vy852-apple-liquid.android-ui .nav,
+html.vy852-apple-liquid.native-android .nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  width: min(calc(100% - 18px), 620px) !important;
+  height: 72px !important;
+  min-height: 72px !important;
+  padding: 6px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+  border: 1px solid var(--vy852-line-strong) !important;
+  border-radius: var(--vy852-nav-radius) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.035) 38%, rgba(255,255,255,.015)),
+    var(--vy852-glass) !important;
+  box-shadow: 0 14px 38px rgba(0, 7, 20, .30), inset 0 1px 0 var(--vy852-highlight), inset 0 -1px 0 rgba(0,0,0,.09) !important;
+  backdrop-filter: blur(30px) saturate(175%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(175%) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  transform: translateX(-50%) translateZ(0) !important;
+}
+html.vy852-apple-liquid.theme-light .nav {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.62) 48%, rgba(242,249,255,.56)),
+    rgba(247, 252, 255, .62) !important;
+}
+html.vy852-apple-liquid .nav::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 1px !important;
+  z-index: -2 !important;
+  border-radius: calc(var(--vy852-nav-radius) - 1px) !important;
+  background: radial-gradient(120% 120% at 10% -35%, rgba(255,255,255,.20), transparent 48%) !important;
+  pointer-events: none !important;
+}
+html.vy852-apple-liquid .nav::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 3 !important;
+  top: -12px !important;
+  bottom: -12px !important;
+  left: -34% !important;
+  width: 28% !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transform: skewX(-18deg) translate3d(-180%,0,0) !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent) !important;
+}
+html.vy852-apple-liquid .nav.android-nav-shine::after {
+  opacity: 1 !important;
+  animation: vy852NavSheen .46s cubic-bezier(.2,.7,.2,1) both !important;
+}
+@keyframes vy852NavSheen { to { transform: skewX(-18deg) translate3d(650%,0,0); opacity: 0; } }
+
+html.vy852-apple-liquid .android-nav-glass-indicator {
+  display: block !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  top: 6px !important;
+  left: 0 !important;
+  height: 60px !important;
+  border: 1px solid rgba(183, 222, 255, .22) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(100% 100% at 26% 0%, rgba(255,255,255,.18), transparent 52%),
+    linear-gradient(180deg, rgba(41, 139, 233, .22), rgba(21, 103, 185, .12)) !important;
+  box-shadow: 0 8px 20px rgba(0, 41, 88, .16), inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.08) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  pointer-events: none !important;
+  will-change: transform, width !important;
+}
+html.vy852-apple-liquid.theme-light .android-nav-glass-indicator {
+  border-color: rgba(10,132,255,.16) !important;
+  background:
+    radial-gradient(100% 100% at 24% 0%, rgba(255,255,255,.96), transparent 52%),
+    linear-gradient(180deg, rgba(185,222,255,.64), rgba(220,239,255,.42)) !important;
+  box-shadow: 0 7px 18px rgba(53,112,166,.12), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(10,132,255,.07) !important;
+}
+html.vy852-apple-liquid .nav button[data-android-tab] {
+  position: relative !important;
+  z-index: 1 !important;
+  height: 60px !important;
+  min-height: 60px !important;
+  padding: 5px 2px 4px !important;
+  border: 0 !important;
+  border-radius: 21px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(196, 214, 232, .70) !important;
+  transition: color .22s ease, transform .16s cubic-bezier(.2,.8,.2,1) !important;
+}
+html.vy852-apple-liquid.theme-light .nav button[data-android-tab] { color: rgba(65, 83, 102, .68) !important; }
+html.vy852-apple-liquid .nav button.active[data-android-tab] {
+  background: transparent !important;
+  color: #64b5ff !important;
+  box-shadow: none !important;
+}
+html.vy852-apple-liquid.theme-light .nav button.active[data-android-tab] { color: #007aff !important; }
+html.vy852-apple-liquid .nav button[data-android-tab]:active { transform: scale(.94) translateZ(0) !important; }
+html.vy852-apple-liquid .nav .android-nav-icon {
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  transform: translateZ(0) !important;
+  transition: transform .26s cubic-bezier(.16,1,.3,1), filter .22s ease !important;
+}
+html.vy852-apple-liquid .nav button.active .android-nav-icon {
+  background: transparent !important;
+  transform: translateY(-1px) scale(1.06) translateZ(0) !important;
+  filter: drop-shadow(0 3px 8px rgba(10,132,255,.24)) !important;
+}
+html.vy852-apple-liquid .nav .android-nav-icon svg { width: 22px !important; height: 22px !important; stroke-width: 1.9 !important; }
+html.vy852-apple-liquid .nav .android-nav-label {
+  font-size: 9.5px !important;
+  line-height: 1 !important;
+  font-weight: 650 !important;
+  letter-spacing: -.01em !important;
+}
+
+/* ---------- Apple-like More liquid sheet ---------- */
+html.vy852-apple-liquid .android-sheet-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 12000 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 7px max(7px, env(safe-area-inset-bottom)) !important;
+  background: rgba(0, 8, 20, .34) !important;
+  backdrop-filter: blur(8px) saturate(118%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(118%) !important;
+  animation: vy852OverlayIn .28s ease-out both !important;
+}
+@keyframes vy852OverlayIn { from { opacity: 0; } to { opacity: 1; } }
+html.vy852-apple-liquid .android-sheet {
+  position: relative !important;
+  width: min(100%, 620px) !important;
+  max-height: min(76vh, 700px) !important;
+  margin: 0 !important;
+  padding: 9px 11px 13px !important;
+  overflow: auto !important;
+  border: 1px solid var(--vy852-line-strong) !important;
+  border-radius: var(--vy852-sheet-radius) !important;
+  background:
+    radial-gradient(120% 90% at 14% -8%, rgba(255,255,255,.13), transparent 46%),
+    linear-gradient(160deg, rgba(255,255,255,.075), rgba(255,255,255,.018) 60%),
+    var(--vy852-glass-strong) !important;
+  box-shadow: 0 28px 72px rgba(0, 5, 18, .42), inset 0 1px 0 var(--vy852-highlight), inset 0 -1px 0 rgba(0,0,0,.10) !important;
+  backdrop-filter: blur(34px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(180%) !important;
+  transform-origin: 50% 100% !important;
+  animation: vy852SheetIn .46s cubic-bezier(.16,1,.3,1) both !important;
+}
+html.vy852-apple-liquid.theme-light .android-sheet {
+  background:
+    radial-gradient(120% 90% at 15% -8%, rgba(255,255,255,.98), transparent 48%),
+    linear-gradient(160deg, rgba(255,255,255,.78), rgba(245,250,255,.56)),
+    rgba(246, 251, 255, .68) !important;
+}
+@keyframes vy852SheetIn {
+  0% { opacity: 0; transform: translate3d(0, 42px, 0) scale(.94); }
+  66% { opacity: 1; transform: translate3d(0, -2px, 0) scale(1.006); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+html.vy852-apple-liquid .android-sheet::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 4 !important;
+  top: -18% !important;
+  bottom: -18% !important;
+  left: -42% !important;
+  width: 26% !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transform: skewX(-16deg) translate3d(-180%,0,0) !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent) !important;
+  animation: vy852SheetSheen .84s .12s cubic-bezier(.2,.7,.2,1) both !important;
+}
+@keyframes vy852SheetSheen {
+  0% { opacity: 0; transform: skewX(-16deg) translate3d(-180%,0,0); }
+  18% { opacity: .8; }
+  100% { opacity: 0; transform: skewX(-16deg) translate3d(720%,0,0); }
+}
+html.vy852-apple-liquid .android-sheet-overlay.vy852-closing { animation: vy852OverlayOut .22s ease-in both !important; }
+html.vy852-apple-liquid .android-sheet-overlay.vy852-closing .android-sheet { animation: vy852SheetOut .24s cubic-bezier(.4,0,1,1) both !important; }
+@keyframes vy852OverlayOut { to { opacity: 0; } }
+@keyframes vy852SheetOut { to { opacity: 0; transform: translate3d(0, 28px, 0) scale(.97); } }
+
+html.vy852-apple-liquid .android-sheet-handle {
+  width: 42px !important;
+  height: 5px !important;
+  margin: 2px auto 10px !important;
+  border-radius: 99px !important;
+  background: rgba(179, 202, 224, .34) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18) !important;
+}
+html.vy852-apple-liquid .android-sheet-titlebar { padding: 0 4px 11px !important; align-items: center !important; }
+html.vy852-apple-liquid .android-sheet-titlebar h3 {
+  font-size: 25px !important;
+  font-weight: 760 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -.04em !important;
+}
+html.vy852-apple-liquid .android-sheet-titlebar p { font-size: 11px !important; color: var(--vy852-muted) !important; }
+html.vy852-apple-liquid .android-sheet-close {
+  width: 42px !important;
+  min-width: 42px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  border: 1px solid var(--vy852-line) !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.065) !important;
+  color: var(--vy852-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.13) !important;
+  transition: transform .18s cubic-bezier(.2,.8,.2,1), background .18s ease !important;
+}
+html.vy852-apple-liquid.theme-light .android-sheet-close { background: rgba(255,255,255,.68) !important; }
+html.vy852-apple-liquid .android-sheet-close:active { transform: scale(.90) rotate(6deg) !important; }
+
+html.vy852-apple-liquid .android-sheet-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--vy852-line) !important;
+  border-radius: 24px !important;
+  background: rgba(255,255,255,.035) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+html.vy852-apple-liquid.theme-light .android-sheet-grid { background: rgba(255,255,255,.54) !important; }
+html.vy852-apple-liquid .android-sheet-item {
+  min-height: 64px !important;
+  padding: 9px 12px !important;
+  grid-template-columns: 42px minmax(0,1fr) 18px !important;
+  gap: 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--vy852-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--vy852-text) !important;
+  box-shadow: none !important;
+  transform: translateZ(0) !important;
+  transition: background .18s ease, transform .16s cubic-bezier(.2,.8,.2,1) !important;
+}
+html.vy852-apple-liquid .android-sheet-item:last-child { border-bottom: 0 !important; }
+html.vy852-apple-liquid .android-sheet-item:active {
+  background: rgba(10,132,255,.12) !important;
+  transform: scale(.985) translateZ(0) !important;
+}
+html.vy852-apple-liquid .android-sheet-item-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid rgba(94,177,255,.13) !important;
+  border-radius: 14px !important;
+  background: linear-gradient(155deg, rgba(10,132,255,.20), rgba(10,132,255,.08)) !important;
+  color: #5cb2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.11) !important;
+}
+html.vy852-apple-liquid.theme-light .android-sheet-item-icon { color: #007aff !important; background: rgba(10,132,255,.10) !important; }
+html.vy852-apple-liquid .android-sheet-item-copy { font-size: 14px !important; font-weight: 680 !important; letter-spacing: -.015em !important; }
+html.vy852-apple-liquid .android-sheet-item-copy small { color: var(--vy852-muted) !important; font-size: 10px !important; font-weight: 500 !important; }
+html.vy852-apple-liquid .android-sheet-item-arrow { color: var(--vy852-muted) !important; }
+
+/* ---------- Shared Apple-like liquid surfaces ---------- */
+html.vy852-apple-liquid :where(
+  .screen .card,
+  .screen .stat,
+  .screen .settings-section,
+  .screen .shop-growth-card,
+  .screen .vx621-hero,
+  .screen .vx621-group,
+  .screen .vx621-feature-card,
+  .screen .business-module-card,
+  .screen .adv-module,
+  .screen .p620-report-card,
+  .screen .subscription-plan-card,
+  #productionAccountCard,
+  .production-account-card,
+  .vx622-menu-card
+) {
+  border: 1px solid var(--vy852-line) !important;
+  border-radius: var(--vy852-card-radius) !important;
+  background:
+    linear-gradient(155deg, rgba(255,255,255,.065), rgba(255,255,255,.018) 58%),
+    var(--vy852-glass) !important;
+  color: var(--vy852-text) !important;
+  box-shadow: var(--vy852-shadow-soft), inset 0 1px 0 rgba(255,255,255,.08) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+}
+html.vy852-apple-liquid.theme-light :where(
+  .screen .card,
+  .screen .stat,
+  .screen .settings-section,
+  .screen .shop-growth-card,
+  .screen .vx621-hero,
+  .screen .vx621-group,
+  .screen .vx621-feature-card,
+  .screen .business-module-card,
+  .screen .adv-module,
+  .screen .p620-report-card,
+  .screen .subscription-plan-card,
+  #productionAccountCard,
+  .production-account-card,
+  .vx622-menu-card
+) {
+  background:
+    linear-gradient(155deg, rgba(255,255,255,.88), rgba(248,252,255,.58) 64%),
+    rgba(249,252,255,.64) !important;
+  box-shadow: var(--vy852-shadow-soft), inset 0 1px 0 #fff !important;
+}
+
+/* Preserve the branded home/business hero, but make it look like refractive glass. */
+html.vy852-apple-liquid #screen-home .home-overview,
+html.vy852-apple-liquid #screen-business .vx621-hero {
+  border-radius: 27px !important;
+  border-color: rgba(129, 196, 255, .28) !important;
+  background:
+    radial-gradient(26rem 16rem at 100% -10%, rgba(105,188,255,.22), transparent 65%),
+    linear-gradient(145deg, rgba(31, 92, 153, .45), rgba(8, 31, 55, .74)) !important;
+  box-shadow: 0 20px 48px rgba(0, 18, 44, .28), inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+html.vy852-apple-liquid.theme-light #screen-home .home-overview,
+html.vy852-apple-liquid.theme-light #screen-business .vx621-hero {
+  background:
+    radial-gradient(28rem 17rem at 100% -12%, rgba(255,255,255,.34), transparent 62%),
+    linear-gradient(145deg, rgba(12,107,212,.91), rgba(40,139,230,.84)) !important;
+  border-color: rgba(255,255,255,.42) !important;
+  box-shadow: 0 18px 42px rgba(29,103,175,.20), inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+/* iOS-like control geometry */
+html.vy852-apple-liquid :where(input, select, textarea) {
+  border-radius: var(--vy852-control-radius) !important;
+  border: 1px solid var(--vy852-line) !important;
+  background: rgba(255,255,255,.045) !important;
+  color: var(--vy852-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+html.vy852-apple-liquid.theme-light :where(input, select, textarea) {
+  background: rgba(255,255,255,.70) !important;
+  box-shadow: inset 0 1px 0 #fff !important;
+}
+html.vy852-apple-liquid :where(.btn, button.primary, .vx621-action, .production-actions button) {
+  border-radius: 15px !important;
+  transition: transform .16s cubic-bezier(.2,.8,.2,1), filter .18s ease, box-shadow .18s ease !important;
+}
+html.vy852-apple-liquid :where(.btn, button.primary, .vx621-action, .production-actions button):active {
+  transform: scale(.975) translateZ(0) !important;
+}
+html.vy852-apple-liquid :where(.btn.primary, button.primary, .vx621-action.primary, .vx621-action.blue) {
+  border: 1px solid rgba(130, 195, 255, .46) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.16), transparent 34%),
+    linear-gradient(135deg, #0a84ff, #0b72e7) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 24px rgba(10,132,255,.24), inset 0 1px 0 rgba(255,255,255,.26) !important;
+}
+html.vy852-apple-liquid :where(.btn.danger, button.danger, .production-actions .danger, .cancel-subscription) {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.13), transparent 35%),
+    linear-gradient(135deg, #ff453a, #e43b46) !important;
+  border-color: rgba(255, 166, 160, .35) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px rgba(255,69,58,.20), inset 0 1px 0 rgba(255,255,255,.20) !important;
+}
+
+/* Settings and account pages: more breathing room + Apple corner rhythm. */
+html.vy852-apple-liquid #screen-settings .vy675-settings-row,
+html.vy852-apple-liquid #screen-settings .settings-row,
+html.vy852-apple-liquid #screen-settings .vx622-settings-row {
+  border-radius: 17px !important;
+}
+html.vy852-apple-liquid #screen-settings[data-vy675-page="account"] #productionAccountCard,
+html.vy852-apple-liquid #screen-settings[data-vy675-page="account"] .production-account-card {
+  border-radius: 28px !important;
+}
+html.vy852-apple-liquid #screen-settings[data-vy675-page="account"] .production-avatar {
+  box-shadow: 0 10px 28px rgba(255,188,36,.22), inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+
+/* Sales light mode stays bright/readable after the liquid layer. */
+html.vy852-apple-liquid.theme-light #screen-sales #vy660ProfitCard,
+html.vy852-apple-liquid.theme-light #screen-sales .vy660-live-box {
+  color: #102033 !important;
+  background:
+    linear-gradient(155deg, rgba(255,255,255,.94), rgba(239,248,255,.72)),
+    rgba(255,255,255,.72) !important;
+  border-color: rgba(10,132,255,.14) !important;
+  box-shadow: 0 12px 28px rgba(43,87,128,.09), inset 0 1px 0 #fff !important;
+}
+html.vy852-apple-liquid.theme-light #screen-sales .vy660-live-box :where(span,small),
+html.vy852-apple-liquid.theme-light #screen-sales .vy660-note { color: #61758a !important; opacity: 1 !important; }
+html.vy852-apple-liquid.theme-light #screen-sales .vy660-live-box b { color: #10263d !important; opacity: 1 !important; }
+
+/* Replace the older Telegram page motion with an iOS-like spring-fade. */
+@keyframes vy852PageFromRight {
+  0% { opacity: .42; transform: translate3d(13px,0,0) scale(.992); }
+  100% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+@keyframes vy852PageFromLeft {
+  0% { opacity: .42; transform: translate3d(-13px,0,0) scale(.992); }
+  100% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+html.vy852-apple-liquid .screen.vy-telegram-page-from-right { animation: vy852PageFromRight .34s cubic-bezier(.16,1,.3,1) both !important; }
+html.vy852-apple-liquid .screen.vy-telegram-page-from-left { animation: vy852PageFromLeft .34s cubic-bezier(.16,1,.3,1) both !important; }
+
+/* Keep animations GPU-cheap on older Android while preserving the look. */
+html.vy852-apple-liquid.perf-lite .top,
+html.vy852-apple-liquid.perf-lite .nav,
+html.vy852-apple-liquid.perf-lite .android-sheet {
+  backdrop-filter: blur(14px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+}
+html.vy852-apple-liquid.perf-lite :where(.screen .card,.screen .stat,.screen .settings-section,.screen .shop-growth-card) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.vy852-apple-liquid.perf-lite .nav::after { display: none !important; }
+
+@media (max-width: 390px) {
+  html.vy852-apple-liquid.android-ui .top,
+  html.vy852-apple-liquid.native-android .top { width: calc(100% - 10px) !important; border-radius: 21px !important; }
+  html.vy852-apple-liquid .brand h1 { font-size: 19px !important; }
+  html.vy852-apple-liquid.android-ui .nav,
+  html.vy852-apple-liquid.native-android .nav { width: calc(100% - 10px) !important; border-radius: 27px !important; }
+  html.vy852-apple-liquid .android-sheet-overlay { padding-inline: 5px !important; }
+  html.vy852-apple-liquid .android-sheet { border-radius: 29px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.vy852-apple-liquid *,
+  html.vy852-apple-liquid *::before,
+  html.vy852-apple-liquid *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .vy852-theme-bloom { display: none !important; }
+}
+
+/* ===== STYLE SOURCE: apple-liquid-853.css ===== */
+
+/* Vyapar AI 8.5.3.2026 — Apple Liquid Glass refinement: switch stability, nav lens, theme reveal, More sheet. */
+html.vy853-apple-liquid{--vy853-nav-radius:27px;--vy853-sheet-radius:30px;--vy853-blue:#0a84ff}
+html.vy853-apple-liquid main{overflow-x:clip!important;isolation:isolate!important}
+html.vy853-apple-liquid .screen{transform-origin:50% 10%!important;backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important}
+html.vy853-apple-liquid .screen.vy-telegram-page-from-left,html.vy853-apple-liquid .screen.vy-telegram-page-from-right{animation:none!important;transform:none!important;opacity:1!important}
+html.vy853-apple-liquid .screen.vy853-page-enter-forward{animation:vy853PageForward .30s cubic-bezier(.22,.72,.16,1) both!important}
+html.vy853-apple-liquid .screen.vy853-page-enter-backward{animation:vy853PageBack .30s cubic-bezier(.22,.72,.16,1) both!important}
+@keyframes vy853PageForward{0%{opacity:.86;transform:translate3d(12px,0,0) scale(.997)}68%{opacity:1;transform:translate3d(-1px,0,0)}100%{opacity:1;transform:none}}
+@keyframes vy853PageBack{0%{opacity:.86;transform:translate3d(-12px,0,0) scale(.997)}68%{opacity:1;transform:translate3d(1px,0,0)}100%{opacity:1;transform:none}}
+html.vy853-apple-liquid.vy853-nav-switching #tabLoader{display:none!important;opacity:0!important;pointer-events:none!important}
+html.vy853-apple-liquid #themeToggle.vy852-theme-pop{animation:none!important}
+html.vy853-apple-liquid #themeToggle.vy853-theme-pop{animation:vy853ThemePop .54s cubic-bezier(.16,1,.3,1) both!important}
+@keyframes vy853ThemePop{0%{transform:scale(1) rotate(0)}32%{transform:scale(.86) rotate(-7deg)}68%{transform:scale(1.075) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
+html.vy853-preview-light #themeToggle::before{opacity:1!important;transform:rotate(0) scale(1)!important}html.vy853-preview-light #themeToggle::after{opacity:0!important;transform:rotate(82deg) scale(.48)!important}
+html.vy853-preview-dark #themeToggle::before{opacity:0!important;transform:rotate(-82deg) scale(.48)!important}html.vy853-preview-dark #themeToggle::after{opacity:1!important;transform:rotate(-12deg) scale(1)!important}
+html.vy853-theme-running .vy852-theme-bloom,html.vy853-theme-running .vx657-theme-crossfade,html.vy853-theme-running .theme-ripple{display:none!important;animation:none!important;transition:none!important}
+.vy853-theme-reveal{position:fixed!important;z-index:2147483200!important;left:var(--vy853-x,50vw)!important;top:var(--vy853-y,44px)!important;width:48px!important;height:48px!important;margin:-24px 0 0 -24px!important;border-radius:50%!important;pointer-events:none!important;transform:scale(.08) translateZ(0)!important;will-change:transform,opacity!important;box-shadow:0 0 0 1px rgba(255,255,255,.10),0 0 42px rgba(68,154,255,.18)!important;animation:vy853ThemeReveal .58s cubic-bezier(.2,.72,.16,1) both!important}
+.vy853-theme-reveal.to-light{background:radial-gradient(circle at 34% 18%,rgba(255,255,255,.96),rgba(248,252,255,.94) 36%,#eef6fc 100%)!important}.vy853-theme-reveal.to-dark{background:radial-gradient(circle at 34% 18%,rgba(35,70,108,.94),rgba(10,28,47,.99) 45%,#06111f 100%)!important}
+@keyframes vy853ThemeReveal{0%{transform:scale(.08) translateZ(0);opacity:.98}54%{transform:scale(var(--vy853-scale,42)) translateZ(0);opacity:1}78%{transform:scale(var(--vy853-scale,42)) translateZ(0);opacity:1}100%{transform:scale(var(--vy853-scale,42)) translateZ(0);opacity:0}}
+html.vy853-apple-liquid.android-ui .nav,html.vy853-apple-liquid.native-android .nav{bottom:max(9px,env(safe-area-inset-bottom))!important;width:min(calc(100% - 18px),620px)!important;height:66px!important;min-height:66px!important;padding:5px!important;border-radius:var(--vy853-nav-radius)!important;border:1px solid rgba(204,229,255,.19)!important;background:radial-gradient(130% 100% at 8% -28%,rgba(255,255,255,.17),transparent 50%),linear-gradient(180deg,rgba(255,255,255,.105),rgba(255,255,255,.026) 45%,rgba(255,255,255,.012)),rgba(13,30,50,.57)!important;box-shadow:0 14px 34px rgba(0,6,17,.28),inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.08)!important;backdrop-filter:blur(20px) saturate(165%)!important;-webkit-backdrop-filter:blur(20px) saturate(165%)!important}
+html.vy853-apple-liquid.theme-light .nav{border-color:rgba(52,92,128,.13)!important;background:radial-gradient(130% 100% at 8% -28%,#fff,transparent 51%),linear-gradient(180deg,rgba(255,255,255,.94),rgba(255,255,255,.68) 52%,rgba(244,250,255,.60)),rgba(250,253,255,.66)!important;box-shadow:0 12px 30px rgba(43,74,104,.13),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(39,74,108,.05)!important}
+html.vy853-apple-liquid .nav::after{display:none!important}
+html.vy853-apple-liquid .android-nav-glass-indicator{display:block!important;position:absolute!important;z-index:0!important;top:5px!important;left:0!important;height:56px!important;min-width:54px!important;border-radius:23px!important;border:1px solid rgba(164,214,255,.27)!important;background:radial-gradient(115% 120% at 25% -10%,rgba(255,255,255,.27),transparent 47%),radial-gradient(95% 120% at 84% 118%,rgba(33,146,255,.17),transparent 55%),linear-gradient(180deg,rgba(70,165,255,.16),rgba(22,116,228,.095)),rgba(81,154,225,.08)!important;box-shadow:0 8px 18px rgba(0,67,139,.15),inset 0 1px 0 rgba(255,255,255,.28)!important;backdrop-filter:blur(12px) saturate(180%)!important;-webkit-backdrop-filter:blur(12px) saturate(180%)!important;transform:translate3d(var(--vy853-nav-x,5px),0,0)!important;transition:transform .42s cubic-bezier(.16,1,.3,1),width .34s cubic-bezier(.16,1,.3,1)!important;pointer-events:none!important;overflow:hidden!important}
+html.vy853-apple-liquid.theme-light .android-nav-glass-indicator{border-color:rgba(30,129,237,.20)!important;background:radial-gradient(115% 120% at 25% -10%,rgba(255,255,255,.94),transparent 47%),radial-gradient(95% 120% at 84% 118%,rgba(0,132,255,.14),transparent 55%),linear-gradient(180deg,rgba(127,197,255,.22),rgba(43,142,241,.11)),rgba(152,207,255,.12)!important;box-shadow:0 8px 18px rgba(25,103,183,.12),inset 0 1px 0 #fff!important}
+html.vy853-apple-liquid .android-nav-glass-indicator::after{content:""!important;position:absolute!important;inset:0!important;border-radius:inherit!important;pointer-events:none!important;opacity:.5!important;transform:translate3d(-130%,0,0) skewX(-18deg)!important;background:linear-gradient(90deg,transparent 25%,rgba(255,255,255,.46),transparent 75%)!important}
+html.vy853-apple-liquid .android-nav-glass-indicator.vy853-lens-moving::after{animation:vy853LensShine .46s cubic-bezier(.2,.72,.2,1) both!important}@keyframes vy853LensShine{from{transform:translate3d(-130%,0,0) skewX(-18deg);opacity:.1}55%{opacity:.58}to{transform:translate3d(130%,0,0) skewX(-18deg);opacity:0}}
+html.vy853-apple-liquid .nav button[data-android-tab]{position:relative!important;z-index:2!important;height:56px!important;min-height:56px!important;border-radius:22px!important;background:transparent!important;box-shadow:none!important;color:rgba(174,194,213,.76)!important;transition:color .20s ease,transform .18s cubic-bezier(.2,.8,.2,1)!important}
+html.vy853-apple-liquid.theme-light .nav button[data-android-tab]{color:rgba(73,94,113,.74)!important}html.vy853-apple-liquid .nav button.active[data-android-tab]{background:transparent!important;box-shadow:none!important;color:#56b2ff!important}html.vy853-apple-liquid.theme-light .nav button.active[data-android-tab]{color:#087ff0!important}
+html.vy853-apple-liquid .nav button.active .android-nav-icon,html.vy853-apple-liquid.theme-light .nav button.active .android-nav-icon{background:transparent!important;box-shadow:none!important;transform:translateY(-1px) scale(1.03)!important}
+html.vy853-apple-liquid .nav .android-nav-icon{width:28px!important;height:27px!important;border-radius:13px!important}html.vy853-apple-liquid .nav .android-nav-label{font-size:9.4px!important;font-weight:700!important;letter-spacing:-.015em!important}
+html.vy853-apple-liquid .android-sheet-overlay{align-items:flex-end!important;padding:10px 9px max(84px,calc(76px + env(safe-area-inset-bottom)))!important;background:rgba(1,8,17,.28)!important;backdrop-filter:blur(4px) saturate(112%)!important;-webkit-backdrop-filter:blur(4px) saturate(112%)!important;animation:vy853OverlayIn .26s ease-out both!important}html.vy853-apple-liquid.theme-light .android-sheet-overlay{background:rgba(31,53,76,.15)!important}@keyframes vy853OverlayIn{from{opacity:0}to{opacity:1}}
+html.vy853-apple-liquid .android-sheet{width:min(calc(100% - 4px),596px)!important;max-width:596px!important;max-height:min(72vh,650px)!important;margin:0 auto!important;padding:9px 12px 13px!important;border:1px solid rgba(202,228,255,.19)!important;border-radius:var(--vy853-sheet-radius)!important;background:radial-gradient(125% 90% at 13% -12%,rgba(255,255,255,.16),transparent 46%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.018) 44%,rgba(255,255,255,.01)),rgba(10,27,46,.56)!important;box-shadow:0 24px 60px rgba(0,5,16,.36),inset 0 1px 0 rgba(255,255,255,.16)!important;backdrop-filter:blur(28px) saturate(178%)!important;-webkit-backdrop-filter:blur(28px) saturate(178%)!important;transform-origin:50% 100%!important;animation:vy853SheetIn .38s cubic-bezier(.16,1,.3,1) both!important}
+html.vy853-apple-liquid.theme-light .android-sheet{border-color:rgba(51,91,128,.13)!important;background:radial-gradient(125% 90% at 13% -12%,rgba(255,255,255,.98),transparent 46%),linear-gradient(180deg,rgba(255,255,255,.90),rgba(255,255,255,.60) 48%,rgba(244,249,254,.54)),rgba(250,253,255,.64)!important;box-shadow:0 22px 54px rgba(40,69,98,.18),inset 0 1px 0 #fff!important}
+@keyframes vy853SheetIn{0%{opacity:0;transform:translate3d(0,30px,0) scale(.955)}64%{opacity:1;transform:translate3d(0,-2px,0) scale(1.008)}100%{opacity:1;transform:none}}
+html.vy853-apple-liquid .android-sheet-overlay.vy852-closing{animation:vy853OverlayOut .23s ease-in both!important}html.vy853-apple-liquid .android-sheet-overlay.vy852-closing .android-sheet{animation:vy853SheetOut .23s cubic-bezier(.4,0,.7,.2) both!important}@keyframes vy853OverlayOut{to{opacity:0}}@keyframes vy853SheetOut{to{opacity:0;transform:translate3d(0,22px,0) scale(.965)}}
+html.vy853-apple-liquid .android-sheet-grid{grid-template-columns:1fr!important;gap:0!important;overflow:hidden!important;border:0!important;border-radius:20px!important;background:rgba(105,145,184,.075)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important}html.vy853-apple-liquid.theme-light .android-sheet-grid{background:rgba(255,255,255,.46)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.94)!important}
+html.vy853-apple-liquid .android-sheet-item{min-height:60px!important;padding:8px 11px!important;border:0!important;border-bottom:1px solid rgba(190,216,240,.09)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transition:background .16s ease,transform .16s cubic-bezier(.2,.8,.2,1)!important}html.vy853-apple-liquid.theme-light .android-sheet-item{border-bottom-color:rgba(54,91,124,.08)!important}html.vy853-apple-liquid .android-sheet-item:last-child{border-bottom:0!important}html.vy853-apple-liquid .android-sheet-item:active,html.vy853-apple-liquid .android-sheet-item.vy852-pressed{background:rgba(54,157,255,.10)!important;transform:scale(.988)!important}
+html.vy853-apple-liquid .android-sheet-close{border-radius:50%!important;background:rgba(126,163,198,.12)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important}
+html.vy853-apple-liquid.perf-tier-legacy .nav,html.vy853-apple-liquid.perf-tier-legacy .android-sheet,html.vy853-apple-liquid.perf-low-ram .nav,html.vy853-apple-liquid.perf-low-ram .android-sheet{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important}html.vy853-apple-liquid.perf-tier-legacy .nav,html.vy853-apple-liquid.perf-low-ram .nav{background:radial-gradient(130% 100% at 8% -28%,rgba(255,255,255,.16),transparent 50%),rgba(13,30,50,.72)!important}html.vy853-apple-liquid.perf-tier-legacy .android-sheet,html.vy853-apple-liquid.perf-low-ram .android-sheet{background:radial-gradient(125% 90% at 13% -12%,rgba(255,255,255,.13),transparent 46%),rgba(10,27,46,.72)!important}
+@media(max-width:390px){html.vy853-apple-liquid.android-ui .nav,html.vy853-apple-liquid.native-android .nav{width:calc(100% - 12px)!important}html.vy853-apple-liquid .android-sheet-overlay{padding-inline:6px!important}}
+@media(prefers-reduced-motion:reduce){html.vy853-apple-liquid .screen.vy853-page-enter-forward,html.vy853-apple-liquid .screen.vy853-page-enter-backward,html.vy853-apple-liquid .android-sheet,html.vy853-apple-liquid .android-sheet-overlay,html.vy853-apple-liquid #themeToggle.vy853-theme-pop,.vy853-theme-reveal{animation:none!important}html.vy853-apple-liquid .android-nav-glass-indicator{transition:none!important}}
+
+/* ===== STYLE SOURCE: apple-unified-854-part1.css ===== */
+
+/* Vyapar AI 8.5.4.2026 — unified iOS/Apple liquid-glass polish.
+   Visual-only overrides: no accounting, auth, subscription or business logic changes. */
+
+html.vy854-unified-ios{
+  --vy854-blue:#0a84ff;
+  --vy854-blue-strong:#007aff;
+  --vy854-blue-soft:rgba(10,132,255,.18);
+  --vy854-red:#ff453a;
+  --vy854-r-xl:32px;
+  --vy854-r-card:26px;
+  --vy854-r-control:18px;
+  --vy854-r-small:14px;
+  --vy854-glass-dark:rgba(11,27,45,.58);
+  --vy854-glass-light:rgba(255,255,255,.72);
+  --vy854-line-dark:rgba(203,228,255,.17);
+  --vy854-line-light:rgba(44,84,120,.12);
+  --vy854-shadow-dark:0 18px 48px rgba(0,7,18,.28);
+  --vy854-shadow-light:0 16px 40px rgba(46,80,112,.13);
+}
+
+html.vy854-unified-ios main{
+  overflow-x:clip!important;
+  isolation:isolate!important;
+}
+
+/* Stop every older page-transition owner. 8.5.4 is the only page-motion layer. */
+html.vy854-unified-ios .screen.vy-telegram-page-from-left,
+html.vy854-unified-ios .screen.vy-telegram-page-from-right,
+html.vy854-unified-ios .screen.vy853-page-enter-forward,
+html.vy854-unified-ios .screen.vy853-page-enter-backward{
+  animation:none!important;
+  transform:none!important;
+  opacity:1!important;
+}
+
+html.vy854-unified-ios .screen.vy854-page-enter-forward{
+  animation:vy854PageForward .24s cubic-bezier(.22,.72,.18,1) both!important;
+}
+html.vy854-unified-ios .screen.vy854-page-enter-backward{
+  animation:vy854PageBack .24s cubic-bezier(.22,.72,.18,1) both!important;
+}
+@keyframes vy854PageForward{
+  0%{opacity:.975;transform:translate3d(9px,0,0) scale(.999)}
+  65%{opacity:1;transform:translate3d(-1px,0,0)}
+  100%{opacity:1;transform:none}
+}
+@keyframes vy854PageBack{
+  0%{opacity:.975;transform:translate3d(-9px,0,0) scale(.999)}
+  65%{opacity:1;transform:translate3d(1px,0,0)}
+  100%{opacity:1;transform:none}
+}
+html.vy854-unified-ios.vy854-local-switch #tabLoader,
+html.vy854-unified-ios.vy854-auth-handoff #tabLoader,
+html.vy854-unified-ios.vy854-auth-handoff #appLoader,
+html.vy854-unified-ios.vy854-auth-handoff #vy647StartupSplash{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* Remove the old visible dot/bloom/ripple theme effects. */
+html.vy854-unified-ios .vy853-theme-reveal,
+html.vy854-unified-ios .vy852-theme-bloom,
+html.vy854-unified-ios .theme-ripple,
+html.vy854-unified-ios .vx657-theme-crossfade{
+  display:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
+/* Full-screen clip reveal: starts at zero radius, so there is no tap-dot artifact. */
+.vy854-theme-wipe{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483300!important;
+  pointer-events:none!important;
+  opacity:1!important;
+  clip-path:circle(0 at var(--vy854-theme-x,calc(100% - 36px)) var(--vy854-theme-y,44px))!important;
+  -webkit-clip-path:circle(0 at var(--vy854-theme-x,calc(100% - 36px)) var(--vy854-theme-y,44px))!important;
+  will-change:clip-path,-webkit-clip-path,opacity!important;
+}
+.vy854-theme-wipe.to-light{
+  background:radial-gradient(120% 90% at 80% 0%,rgba(255,255,255,.98),rgba(244,249,254,.98) 52%,#edf5fb 100%)!important;
+}
+.vy854-theme-wipe.to-dark{
+  background:radial-gradient(120% 90% at 80% 0%,rgba(27,55,86,.99),rgba(8,25,43,.995) 52%,#06111f 100%)!important;
+}
+.vy854-theme-wipe.run{
+  animation:vy854ThemeWipe .56s cubic-bezier(.2,.72,.16,1) both!important;
+}
+@keyframes vy854ThemeWipe{
+  0%{clip-path:circle(0 at var(--vy854-theme-x) var(--vy854-theme-y));-webkit-clip-path:circle(0 at var(--vy854-theme-x) var(--vy854-theme-y));opacity:1}
+  70%{clip-path:circle(150vmax at var(--vy854-theme-x) var(--vy854-theme-y));-webkit-clip-path:circle(150vmax at var(--vy854-theme-x) var(--vy854-theme-y));opacity:1}
+
+/* ===== STYLE SOURCE: apple-unified-854-part2.css ===== */
+
+  100%{clip-path:circle(150vmax at var(--vy854-theme-x) var(--vy854-theme-y));-webkit-clip-path:circle(150vmax at var(--vy854-theme-x) var(--vy854-theme-y));opacity:0}
+}
+
+/* Header is one coherent app shell. */
+html.vy854-unified-ios.android-ui .top,
+html.vy854-unified-ios.native-android .top{
+  width:calc(100% - 18px)!important;
+  min-height:66px!important;
+  margin:7px auto 14px!important;
+  padding:8px 10px!important;
+  border-radius:28px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  background:radial-gradient(115% 95% at 18% -18%,rgba(255,255,255,.18),transparent 48%),linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.02)),var(--vy854-glass-dark)!important;
+  box-shadow:var(--vy854-shadow-dark),inset 0 1px 0 rgba(255,255,255,.16)!important;
+  overflow:hidden!important;
+}
+html.vy854-unified-ios.theme-light .top{
+  border-color:var(--vy854-line-light)!important;
+  background:radial-gradient(115% 95% at 18% -18%,#fff,transparent 50%),linear-gradient(180deg,rgba(255,255,255,.94),rgba(247,251,255,.66)),var(--vy854-glass-light)!important;
+  box-shadow:var(--vy854-shadow-light),inset 0 1px 0 #fff!important;
+}
+
+/* Circular app icon + remove the visible dark border/shadow around the logo. */
+html.vy854-unified-ios .brand .logo{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  flex:0 0 46px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  -webkit-clip-path:circle(50%)!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  outline:0!important;
+  object-fit:cover!important;
+}
+html.vy854-unified-ios .brand h1{
+  font-size:21px!important;
+  font-weight:780!important;
+  letter-spacing:-.035em!important;
+}
+
+html.vy854-unified-ios #themeToggle{
+  width:46px!important;
+  min-width:46px!important;
+  height:46px!important;
+  min-height:46px!important;
+  border-radius:50%!important;
+  border:1px solid rgba(175,216,255,.21)!important;
+  box-shadow:0 8px 20px rgba(0,8,22,.18),inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+html.vy854-unified-ios.theme-light #themeToggle{
+  border-color:rgba(10,132,255,.18)!important;
+  color:var(--vy854-blue-strong)!important;
+  background:radial-gradient(circle at 28% 18%,#fff 0 16%,rgba(255,255,255,.74) 36%,transparent 48%),rgba(245,251,255,.82)!important;
+  box-shadow:0 8px 20px rgba(40,83,123,.12),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #themeToggle.vy854-theme-pop{
+  animation:vy854ThemeButton .46s cubic-bezier(.16,1,.3,1) both!important;
+}
+@keyframes vy854ThemeButton{
+  0%{transform:scale(1) rotate(0)}
+  34%{transform:scale(.88) rotate(-7deg)}
+  72%{transform:scale(1.06) rotate(2deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+
+/* Light-mode nav: clear blue active state and a true iOS-like floating capsule. */
+html.vy854-unified-ios.android-ui .nav,
+html.vy854-unified-ios.native-android .nav{
+  width:min(calc(100% - 20px),620px)!important;
+  height:68px!important;
+  min-height:68px!important;
+  padding:5px!important;
+  bottom:max(9px,env(safe-area-inset-bottom))!important;
+  border-radius:31px!important;
+  border:1px solid rgba(204,229,255,.18)!important;
+  background:radial-gradient(135% 105% at 8% -25%,rgba(255,255,255,.17),transparent 52%),linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,.024) 48%,rgba(255,255,255,.012)),rgba(11,28,47,.58)!important;
+  box-shadow:0 15px 36px rgba(0,6,17,.28),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.06)!important;
+  overflow:hidden!important;
+}
+html.vy854-unified-ios.theme-light .nav{
+  border-color:rgba(35,83,126,.12)!important;
+
+/* ===== STYLE SOURCE: apple-unified-854-part3.css ===== */
+
+  background:radial-gradient(135% 105% at 8% -25%,#fff,transparent 52%),linear-gradient(180deg,rgba(255,255,255,.97),rgba(255,255,255,.76) 52%,rgba(243,249,254,.67)),rgba(249,253,255,.72)!important;
+  box-shadow:0 14px 34px rgba(46,80,112,.14),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(38,77,113,.045)!important;
+}
+html.vy854-unified-ios .android-nav-glass-indicator{
+  top:5px!important;
+  height:58px!important;
+  border-radius:25px!important;
+  border:1px solid rgba(116,191,255,.31)!important;
+  background:radial-gradient(110% 120% at 22% -10%,rgba(255,255,255,.34),transparent 46%),radial-gradient(95% 120% at 86% 118%,rgba(16,139,255,.24),transparent 55%),linear-gradient(180deg,rgba(49,157,255,.22),rgba(15,113,225,.12)),rgba(10,132,255,.09)!important;
+  box-shadow:0 9px 20px rgba(0,83,170,.17),inset 0 1px 0 rgba(255,255,255,.34)!important;
+  transition:transform .40s cubic-bezier(.16,1,.3,1),width .32s cubic-bezier(.16,1,.3,1)!important;
+}
+html.vy854-unified-ios.theme-light .android-nav-glass-indicator{
+  border-color:rgba(0,122,255,.25)!important;
+  background:radial-gradient(110% 120% at 22% -10%,rgba(255,255,255,.98),transparent 46%),radial-gradient(95% 120% at 86% 118%,rgba(0,122,255,.22),transparent 55%),linear-gradient(180deg,rgba(76,170,255,.28),rgba(10,132,255,.15)),rgba(10,132,255,.13)!important;
+  box-shadow:0 9px 20px rgba(0,105,220,.15),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios .nav button[data-android-tab]{
+  height:58px!important;
+  min-height:58px!important;
+  border-radius:24px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:rgba(166,190,211,.82)!important;
+}
+html.vy854-unified-ios.theme-light .nav button[data-android-tab]{
+  color:rgba(66,91,113,.78)!important;
+}
+html.vy854-unified-ios .nav button.active[data-android-tab],
+html.vy854-unified-ios.theme-light .nav button.active[data-android-tab]{
+  color:var(--vy854-blue-strong)!important;
+}
+html.vy854-unified-ios .nav button.active .android-nav-icon,
+html.vy854-unified-ios.theme-light .nav button.active .android-nav-icon{
+  color:var(--vy854-blue-strong)!important;
+  opacity:1!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:translateY(-1px) scale(1.04)!important;
+}
+html.vy854-unified-ios .nav button.active .android-nav-label,
+html.vy854-unified-ios.theme-light .nav button.active .android-nav-label{
+  color:var(--vy854-blue-strong)!important;
+  opacity:1!important;
+}
+html.vy854-unified-ios .nav .android-nav-label{font-size:9.8px!important;font-weight:720!important;letter-spacing:-.01em!important}
+
+/* Global Apple curve hierarchy across the app. */
+html.vy854-unified-ios .card,
+html.vy854-unified-ios .stat,
+html.vy854-unified-ios .settings-section,
+html.vy854-unified-ios .production-account-card,
+html.vy854-unified-ios .home-overview,
+html.vy854-unified-ios .shop-growth-card,
+html.vy854-unified-ios .p2-card,
+html.vy854-unified-ios .vx621-card,
+html.vy854-unified-ios .vx622-menu-card,
+html.vy854-unified-ios .data-safety-section{
+  border-radius:var(--vy854-r-card)!important;
+}
+html.vy854-unified-ios input,
+html.vy854-unified-ios select,
+html.vy854-unified-ios textarea,
+html.vy854-unified-ios .btn,
+html.vy854-unified-ios .pill,
+html.vy854-unified-ios .glass-chip{
+  border-radius:var(--vy854-r-control)!important;
+}
+html.vy854-unified-ios .home-reward-grid>*,
+html.vy854-unified-ios .shop-reward-stat,
+html.vy854-unified-ios .shop-streak,
+html.vy854-unified-ios .home-kpi,
+html.vy854-unified-ios .home-quick-action{
+  border-radius:22px!important;
+}
+
+/* More popup: connected to the app, not a separate application. */
+html.vy854-unified-ios .android-sheet-overlay{
+  padding:10px 10px max(84px,calc(76px + env(safe-area-inset-bottom)))!important;
+  background:rgba(0,8,18,.22)!important;
+
+/* ===== STYLE SOURCE: apple-unified-854-part4.css ===== */
+
+  backdrop-filter:blur(8px) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(118%)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet-overlay{
+  background:rgba(47,72,98,.11)!important;
+}
+html.vy854-unified-ios .android-sheet{
+  width:min(calc(100% - 2px),596px)!important;
+  max-height:min(74vh,660px)!important;
+  padding:10px 12px 14px!important;
+  border-radius:34px!important;
+  border:1px solid rgba(204,230,255,.18)!important;
+  background:radial-gradient(125% 95% at 14% -14%,rgba(255,255,255,.18),transparent 47%),linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),rgba(10,27,46,.53)!important;
+  box-shadow:0 26px 62px rgba(0,5,16,.34),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(30px) saturate(180%)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(180%)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet{
+  border-color:rgba(45,86,123,.11)!important;
+  background:radial-gradient(125% 95% at 14% -14%,#fff,transparent 48%),linear-gradient(180deg,rgba(255,255,255,.93),rgba(255,255,255,.62)),rgba(249,253,255,.67)!important;
+  box-shadow:0 24px 56px rgba(41,72,101,.17),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios .android-sheet-grid{
+  border-radius:24px!important;
+  background:rgba(104,145,184,.07)!important;
+  border:1px solid rgba(196,224,249,.07)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet-grid{
+  background:rgba(255,255,255,.55)!important;
+  border-color:rgba(44,84,120,.07)!important;
+}
+html.vy854-unified-ios .android-sheet-item{
+  min-height:62px!important;
+  padding:9px 12px!important;
+  border-radius:0!important;
+}
+html.vy854-unified-ios .android-sheet-close{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  border-radius:50%!important;
+  background:rgba(122,162,199,.15)!important;
+  border:1px solid rgba(205,230,255,.12)!important;
+}
+html.vy854-unified-ios.theme-light .android-sheet-close{
+  background:rgba(255,255,255,.76)!important;
+  border-color:rgba(49,90,127,.10)!important;
+  color:#2b648f!important;
+}
+
+/* Settings is part of the same app shell. */
+html.vy854-unified-ios #screen-settings .vy675-settings-shell,
+html.vy854-unified-ios #screen-settings .vy675-settings-home,
+html.vy854-unified-ios #screen-settings .vy675-settings-page{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-shell{
+  padding-bottom:88px!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-eyebrow{display:none!important}
+html.vy854-unified-ios #screen-settings .vy675-settings-intro{
+  margin:0 0 14px!important;
+  padding:18px 18px 16px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  border-radius:28px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.02)),rgba(13,31,51,.48)!important;
+  box-shadow:0 12px 30px rgba(0,7,18,.16),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html.vy854-unified-ios.theme-light #screen-settings .vy675-settings-intro{
+  border-color:var(--vy854-line-light)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(248,252,255,.66)),rgba(255,255,255,.58)!important;
+  box-shadow:0 12px 28px rgba(47,80,111,.09),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-search{
+  border-radius:20px!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-list{
+  overflow:hidden!important;
+  border-radius:24px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  background:rgba(16,35,57,.42)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html.vy854-unified-ios.theme-light #screen-settings .vy675-settings-list{
+
+/* ===== STYLE SOURCE: apple-unified-854-part5.css ===== */
+
+  border-color:var(--vy854-line-light)!important;
+  background:rgba(255,255,255,.68)!important;
+  box-shadow:0 10px 26px rgba(48,79,108,.07),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-row{
+  min-height:70px!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-row-icon{
+  border-radius:16px!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-page-header{
+  position:sticky!important;
+  top:0!important;
+  z-index:8!important;
+  margin-bottom:14px!important;
+  padding:10px 12px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  border-radius:28px!important;
+  background:rgba(12,30,50,.70)!important;
+  backdrop-filter:blur(20px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(150%)!important;
+  box-shadow:0 12px 30px rgba(0,7,18,.16),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html.vy854-unified-ios.theme-light #screen-settings .vy675-page-header{
+  border-color:var(--vy854-line-light)!important;
+  background:rgba(249,253,255,.82)!important;
+  box-shadow:0 12px 28px rgba(48,78,107,.09),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-page-back{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  border-radius:50%!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-page.vy854-settings-in{
+  animation:vy854SettingsForward .27s cubic-bezier(.22,.72,.18,1) both!important;
+}
+html.vy854-unified-ios #screen-settings .vy675-settings-home.vy854-settings-back{
+  animation:vy854SettingsBack .27s cubic-bezier(.22,.72,.18,1) both!important;
+}
+@keyframes vy854SettingsForward{from{opacity:.965;transform:translate3d(14px,0,0)}to{opacity:1;transform:none}}
+@keyframes vy854SettingsBack{from{opacity:.965;transform:translate3d(-14px,0,0)}to{opacity:1;transform:none}}
+
+/* Home growth + Your Shop Journey are first-class app surfaces. */
+html.vy854-unified-ios .shop-growth-card{
+  overflow:hidden!important;
+  border-radius:30px!important;
+}
+html.vy854-unified-ios .shop-progress-btn{
+  border-radius:18px!important;
+  padding-inline:16px!important;
+}
+html.vy854-unified-ios .shop-progress-btn::after{
+  content:' ›';
+  font-weight:800;
+}
+html.vy854-unified-ios .shop-progress-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:16000!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:10px 9px max(10px,env(safe-area-inset-bottom))!important;
+  background:rgba(0,8,18,.24)!important;
+  backdrop-filter:blur(8px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(116%)!important;
+  animation:vy854JourneyOverlay .22s ease-out both!important;
+}
+html.vy854-unified-ios.theme-light .shop-progress-overlay{background:rgba(42,65,89,.12)!important}
+html.vy854-unified-ios .shop-progress-sheet{
+  width:min(calc(100% - 2px),620px)!important;
+  max-height:min(88dvh,820px)!important;
+  overflow:auto!important;
+  margin:0!important;
+  padding:13px 14px 20px!important;
+  border:1px solid var(--vy854-line-dark)!important;
+  border-radius:36px 36px 30px 30px!important;
+  background:radial-gradient(125% 95% at 14% -14%,rgba(255,255,255,.18),transparent 47%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.018)),rgba(10,27,46,.63)!important;
+  box-shadow:0 28px 70px rgba(0,5,16,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(28px) saturate(175%)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(175%)!important;
+  transform-origin:50% 100%!important;
+  animation:vy854JourneyIn .38s cubic-bezier(.16,1,.3,1) both!important;
+}
+html.vy854-unified-ios.theme-light .shop-progress-sheet{
+
+/* ===== STYLE SOURCE: apple-unified-854-part6.css ===== */
+
+  border-color:var(--vy854-line-light)!important;
+  background:radial-gradient(125% 95% at 14% -14%,#fff,transparent 48%),linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.70)),rgba(249,253,255,.72)!important;
+  box-shadow:0 26px 62px rgba(41,72,101,.18),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios .shop-sheet-score,
+html.vy854-unified-ios .shop-milestone,
+html.vy854-unified-ios .shop-next-target,
+html.vy854-unified-ios .shop-month-grid>div,
+html.vy854-unified-ios .shop-sheet-note{
+  border-radius:22px!important;
+}
+html.vy854-unified-ios .shop-sheet-close{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  border-radius:50%!important;
+}
+html.vy854-unified-ios .shop-progress-overlay.vy854-journey-closing{animation:vy854JourneyOverlayOut .20s ease-in both!important}
+html.vy854-unified-ios .shop-progress-overlay.vy854-journey-closing .shop-progress-sheet{animation:vy854JourneyOut .20s cubic-bezier(.4,0,.7,.2) both!important}
+@keyframes vy854JourneyOverlay{from{opacity:0}to{opacity:1}}
+@keyframes vy854JourneyIn{0%{opacity:0;transform:translate3d(0,34px,0) scale(.955)}68%{opacity:1;transform:translate3d(0,-2px,0) scale(1.006)}100%{opacity:1;transform:none}}
+@keyframes vy854JourneyOverlayOut{to{opacity:0}}
+@keyframes vy854JourneyOut{to{opacity:0;transform:translate3d(0,24px,0) scale(.97)}}
+
+/* Login/Create Account = same Apple liquid-glass language, no white flash. */
+html.vy854-unified-ios #vyaparOtpGate{
+  --auth-bg:#071525!important;
+  --auth-card:rgba(13,31,51,.76)!important;
+  --auth-soft:rgba(35,61,86,.62)!important;
+  --auth-soft-hover:rgba(46,77,105,.68)!important;
+  --auth-border:rgba(205,229,252,.14)!important;
+  --auth-text:#f4f8fc!important;
+  --auth-body:#e4edf6!important;
+  --auth-muted:#9fb2c4!important;
+  --auth-primary:#0a84ff!important;
+  --auth-primary-hover:#168cff!important;
+  --auth-accent:#55b7ff!important;
+  background:radial-gradient(36rem 28rem at -10% -8%,rgba(44,133,229,.22),transparent 68%),linear-gradient(180deg,#06111f,#08182a)!important;
+  color-scheme:dark!important;
+}
+html.vy854-unified-ios.theme-light #vyaparOtpGate,
+html.vy854-unified-ios #vyaparOtpGate:not(.auth-dark){
+  --auth-bg:#eff6fb!important;
+  --auth-card:rgba(255,255,255,.78)!important;
+  --auth-soft:rgba(238,246,252,.78)!important;
+  --auth-soft-hover:rgba(225,239,250,.82)!important;
+  --auth-border:rgba(45,85,121,.12)!important;
+  --auth-text:#10233a!important;
+  --auth-body:#243b52!important;
+  --auth-muted:#6a7e91!important;
+  --auth-primary:#0a84ff!important;
+  --auth-primary-hover:#007aff!important;
+  --auth-accent:#007aff!important;
+  background:radial-gradient(34rem 26rem at -10% -8%,rgba(84,171,255,.16),transparent 70%),linear-gradient(180deg,#fbfdff,#eef6fb)!important;
+  color-scheme:light!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-card{
+  max-width:448px!important;
+  padding:28px 24px 24px!important;
+  border-radius:32px!important;
+  border:1px solid var(--auth-border)!important;
+  background:var(--auth-card)!important;
+  box-shadow:0 24px 62px rgba(0,7,20,.22),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  backdrop-filter:blur(26px) saturate(160%)!important;
+  -webkit-backdrop-filter:blur(26px) saturate(160%)!important;
+}
+html.vy854-unified-ios.theme-light #vyaparOtpGate .auth-card,
+html.vy854-unified-ios #vyaparOtpGate:not(.auth-dark) .auth-card{
+  box-shadow:0 22px 54px rgba(43,75,106,.14),inset 0 1px 0 #fff!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-logo{
+  width:92px!important;
+  height:92px!important;
+  max-width:92px!important;
+  padding:8px!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  object-fit:contain!important;
+  box-shadow:none!important;
+}
+
+/* ===== STYLE SOURCE: apple-unified-854-part7.css ===== */
+
+html.vy854-unified-ios #vyaparOtpGate .auth-method-tabs{border-radius:20px!important;padding:5px!important}
+html.vy854-unified-ios #vyaparOtpGate .auth-method-tab{border-radius:16px!important}
+html.vy854-unified-ios #vyaparOtpGate .auth-input,
+html.vy854-unified-ios #vyaparOtpGate .auth-primary,
+html.vy854-unified-ios #vyaparOtpGate .auth-google,
+html.vy854-unified-ios #vyaparOtpGate .auth-small-btn{
+  min-height:50px!important;
+  border-radius:18px!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-message{border-radius:16px!important}
+
+/* Successful login uses one compact handoff, never a second fullscreen loader. */
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-overlay{
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:0 16px max(24px,env(safe-area-inset-bottom))!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  pointer-events:none!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-card{
+  width:auto!important;
+  min-width:190px!important;
+  max-width:280px!important;
+  padding:11px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  border-radius:999px!important;
+  text-align:left!important;
+  background:rgba(13,31,51,.88)!important;
+  color:#fff!important;
+  border:1px solid rgba(205,230,255,.14)!important;
+  box-shadow:0 14px 34px rgba(0,7,18,.24)!important;
+  backdrop-filter:blur(18px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%)!important;
+}
+html.vy854-unified-ios.theme-light #vyaparOtpGate .auth-loading-card,
+html.vy854-unified-ios #vyaparOtpGate:not(.auth-dark) .auth-loading-card{
+  background:rgba(255,255,255,.90)!important;
+  color:#16304a!important;
+  border-color:rgba(38,81,119,.10)!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-spinner{
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  margin:0!important;
+  border-width:2px!important;
+}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-card strong{font-size:12px!important;white-space:nowrap!important}
+html.vy854-unified-ios #vyaparOtpGate .auth-loading-card span{display:none!important}
+
+/* Startup surfaces stay theme-matched and circular instead of flashing white. */
+html.vy854-unified-ios #appLoader.android-loader,
+html.vy854-unified-ios #vy647StartupSplash{
+  background:linear-gradient(180deg,#06111f,#08182a)!important;
+}
+html.vy854-unified-ios.theme-light #appLoader.android-loader,
+html.vy854-unified-ios.theme-light #vy647StartupSplash{
+  background:linear-gradient(180deg,#fbfdff,#eef6fb)!important;
+}
+html.vy854-unified-ios #appLoader .android-loader-logo,
+html.vy854-unified-ios #vy647StartupSplash .vy647-splash-core>img{
+  border-radius:50%!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+
+/* Legacy/low-RAM devices: keep curves and blue state, drop expensive live blur. */
+html.vy854-unified-ios.perf-tier-legacy .top,
+html.vy854-unified-ios.perf-tier-legacy .nav,
+html.vy854-unified-ios.perf-tier-legacy .android-sheet,
+html.vy854-unified-ios.perf-tier-legacy .shop-progress-sheet,
+html.vy854-unified-ios.perf-low-ram .top,
+html.vy854-unified-ios.perf-low-ram .nav,
+html.vy854-unified-ios.perf-low-ram .android-sheet,
+html.vy854-unified-ios.perf-low-ram .shop-progress-sheet{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+
+@media(max-width:390px){
+  html.vy854-unified-ios .brand .logo{width:42px!important;height:42px!important;min-width:42px!important;max-width:42px!important;flex-basis:42px!important}
+  html.vy854-unified-ios .brand h1{font-size:19px!important}
+
+/* ===== STYLE SOURCE: apple-unified-854-part8.css ===== */
+
+  html.vy854-unified-ios #themeToggle{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important}
+  html.vy854-unified-ios.android-ui .nav,html.vy854-unified-ios.native-android .nav{width:calc(100% - 14px)!important}
+  html.vy854-unified-ios #screen-settings .vy675-settings-intro{padding:16px!important}
+  html.vy854-unified-ios #vyaparOtpGate .auth-card{padding:22px 17px 20px!important;border-radius:28px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy854-unified-ios .screen.vy854-page-enter-forward,
+  html.vy854-unified-ios .screen.vy854-page-enter-backward,
+  html.vy854-unified-ios #screen-settings .vy675-settings-page.vy854-settings-in,
+  html.vy854-unified-ios #screen-settings .vy675-settings-home.vy854-settings-back,
+  .vy854-theme-wipe,
+  html.vy854-unified-ios .shop-progress-sheet,
+  html.vy854-unified-ios .shop-progress-overlay{
+    animation:none!important;
+    transform:none!important;
+  }
+}
+
+/* ===== STYLE SOURCE: apple-stability-855.css ===== */
+
+/* Vyapar AI 8.5.5.2026 — authoritative Android visual-stability layer. */
+html.vy855-stable-ios{--vy855-blue:#0a84ff;--vy855-blue2:#007aff;--vy855-line:rgba(180,214,245,.16);--vy855-card:26px;--vy855-control:19px;color-scheme:dark}
+html.vy855-stable-ios.theme-light{--vy855-line:rgba(46,83,117,.12);color-scheme:light}
+html.vy855-stable-ios,html.vy855-stable-ios body,html.vy855-stable-ios button,html.vy855-stable-ios a,html.vy855-stable-ios input,html.vy855-stable-ios select,html.vy855-stable-ios textarea,html.vy855-stable-ios .nav,html.vy855-stable-ios .nav *{-webkit-tap-highlight-color:transparent!important}
+html.vy855-stable-ios .vy852-theme-bloom,html.vy855-stable-ios .vy853-theme-reveal,html.vy855-stable-ios .vy854-theme-wipe,html.vy855-stable-ios .theme-ripple,html.vy855-stable-ios .vx657-theme-crossfade{display:none!important;animation:none!important;transition:none!important}
+html.vy855-stable-ios .nav::before,html.vy855-stable-ios .nav::after,html.vy855-stable-ios .android-nav-glass-indicator::after{content:none!important;display:none!important;background:none!important;animation:none!important}
+html.vy855-stable-ios .screen.vy-telegram-page-from-left,html.vy855-stable-ios .screen.vy-telegram-page-from-right,html.vy855-stable-ios .screen.vy853-page-enter-forward,html.vy855-stable-ios .screen.vy853-page-enter-backward,html.vy855-stable-ios .screen.vy854-page-enter-forward,html.vy855-stable-ios .screen.vy854-page-enter-backward{animation:none!important;transform:none!important;opacity:1!important}
+html.vy855-stable-ios .screen.vy855-enter-forward{animation:vy855Forward .18s cubic-bezier(.22,.7,.2,1) both!important}html.vy855-stable-ios .screen.vy855-enter-backward{animation:vy855Back .18s cubic-bezier(.22,.7,.2,1) both!important}@keyframes vy855Forward{from{opacity:.985;transform:translate3d(6px,0,0)}to{opacity:1;transform:none}}@keyframes vy855Back{from{opacity:.985;transform:translate3d(-6px,0,0)}to{opacity:1;transform:none}}
+html.vy855-stable-ios.vy855-switching #tabLoader{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.vy855-theme-curtain{position:fixed!important;inset:0!important;z-index:2147483400!important;pointer-events:none!important;opacity:0!important;background:#06172d!important;transition:opacity .11s ease!important}.vy855-theme-curtain.to-light{background:#eef5fb!important}.vy855-theme-curtain.show{opacity:1!important}.vy855-theme-curtain.leave{opacity:0!important}
+html.vy855-stable-ios.android-ui .top,html.vy855-stable-ios.native-android .top{width:calc(100% - 16px)!important;min-height:66px!important;margin:7px auto 13px!important;padding:8px 10px!important;border-radius:29px!important;border:1px solid var(--vy855-line)!important;background:radial-gradient(120% 95% at 16% -16%,rgba(255,255,255,.17),transparent 48%),linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.018)),rgba(9,27,46,.72)!important;box-shadow:0 12px 30px rgba(0,7,18,.22),inset 0 1px 0 rgba(255,255,255,.14)!important;filter:none!important;mix-blend-mode:normal!important}
+html.vy855-stable-ios.theme-light .top{background:radial-gradient(120% 95% at 16% -16%,#fff,transparent 49%),linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,252,255,.74)),rgba(255,255,255,.76)!important;box-shadow:0 12px 28px rgba(42,72,101,.11),inset 0 1px 0 #fff!important}
+html.vy855-stable-ios .brand .logo,html.vy855-stable-ios #vyaparOtpGate .auth-logo,html.vy855-stable-ios #vy647PasswordGate img,html.vy855-stable-ios #appLoader .android-loader-logo img,html.vy855-stable-ios #vy647StartupSplash .vy647-splash-core>img{border-radius:50%!important;clip-path:circle(50%)!important;-webkit-clip-path:circle(50%)!important;background:#fff!important;border:0!important;outline:0!important;box-shadow:none!important;object-fit:contain!important}
+html.vy855-stable-ios .brand .logo{width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;flex:0 0 44px!important;padding:0!important}
+html.vy855-stable-ios.android-ui .nav,html.vy855-stable-ios.native-android .nav{left:50%!important;right:auto!important;bottom:max(9px,env(safe-area-inset-bottom))!important;width:min(calc(100% - 16px),620px)!important;height:68px!important;min-height:68px!important;padding:5px!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;border-radius:31px!important;border:1px solid rgba(163,204,240,.18)!important;background:radial-gradient(130% 105% at 8% -24%,rgba(255,255,255,.16),transparent 52%),linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.02) 54%),rgba(8,26,45,.88)!important;box-shadow:0 13px 31px rgba(0,6,17,.27),inset 0 1px 0 rgba(255,255,255,.14)!important;transform:translateX(-50%)!important;filter:none!important;mix-blend-mode:normal!important;isolation:isolate!important;overflow:hidden!important}
+html.vy855-stable-ios.theme-light .nav{border-color:rgba(40,82,119,.12)!important;background:radial-gradient(130% 105% at 8% -24%,#fff,transparent 52%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(250,253,255,.78) 54%),rgba(247,252,255,.86)!important;box-shadow:0 12px 28px rgba(42,73,102,.12),inset 0 1px 0 #fff!important}
+html.vy855-stable-ios .android-nav-glass-indicator{display:block!important;top:5px!important;height:58px!important;border-radius:25px!important;border:1px solid rgba(79,169,255,.25)!important;background:linear-gradient(180deg,rgba(53,156,255,.22),rgba(15,102,205,.12)),rgba(10,132,255,.08)!important;box-shadow:0 7px 18px rgba(0,86,178,.14),inset 0 1px 0 rgba(255,255,255,.24)!important;filter:none!important}
+html.vy855-stable-ios.theme-light .android-nav-glass-indicator{border-color:rgba(0,122,255,.20)!important;background:linear-gradient(180deg,rgba(92,181,255,.28),rgba(10,132,255,.12)),rgba(10,132,255,.10)!important;box-shadow:0 7px 17px rgba(0,105,220,.12),inset 0 1px 0 #fff!important}
+html.vy855-stable-ios .nav button[data-android-tab]{position:relative!important;z-index:2!important;height:58px!important;min-height:58px!important;border:0!important;border-radius:24px!important;background:transparent!important;box-shadow:none!important;filter:none!important;color:#8fa8bc!important;outline:none!important}html.vy855-stable-ios.theme-light .nav button[data-android-tab]{color:#60778a!important}html.vy855-stable-ios .nav button.active[data-android-tab],html.vy855-stable-ios.theme-light .nav button.active[data-android-tab]{color:var(--vy855-blue2)!important;background:transparent!important}html.vy855-stable-ios .nav button.active .android-nav-icon,html.vy855-stable-ios .nav button.active .android-nav-label{color:var(--vy855-blue2)!important;filter:none!important;text-shadow:none!important}html.vy855-stable-ios .nav button:focus-visible{outline:2px solid rgba(10,132,255,.65)!important;outline-offset:-3px!important}
+html.vy855-stable-ios .android-sheet-overlay{background:rgba(0,8,18,.50)!important;backdrop-filter:blur(5px) saturate(112%)!important;-webkit-backdrop-filter:blur(5px) saturate(112%)!important;z-index:14000!important}html.vy855-stable-ios.theme-light .android-sheet-overlay{background:rgba(37,59,82,.22)!important}
+html.vy855-stable-ios .android-sheet{width:min(calc(100% - 14px),596px)!important;max-height:min(74vh,660px)!important;margin:0 auto!important;border-radius:34px!important;border:1px solid rgba(176,214,246,.17)!important;background:radial-gradient(125% 90% at 14% -12%,rgba(255,255,255,.14),transparent 48%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01)),#0c243a!important;box-shadow:0 24px 58px rgba(0,5,16,.40),inset 0 1px 0 rgba(255,255,255,.13)!important;filter:none!important}html.vy855-stable-ios.theme-light .android-sheet{border-color:rgba(48,88,123,.11)!important;background:radial-gradient(125% 90% at 14% -12%,#fff,transparent 48%),linear-gradient(180deg,rgba(255,255,255,.94),rgba(249,252,255,.72)),#f7fbff!important;box-shadow:0 22px 52px rgba(41,70,98,.17),inset 0 1px 0 #fff!important}
+html.vy855-stable-ios .android-sheet-grid{border-radius:23px!important;overflow:hidden!important;background:rgba(19,47,73,.92)!important}html.vy855-stable-ios.theme-light .android-sheet-grid{background:#fff!important}html.vy855-stable-ios .android-sheet-item{min-height:62px!important;border-radius:0!important;background:transparent!important}html.vy855-stable-ios .android-sheet-item:active{background:rgba(10,132,255,.11)!important}html.vy855-stable-ios .android-sheet-close{border-radius:50%!important}html.vy855-stable-ios .android-sheet-overlay.vy855-sheet-leaving{animation:vy855OverlayOut .16s ease-in both!important}html.vy855-stable-ios .android-sheet-overlay.vy855-sheet-leaving .android-sheet{animation:vy855SheetOut .16s ease-in both!important}@keyframes vy855OverlayOut{to{opacity:0}}@keyframes vy855SheetOut{to{opacity:0;transform:translate3d(0,16px,0) scale(.98)}}
+html.vy855-stable-ios .card,html.vy855-stable-ios .stat,html.vy855-stable-ios .settings-section,html.vy855-stable-ios .production-account-card,html.vy855-stable-ios .home-overview,html.vy855-stable-ios .shop-growth-card,html.vy855-stable-ios .p2-card,html.vy855-stable-ios .vx621-card,html.vy855-stable-ios .vx622-menu-card,html.vy855-stable-ios .data-safety-section{border-radius:var(--vy855-card)!important}html.vy855-stable-ios input,html.vy855-stable-ios select,html.vy855-stable-ios textarea,html.vy855-stable-ios .btn,html.vy855-stable-ios .pill,html.vy855-stable-ios .glass-chip{border-radius:var(--vy855-control)!important}
+html.vy855-stable-ios #screen-settings .vy675-settings-shell,html.vy855-stable-ios #screen-settings .vy675-settings-home,html.vy855-stable-ios #screen-settings .vy675-settings-page{background:transparent!important;box-shadow:none!important}html.vy855-stable-ios #screen-settings .vy675-settings-intro,html.vy855-stable-ios #screen-settings .vy675-page-header{border-radius:28px!important}html.vy855-stable-ios #screen-settings .vy675-settings-list{border-radius:23px!important;overflow:hidden!important}html.vy855-stable-ios #screen-settings .vy675-settings-row{border-radius:0!important}html.vy855-stable-ios #screen-settings .vy675-page-back{border-radius:50%!important}
+html.vy855-stable-ios .shop-progress-overlay{background:rgba(0,8,18,.48)!important;backdrop-filter:blur(5px) saturate(112%)!important;-webkit-backdrop-filter:blur(5px) saturate(112%)!important}html.vy855-stable-ios.theme-light .shop-progress-overlay{background:rgba(37,59,82,.20)!important}html.vy855-stable-ios .shop-progress-sheet{border-radius:36px 36px 30px 30px!important;background:radial-gradient(125% 95% at 14% -14%,rgba(255,255,255,.13),transparent 48%),#0c243a!important;box-shadow:0 26px 64px rgba(0,5,16,.40),inset 0 1px 0 rgba(255,255,255,.13)!important}html.vy855-stable-ios.theme-light .shop-progress-sheet{background:radial-gradient(125% 95% at 14% -14%,#fff,transparent 48%),#f9fcff!important}html.vy855-stable-ios .shop-sheet-close{border-radius:50%!important}html.vy855-stable-ios .shop-sheet-score,html.vy855-stable-ios .shop-milestone,html.vy855-stable-ios .shop-next-target,html.vy855-stable-ios .shop-month-grid>div,html.vy855-stable-ios .shop-sheet-note{border-radius:22px!important}
+html.vy855-stable-ios #vyaparOtpGate{background:radial-gradient(34rem 25rem at -10% -8%,rgba(37,122,219,.19),transparent 68%),linear-gradient(180deg,#06111f,#07182a)!important;color-scheme:dark!important}html.vy855-stable-ios.theme-light #vyaparOtpGate,html.vy855-stable-ios #vyaparOtpGate:not(.auth-dark){background:radial-gradient(32rem 24rem at -10% -8%,rgba(80,167,255,.14),transparent 69%),linear-gradient(180deg,#fbfdff,#eef5fb)!important;color-scheme:light!important}
+html.vy855-stable-ios #vyaparOtpGate .auth-page{padding:max(12px,env(safe-area-inset-top)) 12px max(16px,env(safe-area-inset-bottom))!important}html.vy855-stable-ios #vyaparOtpGate .auth-card{width:min(100%,430px)!important;max-width:430px!important;margin:auto!important;padding:26px 22px 22px!important;border-radius:32px!important;border:1px solid rgba(190,222,249,.15)!important;background:rgba(10,30,50,.78)!important;box-shadow:0 22px 54px rgba(0,6,18,.27),inset 0 1px 0 rgba(255,255,255,.10)!important}html.vy855-stable-ios.theme-light #vyaparOtpGate .auth-card,html.vy855-stable-ios #vyaparOtpGate:not(.auth-dark) .auth-card{border-color:rgba(47,86,121,.11)!important;background:rgba(255,255,255,.82)!important;box-shadow:0 20px 48px rgba(42,73,103,.13),inset 0 1px 0 #fff!important}
+html.vy855-stable-ios #vyaparOtpGate .auth-logo{width:92px!important;height:92px!important;max-width:92px!important;padding:0!important}html.vy855-stable-ios #vyaparOtpGate .auth-method-tabs{padding:4px!important;border-radius:19px!important;background:rgba(19,45,69,.78)!important;border:1px solid rgba(157,205,244,.12)!important;overflow:hidden!important}html.vy855-stable-ios.theme-light #vyaparOtpGate .auth-method-tabs,html.vy855-stable-ios #vyaparOtpGate:not(.auth-dark) .auth-method-tabs{background:rgba(232,242,250,.86)!important;border-color:rgba(50,89,124,.10)!important}
+html.vy855-stable-ios #vyaparOtpGate .auth-method-tab{min-height:46px!important;border-radius:15px!important;color:#a7b9c9!important;background:transparent!important;box-shadow:none!important;opacity:1!important}html.vy855-stable-ios #vyaparOtpGate .auth-method-tab.active{color:#fff!important;background:linear-gradient(180deg,rgba(36,145,255,.88),rgba(0,112,232,.74))!important;box-shadow:0 6px 16px rgba(0,100,220,.18),inset 0 1px 0 rgba(255,255,255,.22)!important}html.vy855-stable-ios.theme-light #vyaparOtpGate .auth-method-tab,html.vy855-stable-ios #vyaparOtpGate:not(.auth-dark) .auth-method-tab{color:#667d91!important}html.vy855-stable-ios.theme-light #vyaparOtpGate .auth-method-tab.active,html.vy855-stable-ios #vyaparOtpGate:not(.auth-dark) .auth-method-tab.active{color:#fff!important}
+html.vy855-stable-ios #vyaparOtpGate .auth-input,html.vy855-stable-ios #vyaparOtpGate .auth-primary,html.vy855-stable-ios #vyaparOtpGate .auth-google,html.vy855-stable-ios #vyaparOtpGate .auth-small-btn{min-height:50px!important;border-radius:18px!important}html.vy855-stable-ios #vyaparOtpGate .auth-input{min-width:0!important;width:100%!important;background:rgba(20,47,74,.78)!important;border-color:rgba(159,205,244,.16)!important}html.vy855-stable-ios.theme-light #vyaparOtpGate .auth-input,html.vy855-stable-ios #vyaparOtpGate:not(.auth-dark) .auth-input{background:#fff!important;border-color:rgba(48,88,123,.13)!important}html.vy855-stable-ios #vyaparOtpGate .auth-otp-row{grid-template-columns:minmax(0,1fr) 116px!important;gap:10px!important;align-items:stretch!important}html.vy855-stable-ios #vyaparOtpGate .auth-small-btn{width:116px!important;min-width:116px!important;padding-inline:10px!important}html.vy855-stable-ios #vyaparOtpGate .auth-message{border-radius:18px!important}html.vy855-stable-ios #vyaparOtpGate .auth-loading-overlay{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;pointer-events:none!important}html.vy855-stable-ios #vyaparOtpGate .auth-loading-card{border-radius:999px!important;box-shadow:0 12px 30px rgba(0,7,18,.22)!important}
+html.vy855-stable-ios #appLoader.android-loader,html.vy855-stable-ios #vy647StartupSplash{background:linear-gradient(180deg,#061326,#06172d)!important}html.vy855-stable-ios.theme-light #appLoader.android-loader,html.vy855-stable-ios.theme-light #vy647StartupSplash{background:linear-gradient(180deg,#fbfdff,#eef5fb)!important}html.vy855-stable-ios.vy855-auth-ready #appLoader,html.vy855-stable-ios.vy855-auth-ready #vy647StartupSplash{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+@media(max-width:390px){html.vy855-stable-ios.android-ui .nav,html.vy855-stable-ios.native-android .nav{width:calc(100% - 12px)!important}html.vy855-stable-ios #vyaparOtpGate .auth-card{padding:22px 16px 19px!important;border-radius:28px!important}html.vy855-stable-ios #vyaparOtpGate .auth-otp-row{grid-template-columns:minmax(0,1fr) 105px!important;gap:8px!important}html.vy855-stable-ios #vyaparOtpGate .auth-small-btn{width:105px!important;min-width:105px!important;font-size:12px!important}}@media(max-width:330px){html.vy855-stable-ios #vyaparOtpGate .auth-otp-row{grid-template-columns:1fr!important}html.vy855-stable-ios #vyaparOtpGate .auth-small-btn{width:100%!important}}
+@media(prefers-reduced-motion:reduce){html.vy855-stable-ios .screen.vy855-enter-forward,html.vy855-stable-ios .screen.vy855-enter-backward,.vy855-theme-curtain,html.vy855-stable-ios .android-sheet-overlay.vy855-sheet-leaving,html.vy855-stable-ios .android-sheet-overlay.vy855-sheet-leaving .android-sheet{animation:none!important;transition:none!important;transform:none!important}}
+
+/* ===== STYLE SOURCE: inspected-glitchfix-855.css ===== */
+
+/* Vyapar AI 8.5.5 inspected glitch fix — Android 7–16.
+   Targets only visual/state-transition defects observed in the 2026-09-06 recording. */
+
+/* Never cover a theme change with an opaque full-screen layer. */
+html.vy855-inspected-fix .vy855-theme-curtain,
+html.vy855-inspected-fix .vy854-theme-wipe,
+html.vy855-inspected-fix .vy853-theme-reveal,
+html.vy855-inspected-fix .vy852-theme-bloom,
+html.vy855-inspected-fix .theme-ripple,
+html.vy855-inspected-fix .vx657-theme-crossfade{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
+/* During the two-frame theme commit, change surfaces atomically instead of
+   letting old WebViews animate unrelated background/opacity properties. */
+html.vy855-inspected-fix.vy855-theme-atomic *,
+html.vy855-inspected-fix.vy855-theme-atomic *::before,
+html.vy855-inspected-fix.vy855-theme-atomic *::after{
+  transition:none!important;
+}
+
+/* Login: the 8.5.5 active pill was being drawn on top of the older sliding
+   ::before lens, creating the tall/double blue block visible in the recording. */
+html.vy855-inspected-fix #vyaparOtpGate .auth-card{
+  width:min(100%,430px)!important;
+  max-width:430px!important;
+  padding:22px 18px 20px!important;
+  border-radius:28px!important;
+  box-shadow:0 16px 38px rgba(0,6,18,.22),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-card,
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-card{
+  box-shadow:0 14px 34px rgba(42,73,103,.11),inset 0 1px 0 #fff!important;
+}
+
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tabs{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:0!important;
+  height:auto!important;
+  margin:0!important;
+  padding:4px!important;
+  gap:4px!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tabs::before{
+  content:none!important;
+  display:none!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab,
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab.active{
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  width:100%!important;
+  min-width:0!important;
+  height:44px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0 8px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+  text-shadow:none!important;
+  opacity:1!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab:not(.active){
+  color:#a9bfd1!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab[disabled]:not(.active){
+  color:#9eb2c4!important;
+  opacity:.72!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab.active{
+  color:#fff!important;
+  background:linear-gradient(180deg,#2189f5,#0d6fd3)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 10px rgba(0,78,168,.22)!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-method-tab:not(.active),
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-method-tab:not(.active){
+  color:#5f7488!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-method-tab[disabled]:not(.active),
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-method-tab[disabled]:not(.active){
+  color:#71869a!important;
+}
+
+/* Keep the email field usable on ~360 CSS-pixel Android screens. 8.5.5 had
+   expanded Get OTP to 116/105px, which crushed and clipped the email input. */
+html.vy855-inspected-fix #vyaparOtpGate .auth-otp-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 92px!important;
+  gap:8px!important;
+  align-items:center!important;
+  width:100%!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-input,
+html.vy855-inspected-fix #vyaparOtpGate .auth-primary,
+html.vy855-inspected-fix #vyaparOtpGate .auth-google,
+html.vy855-inspected-fix #vyaparOtpGate .auth-small-btn{
+  height:48px!important;
+  min-height:48px!important;
+  border-radius:16px!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-input{
+  min-width:0!important;
+  padding:10px 14px!important;
+  font-size:14px!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-small-btn{
+  width:92px!important;
+  min-width:92px!important;
+  max-width:92px!important;
+  padding:0 8px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-input::placeholder{
+  color:rgba(196,213,227,.60)!important;
+  opacity:1!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-input::placeholder,
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-input::placeholder{
+  color:rgba(76,98,117,.62)!important;
+}
+html.vy855-inspected-fix #vyaparOtpGate .auth-subtitle{
+  color:#91a8bb!important;
+  opacity:1!important;
+}
+html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-subtitle,
+html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-subtitle{
+  color:#657b8e!important;
+}
+
+@media(max-width:348px){
+  html.vy855-inspected-fix #vyaparOtpGate .auth-card{padding-left:14px!important;padding-right:14px!important}
+  html.vy855-inspected-fix #vyaparOtpGate .auth-otp-row{grid-template-columns:1fr!important}
+  html.vy855-inspected-fix #vyaparOtpGate .auth-small-btn{width:100%!important;min-width:0!important;max-width:none!important}
+}
+
+/* Settings must never enter as an empty/transparent page. Content still gets
+   the short directional transform, but its base screen remains paintable. */
+html.vy855-inspected-fix #screen-settings:not(.hide){
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+}
+html.vy855-inspected-fix #screen-settings.vy855-enter-forward,
+html.vy855-inspected-fix #screen-settings.vy855-enter-backward{
+  animation-duration:.14s!important;
+}
+
+/* ===== STYLE SOURCE: liquid-lens-motion-856.css ===== */
+
+/* Vyapar AI 8.5.6 — liquid-lens motion + iOS geometry polish.
+   Presentation only. Designed to stay smooth on Android 7–16: motion uses
+   transform/opacity; expensive blur is disabled for the legacy perf tier. */
+
+html.vy855-liquid-lens{
+  --vy856-blue:#0a84ff;
+  --vy856-blue-2:#2f9bff;
+  --vy856-bg:#06172d;
+  --vy856-glass:rgba(12,34,56,.76);
+  --vy856-glass-soft:rgba(20,45,70,.60);
+  --vy856-line:rgba(187,220,248,.18);
+  --vy856-hi:rgba(255,255,255,.19);
+  --vy856-card-r:26px;
+  --vy856-control-r:18px;
+  --vy856-sheet-r:34px;
+  --vy856-spring:cubic-bezier(.16,1,.3,1);
+}
+html.vy855-liquid-lens.theme-light{
+  --vy856-bg:#eff6fb;
+  --vy856-glass:rgba(250,253,255,.78);
+  --vy856-glass-soft:rgba(255,255,255,.66);
+  --vy856-line:rgba(45,84,119,.13);
+  --vy856-hi:rgba(255,255,255,.94);
+}
+
+/* ---------- Apple-like continuous geometry ---------- */
+html.vy855-liquid-lens .card,
+html.vy855-liquid-lens .stat,
+html.vy855-liquid-lens .settings-section,
+html.vy855-liquid-lens .production-account-card,
+html.vy855-liquid-lens .home-overview,
+html.vy855-liquid-lens .shop-growth-card,
+html.vy855-liquid-lens .p2-card,
+html.vy855-liquid-lens .vx621-card,
+html.vy855-liquid-lens .vx622-menu-card,
+html.vy855-liquid-lens .data-safety-section,
+html.vy855-liquid-lens .subscription-result-card{
+  border-radius:var(--vy856-card-r)!important;
+  overflow:hidden;
+}
+html.vy855-liquid-lens input,
+html.vy855-liquid-lens select,
+html.vy855-liquid-lens textarea,
+html.vy855-liquid-lens .btn,
+html.vy855-liquid-lens .pill,
+html.vy855-liquid-lens .glass-chip,
+html.vy855-liquid-lens .auth-input,
+html.vy855-liquid-lens .auth-primary,
+html.vy855-liquid-lens .auth-google,
+html.vy855-liquid-lens .auth-small-btn{
+  border-radius:var(--vy856-control-r)!important;
+}
+html.vy855-liquid-lens .android-sheet,
+html.vy855-liquid-lens .shop-progress-sheet,
+html.vy855-liquid-lens .vx643-modal,
+html.vy855-liquid-lens .subscription-dialog,
+html.vy855-liquid-lens .menu-popover,
+html.vy855-liquid-lens .more-sheet,
+html.vy855-liquid-lens .sheet{
+  border-radius:var(--vy856-sheet-r)!important;
+}
+html.vy855-liquid-lens #screen-settings .vy675-settings-intro,
+html.vy855-liquid-lens #screen-settings .vy675-page-header{border-radius:30px!important}
+html.vy855-liquid-lens #screen-settings .vy675-settings-list{border-radius:24px!important;overflow:hidden!important}
+html.vy855-liquid-lens #screen-settings .vy675-page-back,
+html.vy855-liquid-lens .android-sheet-close,
+html.vy855-liquid-lens .shop-sheet-close{border-radius:999px!important}
+
+/* ---------- Convex liquid-glass edge ----------
+   The red/green/blue edge is intentionally subtle: it mimics the refractive
+   chromatic fringe shown in the user's reference without making text fuzzy. */
+html.vy855-liquid-lens.android-ui .top,
+html.vy855-liquid-lens.native-android .top,
+html.vy855-liquid-lens.android-ui .nav,
+html.vy855-liquid-lens.native-android .nav,
+html.vy855-liquid-lens .android-sheet,
+html.vy855-liquid-lens .shop-progress-sheet,
+html.vy855-liquid-lens .vx643-modal,
+html.vy855-liquid-lens .subscription-dialog{
+  border:1px solid var(--vy856-line)!important;
+  background:
+    radial-gradient(115% 90% at 15% -14%,rgba(255,255,255,.15),transparent 47%),
+    linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.012) 52%),
+    var(--vy856-glass)!important;
+  box-shadow:
+    0 16px 38px rgba(0,7,20,.24),
+    inset 0 1px 0 var(--vy856-hi),
+    inset 1px 0 0 rgba(88,255,170,.10),
+    inset -1px 0 0 rgba(255,102,92,.11),
+    inset 0 -1px 0 rgba(74,147,255,.10)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(155%)!important;
+  backdrop-filter:blur(22px) saturate(155%)!important;
+}
+html.vy855-liquid-lens.theme-light.android-ui .top,
+html.vy855-liquid-lens.theme-light.native-android .top,
+html.vy855-liquid-lens.theme-light.android-ui .nav,
+html.vy855-liquid-lens.theme-light.native-android .nav,
+html.vy855-liquid-lens.theme-light .android-sheet,
+html.vy855-liquid-lens.theme-light .shop-progress-sheet,
+html.vy855-liquid-lens.theme-light .vx643-modal,
+html.vy855-liquid-lens.theme-light .subscription-dialog{
+  background:
+    radial-gradient(115% 90% at 15% -14%,#fff,transparent 49%),
+    linear-gradient(180deg,rgba(255,255,255,.82),rgba(247,251,255,.56) 54%),
+    var(--vy856-glass)!important;
+  box-shadow:
+    0 15px 34px rgba(42,72,102,.12),
+    inset 0 1px 0 #fff,
+    inset 1px 0 0 rgba(74,221,145,.11),
+    inset -1px 0 0 rgba(255,105,88,.10),
+    inset 0 -1px 0 rgba(45,127,232,.10)!important;
+}
+
+/* Top bar: rounded iOS capsule, no square bleed. */
+html.vy855-liquid-lens.android-ui .top,
+html.vy855-liquid-lens.native-android .top{
+  border-radius:30px!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+html.vy855-liquid-lens .top::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:1px!important;
+  border-radius:29px!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(80% 28% at 23% 0%,rgba(255,255,255,.17),transparent 72%),
+    radial-gradient(42% 70% at 0% 52%,rgba(76,255,159,.055),transparent 75%),
+    radial-gradient(42% 70% at 100% 52%,rgba(255,91,76,.06),transparent 75%)!important;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08)!important;
+}
+
+/* Keep every in-app rendition of the actual app mark clipped cleanly. */
+html.vy855-liquid-lens .brand .logo,
+html.vy855-liquid-lens #vyaparOtpGate .auth-logo,
+html.vy855-liquid-lens #vy647PasswordGate img,
+html.vy855-liquid-lens #appLoader .android-loader-logo img,
+html.vy855-liquid-lens #vy647StartupSplash .vy647-splash-core>img,
+html.vy855-liquid-lens #vy855BootGuard img{
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  -webkit-clip-path:circle(50%)!important;
+  overflow:hidden!important;
+  object-fit:contain!important;
+  background:#fff!important;
+}
+
+/* ---------- Floating tab lens ---------- */
+html.vy855-liquid-lens.android-ui .nav,
+html.vy855-liquid-lens.native-android .nav{
+  border-radius:32px!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+html.vy855-liquid-lens .nav::before{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:1px!important;
+  z-index:-1!important;
+  border-radius:31px!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(100% 56% at 15% -15%,rgba(255,255,255,.18),transparent 62%),
+    linear-gradient(90deg,rgba(90,255,173,.045),transparent 22%,transparent 78%,rgba(255,94,82,.05))!important;
+}
+html.vy855-liquid-lens .nav::after{content:none!important;display:none!important}
+html.vy855-liquid-lens .android-nav-glass-indicator{
+  display:block!important;
+  border-radius:26px!important;
+  border:1px solid rgba(117,190,255,.27)!important;
+  background:
+    radial-gradient(100% 88% at 30% -8%,rgba(255,255,255,.22),transparent 54%),
+    linear-gradient(180deg,rgba(42,151,255,.24),rgba(11,101,206,.115)),
+    rgba(10,132,255,.075)!important;
+  box-shadow:
+    0 7px 19px rgba(0,82,174,.14),
+    inset 0 1px 0 rgba(255,255,255,.25),
+    inset 1.2px 0 0 rgba(79,255,165,.17),
+    inset -1.2px 0 0 rgba(255,92,75,.19),
+    inset 0 -1px 0 rgba(70,142,255,.16)!important;
+  transition:
+    transform .34s var(--vy856-spring),
+    width .28s var(--vy856-spring),
+    box-shadow .22s ease!important;
+  will-change:transform,width!important;
+  overflow:hidden!important;
+}
+html.vy855-liquid-lens.theme-light .android-nav-glass-indicator{
+  background:
+    radial-gradient(100% 88% at 30% -8%,rgba(255,255,255,.82),transparent 54%),
+    linear-gradient(180deg,rgba(80,172,255,.27),rgba(17,119,224,.12)),
+    rgba(10,132,255,.08)!important;
+}
+html.vy855-liquid-lens .android-nav-glass-indicator::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:2px!important;
+  border-radius:24px!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(75% 28% at 28% 0%,rgba(255,255,255,.24),transparent 72%),
+    radial-gradient(18% 70% at 0% 55%,rgba(71,255,160,.13),transparent 80%),
+    radial-gradient(18% 70% at 100% 55%,rgba(255,88,72,.14),transparent 80%)!important;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08)!important;
+  opacity:.9!important;
+}
+html.vy855-liquid-lens .nav button[data-android-tab]{
+  transition:transform .14s var(--vy856-spring),color .20s ease!important;
+  transform:translateZ(0)!important;
+}
+html.vy855-liquid-lens .nav button[data-android-tab]:active{transform:scale(.92) translateZ(0)!important}
+html.vy855-liquid-lens .nav button.vy856-tab-pop .android-nav-icon{
+  animation:vy856TabPop .34s var(--vy856-spring) both!important;
+}
+@keyframes vy856TabPop{
+  0%{transform:scale(.88) translateY(1px)}
+  58%{transform:scale(1.10) translateY(-1px)}
+  100%{transform:scale(1) translateY(0)}
+}
+
+/* ---------- Page transitions ---------- */
+html.vy855-liquid-lens .screen.vy855-enter-forward{
+  animation:vy855Forward .26s var(--vy856-spring) both!important;
+  transform-origin:50% 45%!important;
+  will-change:transform,opacity!important;
+}
+html.vy855-liquid-lens .screen.vy855-enter-backward{
+  animation:vy855Back .26s var(--vy856-spring) both!important;
+  transform-origin:50% 45%!important;
+  will-change:transform,opacity!important;
+}
+@keyframes vy855Forward{
+  0%{opacity:.72;transform:translate3d(18px,0,0) scale(.988)}
+  72%{opacity:1;transform:translate3d(-1px,0,0) scale(1.001)}
+  100%{opacity:1;transform:none}
+}
+@keyframes vy855Back{
+  0%{opacity:.72;transform:translate3d(-18px,0,0) scale(.988)}
+  72%{opacity:1;transform:translate3d(1px,0,0) scale(1.001)}
+  100%{opacity:1;transform:none}
+}
+html.vy855-liquid-lens #screen-settings .vy675-settings-page.vy854-settings-in,
+html.vy855-liquid-lens #screen-settings .vy675-settings-page.vy856-settings-in{
+  animation:vy856SettingsIn .26s var(--vy856-spring) both!important;
+}
+html.vy855-liquid-lens #screen-settings .vy675-settings-home.vy856-settings-home-in{
+  animation:vy856SettingsBack .25s var(--vy856-spring) both!important;
+}
+@keyframes vy856SettingsIn{from{opacity:.70;transform:translate3d(18px,0,0) scale(.992)}to{opacity:1;transform:none}}
+@keyframes vy856SettingsBack{from{opacity:.70;transform:translate3d(-16px,0,0) scale(.992)}to{opacity:1;transform:none}}
+
+/* ---------- iOS-style popup/sheet entrance ---------- */
+html.vy855-liquid-lens .android-sheet-overlay,
+html.vy855-liquid-lens .shop-progress-overlay,
+html.vy855-liquid-lens .vx643-modal-overlay,
+html.vy855-liquid-lens .subscription-overlay{
+  animation:vy856BackdropIn .18s ease-out both!important;
+}
+html.vy855-liquid-lens .android-sheet-overlay .android-sheet,
+html.vy855-liquid-lens .shop-progress-overlay .shop-progress-sheet{
+  transform-origin:50% 100%!important;
+  animation:vy856SheetIn .38s var(--vy856-spring) both!important;
+  will-change:transform,opacity!important;
+}
+html.vy855-liquid-lens .vx643-modal-overlay .vx643-modal,
+html.vy855-liquid-lens .subscription-overlay .subscription-dialog,
+html.vy855-liquid-lens .menu-popover,
+html.vy855-liquid-lens .more-sheet,
+html.vy855-liquid-lens .sheet[role="dialog"]{
+  transform-origin:50% 50%!important;
+  animation:vy856PopupIn .34s var(--vy856-spring) both!important;
+  will-change:transform,opacity!important;
+}
+@keyframes vy856BackdropIn{from{opacity:0}to{opacity:1}}
+@keyframes vy856SheetIn{
+  0%{opacity:0;transform:translate3d(0,28px,0) scale(.965)}
+  68%{opacity:1;transform:translate3d(0,-1px,0) scale(1.002)}
+  100%{opacity:1;transform:none}
+}
+@keyframes vy856PopupIn{
+  0%{opacity:0;transform:scale(.90) translate3d(0,8px,0)}
+  68%{opacity:1;transform:scale(1.012) translate3d(0,-1px,0)}
+  100%{opacity:1;transform:none}
+}
+
+/* ---------- Theme lens: visible UI stays on screen while the new palette
+   commits. This is a refractive halo, never an opaque page-covering curtain. */
+.vy856-theme-lens{
+  position:fixed!important;
+  z-index:2147483450!important;
+  width:64px!important;
+  height:64px!important;
+  margin:-32px 0 0 -32px!important;
+  border-radius:50%!important;
+  pointer-events:none!important;
+  opacity:0!important;
+  transform:scale(.18) translateZ(0)!important;
+  will-change:transform,opacity!important;
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.22),transparent 38%),
+    radial-gradient(circle,transparent 54%,rgba(78,255,167,.13) 59%,rgba(80,154,255,.13) 63%,rgba(255,92,77,.15) 67%,transparent 73%)!important;
+  box-shadow:inset 1px 0 rgba(83,255,168,.23),inset -1px 0 rgba(255,91,75,.24),0 0 24px rgba(79,154,255,.11)!important;
+  animation:vy856ThemeLens .42s var(--vy856-spring) both!important;
+}
+.vy856-theme-lens.to-light{
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.30),transparent 38%),
+    radial-gradient(circle,transparent 54%,rgba(85,255,179,.12) 59%,rgba(84,170,255,.14) 63%,rgba(255,112,91,.13) 67%,transparent 73%)!important;
+}
+@keyframes vy856ThemeLens{
+  0%{opacity:.06;transform:scale(.18) translateZ(0)}
+  28%{opacity:.50}
+  72%{opacity:.22}
+  100%{opacity:0;transform:scale(var(--vy856-theme-scale,28)) translateZ(0)}
+}
+html.vy855-liquid-lens #themeToggle.vy856-theme-button-pop{
+  animation:vy856ThemeButton .38s var(--vy856-spring) both!important;
+}
+@keyframes vy856ThemeButton{
+  0%{transform:scale(1) rotate(0)}
+  36%{transform:scale(.86) rotate(-9deg)}
+  72%{transform:scale(1.08) rotate(3deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+
+/* Quick tap response across the UI — small enough not to cause layout shift. */
+html.vy855-liquid-lens button,
+html.vy855-liquid-lens .btn,
+html.vy855-liquid-lens [role="button"]{
+  -webkit-tap-highlight-color:transparent!important;
+}
+html.vy855-liquid-lens button:active:not(.nav button),
+html.vy855-liquid-lens .btn:active{
+  transform:scale(.975);
+}
+
+/* Old/low-power WebViews: keep geometry/motion, skip costly live blur. */
+html.vy855-liquid-lens.perf-tier-legacy .top,
+html.vy855-liquid-lens.perf-tier-legacy .nav,
+html.vy855-liquid-lens.perf-tier-legacy .android-sheet,
+html.vy855-liquid-lens.perf-tier-legacy .shop-progress-sheet,
+html.vy855-liquid-lens.perf-tier-legacy .vx643-modal,
+html.vy855-liquid-lens.perf-tier-legacy .subscription-dialog{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-forward,
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-backward{animation-duration:.18s!important}
+html.vy855-liquid-lens.perf-tier-legacy .vy856-theme-lens{display:none!important}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy855-liquid-lens .screen.vy855-enter-forward,
+  html.vy855-liquid-lens .screen.vy855-enter-backward,
+  html.vy855-liquid-lens .android-sheet-overlay,
+  html.vy855-liquid-lens .shop-progress-overlay,
+  html.vy855-liquid-lens .vx643-modal-overlay,
+  html.vy855-liquid-lens .subscription-overlay,
+  html.vy855-liquid-lens .android-sheet,
+  html.vy855-liquid-lens .shop-progress-sheet,
+  html.vy855-liquid-lens .vx643-modal,
+  html.vy855-liquid-lens .subscription-dialog,
+  .vy856-theme-lens{animation:none!important;transition:none!important}
+}
+
+/* ===== STYLE SOURCE: liquid-lens-legacy-856.css ===== */
+
+/* Vyapar AI 8.5.6 — Android 7/8 compatibility tail for the liquid-lens layer. */
+
+/* Android 8 (API 27) is intentionally classified as legacy by the performance
+   coordinator. Keep the lightweight chromatic halo there; it is transform-only
+   and does not use live backdrop blur. */
+html.vy855-liquid-lens.perf-tier-legacy .vy856-theme-lens{
+  display:block!important;
+  box-shadow:inset 1px 0 rgba(83,255,168,.17),inset -1px 0 rgba(255,91,75,.18)!important;
+  animation-duration:.34s!important;
+}
+
+/* Do not force clipping on ordinary content cards: some cards host menus,
+   tooltips or expanding rows. Radius stays iOS-like while overlays can escape. */
+html.vy855-liquid-lens .card,
+html.vy855-liquid-lens .stat,
+html.vy855-liquid-lens .settings-section,
+html.vy855-liquid-lens .production-account-card,
+html.vy855-liquid-lens .p2-card,
+html.vy855-liquid-lens .vx621-card,
+html.vy855-liquid-lens .vx622-menu-card,
+html.vy855-liquid-lens .data-safety-section{
+  overflow:visible!important;
+}
+
+/* Selector kept simple for old Chromium/WebView builds. */
+html.vy855-liquid-lens button:active:not([data-android-tab]),
+html.vy855-liquid-lens .btn:active{
+  transform:scale(.975)!important;
+  transition:transform .09s ease-out!important;
+}
+
+/* Slightly slower than the old .18s fallback: still cheap, but visibly smooth
+   on the Android 8 device shown in the reference screenshot. */
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-forward,
+html.vy855-liquid-lens.perf-tier-legacy .screen.vy855-enter-backward{
+  animation-duration:.22s!important;
+}
+
+/* ===== STYLE SOURCE: ios27-convex-857.css ===== */
+
+/* Vyapar AI 8.5.7 preview — iOS-27-inspired water glass + behaving convex chromatic lens.
+   Presentation-only layer. Green/red accents are treated as refractive edge lenses,
+   not decorative flat borders. */
+
+html.vy857-ios27{
+  --vy857-water-dark:rgba(12,27,45,.78);
+  --vy857-water-dark-soft:rgba(18,35,56,.66);
+  --vy857-water-light:rgba(224,233,241,.64);
+  --vy857-water-light-soft:rgba(235,241,246,.58);
+  --vy857-line-dark:rgba(205,226,244,.16);
+  --vy857-line-light:rgba(67,91,115,.12);
+  --vy857-hi-dark:rgba(255,255,255,.17);
+  --vy857-hi-light:rgba(255,255,255,.58);
+  --vy857-green:rgba(77,255,164,.30);
+  --vy857-red:rgba(255,92,76,.30);
+  --vy857-blue:rgba(75,151,255,.18);
+  --vy857-spring:cubic-bezier(.16,1,.3,1);
+  --vy857-card-r:28px;
+  --vy857-sheet-r:36px;
+  --vy857-control-r:20px;
+}
+
+/* Water glass: smoky/translucent, never milky-white Windows/Aero blur. */
+html.vy857-ios27 .top,
+html.vy857-ios27 .nav,
+html.vy857-ios27 .android-sheet,
+html.vy857-ios27 .shop-progress-sheet,
+html.vy857-ios27 .vx643-modal,
+html.vy857-ios27 .subscription-dialog,
+html.vy857-ios27 .more-sheet,
+html.vy857-ios27 .menu-popover,
+html.vy857-ios27 #vyaparOtpGate .auth-card,
+html.vy857-ios27 #screen-settings .vy675-settings-list,
+html.vy857-ios27 #screen-settings .vy675-settings-intro,
+html.vy857-ios27 #screen-settings .vy675-page-header,
+html.vy857-ios27 #shopGrowthSummary{
+  position:relative!important;
+  isolation:isolate!important;
+  border:1px solid var(--vy857-line-dark)!important;
+  background:
+    radial-gradient(120% 86% at 18% -14%,rgba(255,255,255,.13),transparent 48%),
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012) 58%),
+    var(--vy857-water-dark)!important;
+  box-shadow:
+    0 16px 38px rgba(0,6,18,.22),
+    inset 0 1px 0 var(--vy857-hi-dark),
+    inset 0 -1px 0 rgba(53,116,184,.08)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%)!important;
+  backdrop-filter:blur(18px) saturate(140%)!important;
+}
+html.vy857-ios27.theme-light .top,
+html.vy857-ios27.theme-light .nav,
+html.vy857-ios27.theme-light .android-sheet,
+html.vy857-ios27.theme-light .shop-progress-sheet,
+html.vy857-ios27.theme-light .vx643-modal,
+html.vy857-ios27.theme-light .subscription-dialog,
+html.vy857-ios27.theme-light .more-sheet,
+html.vy857-ios27.theme-light .menu-popover,
+html.vy857-ios27.theme-light #vyaparOtpGate .auth-card,
+html.vy857-ios27.theme-light #screen-settings .vy675-settings-list,
+html.vy857-ios27.theme-light #screen-settings .vy675-settings-intro,
+html.vy857-ios27.theme-light #screen-settings .vy675-page-header,
+html.vy857-ios27.theme-light #shopGrowthSummary{
+  border-color:var(--vy857-line-light)!important;
+  background:
+    radial-gradient(120% 86% at 18% -14%,rgba(255,255,255,.38),transparent 49%),
+    linear-gradient(180deg,rgba(255,255,255,.14),rgba(210,222,232,.075) 58%),
+    var(--vy857-water-light)!important;
+  box-shadow:
+    0 15px 34px rgba(43,67,90,.12),
+    inset 0 1px 0 var(--vy857-hi-light),
+    inset 0 -1px 0 rgba(80,112,145,.08)!important;
+}
+
+html.vy857-ios27 .top{border-radius:32px!important}
+html.vy857-ios27 .nav{border-radius:34px!important}
+html.vy857-ios27 .android-sheet,
+html.vy857-ios27 .shop-progress-sheet,
+html.vy857-ios27 .vx643-modal,
+html.vy857-ios27 .subscription-dialog,
+html.vy857-ios27 .more-sheet,
+html.vy857-ios27 .menu-popover{border-radius:var(--vy857-sheet-r)!important}
+html.vy857-ios27 #vyaparOtpGate .auth-card,
+html.vy857-ios27 #shopGrowthSummary{border-radius:var(--vy857-card-r)!important}
+html.vy857-ios27 input,
+html.vy857-ios27 select,
+html.vy857-ios27 textarea,
+html.vy857-ios27 button,
+html.vy857-ios27 .btn,
+html.vy857-ios27 .auth-input,
+html.vy857-ios27 .auth-primary,
+html.vy857-ios27 .auth-google,
+html.vy857-ios27 .auth-small-btn{border-radius:var(--vy857-control-r)!important}
+
+/* Real convex-lens overlay inserted by JS. It has a clear center and
+   chromatic refraction at opposite edges. */
+html.vy857-ios27 .vy857-convex-edge{
+  --vy857-px:50%;
+  --vy857-py:18%;
+  position:absolute!important;
+  inset:0!important;
+  z-index:40!important;
+  border-radius:inherit!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  opacity:.82!important;
+  transform:translateZ(0)!important;
+  transition:opacity .18s ease,transform .26s var(--vy857-spring)!important;
+  background:
+    radial-gradient(74px 54px at var(--vy857-px) var(--vy857-py),rgba(255,255,255,.085),rgba(255,255,255,.022) 38%,transparent 72%)!important;
+  box-shadow:
+    inset 1.2px 0 0 rgba(77,255,164,.15),
+    inset -1.2px 0 0 rgba(255,92,76,.16),
+    inset 0 1px 0 rgba(255,255,255,.09),
+    inset 0 -1px 0 rgba(67,143,255,.07)!important;
+}
+html.vy857-ios27 .vy857-convex-edge::before,
+html.vy857-ios27 .vy857-convex-edge::after{
+  content:"";
+  position:absolute;
+  top:-9%;
+  bottom:-9%;
+  width:19px;
+  pointer-events:none;
+  opacity:.72;
+  transform:translate3d(0,0,0) scaleY(.96);
+  transition:transform .28s var(--vy857-spring),opacity .18s ease;
+}
+html.vy857-ios27 .vy857-convex-edge::before{
+  left:-8px;
+  background:
+    radial-gradient(17px 72px at 100% 12%,rgba(112,255,188,.33),transparent 72%),
+    radial-gradient(17px 82px at 100% 88%,rgba(60,243,151,.24),transparent 74%);
+  box-shadow:10px 0 18px -13px rgba(71,255,160,.58);
+}
+html.vy857-ios27 .vy857-convex-edge::after{
+  right:-8px;
+  background:
+    radial-gradient(17px 72px at 0% 12%,rgba(255,122,105,.32),transparent 72%),
+    radial-gradient(17px 82px at 0% 88%,rgba(255,83,70,.24),transparent 74%);
+  box-shadow:-10px 0 18px -13px rgba(255,90,76,.58);
+}
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge{
+  opacity:1!important;
+  transform:translateZ(0) scale(1.002)!important;
+}
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge::before{
+  transform:translate3d(var(--vy857-green-shift,2px),var(--vy857-edge-y,0px),0) scaleY(1.045)!important;
+  opacity:.94!important;
+}
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge::after{
+  transform:translate3d(var(--vy857-red-shift,-2px),calc(var(--vy857-edge-y,0px) * -1),0) scaleY(1.045)!important;
+  opacity:.94!important;
+}
+
+/* Unified popup language: More and Shop Journey must read as the same system. */
+html.vy857-ios27 .shop-progress-sheet,
+html.vy857-ios27 .android-sheet,
+html.vy857-ios27 .more-sheet{
+  padding-top:14px!important;
+}
+html.vy857-ios27 .shop-sheet-handle,
+html.vy857-ios27 .android-sheet-handle,
+html.vy857-ios27 .sheet-handle{
+  width:54px!important;
+  height:6px!important;
+  border-radius:999px!important;
+  background:rgba(119,157,189,.34)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html.vy857-ios27 .shop-sheet-close,
+html.vy857-ios27 .android-sheet-close,
+html.vy857-ios27 .more-sheet-close{
+  width:54px!important;
+  height:54px!important;
+  min-width:54px!important;
+  border-radius:50%!important;
+  background:rgba(22,43,67,.72)!important;
+  border:1px solid rgba(205,226,244,.14)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 7px 18px rgba(0,7,20,.12)!important;
+}
+html.vy857-ios27.theme-light .shop-sheet-close,
+html.vy857-ios27.theme-light .android-sheet-close,
+html.vy857-ios27.theme-light .more-sheet-close{
+  background:rgba(205,217,227,.66)!important;
+  border-color:rgba(70,96,122,.12)!important;
+  color:#18334d!important;
+}
+
+/* Login becomes one coherent rounded form rather than stacked independent boxes. */
+html.vy857-ios27 #vyaparOtpGate .auth-card{padding:24px 20px 22px!important}
+html.vy857-ios27 #vyaparOtpGate .auth-method-tabs{
+  border-radius:22px!important;
+  padding:4px!important;
+  gap:4px!important;
+  background:rgba(86,111,134,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;
+}
+html.vy857-ios27 #vyaparOtpGate .auth-method-tab,
+html.vy857-ios27 #vyaparOtpGate .auth-method-tab.active{border-radius:17px!important}
+html.vy857-ios27 #vyaparOtpGate .auth-input,
+html.vy857-ios27 #vyaparOtpGate .auth-primary,
+html.vy857-ios27 #vyaparOtpGate .auth-google,
+html.vy857-ios27 #vyaparOtpGate .auth-small-btn{
+  height:50px!important;
+  min-height:50px!important;
+  border-radius:20px!important;
+}
+html.vy857-ios27 #vyaparOtpGate .auth-small-btn:not(:disabled){
+  background:linear-gradient(180deg,rgba(43,148,245,.86),rgba(14,103,198,.84))!important;
+  color:#fff!important;
+  border:1px solid rgba(122,192,255,.26)!important;
+}
+html.vy857-ios27 #vyaparOtpGate .auth-small-btn:disabled{
+  background:rgba(101,126,149,.34)!important;
+  color:rgba(223,233,241,.72)!important;
+  border:1px solid rgba(176,202,224,.10)!important;
+}
+html.vy857-ios27.theme-light #vyaparOtpGate .auth-small-btn:disabled{
+  background:rgba(139,158,176,.30)!important;
+  color:rgba(56,78,97,.62)!important;
+}
+
+/* New recommendation surface. */
+html.vy857-ios27 .vy857-smart-rec{
+  position:relative;
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  margin-top:14px;
+  padding:13px 14px;
+  border-radius:22px;
+  border:1px solid rgba(161,201,233,.14);
+  background:
+    radial-gradient(120% 120% at 0% 0%,rgba(80,165,255,.12),transparent 45%),
+    rgba(17,37,59,.48);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  overflow:hidden;
+}
+html.vy857-ios27.theme-light .vy857-smart-rec{
+  border-color:rgba(62,93,122,.10);
+  background:
+    radial-gradient(120% 120% at 0% 0%,rgba(49,139,230,.10),transparent 46%),
+    rgba(208,220,230,.48);
+}
+html.vy857-ios27 .vy857-rec-orb{
+  width:44px;height:44px;border-radius:16px;display:grid;place-items:center;
+  font-size:20px;color:#dff1ff;
+  background:linear-gradient(180deg,rgba(38,143,241,.30),rgba(16,90,175,.15));
+  border:1px solid rgba(120,190,255,.18);
+  box-shadow:inset 1px 0 0 rgba(77,255,164,.12),inset -1px 0 0 rgba(255,92,76,.13);
+}
+html.vy857-ios27.theme-light .vy857-rec-orb{color:#075ca9;background:rgba(40,139,226,.12)}
+html.vy857-ios27 .vy857-rec-copy{min-width:0;display:grid;gap:2px}
+html.vy857-ios27 .vy857-rec-copy span{font-size:10px;letter-spacing:.12em;font-weight:800;color:#63adf5}
+html.vy857-ios27 .vy857-rec-copy b{font-size:14px;line-height:1.25;color:#f5fbff}
+html.vy857-ios27 .vy857-rec-copy small{font-size:11px;line-height:1.35;color:#91a8bb}
+html.vy857-ios27.theme-light .vy857-rec-copy b{color:#142c43}
+html.vy857-ios27.theme-light .vy857-rec-copy small{color:#60768a}
+html.vy857-ios27 .vy857-rec-action{
+  min-width:74px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0 12px!important;
+  border-radius:16px!important;
+  border:1px solid rgba(104,177,242,.18)!important;
+  background:rgba(30,111,190,.18)!important;
+  color:#d9efff!important;
+  font-size:11px!important;
+  font-weight:800!important;
+}
+html.vy857-ios27.theme-light .vy857-rec-action{color:#0a5a9f!important;background:rgba(36,128,210,.10)!important}
+
+/* Settings: no squared white sub-panels; keep one continuous water-glass family. */
+html.vy857-ios27 #screen-settings .vy675-settings-section,
+html.vy857-ios27 #screen-settings .vy675-settings-row,
+html.vy857-ios27 #screen-settings .settings-section{
+  border-radius:22px!important;
+}
+html.vy857-ios27 #screen-settings:not(.hide){opacity:1!important;visibility:visible!important;filter:none!important}
+
+/* Android 7/8: keep the convex behavior but avoid live blur cost. */
+html.vy857-ios27.perf-tier-legacy .top,
+html.vy857-ios27.perf-tier-legacy .nav,
+html.vy857-ios27.perf-tier-legacy .android-sheet,
+html.vy857-ios27.perf-tier-legacy .shop-progress-sheet,
+html.vy857-ios27.perf-tier-legacy .vx643-modal,
+html.vy857-ios27.perf-tier-legacy .subscription-dialog,
+html.vy857-ios27.perf-tier-legacy .more-sheet,
+html.vy857-ios27.perf-tier-legacy .menu-popover,
+html.vy857-ios27.perf-tier-legacy #vyaparOtpGate .auth-card{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html.vy857-ios27.perf-tier-legacy .vy857-convex-edge{transition-duration:.16s!important}
+html.vy857-ios27.perf-tier-legacy .vy857-convex-edge::before,
+html.vy857-ios27.perf-tier-legacy .vy857-convex-edge::after{transition-duration:.18s!important}
+
+@media(max-width:380px){
+  html.vy857-ios27 .vy857-smart-rec{grid-template-columns:40px minmax(0,1fr);padding:12px}
+  html.vy857-ios27 .vy857-rec-orb{width:40px;height:40px;border-radius:15px}
+  html.vy857-ios27 .vy857-rec-action{grid-column:2;width:max-content}
+}
+
+/* ===== STYLE SOURCE: ios27-convex-857-fix.css ===== */
+
+/* 8.5.7 convex-lens compatibility tail: avoid CSS calc multiplication on old WebViews. */
+html.vy857-ios27 .vy857-lens-active>.vy857-convex-edge::after{
+  transform:translate3d(var(--vy857-red-shift,-2px),var(--vy857-red-edge-y,0px),0) scaleY(1.045)!important;
+}
+
+/* ===== STYLE SOURCE: ios-liquid-unified-858.css ===== */
+
+/* Vyapar AI 8.5.7 final liquid UI polish.
+   Convex refraction is intentionally limited to the fixed top bar and bottom nav. */
+
+html.vy858-unified{
+  --vy858-spring:cubic-bezier(.22,.72,.18,1);
+  --vy858-telegram:cubic-bezier(.25,.72,.22,1);
+  --vy858-top-h:68px;
+  --vy858-nav-h:68px;
+  --vy858-line-dark:rgba(226,241,255,.22);
+  --vy858-line-light:rgba(53,83,110,.19);
+  --vy858-sheet-dark:rgba(10,27,45,.84);
+  --vy858-sheet-light:rgba(218,229,238,.78);
+}
+
+/* Fixed crystal shell: content scrolls underneath instead of moving the header. */
+html.vy858-unified.android-ui .top,
+html.vy858-unified.native-android .top{
+  position:fixed!important;
+  z-index:2147482000!important;
+  top:8px!important;
+  left:50%!important;
+  right:auto!important;
+  width:min(calc(100vw - 18px),842px)!important;
+  height:var(--vy858-top-h)!important;
+  min-height:var(--vy858-top-h)!important;
+  margin:0!important;
+  padding:8px 10px!important;
+  transform:translateX(-50%) translateZ(0)!important;
+  overflow:hidden!important;
+  border:1px solid var(--vy858-line-dark)!important;
+  border-radius:32px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.012) 58%),rgba(8,22,38,.18)!important;
+  box-shadow:0 10px 28px rgba(0,7,18,.12),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.05)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(122%) contrast(1.02)!important;
+  backdrop-filter:blur(6px) saturate(122%) contrast(1.02)!important;
+  contain:layout paint!important;
+}
+html.vy858-unified.theme-light .top{
+  border-color:var(--vy858-line-light)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.055) 58%),rgba(239,247,253,.12)!important;
+  box-shadow:0 10px 28px rgba(42,75,104,.08),inset 0 1px 0 rgba(255,255,255,.68),inset 0 -1px 0 rgba(47,76,102,.05)!important;
+}
+html.vy858-unified.android-ui .app>main,
+html.vy858-unified.native-android .app>main{padding-top:calc(var(--vy858-top-h) + 22px)!important}
+
+html.vy858-unified.android-ui .nav,
+html.vy858-unified.native-android .nav{
+  width:min(calc(100vw - 16px),620px)!important;
+  height:var(--vy858-nav-h)!important;
+  min-height:var(--vy858-nav-h)!important;
+  padding:5px!important;
+  gap:1px!important;
+  overflow:hidden!important;
+  border:1px solid var(--vy858-line-dark)!important;
+  border-radius:33px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.01) 58%),rgba(7,21,37,.26)!important;
+  box-shadow:0 12px 30px rgba(0,6,17,.14),inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.05)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(122%) contrast(1.02)!important;
+  backdrop-filter:blur(6px) saturate(122%) contrast(1.02)!important;
+  contain:layout paint!important;
+}
+html.vy858-unified.theme-light .nav{
+  border-color:var(--vy858-line-light)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.045) 58%),rgba(231,241,248,.20)!important;
+  box-shadow:0 12px 30px rgba(45,76,104,.08),inset 0 1px 0 rgba(255,255,255,.74),inset 0 -1px 0 rgba(48,76,102,.045)!important;
+}
+
+/* One continuous border plus two INSIDE convex optical portals. */
+html.vy858-unified .top>.vy857-convex-edge,
+html.vy858-unified .nav>.vy857-convex-edge{
+  inset:1px!important;
+  z-index:20!important;
+  opacity:1!important;
+  border:1px solid rgba(230,244,255,.13)!important;
+  border-radius:inherit!important;
+  background:radial-gradient(100px 52px at var(--vy857-px,50%) var(--vy857-py,20%),rgba(255,255,255,.07),transparent 68%),linear-gradient(180deg,rgba(255,255,255,.035),transparent 48%,rgba(4,17,31,.02))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -1px 0 rgba(0,0,0,.035)!important;
+  pointer-events:none!important;
+}
+html.vy858-unified.theme-light .top>.vy857-convex-edge,
+html.vy858-unified.theme-light .nav>.vy857-convex-edge{
+  border-color:rgba(255,255,255,.46)!important;
+  background:radial-gradient(100px 52px at var(--vy857-px,50%) var(--vy857-py,20%),rgba(255,255,255,.30),transparent 68%),linear-gradient(180deg,rgba(255,255,255,.11),transparent 48%)!important;
+}
+html.vy858-unified .top>.vy857-convex-edge::before,
+html.vy858-unified .top>.vy857-convex-edge::after,
+html.vy858-unified .nav>.vy857-convex-edge::before,
+html.vy858-unified .nav>.vy857-convex-edge::after{
+  top:3px!important;
+  bottom:3px!important;
+  width:26px!important;
+  opacity:.92!important;
+  border-radius:999px!important;
+  background:radial-gradient(24px 74% at 52% 50%,rgba(255,255,255,.10),rgba(255,255,255,.018) 54%,transparent 76%)!important;
+  -webkit-backdrop-filter:blur(.35px) saturate(118%) contrast(1.08) brightness(1.035)!important;
+  backdrop-filter:blur(.35px) saturate(118%) contrast(1.08) brightness(1.035)!important;
+  transition:transform .20s var(--vy858-spring),opacity .16s ease!important;
+}
+html.vy858-unified .top>.vy857-convex-edge::before,
+html.vy858-unified .nav>.vy857-convex-edge::before{
+  left:2px!important;
+  box-shadow:inset 1px 0 rgba(118,255,202,.055),inset -1px 0 rgba(255,255,255,.08)!important;
+  transform:translate3d(0,var(--vy858-scroll-shift,0px),0) scaleX(1.045)!important;
+}
+html.vy858-unified .top>.vy857-convex-edge::after,
+html.vy858-unified .nav>.vy857-convex-edge::after{
+  right:2px!important;
+  box-shadow:inset -1px 0 rgba(255,132,119,.055),inset 1px 0 rgba(255,255,255,.08)!important;
+  transform:translate3d(0,var(--vy858-scroll-shift-neg,0px),0) scaleX(1.045)!important;
+}
+html.vy858-unified .top.vy857-lens-active>.vy857-convex-edge::before,
+html.vy858-unified .nav.vy857-lens-active>.vy857-convex-edge::before{transform:translate3d(2px,var(--vy858-scroll-shift,0px),0) scaleX(1.11)!important}
+html.vy858-unified .top.vy857-lens-active>.vy857-convex-edge::after,
+html.vy858-unified .nav.vy857-lens-active>.vy857-convex-edge::after{transform:translate3d(-2px,var(--vy858-scroll-shift-neg,0px),0) scaleX(1.11)!important}
+
+/* No red/green lens decoration anywhere except the two shell containers. */
+html.vy858-unified #vyaparOtpGate .vy857-convex-edge,
+html.vy858-unified #screen-settings .vy857-convex-edge,
+html.vy858-unified .android-sheet .vy857-convex-edge,
+html.vy858-unified .shop-progress-sheet .vy857-convex-edge,
+html.vy858-unified #shopGrowthSummary>.vy857-convex-edge,
+html.vy858-unified .vx643-modal .vy857-convex-edge,
+html.vy858-unified .subscription-dialog .vy857-convex-edge,
+html.vy858-unified .menu-popover .vy857-convex-edge{display:none!important}
+html.vy858-unified .vy857-rec-orb{box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important}
+
+/* Neutral active nav lens. */
+html.vy858-unified .android-nav-glass-indicator{
+  border:1px solid rgba(74,151,229,.20)!important;
+  border-radius:25px!important;
+  background:radial-gradient(90% 72% at 28% 0%,rgba(255,255,255,.13),transparent 58%),rgba(45,128,213,.075)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14)!important;
+  transition:transform .26s var(--vy858-telegram),width .24s var(--vy858-telegram),opacity .16s ease!important;
+}
+html.vy858-unified.theme-light .android-nav-glass-indicator{border-color:rgba(10,112,219,.16)!important;background:rgba(22,122,220,.075)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.62)!important}
+html.vy858-unified .android-nav-glass-indicator::after{background:linear-gradient(180deg,rgba(255,255,255,.075),transparent)!important;box-shadow:none!important}
+
+/* Telegram-like page motion: no double wobble. */
+html.vy858-unified .screen.vy855-enter-forward{animation:vy858PageForward .22s var(--vy858-telegram) both!important;transform-origin:center!important}
+html.vy858-unified .screen.vy855-enter-backward{animation:vy858PageBack .22s var(--vy858-telegram) both!important;transform-origin:center!important}
+@keyframes vy858PageForward{from{opacity:.86;transform:translate3d(12px,0,0)}to{opacity:1;transform:none}}
+@keyframes vy858PageBack{from{opacity:.86;transform:translate3d(-10px,0,0)}to{opacity:1;transform:none}}
+html.vy858-unified .nav button.vy856-tab-pop .android-nav-icon{animation:vy858TabPop .22s var(--vy858-telegram) both!important}
+@keyframes vy858TabPop{0%{transform:scale(.94)}65%{transform:scale(1.045)}100%{transform:scale(1)}}
+
+/* Theme transition is owned by one large watery radial sweep from top-right. */
+html.vy858-unified .vy856-theme-lens,
+html.vy858-unified .vy855-theme-curtain,
+html.vy858-unified .vy854-theme-wipe,
+html.vy858-unified .vy853-theme-reveal,
+html.vy858-unified .vy852-theme-bloom,
+html.vy858-unified .theme-ripple,
+html.vy858-unified .vx657-theme-crossfade{display:none!important}
+.vy858-theme-sweep{
+  position:fixed;z-index:2147483540;width:64px;height:64px;left:calc(var(--vy858-theme-x) - 32px);top:calc(var(--vy858-theme-y) - 32px);border-radius:50%;pointer-events:none;transform:scale(.01);transform-origin:center;overflow:hidden;
+  animation:vy858ThemeSweep .56s cubic-bezier(.18,.74,.18,1) both;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 0 0 1px rgba(93,126,157,.08);
+  -webkit-backdrop-filter:blur(1px) saturate(112%);backdrop-filter:blur(1px) saturate(112%);
+}
+.vy858-theme-sweep.to-light{background:rgba(239,246,251,.96)}
+.vy858-theme-sweep.to-dark{background:rgba(5,18,33,.97)}
+.vy858-theme-sweep::after{content:"";position:absolute;inset:2px;border-radius:inherit;border:1px solid rgba(255,255,255,.13);box-shadow:inset 8px 0 15px -16px rgba(255,255,255,.85),inset -8px 0 15px -16px rgba(0,0,0,.45)}
+@keyframes vy858ThemeSweep{0%{transform:scale(.01);opacity:.98}72%{transform:scale(var(--vy858-theme-scale));opacity:1}100%{transform:scale(var(--vy858-theme-scale));opacity:0}}
+
+/* Login is one compact form body with equal continuous radii and no page scroll. */
+html.vy858-unified #vyaparOtpGate{overflow:hidden!important;overscroll-behavior:none!important;padding:8px 0!important}
+html.vy858-unified #vyaparOtpGate .auth-card{width:min(calc(100vw - 28px),430px)!important;max-width:430px!important;padding:18px 18px 17px!important;border-radius:30px!important;background:rgba(13,31,50,.70)!important;border:1px solid rgba(182,213,237,.13)!important;box-shadow:0 16px 36px rgba(0,7,18,.18),inset 0 1px 0 rgba(255,255,255,.08)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.vy858-unified.theme-light #vyaparOtpGate .auth-card{background:rgba(232,239,245,.78)!important;border-color:rgba(62,90,116,.12)!important;box-shadow:0 15px 34px rgba(42,67,90,.10),inset 0 1px 0 rgba(255,255,255,.72)!important}
+html.vy858-unified #vyaparOtpGate .auth-logo{width:86px!important;height:86px!important;border-radius:50%!important;clip-path:circle(50%)!important;object-fit:contain!important}
+html.vy858-unified #vyaparOtpGate .auth-method-tabs{height:50px!important;min-height:50px!important;padding:4px!important;border-radius:21px!important;gap:4px!important;background:rgba(108,132,153,.10)!important}
+html.vy858-unified #vyaparOtpGate .auth-method-tab,html.vy858-unified #vyaparOtpGate .auth-method-tab.active{height:42px!important;min-height:42px!important;border-radius:17px!important;font-size:12.5px!important}
+html.vy858-unified #vyaparOtpGate .auth-otp-row{display:grid!important;grid-template-columns:minmax(0,1fr) 92px!important;gap:8px!important;width:100%!important}
+html.vy858-unified #vyaparOtpGate .auth-input,html.vy858-unified #vyaparOtpGate .auth-primary,html.vy858-unified #vyaparOtpGate .auth-google,html.vy858-unified #vyaparOtpGate .auth-small-btn{height:48px!important;min-height:48px!important;border-radius:19px!important}
+html.vy858-unified #vyaparOtpGate .auth-input{min-width:0!important;padding:10px 14px!important}
+html.vy858-unified #vyaparOtpGate .auth-small-btn{width:92px!important;min-width:92px!important;max-width:92px!important;padding:0 8px!important}
+html.vy858-unified #vyaparOtpGate .auth-subtitle{margin-bottom:14px!important}
+@media(max-height:650px){html.vy858-unified #vyaparOtpGate .auth-card{padding-top:13px!important;padding-bottom:13px!important}html.vy858-unified #vyaparOtpGate .auth-logo{width:70px!important;height:70px!important}html.vy858-unified #vyaparOtpGate .auth-title{font-size:25px!important;margin-top:8px!important}html.vy858-unified #vyaparOtpGate .auth-subtitle{margin:4px 0 10px!important;font-size:12px!important}}
+@media(max-width:348px){html.vy858-unified #vyaparOtpGate .auth-otp-row{grid-template-columns:1fr!important}html.vy858-unified #vyaparOtpGate .auth-small-btn{width:100%!important;min-width:0!important;max-width:none!important}}
+
+/* More and Shop Journey share one popup language. */
+html.vy858-unified body:has(.android-sheet-overlay),html.vy858-unified body:has(.shop-progress-overlay){overflow:hidden!important}
+html.vy858-unified .android-sheet-overlay,html.vy858-unified .shop-progress-overlay{background:rgba(5,14,24,.14)!important;-webkit-backdrop-filter:blur(3px)!important;backdrop-filter:blur(3px)!important;animation:vy858Backdrop .18s ease-out both!important}
+html.vy858-unified .android-sheet,html.vy858-unified .shop-progress-sheet{border:1px solid rgba(178,209,234,.14)!important;border-radius:34px!important;background:radial-gradient(130% 85% at 18% -15%,rgba(255,255,255,.11),transparent 49%),var(--vy858-sheet-dark)!important;box-shadow:0 18px 44px rgba(0,7,18,.20),inset 0 1px 0 rgba(255,255,255,.09)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#f3f9ff!important}
+html.vy858-unified.theme-light .android-sheet,html.vy858-unified.theme-light .shop-progress-sheet{border-color:rgba(60,91,118,.13)!important;background:radial-gradient(130% 85% at 18% -15%,rgba(255,255,255,.36),transparent 49%),var(--vy858-sheet-light)!important;color:#152c40!important;box-shadow:0 18px 44px rgba(47,72,94,.13),inset 0 1px 0 rgba(255,255,255,.66)!important}
+html.vy858-unified .android-sheet{max-height:min(calc(100dvh - var(--vy858-nav-h) - 34px),610px)!important;overflow:hidden!important;padding:12px 14px 14px!important;transform-origin:92% 100%!important;animation:vy858PopupFromMore .34s var(--vy858-spring) both!important}
+html.vy858-unified .shop-progress-overlay{padding:58px 8px 8px!important}
+html.vy858-unified .shop-progress-sheet{max-height:calc(100dvh - 72px)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:12px 15px 18px!important;overscroll-behavior:contain!important;scrollbar-width:none!important;animation:vy858Journey .30s var(--vy858-spring) both!important}
+html.vy858-unified .shop-progress-sheet::-webkit-scrollbar{display:none!important}
+html.vy858-unified .android-sheet-handle,html.vy858-unified .shop-sheet-handle{width:52px!important;height:5px!important;border-radius:999px!important;background:rgba(159,187,210,.30)!important}
+html.vy858-unified .android-sheet-close,html.vy858-unified .shop-sheet-close{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;border-radius:50%!important;background:rgba(104,132,156,.12)!important;border:1px solid rgba(185,211,232,.14)!important;color:inherit!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.09)!important}
+@keyframes vy858Backdrop{from{opacity:0}to{opacity:1}}
+@keyframes vy858PopupFromMore{0%{opacity:0;transform:translate3d(16px,22px,0) scale(.78);border-radius:46px}70%{opacity:1;transform:translate3d(-1px,-1px,0) scale(1.006);border-radius:34px}100%{opacity:1;transform:none;border-radius:34px}}
+@keyframes vy858Journey{from{opacity:0;transform:translate3d(0,18px,0) scale(.93)}to{opacity:1;transform:none}}
+@media(max-height:570px){html.vy858-unified .android-sheet{overflow-y:auto!important;scrollbar-width:none!important}html.vy858-unified .android-sheet::-webkit-scrollbar{display:none!important}}
+
+/* Settings uses the same app palette and transform-only subpage motion. */
+html.vy858-unified #screen-settings.vy675-settings-ready{--vy675-bg:transparent;--vy675-surface:rgba(14,33,52,.50);--vy675-surface-soft:rgba(255,255,255,.045);--vy675-border:rgba(172,205,232,.14);--vy675-text:#f3f9ff;--vy675-muted:#96aabd;--vy675-blue:#4f9df4;--vy675-blue-soft:rgba(79,157,244,.11);background:transparent!important;color:var(--vy675-text)!important}
+html.vy858-unified.theme-light #screen-settings.vy675-settings-ready{--vy675-surface:rgba(229,237,244,.55);--vy675-surface-soft:rgba(207,220,231,.38);--vy675-border:rgba(51,81,108,.12);--vy675-text:#152b3f;--vy675-muted:#61778a;--vy675-blue:#137ad5;--vy675-blue-soft:rgba(19,122,213,.09)}
+html.vy858-unified #screen-settings .vy675-settings-intro,html.vy858-unified #screen-settings .vy675-settings-list,html.vy858-unified #screen-settings .vy675-settings-search,html.vy858-unified #screen-settings .vy675-page-header,html.vy858-unified #screen-settings .vy675-page-body>.card,html.vy858-unified #screen-settings .vy675-page-body>.settings-section{background:var(--vy675-surface)!important;border-color:var(--vy675-border)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.vy858-unified #screen-settings .vy675-settings-intro{padding:16px!important;margin-bottom:12px!important;border:1px solid var(--vy675-border)!important;border-radius:26px!important}
+html.vy858-unified #screen-settings .vy675-settings-list{border-radius:23px!important}html.vy858-unified #screen-settings .vy675-settings-search{border-radius:19px!important}
+html.vy858-unified #screen-settings .vy675-page-header{top:calc(var(--vy858-top-h) + 18px)!important;z-index:80!important;padding:7px 8px!important;border:1px solid var(--vy675-border)!important;border-radius:22px!important}
+html.vy858-unified #screen-settings .vy675-page-back{border-radius:50%!important}
+html.vy858-unified #screen-settings .vy675-settings-page.vy856-settings-in,html.vy858-unified #screen-settings .vy675-settings-page.vy854-settings-in{animation:vy858SettingsIn .18s var(--vy858-telegram) both!important}
+html.vy858-unified #screen-settings .vy675-settings-home.vy856-settings-home-in{animation:vy858SettingsBack .18s var(--vy858-telegram) both!important}
+@keyframes vy858SettingsIn{from{opacity:.90;transform:translate3d(10px,0,0)}to{opacity:1;transform:none}}
+@keyframes vy858SettingsBack{from{opacity:.90;transform:translate3d(-8px,0,0)}to{opacity:1;transform:none}}
+
+/* Light-mode blue branded heroes keep white readable content. */
+html.vy858-unified.theme-light #screen-business .vx621-hero,html.vy858-unified.theme-light #screen-home .home-overview{color:#fff!important}
+html.vy858-unified.theme-light #screen-business .vx621-hero h1,html.vy858-unified.theme-light #screen-business .vx621-hero h2,html.vy858-unified.theme-light #screen-business .vx621-hero p,html.vy858-unified.theme-light #screen-business .vx621-hero .pill,html.vy858-unified.theme-light #screen-business .vx621-hero span,html.vy858-unified.theme-light #screen-home .home-overview h1,html.vy858-unified.theme-light #screen-home .home-overview h2,html.vy858-unified.theme-light #screen-home .home-overview h3,html.vy858-unified.theme-light #screen-home .home-overview p,html.vy858-unified.theme-light #screen-home .home-overview span{color:#fff!important;-webkit-text-fill-color:#fff!important}
+
+/* Old WebView fallback: transparent geometry, no expensive live blur. */
+html.vy858-unified.perf-tier-legacy .top,html.vy858-unified.perf-tier-legacy .nav,html.vy858-unified.perf-tier-legacy .android-sheet,html.vy858-unified.perf-tier-legacy .shop-progress-sheet,html.vy858-unified.perf-tier-legacy .top>.vy857-convex-edge::before,html.vy858-unified.perf-tier-legacy .top>.vy857-convex-edge::after,html.vy858-unified.perf-tier-legacy .nav>.vy857-convex-edge::before,html.vy858-unified.perf-tier-legacy .nav>.vy857-convex-edge::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.vy858-unified.perf-tier-legacy .top,html.vy858-unified.perf-tier-legacy .nav{background:rgba(18,36,54,.34)!important}
+html.vy858-unified.theme-light.perf-tier-legacy .top,html.vy858-unified.theme-light.perf-tier-legacy .nav{background:rgba(235,243,249,.42)!important}
+
+@media(prefers-reduced-motion:reduce){html.vy858-unified .screen.vy855-enter-forward,html.vy858-unified .screen.vy855-enter-backward,html.vy858-unified #screen-settings .vy675-settings-page,html.vy858-unified #screen-settings .vy675-settings-home,html.vy858-unified .android-sheet,html.vy858-unified .shop-progress-sheet,.vy858-theme-sweep{animation:none!important;transition:none!important}}

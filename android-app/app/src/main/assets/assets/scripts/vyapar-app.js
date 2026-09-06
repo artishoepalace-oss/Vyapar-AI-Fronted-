@@ -103,12 +103,11 @@
   }
 
   function decoratePlanIdentity(){
+    // plan-badge-menu-645 is the single owner of the paid verification mark.
+    // Older builds added .vy647-plan-mark from this observer as well, which
+    // produced two ticks and an endless mutation/paint loop on some WebViews.
     var card=document.getElementById('productionAccountCard');if(!card)return;
-    var title=card.querySelector('.production-account-head h3');if(!title)return;
-    var plan=resolvePlan(),badge=title.querySelector('.vy647-plan-mark');
-    if(!plan){if(badge)badge.remove();return}
-    if(!badge){badge=document.createElement('span');badge.className='vy647-plan-mark';badge.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m9.7 16.6-4.2-4.2 1.8-1.8 2.4 2.4 6.9-6.9 1.8 1.8z"/></svg>';title.appendChild(badge)}
-    badge.className='vy647-plan-mark '+plan;badge.title=plan==='business'?'Business verified':'Pro verified';badge.setAttribute('aria-label',badge.title);
+    card.querySelectorAll('.vy647-plan-mark').forEach(function(mark){mark.remove()});
   }
 
   var refreshQueued=false;
@@ -12021,7 +12020,7 @@ const tickSvg='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentCo
 function readJson(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(_){return{}}}
 function normalizePlan(v){const p=String(v||'').trim().toLowerCase();if(p.includes('business'))return'business';if(p.includes('pro'))return'pro';return''}
 function resolvedPlan(){const a=readJson(ACCOUNT_KEY),s=readJson(STATE_KEY),token=String(localStorage.getItem('vyapar_ai_auth_token_v1')||'').trim();const statePlan=(s?.subscription?.verified===true&&String(s?.subscription?.token||token).trim())?normalizePlan(s?.subscription?.plan):'';if(statePlan)return statePlan;const accountPlan=normalizePlan(a?.subscription?.plan),status=String(a?.subscription?.status||'').trim().toLowerCase();const inactive=/^(cancelled|canceled|expired|failed|none|inactive)$/.test(status);if(token&&accountPlan&&!inactive)return accountPlan;return''}
-function decorateAccount(){const card=document.getElementById('productionAccountCard');if(!card)return;const title=card.querySelector('.production-account-head h3');if(!title)return;const plan=resolvedPlan();card.querySelectorAll('.vy645-plan-tick,.vy647-plan-mark').forEach(el=>el.remove());if(plan){const badge=document.createElement('span');badge.className='vy645-plan-tick '+plan;badge.setAttribute('role','img');badge.setAttribute('aria-label',plan==='business'?'Business verified':'Pro verified');badge.title=plan==='business'?'Business verified':'Pro verified';badge.innerHTML=tickSvg;title.appendChild(badge)}const avatar=card.querySelector('.production-avatar, .account-avatar, .profile-avatar, .avatar');if(avatar){avatar.classList.remove('vy648-plan-avatar','pro','business');avatar.removeAttribute('data-plan');if(plan){avatar.classList.add('vy648-plan-avatar',plan);avatar.setAttribute('data-plan',plan)}}}
+function decorateAccount(){const card=document.getElementById('productionAccountCard');if(!card)return;const title=card.querySelector('.production-account-head h3');if(!title)return;const plan=resolvedPlan();card.querySelectorAll('.vy647-plan-mark').forEach(el=>el.remove());let badge=title.querySelector('.vy645-plan-tick');if(!plan){if(badge)badge.remove()}else{if(!badge){badge=document.createElement('span');badge.className='vy645-plan-tick';badge.innerHTML=tickSvg;title.appendChild(badge)}badge.className='vy645-plan-tick '+plan;badge.setAttribute('role','img');badge.setAttribute('aria-label',plan==='business'?'Business verified':'Pro verified');badge.title=plan==='business'?'Business verified':'Pro verified'}const avatar=card.querySelector('.production-avatar, .account-avatar, .profile-avatar, .avatar');if(avatar){const wanted=plan||'';if(avatar.dataset.plan!==wanted){avatar.classList.remove('vy648-plan-avatar','pro','business');avatar.removeAttribute('data-plan');if(plan){avatar.classList.add('vy648-plan-avatar',plan);avatar.setAttribute('data-plan',plan)}}}}
 function decoratePlanCards(){document.querySelectorAll('.subscription-plan-grid .subscription-plan-card').forEach(card=>{card.classList.remove('vy649-pro-card','vy649-business-card');const name=String(card.querySelector('h2')?.textContent||'').trim().toLowerCase();if(name==='pro')card.classList.add('vy649-pro-card');if(name==='business')card.classList.add('vy649-business-card')})}
 function setMenu(m,o){if(!m)return;m.classList.toggle('is-open',!!o);const t=m.querySelector(':scope > .vx622-menu-trigger');if(t)t.setAttribute('aria-expanded',o?'true':'false')}
 function closeAll(ex){document.querySelectorAll('.vx622-bulk-menu.is-open').forEach(m=>{if(m!==ex)setMenu(m,false)})}
@@ -14365,8 +14364,6 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       activePage = '';
       const result = current.apply(this, arguments);
       build();
-      setTimeout(scheduleBuild, 0);
-      setTimeout(scheduleBuild, 120);
       return result;
     };
     wrapped.__vy675SettingsCenter = true;
@@ -14420,7 +14417,13 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     installScrollBehaviour();
     installNativeBack();
     observer = new MutationObserver(records => {
-      if (records.some(record => record.addedNodes?.length || record.removedNodes?.length)) scheduleBuild();
+      if (building) return;
+      const needsBuild = records.some(record => {
+        const target = record.target;
+        if (target instanceof Element && target.closest('.vy675-settings-shell, .vy675-settings-repository')) return false;
+        return Boolean(record.addedNodes?.length || record.removedNodes?.length);
+      });
+      if (needsBuild) scheduleBuild();
     });
     const settingsScreen = screen();
     if (settingsScreen) observer.observe(settingsScreen, { childList: true, subtree: true });
@@ -14508,4 +14511,1747 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
 
   window.addEventListener('orientationchange', scheduleHarden, { passive: true });
   window.addEventListener('resize', scheduleHarden, { passive: true });
+
+  /* 8.5 maintenance: Telegram-like tab transition, native theme bars and long-press guard. */
+  const reducedMotion = () => Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const currentVisibleTab = () => {
+    const screen = Array.from(document.querySelectorAll('.screen')).find(node => !node.classList.contains('hide'));
+    return screen ? screen.id.replace('screen-', '') : 'home';
+  };
+  const tabRank = tab => {
+    const ranks = { home: 0, business: 1, sales: 2, stock: 3, upload: 4, analytics: 4, calculator: 4, subscription: 4, settings: 4 };
+    return Object.prototype.hasOwnProperty.call(ranks, tab) ? ranks[tab] : 4;
+  };
+
+  const finalSetTab = typeof window.setTab === 'function' ? window.setTab : null;
+  if (finalSetTab) {
+    window.setTab = function (tab, withLoader) {
+      const previousTab = currentVisibleTab();
+      const result = finalSetTab.call(this, tab, withLoader);
+      if (result === false || previousTab === tab || reducedMotion()) return result;
+
+      const screen = document.getElementById('screen-' + tab);
+      if (!screen) return result;
+      screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
+      void screen.offsetWidth;
+      screen.classList.add(tabRank(tab) < tabRank(previousTab) ? 'vy-telegram-page-from-left' : 'vy-telegram-page-from-right');
+      clearTimeout(screen.__vyTelegramPageTimer);
+      screen.__vyTelegramPageTimer = setTimeout(() => {
+        screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
+      }, 320);
+      return result;
+    };
+  }
+
+  const syncNativeTheme = () => {
+    try {
+      const bridge = window.AndroidApp;
+      if (bridge && typeof bridge.setSystemTheme === 'function') {
+        bridge.setSystemTheme(document.documentElement.classList.contains('theme-light'));
+      }
+    } catch (_) {}
+  };
+  syncNativeTheme();
+
+  const nativeThemeObserver = new MutationObserver(syncNativeTheme);
+  nativeThemeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  nativeThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  // Old Android WebViews can freeze while creating selection/action-mode UI on
+  // long press. Native code consumes long-clicks too; this prevents the web
+  // context menu/drag fallback from starting before Android receives it.
+  if (document.documentElement.classList.contains('native-android')) {
+    document.addEventListener('contextmenu', event => event.preventDefault(), true);
+    document.addEventListener('dragstart', event => {
+      if (event.target && event.target.closest && event.target.closest('img, a, button')) event.preventDefault();
+    }, true);
+  }
+
+})();
+
+/* ===== SCRIPT SOURCE: apple-motion-852.js ===== */
+
+/* Vyapar AI 8.5.2.2026 — Apple-inspired Liquid Glass motion layer.
+   Interaction polish only; existing navigation/theme/business logic stays authoritative. */
+(function () {
+  'use strict';
+
+  const root = document.documentElement;
+  root.classList.add('vy852-apple-liquid');
+
+  const reducedMotion = () => Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function themeButton() {
+    return document.getElementById('themeToggle');
+  }
+
+  function currentLight() {
+    return root.classList.contains('theme-light') || document.body.classList.contains('theme-light');
+  }
+
+  function addThemeBloom(event, targetLight) {
+    if (reducedMotion()) return;
+
+    document.querySelectorAll('.vy852-theme-bloom').forEach(node => node.remove());
+    const button = themeButton();
+    const rect = button ? button.getBoundingClientRect() : null;
+    const x = event && Number.isFinite(event.clientX) && event.clientX > 0
+      ? event.clientX
+      : (rect ? rect.left + rect.width / 2 : window.innerWidth - 30);
+    const y = event && Number.isFinite(event.clientY) && event.clientY > 0
+      ? event.clientY
+      : (rect ? rect.top + rect.height / 2 : 42);
+
+    const farX = Math.max(x, Math.max(0, window.innerWidth - x));
+    const farY = Math.max(y, Math.max(0, window.innerHeight - y));
+    const radius = Math.sqrt(farX * farX + farY * farY);
+    const scale = Math.max(24, radius / 22 + 2);
+
+    const bloom = document.createElement('div');
+    bloom.className = 'vy852-theme-bloom';
+    bloom.style.left = x + 'px';
+    bloom.style.top = y + 'px';
+    bloom.style.setProperty('--vy852-bloom-scale', String(scale));
+    bloom.style.setProperty('--vy852-bloom-bg', targetLight ? '#eef5fb' : '#06111f');
+    document.body.appendChild(bloom);
+    setTimeout(() => bloom.remove(), 620);
+  }
+
+  function popThemeButton() {
+    const button = themeButton();
+    if (!button || reducedMotion()) return;
+    button.classList.remove('vy852-theme-pop');
+    void button.offsetWidth;
+    button.classList.add('vy852-theme-pop');
+    setTimeout(() => button.classList.remove('vy852-theme-pop'), 620);
+  }
+
+  const previousToggleTheme = typeof window.toggleTheme === 'function' ? window.toggleTheme : null;
+  if (previousToggleTheme && !previousToggleTheme.__vy852Wrapped) {
+    const wrappedToggleTheme = function (event) {
+      const targetLight = !currentLight();
+      root.classList.add('vy852-theme-animation');
+      document.body.classList.add('vy852-theme-animation');
+      addThemeBloom(event, targetLight);
+      popThemeButton();
+
+      const result = previousToggleTheme.call(this, event);
+      clearTimeout(window.__vy852ThemeCleanup);
+      window.__vy852ThemeCleanup = setTimeout(() => {
+        root.classList.remove('vy852-theme-animation');
+        document.body.classList.remove('vy852-theme-animation');
+      }, 620);
+      return result;
+    };
+    wrappedToggleTheme.__vy852Wrapped = true;
+    window.toggleTheme = wrappedToggleTheme;
+  }
+
+  /* Spring-close the More sheet before delegating to the existing authoritative closer. */
+  const originalCloseMoreSheet = typeof window.closeMoreSheet === 'function' ? window.closeMoreSheet : null;
+  let closingSheet = false;
+
+  function finishSheetClose(restoreNav) {
+    if (!originalCloseMoreSheet) return;
+    originalCloseMoreSheet(restoreNav);
+    closingSheet = false;
+  }
+
+  function animateSheetClose(restoreNav) {
+    const overlay = document.getElementById('androidMoreSheet');
+    if (!overlay || reducedMotion() || !originalCloseMoreSheet) {
+      finishSheetClose(restoreNav);
+      return;
+    }
+    if (closingSheet) return;
+    closingSheet = true;
+    overlay.classList.add('vy852-closing');
+    setTimeout(() => finishSheetClose(restoreNav), 230);
+  }
+
+  if (originalCloseMoreSheet && !originalCloseMoreSheet.__vy852Wrapped) {
+    const wrappedClose = function (restoreNav) {
+      animateSheetClose(restoreNav);
+    };
+    wrappedClose.__vy852Wrapped = true;
+    window.closeMoreSheet = wrappedClose;
+  }
+
+  /* Capture sheet actions so the close animation is visible instead of instant removal. */
+  document.addEventListener('click', event => {
+    const overlay = event.target && event.target.closest ? event.target.closest('#androidMoreSheet') : null;
+    if (!overlay) return;
+
+    const close = event.target.closest('.android-sheet-close');
+    if (close) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      animateSheetClose(true);
+      return;
+    }
+
+    const item = event.target.closest('.android-sheet-item[data-tab]');
+    if (item) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const tab = item.getAttribute('data-tab');
+      const delay = reducedMotion() ? 0 : 180;
+      const sheet = document.getElementById('androidMoreSheet');
+      if (sheet) sheet.classList.add('vy852-closing');
+      setTimeout(() => {
+        if (originalCloseMoreSheet) originalCloseMoreSheet(false);
+        closingSheet = false;
+        if (tab && typeof window.setTab === 'function') window.setTab(tab, false);
+      }, delay);
+      return;
+    }
+
+    if (event.target === overlay) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      animateSheetClose(true);
+    }
+  }, true);
+
+  /* Add a subtle liquid press response to high-value controls without rerendering screens. */
+  document.addEventListener('pointerdown', event => {
+    const control = event.target && event.target.closest
+      ? event.target.closest('.nav button[data-android-tab], .android-sheet-item, .btn, .vx621-action, #themeToggle')
+      : null;
+    if (!control) return;
+    control.classList.add('vy852-pressed');
+  }, { passive: true, capture: true });
+
+  const clearPressed = () => document.querySelectorAll('.vy852-pressed').forEach(node => node.classList.remove('vy852-pressed'));
+  document.addEventListener('pointerup', clearPressed, { passive: true, capture: true });
+  document.addEventListener('pointercancel', clearPressed, { passive: true, capture: true });
+
+  /* Keep the class in sync if some older renderer replaces body classes. */
+  const classObserver = new MutationObserver(() => {
+    if (!root.classList.contains('vy852-apple-liquid')) root.classList.add('vy852-apple-liquid');
+  });
+  classObserver.observe(root, { attributes: true, attributeFilter: ['class'] });
+})();
+
+/* ===== SCRIPT SOURCE: apple-motion-853.js ===== */
+
+/* Vyapar AI 8.5.3.2026 — Apple Liquid Glass motion/stability refinement.
+   Fixes page-switch flicker and synchronizes nav/theme animation without touching business logic. */
+(function () {
+  'use strict';
+
+  const root = document.documentElement;
+  root.classList.add('vy853-apple-liquid');
+
+  const reducedMotion = () => Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const mainTabs = ['home', 'business', 'sales', 'stock'];
+  const tabRank = { home: 0, business: 1, sales: 2, stock: 3, upload: 4, analytics: 4, calculator: 4, subscription: 4, settings: 4 };
+
+  function visibleTab() {
+    const screen = Array.from(document.querySelectorAll('.screen')).find(node => !node.classList.contains('hide'));
+    return screen ? screen.id.replace(/^screen-/, '') : 'home';
+  }
+
+  function rank(tab) {
+    return Object.prototype.hasOwnProperty.call(tabRank, tab) ? tabRank[tab] : 4;
+  }
+
+  function clearPageClasses() {
+    document.querySelectorAll('.screen').forEach(screen => {
+      screen.classList.remove(
+        'vy853-page-enter-forward',
+        'vy853-page-enter-backward',
+        'vy-telegram-page-from-left',
+        'vy-telegram-page-from-right'
+      );
+    });
+  }
+
+  let pageTimer = 0;
+  function animatePage(previousTab, nextTab) {
+    if (reducedMotion() || !nextTab || previousTab === nextTab) return;
+    const screen = document.getElementById('screen-' + nextTab);
+    if (!screen || screen.classList.contains('hide')) return;
+
+    clearTimeout(pageTimer);
+    clearPageClasses();
+    const direction = rank(nextTab) < rank(previousTab) ? 'vy853-page-enter-backward' : 'vy853-page-enter-forward';
+    requestAnimationFrame(() => {
+      screen.classList.add(direction);
+      pageTimer = setTimeout(() => screen.classList.remove(direction), 340);
+    });
+  }
+
+  function navElement() {
+    return document.getElementById('nav') || document.querySelector('.nav');
+  }
+
+  function ensureLens() {
+    const nav = navElement();
+    if (!nav) return null;
+    let lens = nav.querySelector('.android-nav-glass-indicator');
+    if (!lens) {
+      lens = document.createElement('span');
+      lens.className = 'android-nav-glass-indicator';
+      lens.setAttribute('aria-hidden', 'true');
+      nav.insertBefore(lens, nav.firstChild);
+    }
+    return lens;
+  }
+
+  let lensTimer = 0;
+  function syncLens(animate) {
+    const nav = navElement();
+    const lens = ensureLens();
+    if (!nav || !lens) return;
+
+    const active = nav.querySelector('button.active[data-android-tab]') || nav.querySelector('button[data-android-tab="home"]');
+    if (!active) return;
+
+    const x = active.offsetLeft;
+    const width = active.offsetWidth;
+    lens.style.width = width + 'px';
+    lens.style.setProperty('--vy853-nav-x', x + 'px');
+
+    if (animate && !reducedMotion()) {
+      lens.classList.remove('vy853-lens-moving');
+      void lens.offsetWidth;
+      lens.classList.add('vy853-lens-moving');
+      clearTimeout(lensTimer);
+      lensTimer = setTimeout(() => lens.classList.remove('vy853-lens-moving'), 500);
+    }
+  }
+
+  const authoritativeSetTab = typeof window.setTab === 'function' ? window.setTab : null;
+  if (authoritativeSetTab && !authoritativeSetTab.__vy853Wrapped) {
+    const wrappedSetTab = function (tab, withLoader) {
+      const previousTab = visibleTab();
+      const isBottomTab = mainTabs.includes(tab);
+      root.classList.toggle('vy853-nav-switching', isBottomTab && previousTab !== tab);
+
+      // Bottom tabs are local, already-rendered workspaces; suppressing the tiny
+      // loader removes the flash seen in the reference video without changing data flow.
+      const result = authoritativeSetTab.call(this, tab, isBottomTab ? false : withLoader);
+      const nextTab = visibleTab();
+
+      if (result !== false && previousTab !== nextTab) animatePage(previousTab, nextTab);
+      requestAnimationFrame(() => syncLens(previousTab !== nextTab));
+
+      clearTimeout(window.__vy853NavSwitchTimer);
+      window.__vy853NavSwitchTimer = setTimeout(() => root.classList.remove('vy853-nav-switching'), 340);
+      return result;
+    };
+    wrappedSetTab.__vy853Wrapped = true;
+    window.setTab = wrappedSetTab;
+  }
+
+  // Capture only the four real workspace tabs. More keeps its existing sheet logic.
+  document.addEventListener('click', event => {
+    const button = event.target && event.target.closest ? event.target.closest('.nav button[data-android-tab]') : null;
+    if (!button) return;
+    const tab = button.getAttribute('data-android-tab');
+    if (!mainTabs.includes(tab) || typeof window.setTab !== 'function') return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.setTab(tab, false);
+  }, true);
+
+  // Theme transition: expand the destination material from the button first,
+  // switch the real theme only once the reveal covers the screen, then fade it away.
+  const previousToggleTheme = typeof window.toggleTheme === 'function' ? window.toggleTheme : null;
+  let themeBusy = false;
+
+  function currentLight() {
+    return root.classList.contains('theme-light') || (document.body && document.body.classList.contains('theme-light'));
+  }
+
+  function themeButton() {
+    return document.getElementById('themeToggle');
+  }
+
+  function themeOrigin(event) {
+    const button = themeButton();
+    const rect = button ? button.getBoundingClientRect() : null;
+    return {
+      x: event && Number.isFinite(event.clientX) && event.clientX > 0 ? event.clientX : (rect ? rect.left + rect.width / 2 : window.innerWidth - 30),
+      y: event && Number.isFinite(event.clientY) && event.clientY > 0 ? event.clientY : (rect ? rect.top + rect.height / 2 : 44)
+    };
+  }
+
+  function makeThemeReveal(event, targetLight) {
+    if (reducedMotion()) return null;
+    document.querySelectorAll('.vy853-theme-reveal, .vy852-theme-bloom').forEach(node => node.remove());
+
+    const origin = themeOrigin(event);
+    const farX = Math.max(origin.x, Math.max(0, window.innerWidth - origin.x));
+    const farY = Math.max(origin.y, Math.max(0, window.innerHeight - origin.y));
+    const radius = Math.sqrt(farX * farX + farY * farY);
+    const scale = Math.max(28, radius / 24 + 2.5);
+
+    const reveal = document.createElement('div');
+    reveal.className = 'vy853-theme-reveal ' + (targetLight ? 'to-light' : 'to-dark');
+    reveal.style.setProperty('--vy853-x', origin.x + 'px');
+    reveal.style.setProperty('--vy853-y', origin.y + 'px');
+    reveal.style.setProperty('--vy853-scale', String(scale));
+    document.body.appendChild(reveal);
+    return reveal;
+  }
+
+  function popThemeButton() {
+    const button = themeButton();
+    if (!button || reducedMotion()) return;
+    button.classList.remove('vy853-theme-pop');
+    void button.offsetWidth;
+    button.classList.add('vy853-theme-pop');
+    setTimeout(() => button.classList.remove('vy853-theme-pop'), 620);
+  }
+
+  if (previousToggleTheme && !previousToggleTheme.__vy853Wrapped) {
+    const wrappedTheme = function (event) {
+      if (themeBusy) return false;
+      themeBusy = true;
+
+      const targetLight = !currentLight();
+      root.classList.add('vy853-theme-running', targetLight ? 'vy853-preview-light' : 'vy853-preview-dark');
+      root.classList.remove(targetLight ? 'vy853-preview-dark' : 'vy853-preview-light');
+      if (document.body) document.body.classList.add('vy853-theme-running');
+
+      const reveal = makeThemeReveal(event, targetLight);
+      popThemeButton();
+
+      const commitDelay = reducedMotion() ? 0 : 330;
+      setTimeout(() => {
+        try {
+          previousToggleTheme.call(this, event);
+        } finally {
+          // Native status/navigation bars are synced by the existing observer.
+        }
+      }, commitDelay);
+
+      clearTimeout(window.__vy853ThemeCleanup);
+      window.__vy853ThemeCleanup = setTimeout(() => {
+        if (reveal && reveal.parentNode) reveal.remove();
+        root.classList.remove('vy853-theme-running', 'vy853-preview-light', 'vy853-preview-dark');
+        if (document.body) document.body.classList.remove('vy853-theme-running');
+        themeBusy = false;
+      }, reducedMotion() ? 60 : 660);
+
+      return false;
+    };
+    wrappedTheme.__vy853Wrapped = true;
+    window.toggleTheme = wrappedTheme;
+  }
+
+  function initialise() {
+    clearPageClasses();
+    syncLens(false);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialise, { once: true });
+  } else {
+    initialise();
+  }
+
+  const navObserver = new MutationObserver(records => {
+    if (records.some(record => record.type === 'childList' || record.attributeName === 'class')) {
+      requestAnimationFrame(() => syncLens(false));
+    }
+  });
+
+  const nav = navElement();
+  if (nav) navObserver.observe(nav, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+  window.addEventListener('resize', () => requestAnimationFrame(() => syncLens(false)), { passive: true });
+  window.addEventListener('orientationchange', () => setTimeout(() => syncLens(false), 120), { passive: true });
+})();
+
+/* ===== SCRIPT SOURCE: apple-unified-854-js-part1.js ===== */
+
+/* Vyapar AI 8.5.4.2026 — unified iOS shell, theme handoff and navigation stability.
+   Keeps business/auth/accounting logic authoritative; this file only coordinates presentation. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy854-unified-ios');
+
+  const reducedMotion=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const localTabs=new Set(['home','business','sales','stock','settings','subscription','calculator','upload','analytics']);
+  const rankMap={home:0,business:1,sales:2,stock:3,upload:4,analytics:4,calculator:4,subscription:4,settings:4};
+  let pageTimer=0;
+  let themeBusy=false;
+
+  function visibleTab(){
+    const screen=Array.from(document.querySelectorAll('.screen')).find(node=>!node.classList.contains('hide'));
+    return screen?screen.id.replace(/^screen-/,''):'home';
+  }
+
+  function rank(tab){
+    return Object.prototype.hasOwnProperty.call(rankMap,tab)?rankMap[tab]:4;
+  }
+
+  function clearOldPageMotion(){
+    document.querySelectorAll('.screen').forEach(screen=>{
+      screen.classList.remove(
+        'vy-telegram-page-from-left','vy-telegram-page-from-right',
+        'vy853-page-enter-forward','vy853-page-enter-backward',
+        'vy854-page-enter-forward','vy854-page-enter-backward'
+      );
+    });
+  }
+
+  function animatePage(previousTab,nextTab){
+    if(reducedMotion()||!nextTab||previousTab===nextTab)return;
+    const screen=document.getElementById('screen-'+nextTab);
+    if(!screen||screen.classList.contains('hide'))return;
+    clearTimeout(pageTimer);
+    clearOldPageMotion();
+    const cls=rank(nextTab)<rank(previousTab)?'vy854-page-enter-backward':'vy854-page-enter-forward';
+    screen.classList.add(cls);
+    pageTimer=setTimeout(()=>screen.classList.remove(cls),280);
+  }
+
+  /* Wrap the final legacy navigation chain, but do not replace its data/scroll/settings behavior. */
+  const previousSetTab=typeof window.setTab==='function'?window.setTab:null;
+  if(previousSetTab&&!previousSetTab.__vy854Wrapped){
+    const wrapped=function(tab,withLoader){
+      const previousTab=visibleTab();
+      const local=localTabs.has(tab);
+      if(local&&previousTab!==tab)root.classList.add('vy854-local-switch');
+      const result=previousSetTab.call(this,tab,local?false:withLoader);
+      const nextTab=visibleTab();
+      if(result!==false&&previousTab!==nextTab)animatePage(previousTab,nextTab);
+      clearTimeout(window.__vy854SwitchTimer);
+      window.__vy854SwitchTimer=setTimeout(()=>root.classList.remove('vy854-local-switch'),300);
+      requestAnimationFrame(syncChrome);
+      return result;
+    };
+    wrapped.__vy854Wrapped=true;
+    window.setTab=wrapped;
+  }
+
+  /* Settings is one part of Vyapar AI: normalize the chrome title and animate internal pages. */
+  function syncChrome(){
+    const title=document.querySelector('.brand h1');
+    if(title&&/app settings/i.test(title.textContent||''))title.textContent='Settings';
+    const progress=document.getElementById('openShopProgress');
+    if(progress&&/view progress/i.test(progress.textContent||''))progress.textContent='Your Shop Journey';
+  }
+
+  function animateSettingsState(){
+    const settings=document.getElementById('screen-settings');
+    if(!settings)return;
+    const home=settings.querySelector('.vy675-settings-home');
+    const page=settings.querySelector('.vy675-settings-page');
+    if(page&&!page.hidden&&!page.classList.contains('vy854-settings-in')){
+      page.classList.remove('vy854-settings-in');
+      void page.offsetWidth;
+
+/* ===== SCRIPT SOURCE: apple-unified-854-js-part2.js ===== */
+
+      page.classList.add('vy854-settings-in');
+      setTimeout(()=>page.classList.remove('vy854-settings-in'),310);
+    }
+    if(home&&!home.hidden&&home.dataset.vy854WasHidden==='1'){
+      home.classList.remove('vy854-settings-back');
+      void home.offsetWidth;
+      home.classList.add('vy854-settings-back');
+      setTimeout(()=>home.classList.remove('vy854-settings-back'),310);
+    }
+    if(home)home.dataset.vy854WasHidden=home.hidden?'1':'0';
+  }
+
+  const settingsObserver=new MutationObserver(records=>{
+    if(records.some(record=>record.type==='attributes'&&record.attributeName==='hidden'))animateSettingsState();
+  });
+  function bindSettingsObserver(){
+    const settings=document.getElementById('screen-settings');
+    if(!settings||settings.dataset.vy854Observed==='1')return;
+    settings.dataset.vy854Observed='1';
+    settingsObserver.observe(settings,{subtree:true,attributes:true,attributeFilter:['hidden']});
+    animateSettingsState();
+  }
+
+  /* Theme commit copied from the canonical app functions so old decorative wrappers are bypassed. */
+  function currentLight(){
+    try{return typeof window.activeTheme==='function'?window.activeTheme()==='light':root.classList.contains('theme-light');}
+    catch(_){return root.classList.contains('theme-light');}
+  }
+
+  function commitTheme(target){
+    try{
+      const s=window.state;
+      if(s){
+        s.settings=s.settings&&typeof s.settings==='object'?s.settings:{};
+        s.settings.theme=target;
+      }
+    }catch(_){}
+    try{if(typeof window.applyTheme==='function')window.applyTheme();}catch(_){}
+    try{if(typeof window.applyGlassControl==='function')window.applyGlassControl();}catch(_){}
+    try{
+      if(typeof window.persistThemeWithoutRender==='function')window.persistThemeWithoutRender();
+      else if(window.state)localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+    }catch(_){}
+  }
+
+  function themeOrigin(event){
+    const button=document.getElementById('themeToggle');
+    const rect=button?button.getBoundingClientRect():null;
+    return {
+      x:event&&Number.isFinite(event.clientX)&&event.clientX>0?event.clientX:(rect?rect.left+rect.width/2:window.innerWidth-34),
+      y:event&&Number.isFinite(event.clientY)&&event.clientY>0?event.clientY:(rect?rect.top+rect.height/2:42)
+    };
+  }
+
+  function popThemeButton(){
+    const button=document.getElementById('themeToggle');
+    if(!button||reducedMotion())return;
+    button.classList.remove('vy854-theme-pop');
+    void button.offsetWidth;
+    button.classList.add('vy854-theme-pop');
+    setTimeout(()=>button.classList.remove('vy854-theme-pop'),520);
+  }
+
+  function runTheme(target,event){
+    if(themeBusy)return false;
+    themeBusy=true;
+    document.querySelectorAll('.vy854-theme-wipe,.vy853-theme-reveal,.vy852-theme-bloom,.theme-ripple,.vx657-theme-crossfade').forEach(node=>node.remove());
+    popThemeButton();
+
+    if(reducedMotion()||!window.CSS||!CSS.supports||!CSS.supports('clip-path','circle(1px at 1px 1px)')){
+      commitTheme(target);
+      themeBusy=false;
+      return false;
+    }
+
+    const origin=themeOrigin(event);
+    const wipe=document.createElement('div');
+    wipe.className='vy854-theme-wipe '+(target==='light'?'to-light':'to-dark');
+    wipe.style.setProperty('--vy854-theme-x',origin.x+'px');
+    wipe.style.setProperty('--vy854-theme-y',origin.y+'px');
+    document.body.appendChild(wipe);
+    requestAnimationFrame(()=>wipe.classList.add('run'));
+
+    const commitDelay=250;
+    setTimeout(()=>commitTheme(target),commitDelay);
+    clearTimeout(window.__vy854ThemeTimer);
+
+/* ===== SCRIPT SOURCE: apple-unified-854-js-part3.js ===== */
+
+    window.__vy854ThemeTimer=setTimeout(()=>{
+      if(wipe.parentNode)wipe.remove();
+      themeBusy=false;
+      syncChrome();
+    },610);
+    return false;
+  }
+
+  window.toggleTheme=function(event){
+    return runTheme(currentLight()?'dark':'light',event);
+  };
+  window.setTheme=function(theme){
+    const target=theme==='light'?'light':'dark';
+    if((target==='light')===currentLight())return false;
+    return runTheme(target,null);
+  };
+
+  /* Auth handoff: hide duplicate app/tab/startup loaders after the auth gate disappears. */
+  let hadAuthGate=false;
+  function syncAuthHandoff(){
+    const gate=document.getElementById('vyaparOtpGate');
+    if(gate){
+      hadAuthGate=true;
+      root.classList.remove('vy854-auth-handoff');
+      const tabLoader=document.getElementById('tabLoader');
+      if(tabLoader)tabLoader.classList.remove('show');
+      return;
+    }
+    if(hadAuthGate){
+      hadAuthGate=false;
+      root.classList.add('vy854-auth-handoff');
+      document.querySelectorAll('#tabLoader,#appLoader,#vy647StartupSplash').forEach(node=>{
+        try{node.classList.remove('show');node.style.visibility='hidden';}catch(_){}
+      });
+      setTimeout(()=>root.classList.remove('vy854-auth-handoff'),1100);
+    }
+  }
+
+  /* Journey close receives the same spring exit instead of disappearing instantly. */
+  document.addEventListener('click',event=>{
+    const overlay=event.target&&event.target.closest?event.target.closest('#shopProgressSheet.shop-progress-overlay'):null;
+    if(!overlay)return;
+    const close=event.target.closest&&event.target.closest('#closeShopProgress,.shop-sheet-close');
+    const backdrop=event.target===overlay;
+    if(!close&&!backdrop)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if(overlay.classList.contains('vy854-journey-closing'))return;
+    overlay.classList.add('vy854-journey-closing');
+    setTimeout(()=>{
+      overlay.remove();
+      document.body.classList.remove('shop-progress-open');
+    },220);
+  },true);
+
+  let mutationQueued=false;
+  const globalObserver=new MutationObserver(()=>{
+    if(mutationQueued)return;
+    mutationQueued=true;
+    requestAnimationFrame(()=>{
+      mutationQueued=false;
+      syncChrome();
+      bindSettingsObserver();
+      syncAuthHandoff();
+    });
+  });
+
+  function initialise(){
+    syncChrome();
+    bindSettingsObserver();
+    syncAuthHandoff();
+    clearOldPageMotion();
+    if(document.body)globalObserver.observe(document.body,{childList:true,subtree:true,attributes:false});
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialise,{once:true});
+  else initialise();
+
+  window.addEventListener('pageshow',()=>requestAnimationFrame(syncChrome),{passive:true});
+})();
+
+/* ===== SCRIPT SOURCE: apple-stability-855.js ===== */
+
+/* Vyapar AI 8.5.5.2026 — authoritative Android presentation coordinator.
+   Runs last so older 8.5.2–8.5.4 animation wrappers cannot leak visual glitches. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy855-stable-ios');
+
+  const reduced=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const localTabs=new Set(['home','business','sales','stock','settings','subscription','calculator','upload','analytics']);
+  const ranks={home:0,business:1,sales:2,stock:3,upload:4,analytics:4,calculator:4,subscription:4,settings:4};
+  let pageTimer=0;
+  let themeBusy=false;
+  let hadAuth=false;
+  let moreSuppressedUntil=0;
+
+  function visibleTab(){
+    const screen=Array.from(document.querySelectorAll('.screen')).find(node=>!node.classList.contains('hide'));
+    return screen?screen.id.replace(/^screen-/,''):'home';
+  }
+  function rank(tab){return Object.prototype.hasOwnProperty.call(ranks,tab)?ranks[tab]:4}
+
+  function cleanOldVisuals(){
+    document.querySelectorAll('.vy852-theme-bloom,.vy853-theme-reveal,.vy854-theme-wipe,.theme-ripple,.vx657-theme-crossfade').forEach(node=>node.remove());
+    const nav=document.getElementById('nav')||document.querySelector('.nav');
+    if(nav){
+      nav.classList.remove('android-nav-shine');
+      nav.style.filter='none';
+      nav.style.mixBlendMode='normal';
+    }
+  }
+
+  function clearMotion(){
+    document.querySelectorAll('.screen').forEach(screen=>{
+      screen.classList.remove(
+        'vy-telegram-page-from-left','vy-telegram-page-from-right',
+        'vy853-page-enter-forward','vy853-page-enter-backward',
+        'vy854-page-enter-forward','vy854-page-enter-backward',
+        'vy855-enter-forward','vy855-enter-backward'
+      );
+    });
+  }
+
+  function animatePage(from,to){
+    if(reduced()||!to||from===to)return;
+    const screen=document.getElementById('screen-'+to);
+    if(!screen||screen.classList.contains('hide'))return;
+    clearTimeout(pageTimer);
+    clearMotion();
+    const cls=rank(to)<rank(from)?'vy855-enter-backward':'vy855-enter-forward';
+    requestAnimationFrame(()=>{
+      screen.classList.add(cls);
+      pageTimer=setTimeout(()=>screen.classList.remove(cls),220);
+    });
+  }
+
+  function syncLens(){
+    const nav=document.getElementById('nav')||document.querySelector('.nav');
+    if(!nav)return;
+    const lens=nav.querySelector('.android-nav-glass-indicator');
+    const active=nav.querySelector('button.active[data-android-tab]')||nav.querySelector('button[data-android-tab="home"]');
+    if(!lens||!active)return;
+    lens.style.width=active.offsetWidth+'px';
+    lens.style.setProperty('--vy853-nav-x',active.offsetLeft+'px');
+    lens.style.transform='translate3d('+active.offsetLeft+'px,0,0)';
+  }
+
+  const previousSetTab=typeof window.setTab==='function'?window.setTab:null;
+  if(previousSetTab&&!previousSetTab.__vy855Wrapped){
+    const wrapped=function(tab,withLoader){
+      const from=visibleTab();
+      const local=localTabs.has(tab);
+      if(local)root.classList.add('vy855-switching');
+      const tabLoader=document.getElementById('tabLoader');
+      if(tabLoader)tabLoader.classList.remove('show');
+
+      const result=previousSetTab.call(this,tab,local?false:withLoader);
+      const to=visibleTab();
+      if(result!==false&&from!==to)animatePage(from,to);
+
+      const stale=document.getElementById('androidMoreSheet');
+      if(stale)stale.remove();
+      document.body.classList.remove('android-sheet-open','more-sheet-open');
+      cleanOldVisuals();
+      requestAnimationFrame(syncLens);
+      clearTimeout(window.__vy855SwitchTimer);
+      window.__vy855SwitchTimer=setTimeout(()=>root.classList.remove('vy855-switching'),230);
+      return result;
+    };
+    wrapped.__vy855Wrapped=true;
+    window.setTab=wrapped;
+  }
+
+  function canonicalLight(){
+    return root.classList.contains('theme-light')||(document.body&&document.body.classList.contains('theme-light'));
+  }
+  function persistTheme(target){
+    try{
+      const s=window.state;
+      if(s){
+        s.settings=s.settings&&typeof s.settings==='object'?s.settings:{};
+        s.settings.theme=target;
+      }
+    }catch(_){}
+    try{if(typeof window.applyTheme==='function')window.applyTheme();}catch(_){}
+    try{if(typeof window.applyGlassControl==='function')window.applyGlassControl();}catch(_){}
+    try{
+      if(typeof window.persistThemeWithoutRender==='function')window.persistThemeWithoutRender();
+      else if(window.state)localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+    }catch(_){}
+    try{
+      const bridge=window.AndroidApp;
+      if(bridge&&typeof bridge.setSystemTheme==='function')bridge.setSystemTheme(target==='light');
+    }catch(_){}
+  }
+
+  function themeCurtain(target){
+    const node=document.createElement('div');
+    node.className='vy855-theme-curtain '+(target==='light'?'to-light':'to-dark');
+    document.body.appendChild(node);
+    return node;
+  }
+
+  function runTheme(target){
+    if(themeBusy)return false;
+    themeBusy=true;
+    cleanOldVisuals();
+
+    const button=document.getElementById('themeToggle');
+    if(button&&!reduced()&&typeof button.animate==='function'){
+      button.animate(
+        [{transform:'scale(1)'},{transform:'scale(.90)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],
+        {duration:330,easing:'cubic-bezier(.16,1,.3,1)'}
+      );
+    }
+
+    if(reduced()){
+      persistTheme(target);
+      cleanOldVisuals();
+      syncLens();
+      themeBusy=false;
+      return false;
+    }
+
+    const curtain=themeCurtain(target);
+    requestAnimationFrame(()=>{
+      curtain.classList.add('show');
+      setTimeout(()=>{
+        persistTheme(target);
+        cleanOldVisuals();
+        syncLens();
+        requestAnimationFrame(()=>{
+          curtain.classList.add('leave');
+          curtain.classList.remove('show');
+          setTimeout(()=>{
+            curtain.remove();
+            themeBusy=false;
+          },160);
+        });
+      },115);
+    });
+    return false;
+  }
+
+  window.toggleTheme=function(){return runTheme(canonicalLight()?'dark':'light')};
+  window.setTheme=function(theme){
+    const target=theme==='light'?'light':'dark';
+    if((target==='light')===canonicalLight())return false;
+    return runTheme(target);
+  };
+
+  function finishMore(tab){
+    const live=document.getElementById('androidMoreSheet');
+    if(live)live.remove();
+    document.body.classList.remove('android-sheet-open','more-sheet-open');
+    document.querySelectorAll('.nav [aria-expanded="true"]').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+    if(tab&&typeof window.setTab==='function')window.setTab(tab,false);
+  }
+
+  document.addEventListener('click',event=>{
+    const item=event.target&&event.target.closest?event.target.closest('#androidMoreSheet .android-sheet-item[data-tab]'):null;
+    if(item){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const tab=item.getAttribute('data-tab');
+      const overlay=item.closest('#androidMoreSheet');
+      moreSuppressedUntil=Date.now()+500;
+      if(overlay)overlay.classList.add('vy855-sheet-leaving');
+      setTimeout(()=>finishMore(tab),reduced()?0:155);
+      return;
+    }
+
+    const overlay=event.target&&event.target.closest?event.target.closest('#androidMoreSheet'):null;
+    if(!overlay)return;
+    const close=event.target.closest&&event.target.closest('.android-sheet-close');
+    if(close||event.target===overlay){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      overlay.classList.add('vy855-sheet-leaving');
+      moreSuppressedUntil=Date.now()+300;
+      setTimeout(()=>finishMore(''),reduced()?0:155);
+    }
+  },true);
+
+  document.addEventListener('click',event=>{
+    if(Date.now()>=moreSuppressedUntil)return;
+    const candidate=event.target&&event.target.closest?event.target.closest('.nav button'):null;
+    if(!candidate)return;
+    const label=(candidate.textContent||'').trim().toLowerCase();
+    if(label==='more'||String(candidate.getAttribute('aria-label')||'').toLowerCase().includes('more')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  },true);
+
+  function authWatchdog(){
+    const gate=document.getElementById('vyaparOtpGate');
+    if(gate){
+      hadAuth=true;
+      root.classList.add('vy855-auth-ready');
+      const splash=document.getElementById('vy647StartupSplash');
+      const loader=document.getElementById('appLoader');
+      if(splash){splash.style.opacity='0';setTimeout(()=>splash.remove(),180)}
+      if(loader){loader.style.opacity='0';setTimeout(()=>loader.remove(),180)}
+      return;
+    }
+    if(hadAuth){
+      hadAuth=false;
+      root.classList.add('vy855-auth-ready');
+      document.querySelectorAll('#appLoader,#vy647StartupSplash,#tabLoader').forEach(node=>node.remove());
+    }
+  }
+
+  setTimeout(()=>{
+    const splash=document.getElementById('vy647StartupSplash');
+    if(splash){splash.style.opacity='0';setTimeout(()=>splash.remove(),180)}
+    const loader=document.getElementById('appLoader');
+    if(loader){loader.style.opacity='0';setTimeout(()=>loader.remove(),180)}
+    root.classList.add('vy855-auth-ready');
+  },1500);
+
+  let queued=false;
+  const observer=new MutationObserver(()=>{
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{
+      queued=false;
+      cleanOldVisuals();
+      authWatchdog();
+      syncLens();
+      const sheets=document.querySelectorAll('#androidMoreSheet');
+      if(sheets.length>1)Array.from(sheets).slice(0,-1).forEach(node=>node.remove());
+    });
+  });
+
+  function init(){
+    cleanOldVisuals();
+    clearMotion();
+    authWatchdog();
+    syncLens();
+    if(document.body)observer.observe(document.body,{childList:true,subtree:true});
+    window.addEventListener('resize',()=>requestAnimationFrame(syncLens),{passive:true});
+    window.addEventListener('orientationchange',()=>setTimeout(syncLens,100),{passive:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
+})();
+
+/* ===== SCRIPT SOURCE: inspected-glitchfix-855.js ===== */
+
+/* Vyapar AI 8.5.5 inspected glitch fix — presentation only.
+   Removes full-screen theme flashes, holds first paint until real UI exists,
+   and primes Settings before navigation so old Android WebViews never show an
+   empty intermediate frame. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy855-inspected-fix');
+
+  const reduced=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  let themeBusy=false;
+
+  function removeThemeArtifacts(){
+    document.querySelectorAll(
+      '.vy855-theme-curtain,.vy854-theme-wipe,.vy853-theme-reveal,.vy852-theme-bloom,.theme-ripple,.vx657-theme-crossfade'
+    ).forEach(node=>node.remove());
+  }
+
+  function currentLight(){
+    return root.classList.contains('theme-light')||Boolean(document.body&&document.body.classList.contains('theme-light'));
+  }
+
+  function saveTheme(target){
+    const light=target==='light';
+    const body=document.body;
+
+    root.classList.toggle('theme-light',light);
+    if(body)body.classList.toggle('theme-light',light);
+    root.style.backgroundColor=light?'#eff6fb':'#06172d';
+    if(body)body.style.backgroundColor=light?'#eff6fb':'#06172d';
+
+    try{
+      const appState=window.state;
+      if(appState){
+        appState.settings=appState.settings&&typeof appState.settings==='object'?appState.settings:{};
+        appState.settings.theme=target;
+      }
+    }catch(_){}
+
+    try{if(typeof window.applyTheme==='function')window.applyTheme();}catch(_){}
+    try{if(typeof window.applyGlassControl==='function')window.applyGlassControl();}catch(_){}
+    try{
+      if(typeof window.persistThemeWithoutRender==='function')window.persistThemeWithoutRender();
+      else if(window.state)localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+    }catch(_){}
+
+    try{
+      const meta=document.querySelector('meta[name="theme-color"]');
+      if(meta)meta.setAttribute('content',light?'#eff6fb':'#06172d');
+    }catch(_){}
+
+    try{
+      const bridge=window.AndroidApp;
+      if(bridge&&typeof bridge.setSystemTheme==='function')bridge.setSystemTheme(light);
+    }catch(_){}
+  }
+
+  function runTheme(target){
+    const normalized=target==='light'?'light':'dark';
+    if(themeBusy)return false;
+    if((normalized==='light')===currentLight()){
+      removeThemeArtifacts();
+      return false;
+    }
+
+    themeBusy=true;
+    removeThemeArtifacts();
+    root.classList.add('vy855-theme-atomic');
+
+    const button=document.getElementById('themeToggle');
+    if(button&&!reduced()&&typeof button.animate==='function'){
+      try{
+        button.animate(
+          [{transform:'scale(1)'},{transform:'scale(.93)'},{transform:'scale(1)'}],
+          {duration:180,easing:'cubic-bezier(.2,.8,.2,1)'}
+        );
+      }catch(_){}
+    }
+
+    /* Commit the theme immediately. No opaque curtain, no blank handoff. */
+    saveTheme(normalized);
+    removeThemeArtifacts();
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      root.classList.remove('vy855-theme-atomic');
+      removeThemeArtifacts();
+      themeBusy=false;
+    }));
+    return false;
+  }
+
+  window.toggleTheme=function(){return runTheme(currentLight()?'dark':'light')};
+  window.setTheme=function(theme){return runTheme(theme==='light'?'light':'dark')};
+
+  /* Settings shell is deterministic and local. Build it before setTab hides the
+     previous screen, then let the existing business/navigation logic continue. */
+  function primeSettings(){
+    try{
+      const screen=document.getElementById('screen-settings');
+      if(!screen)return;
+      const ready=screen.querySelector('.vy675-settings-shell,.vy675-settings-home,.vy675-settings-page');
+      if(!ready&&typeof window.renderSettings==='function')window.renderSettings();
+    }catch(_){}
+  }
+
+  const previousSetTab=typeof window.setTab==='function'?window.setTab:null;
+  if(previousSetTab&&!previousSetTab.__vy855InspectedWrapped){
+    const wrapped=function(tab,withLoader){
+      if(tab==='settings')primeSettings();
+      const result=previousSetTab.call(this,tab,withLoader);
+      if(tab==='settings'){
+        const settle=()=>{
+          primeSettings();
+          const screen=document.getElementById('screen-settings');
+          if(screen&&!screen.classList.contains('hide')){
+            screen.style.opacity='1';
+            screen.style.visibility='visible';
+          }
+        };
+        settle();
+        requestAnimationFrame(settle);
+      }
+      return result;
+    };
+    wrapped.__vy855InspectedWrapped=true;
+    window.setTab=wrapped;
+  }
+
+  /* Continuous first paint: keep the WebView on a theme-matched surface until
+     either the auth gate or a populated app screen has actually laid out. */
+  function isPainted(node){
+    if(!node)return false;
+    const style=getComputedStyle(node);
+    if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)===0)return false;
+    const rect=node.getBoundingClientRect();
+    return rect.width>40&&rect.height>60;
+  }
+
+  function realUiVisible(){
+    const auth=document.getElementById('vyaparOtpGate');
+    if(isPainted(auth))return true;
+    const password=document.getElementById('vy647PasswordGate');
+    if(isPainted(password))return true;
+    const visible=Array.from(document.querySelectorAll('.screen')).find(screen=>!screen.classList.contains('hide')&&screen.children.length>0);
+    return isPainted(visible);
+  }
+
+  let bootDone=false;
+  function finishBoot(force){
+    if(bootDone)return;
+    const guard=document.getElementById('vy855BootGuard');
+    if(!guard){root.classList.remove('vy855-booting');bootDone=true;return}
+    if(!force&&!realUiVisible())return;
+    bootDone=true;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      guard.classList.add('is-ready');
+      root.classList.remove('vy855-booting');
+      setTimeout(()=>guard.remove(),140);
+    }));
+  }
+
+  let bootObserver=null;
+  function initBootGuard(){
+    finishBoot(false);
+    if(bootDone)return;
+    bootObserver=new MutationObserver(()=>finishBoot(false));
+    bootObserver.observe(document.body||document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+    setTimeout(()=>{
+      if(bootObserver)bootObserver.disconnect();
+      finishBoot(true);
+    },2400);
+  }
+
+  removeThemeArtifacts();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBootGuard,{once:true});
+  else initBootGuard();
+})();
+
+/* ===== SCRIPT SOURCE: liquid-lens-motion-856.js ===== */
+
+/* Vyapar AI 8.5.6 — smooth motion coordinator.
+   Adds only presentation feedback; all auth/accounting/navigation decisions stay
+   with the existing application functions. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy855-liquid-lens');
+
+  const reduced=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function replayClass(node,name,duration){
+    if(!node)return;
+    node.classList.remove(name);
+    /* Force only this tiny animated element to restart; never reflow a page. */
+    void node.offsetWidth;
+    node.classList.add(name);
+    clearTimeout(node.__vy856ReplayTimer);
+    node.__vy856ReplayTimer=setTimeout(()=>node.classList.remove(name),duration||420);
+  }
+
+  /* ---------- Nav feedback ---------- */
+  document.addEventListener('click',event=>{
+    const button=event.target&&event.target.closest?event.target.closest('.nav button[data-android-tab]'):null;
+    if(!button)return;
+    if(!reduced())replayClass(button,'vy856-tab-pop',380);
+  },true);
+
+  /* ---------- Settings forward/back transitions ---------- */
+  let settingsState='';
+  function syncSettingsMotion(){
+    const screen=document.getElementById('screen-settings');
+    if(!screen||screen.classList.contains('hide'))return;
+    const home=screen.querySelector('.vy675-settings-home');
+    const page=screen.querySelector('.vy675-settings-page');
+    const state=page&&!page.hidden?'page':home&&!home.hidden?'home':'';
+    if(!state||state===settingsState)return;
+    const previous=settingsState;
+    settingsState=state;
+    if(reduced())return;
+    if(state==='page')replayClass(page,'vy856-settings-in',300);
+    if(state==='home'&&previous==='page')replayClass(home,'vy856-settings-home-in',300);
+  }
+
+  /* ---------- Non-opaque liquid theme halo ---------- */
+  let themeVisualBusy=false;
+  function themeButtonCenter(event){
+    if(event&&Number.isFinite(event.clientX)&&Number.isFinite(event.clientY)&&event.clientX>0&&event.clientY>0){
+      return{x:event.clientX,y:event.clientY};
+    }
+    const button=document.getElementById('themeToggle');
+    if(button){
+      const r=button.getBoundingClientRect();
+      return{x:r.left+r.width/2,y:r.top+r.height/2};
+    }
+    return{x:innerWidth-36,y:36};
+  }
+
+  function spawnThemeLens(target,event){
+    if(reduced())return;
+    document.querySelectorAll('.vy856-theme-lens').forEach(node=>node.remove());
+    const center=themeButtonCenter(event);
+    const lens=document.createElement('div');
+    lens.className='vy856-theme-lens '+(target==='light'?'to-light':'to-dark');
+    lens.style.left=center.x+'px';
+    lens.style.top=center.y+'px';
+    const farX=Math.max(center.x,innerWidth-center.x);
+    const farY=Math.max(center.y,innerHeight-center.y);
+    const scale=Math.max(2,Math.hypot(farX,farY)/32+1.5);
+    lens.style.setProperty('--vy856-theme-scale',String(scale));
+    document.body.appendChild(lens);
+    setTimeout(()=>lens.remove(),470);
+  }
+
+  function animateThemeButton(){
+    if(reduced())return;
+    const button=document.getElementById('themeToggle');
+    replayClass(button,'vy856-theme-button-pop',420);
+  }
+
+  const priorToggle=typeof window.toggleTheme==='function'?window.toggleTheme:null;
+  if(priorToggle&&!priorToggle.__vy856Wrapped){
+    const wrapped=function(event){
+      if(themeVisualBusy)return false;
+      themeVisualBusy=true;
+      const target=root.classList.contains('theme-light')?'dark':'light';
+      spawnThemeLens(target,event);
+      animateThemeButton();
+      const result=priorToggle.call(this,event);
+      setTimeout(()=>{themeVisualBusy=false},reduced()?80:300);
+      return result;
+    };
+    wrapped.__vy856Wrapped=true;
+    window.toggleTheme=wrapped;
+  }
+
+  const priorSetTheme=typeof window.setTheme==='function'?window.setTheme:null;
+  if(priorSetTheme&&!priorSetTheme.__vy856Wrapped){
+    const wrapped=function(theme,event){
+      const target=theme==='light'?'light':'dark';
+      const already=(target==='light')===root.classList.contains('theme-light');
+      if(already)return false;
+      spawnThemeLens(target,event);
+      animateThemeButton();
+      return priorSetTheme.call(this,target);
+    };
+    wrapped.__vy856Wrapped=true;
+    window.setTheme=wrapped;
+  }
+
+  /* ---------- Keep the liquid lens aligned after any old renderer rebuilds
+     the navbar. The stability layer owns coordinates; this only lets CSS
+     animate the delta instead of snapping. ---------- */
+  function nudgeLens(){
+    const nav=document.getElementById('nav')||document.querySelector('.nav');
+    if(!nav)return;
+    const lens=nav.querySelector('.android-nav-glass-indicator');
+    const active=nav.querySelector('button.active[data-android-tab]');
+    if(!lens||!active)return;
+    const x=active.offsetLeft;
+    const w=active.offsetWidth;
+    if(Math.abs((parseFloat(lens.style.width)||0)-w)>.2)lens.style.width=w+'px';
+    const expected='translate3d('+x+'px,0,0)';
+    if(lens.style.transform!==expected)lens.style.transform=expected;
+  }
+
+  let queued=false;
+  function scheduleSync(){
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{
+      queued=false;
+      syncSettingsMotion();
+      nudgeLens();
+    });
+  }
+
+  const observer=new MutationObserver(records=>{
+    if(records.some(record=>record.type==='childList'||record.attributeName==='class'||record.attributeName==='hidden'))scheduleSync();
+  });
+
+  function init(){
+    root.classList.add('vy855-liquid-lens');
+    syncSettingsMotion();
+    nudgeLens();
+    if(document.body){
+      observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+    }
+    window.addEventListener('resize',scheduleSync,{passive:true});
+    window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,100),{passive:true});
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
+})();
+
+/* ===== SCRIPT SOURCE: ios27-convex-857.js ===== */
+
+/* Vyapar AI 8.5.7 preview — behaving convex lens + smarter recommendation presenter.
+   No accounting/auth decisions are replaced. This layer only reacts to UI state. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy857-ios27');
+
+  const lensSelector=[
+    '.top',
+    '.nav',
+    '.android-sheet',
+    '.shop-progress-sheet',
+    '.vx643-modal',
+    '.subscription-dialog',
+    '.more-sheet',
+    '.menu-popover',
+    '#vyaparOtpGate .auth-card',
+    '#screen-settings .vy675-settings-list',
+    '#screen-settings .vy675-settings-intro',
+    '#screen-settings .vy675-page-header',
+    '#shopGrowthSummary'
+  ].join(',');
+
+  function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
+
+  function directChildByClass(surface,className){
+    if(!surface)return null;
+    for(let i=0;i<surface.children.length;i+=1){
+      const child=surface.children[i];
+      if(child.classList&&child.classList.contains(className))return child;
+    }
+    return null;
+  }
+
+  function ensureLens(surface){
+    if(!surface||directChildByClass(surface,'vy857-convex-edge'))return;
+    const edge=document.createElement('i');
+    edge.className='vy857-convex-edge';
+    edge.setAttribute('aria-hidden','true');
+    surface.appendChild(edge);
+    surface.classList.add('vy857-lens-surface');
+  }
+
+  function attachLenses(){
+    document.querySelectorAll(lensSelector).forEach(ensureLens);
+  }
+
+  function pointFromEvent(event){
+    if(event.touches&&event.touches[0])return event.touches[0];
+    if(event.changedTouches&&event.changedTouches[0])return event.changedTouches[0];
+    return event;
+  }
+
+  function updateLens(surface,event,active){
+    if(!surface)return;
+    const point=pointFromEvent(event);
+    const rect=surface.getBoundingClientRect();
+    if(!rect.width||!rect.height||!Number.isFinite(point.clientX)||!Number.isFinite(point.clientY))return;
+    const rx=clamp((point.clientX-rect.left)/rect.width,0,1);
+    const ry=clamp((point.clientY-rect.top)/rect.height,0,1);
+    const edgeY=Math.round((ry-.5)*9);
+    const spread=Math.round((.5-rx)*4);
+    surface.style.setProperty('--vy857-px',(rx*100).toFixed(1)+'%');
+    surface.style.setProperty('--vy857-py',(ry*100).toFixed(1)+'%');
+    surface.style.setProperty('--vy857-edge-y',edgeY+'px');
+    surface.style.setProperty('--vy857-red-edge-y',(-edgeY)+'px');
+    surface.style.setProperty('--vy857-green-shift',(2+spread)+'px');
+    surface.style.setProperty('--vy857-red-shift',(-2+spread)+'px');
+    if(active)surface.classList.add('vy857-lens-active');
+    clearTimeout(surface.__vy857LensTimer);
+    surface.__vy857LensTimer=setTimeout(()=>surface.classList.remove('vy857-lens-active'),240);
+  }
+
+  function lensEvent(event){
+    const surface=event.target&&event.target.closest?event.target.closest(lensSelector):null;
+    if(!surface)return;
+    updateLens(surface,event,event.type!=='pointerleave'&&event.type!=='touchend');
+  }
+
+  ['pointerdown','pointermove','pointerleave','touchstart','touchmove','touchend'].forEach(type=>{
+    document.addEventListener(type,lensEvent,{passive:true,capture:true});
+  });
+
+  function number(value){
+    const out=Number(value);
+    return Number.isFinite(out)?out:0;
+  }
+
+  function todayKey(){
+    const d=new Date();
+    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+  }
+
+  function currentState(){
+    try{return window.state&&typeof window.state==='object'?window.state:{}}catch(_){return {}}
+  }
+
+  function recommendation(){
+    const s=currentState();
+    const today=todayKey();
+    const daily=(Array.isArray(s.daily)?s.daily:[]).filter(item=>String(item&&item.date||'')===today);
+    const itemSales=(Array.isArray(s.sales)?s.sales:[]).filter(item=>String(item&&item.date||'')===today);
+    const hasToday=daily.length>0||itemSales.length>0;
+    const stocks=Array.isArray(s.stocks)?s.stocks:[];
+    let low=0;
+    stocks.forEach(item=>{
+      const qty=Math.max(0,number(item&&(item.qty!==undefined?item.qty:item.availableQty)));
+      const min=Math.max(0,number(item&&(item.lowStock!==undefined?item.lowStock:item.minAlertQty)));
+      if(min>0&&qty<=min)low+=1;
+    });
+
+    if(!hasToday){
+      return{
+        title:'Record today’s first sale',
+        detail:'One real sale or daily entry keeps today’s trend, streak and profit view current.',
+        action:'Open Sales',
+        tab:'sales',
+        icon:'✦'
+      };
+    }
+    if(low>0){
+      return{
+        title:'Restock '+low+' low-stock item'+(low===1?'':'s'),
+        detail:'Your sales are being recorded. Protect the next sale by checking low-stock products now.',
+        action:'Open Stock',
+        tab:'stock',
+        icon:'↗'
+      };
+    }
+
+    const customerDue=(Array.isArray(s.customers)?s.customers:[]).reduce((sum,item)=>sum+Math.max(0,number(item&&(item.due!==undefined?item.due:item.balance))),0);
+    if(customerDue>0){
+      return{
+        title:'Review customer dues',
+        detail:'Today is recorded and stock looks stable. A quick due check can improve cash-flow follow-up.',
+        action:'Business',
+        tab:'business',
+        icon:'₹'
+      };
+    }
+
+    return{
+      title:'Review today before closing',
+      detail:'Sales and stock look current. Check margin, expenses and cash position before the day ends.',
+      action:'Business',
+      tab:'business',
+      icon:'✓'
+    };
+  }
+
+  function recommendationSignature(data){
+    return [data.title,data.detail,data.action,data.tab,data.icon].join('|');
+  }
+
+  function recommendationMarkup(data,compact){
+    return '<div class="vy857-smart-rec'+(compact?' is-compact':'')+'" data-vy857-rec="'+data.tab+'" data-vy857-signature="'+recommendationSignature(data).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+
+      '<div class="vy857-rec-orb">'+data.icon+'</div>'+
+      '<div class="vy857-rec-copy"><span>NEXT BEST ACTION</span><b>'+data.title+'</b><small>'+data.detail+'</small></div>'+
+      '<button type="button" class="vy857-rec-action" data-vy857-open="'+data.tab+'">'+data.action+'</button>'+
+    '</div>';
+  }
+
+  function updateRecommendationNode(rec,data){
+    if(!rec)return;
+    const signature=recommendationSignature(data);
+    if(rec.getAttribute('data-vy857-signature')===signature)return;
+    const copy=rec.querySelector('.vy857-rec-copy');
+    const orb=rec.querySelector('.vy857-rec-orb');
+    const button=rec.querySelector('.vy857-rec-action');
+    if(copy){
+      const kicker=copy.querySelector('span');
+      const title=copy.querySelector('b');
+      const detail=copy.querySelector('small');
+      if(kicker)kicker.textContent='NEXT BEST ACTION';
+      if(title)title.textContent=data.title;
+      if(detail)detail.textContent=data.detail;
+    }
+    if(orb)orb.textContent=data.icon;
+    if(button){button.textContent=data.action;button.setAttribute('data-vy857-open',data.tab);}
+    rec.setAttribute('data-vy857-rec',data.tab);
+    rec.setAttribute('data-vy857-signature',signature);
+  }
+
+  function directRecommendation(parent){
+    if(!parent)return null;
+    for(let i=0;i<parent.children.length;i+=1){
+      const child=parent.children[i];
+      if(child.classList&&child.classList.contains('vy857-smart-rec'))return child;
+    }
+    return null;
+  }
+
+  function syncRecommendation(){
+    const data=recommendation();
+    const summary=document.getElementById('shopGrowthSummary');
+    if(summary){
+      let rec=directRecommendation(summary);
+      if(!rec){
+        const foot=summary.querySelector('.shop-growth-foot');
+        const holder=document.createElement('div');
+        holder.innerHTML=recommendationMarkup(data,false);
+        rec=holder.firstElementChild;
+        if(foot)summary.insertBefore(rec,foot);else summary.appendChild(rec);
+      }else updateRecommendationNode(rec,data);
+    }
+
+    const sheet=document.querySelector('.shop-progress-sheet');
+    if(sheet){
+      let rec=directRecommendation(sheet);
+      if(!rec){
+        const score=sheet.querySelector('.shop-sheet-score');
+        const holder=document.createElement('div');
+        holder.innerHTML=recommendationMarkup(data,true);
+        rec=holder.firstElementChild;
+        if(score)score.parentNode.insertBefore(rec,score.nextSibling);
+        else sheet.insertBefore(rec,sheet.firstChild);
+      }else updateRecommendationNode(rec,data);
+    }
+  }
+
+  document.addEventListener('click',event=>{
+    const button=event.target&&event.target.closest?event.target.closest('[data-vy857-open]'):null;
+    if(!button)return;
+    const tab=button.getAttribute('data-vy857-open');
+    try{
+      const close=document.getElementById('closeShopProgress');
+      if(close)close.click();
+    }catch(_){}
+    try{if(typeof window.setTab==='function')window.setTab(tab,false);}catch(_){}
+  },true);
+
+  let queued=false;
+  function scheduleSync(){
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{
+      queued=false;
+      attachLenses();
+      syncRecommendation();
+    });
+  }
+
+  const observer=new MutationObserver(records=>{
+    if(records.some(record=>record.type==='childList'||record.attributeName==='class'||record.attributeName==='hidden'))scheduleSync();
+  });
+
+  function init(){
+    root.classList.add('vy857-ios27');
+    attachLenses();
+    syncRecommendation();
+    if(document.body)observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+    window.addEventListener('resize',scheduleSync,{passive:true});
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
+})();
+
+/* ===== SCRIPT SOURCE: ios-liquid-unified-858.js ===== */
+
+/* Vyapar AI 8.5.7 final UI coordinator.
+   Presentation only: existing auth/accounting/business decisions remain untouched. */
+(function(){
+  'use strict';
+
+  const root=document.documentElement;
+  root.classList.add('vy858-unified');
+  const reduced=()=>Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const shellSelector='.top,.nav';
+
+  /* Existing 8.5.7 lens nodes may still exist on old cards; CSS hides those.
+     Only the top/nav shell receives visible optical movement. */
+  let scrollQueued=false;
+  function syncScrollRefraction(){
+    scrollQueued=false;
+    const y=Math.max(0,window.scrollY||document.documentElement.scrollTop||0);
+    const shift=((y%18)-9)*0.18;
+    document.querySelectorAll(shellSelector).forEach(shell=>{
+      shell.style.setProperty('--vy858-scroll-shift',shift.toFixed(2)+'px');
+      shell.style.setProperty('--vy858-scroll-shift-neg',(-shift).toFixed(2)+'px');
+    });
+  }
+  function queueScrollRefraction(){
+    if(scrollQueued)return;
+    scrollQueued=true;
+    requestAnimationFrame(syncScrollRefraction);
+  }
+  window.addEventListener('scroll',queueScrollRefraction,{passive:true});
+
+  function polishAuthLabels(){
+    const pass=document.getElementById('tab-login-pass');
+    const otp=document.getElementById('tab-login-otp');
+    const passSubmit=document.getElementById('login-password-submit');
+    const otpSubmit=document.getElementById('login-otp-submit');
+    if(pass)pass.textContent='Password';
+    if(otp)otp.textContent='Email OTP';
+    if(passSubmit&&!/Signing/i.test(passSubmit.textContent||''))passSubmit.textContent='Sign In';
+    if(otpSubmit&&!/Verifying/i.test(otpSubmit.textContent||''))otpSubmit.textContent='Verify & Sign In';
+  }
+
+  /* Telegram-like large watery radial theme reveal from the actual top-right control. */
+  let themeBusy=false;
+  function centerFrom(event){
+    if(event&&Number.isFinite(event.clientX)&&Number.isFinite(event.clientY)&&event.clientX>0&&event.clientY>0){
+      return{x:event.clientX,y:event.clientY};
+    }
+    const button=document.getElementById('themeToggle');
+    if(button){const r=button.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};}
+    return{x:innerWidth-34,y:34};
+  }
+  function createSweep(target,event){
+    document.querySelectorAll('.vy858-theme-sweep').forEach(node=>node.remove());
+    if(reduced())return null;
+    const c=centerFrom(event);
+    const farX=Math.max(c.x,innerWidth-c.x);
+    const farY=Math.max(c.y,innerHeight-c.y);
+    const radius=Math.ceil(Math.hypot(farX,farY)+36);
+    const layer=document.createElement('div');
+    layer.className='vy858-theme-sweep '+(target==='light'?'to-light':'to-dark');
+    layer.style.setProperty('--vy858-theme-x',c.x+'px');
+    layer.style.setProperty('--vy858-theme-y',c.y+'px');
+    layer.style.setProperty('--vy858-theme-radius',radius+'px');
+    layer.style.setProperty('--vy858-theme-scale',String(radius/32));
+    document.body.appendChild(layer);
+    return layer;
+  }
+
+  const priorToggle=typeof window.toggleTheme==='function'?window.toggleTheme:null;
+  if(priorToggle&&!priorToggle.__vy858Wrapped){
+    const wrapped=function(event){
+      if(themeBusy)return false;
+      themeBusy=true;
+      const target=root.classList.contains('theme-light')?'dark':'light';
+      const layer=createSweep(target,event);
+      setTimeout(()=>{
+        try{priorToggle.call(this,event);}catch(_){themeBusy=false;layer?.remove();}
+      },reduced()?0:190);
+      setTimeout(()=>{
+        layer?.remove();
+        themeBusy=false;
+        polishAuthLabels();
+      },reduced()?80:560);
+      return false;
+    };
+    wrapped.__vy858Wrapped=true;
+    window.toggleTheme=wrapped;
+  }
+
+  const priorSetTheme=typeof window.setTheme==='function'?window.setTheme:null;
+  if(priorSetTheme&&!priorSetTheme.__vy858Wrapped){
+    const wrapped=function(theme,event){
+      const target=theme==='light'?'light':'dark';
+      const already=(target==='light')===root.classList.contains('theme-light');
+      if(already||themeBusy)return false;
+      themeBusy=true;
+      const layer=createSweep(target,event);
+      setTimeout(()=>{try{priorSetTheme.call(this,target,event);}catch(_){}},reduced()?0:190);
+      setTimeout(()=>{layer?.remove();themeBusy=false;polishAuthLabels();},reduced()?80:560);
+      return false;
+    };
+    wrapped.__vy858Wrapped=true;
+    window.setTheme=wrapped;
+  }
+
+  /* More/Journey: keep the document fixed behind the liquid popup and restore position. */
+  let pageY=0;
+  function lockBody(){
+    if(document.body.dataset.vy858Locked==='1')return;
+    pageY=window.scrollY||0;
+    document.body.dataset.vy858Locked='1';
+    document.body.style.setProperty('--vy858-page-y',pageY+'px');
+  }
+  function unlockBody(){
+    if(document.body.dataset.vy858Locked!=='1')return;
+    document.body.dataset.vy858Locked='0';
+    requestAnimationFrame(()=>window.scrollTo(0,pageY));
+  }
+  function syncPopupState(){
+    const more=document.querySelector('.android-sheet-overlay');
+    const journey=document.querySelector('.shop-progress-overlay');
+    if(more||journey)lockBody();else unlockBody();
+    [more?.querySelector('.android-sheet'),journey?.querySelector('.shop-progress-sheet')].filter(Boolean).forEach(sheet=>{
+      if(sheet.dataset.vy858Prepared)return;
+      sheet.dataset.vy858Prepared='1';
+      sheet.scrollTop=0;
+    });
+  }
+
+  document.addEventListener('click',event=>{
+    const moreButton=event.target&&event.target.closest?event.target.closest('.nav button[data-android-tab="more"],.nav button[data-tab="more"]'):null;
+    if(moreButton)pageY=window.scrollY||0;
+  },true);
+
+  let queued=false;
+  function schedule(){
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{
+      queued=false;
+      polishAuthLabels();
+      syncPopupState();
+      syncScrollRefraction();
+    });
+  }
+
+  const observer=new MutationObserver(records=>{
+    if(records.some(r=>r.type==='childList'||r.attributeName==='class'||r.attributeName==='hidden'))schedule();
+  });
+
+  function init(){
+    root.classList.add('vy858-unified');
+    polishAuthLabels();
+    syncScrollRefraction();
+    syncPopupState();
+    if(document.body)observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+    window.addEventListener('resize',schedule,{passive:true});
+    window.addEventListener('orientationchange',()=>setTimeout(schedule,100),{passive:true});
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
 })();

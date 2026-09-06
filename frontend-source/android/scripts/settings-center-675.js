@@ -369,8 +369,6 @@
       activePage = '';
       const result = current.apply(this, arguments);
       build();
-      setTimeout(scheduleBuild, 0);
-      setTimeout(scheduleBuild, 120);
       return result;
     };
     wrapped.__vy675SettingsCenter = true;
@@ -424,7 +422,13 @@
     installScrollBehaviour();
     installNativeBack();
     observer = new MutationObserver(records => {
-      if (records.some(record => record.addedNodes?.length || record.removedNodes?.length)) scheduleBuild();
+      if (building) return;
+      const needsBuild = records.some(record => {
+        const target = record.target;
+        if (target instanceof Element && target.closest('.vy675-settings-shell, .vy675-settings-repository')) return false;
+        return Boolean(record.addedNodes?.length || record.removedNodes?.length);
+      });
+      if (needsBuild) scheduleBuild();
     });
     const settingsScreen = screen();
     if (settingsScreen) observer.observe(settingsScreen, { childList: true, subtree: true });
