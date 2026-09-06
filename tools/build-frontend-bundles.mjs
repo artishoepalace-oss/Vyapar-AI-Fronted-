@@ -55,7 +55,8 @@ const uiStyles = [
   'ios27-convex-857-fix.css',
   'ios-liquid-unified-858.css',
   'settings-overlap-858.css',
-  'liquid-glass-v2-859.css'
+  'liquid-glass-v2-859.css',
+  'ios-hig-blur-860.css'
 ];
 
 const scripts = [
@@ -87,7 +88,8 @@ const scripts = [
   'liquid-lens-motion-856.js',
   'ios27-convex-857.js',
   'ios-liquid-unified-858.js',
-  'liquid-glass-v2-859.js'
+  'liquid-glass-v2-859.js',
+  'ios-hig-blur-860.js'
 ];
 
 function readSource(subdirectory, filename) {
