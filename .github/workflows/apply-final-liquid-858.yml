@@ -1,0 +1,90 @@
+name: Apply final liquid polish 8.5.8 layer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-final-liquid-858.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Patch Settings rebuild lag
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('frontend-source/android/scripts/settings-center-675.js')
+          s=p.read_text()
+
+          old="""      build();
+                setTimeout(scheduleBuild, 0);
+                setTimeout(scheduleBuild, 120);
+                return result;"""
+          new="""      build();
+                return result;"""
+          if old in s:
+              s=s.replace(old,new,1)
+
+          old_obs="""    observer = new MutationObserver(records => {
+                if (records.some(record => record.addedNodes?.length || record.removedNodes?.length)) scheduleBuild();
+              });"""
+          new_obs="""    observer = new MutationObserver(records => {
+                if (building) return;
+                const needsBuild = records.some(record => {
+                  const target = record.target;
+                  if (target instanceof Element && target.closest('.vy675-settings-shell, .vy675-settings-repository')) return false;
+                  return Boolean(record.addedNodes?.length || record.removedNodes?.length);
+                });
+                if (needsBuild) scheduleBuild();
+              });"""
+          if old_obs not in s:
+              raise SystemExit('Expected Settings observer block not found')
+          s=s.replace(old_obs,new_obs,1)
+          p.write_text(s)
+          PY
+
+      - name: Rebuild Android frontend bundles
+        run: node tools/build-frontend-bundles.mjs
+
+      - name: Validate final UI
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend-source/android/scripts/ios-liquid-unified-858.js
+          node --check frontend-source/android/scripts/settings-center-675.js
+          node --check android-app/app/src/main/assets/assets/scripts/vyapar-app.js
+          grep -q "STYLE SOURCE: ios-liquid-unified-858.css" android-app/app/src/main/assets/assets/styles/vyapar-ui.css
+          grep -q "SCRIPT SOURCE: ios-liquid-unified-858.js" android-app/app/src/main/assets/assets/scripts/vyapar-app.js
+          grep -q "vy858-unified" android-app/app/src/main/assets/index.html
+          grep -q "target.closest('.vy675-settings-shell, .vy675-settings-repository')" frontend-source/android/scripts/settings-center-675.js
+          node - <<'NODE'
+          const v=require('./version.json');
+          if(v.versionName!=='8.5.7.2026'||v.versionCode!==8572026) throw new Error('Version changed unexpectedly');
+          console.log('Final liquid UI validated:',v.versionName,v.versionCode);
+          NODE
+
+      - name: Commit final source and generated runtime bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/apply-final-liquid-858.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Finalize 8.5.7 liquid glass UI and Settings stability"
+          git push origin HEAD:main
