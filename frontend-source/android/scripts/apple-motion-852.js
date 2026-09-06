@@ -106,6 +106,7 @@
 
   /* Capture sheet actions so the close animation is visible instead of instant removal. */
   document.addEventListener('click', event => {
+    if (document.documentElement.classList.contains('vy859-liquid-v2')) return;
     const overlay = event.target && event.target.closest ? event.target.closest('#androidMoreSheet') : null;
     if (!overlay) return;
 
