@@ -44,7 +44,8 @@ const uiStyles = [
   'ui-stability-862.css',
   'graphite-maroon-863.css',
   'profile-light-863.css',
-  'premium-tier-864.css'
+  'premium-tier-864.css',
+  'premium-light-864.css'
 ];
 
 const scripts = [
