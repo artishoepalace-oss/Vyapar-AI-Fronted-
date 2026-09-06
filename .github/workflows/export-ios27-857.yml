@@ -1,0 +1,45 @@
+name: Export Vyapar AI iOS27 Convex Preview
+
+on:
+  push:
+    branches:
+      - fix/ios27-convex-lens-recommendation-857
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild Android frontend bundles
+        run: node tools/build-frontend-bundles.mjs
+
+      - name: Validate bundled JavaScript
+        run: |
+          node --check frontend-source/android/scripts/ios27-convex-857.js
+          node --check android-app/app/src/main/assets/assets/scripts/vyapar-app.js
+
+      - name: Create full source ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p export
+          zip -qr export/Vyapar-AI-iOS27-Convex-857.zip . \
+            -x '.git/*' 'export/*' '*.apk' 'android-app/.gradle/*' 'android-app/app/build/*'
+
+      - name: Upload source ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vyapar-AI-iOS27-Convex-857-source
+          path: export/Vyapar-AI-iOS27-Convex-857.zip
+          if-no-files-found: error
