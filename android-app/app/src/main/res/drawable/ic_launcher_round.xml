@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Legacy (API 23–25) circular launcher wrapper. The square source bitmap is
-     kept fully inside the circular silhouette so its white corners can never
-     protrude beyond the icon mask. API 26+ uses the adaptive override. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="#FFFFFFFF" />
+            <solid android:color="#09090A" />
         </shape>
     </item>
     <item
-        android:width="34dp"
-        android:height="34dp"
-        android:gravity="center">
-        <bitmap
-            android:src="@drawable/ic_launcher"
-            android:gravity="fill"
-            android:filter="true" />
-    </item>
+        android:width="52dp"
+        android:height="52dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_launcher_mark_864" />
 </layer-list>
