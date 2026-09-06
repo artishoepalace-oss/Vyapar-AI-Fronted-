@@ -39,7 +39,8 @@ const uiStyles = [
   'telegram-shell-851.css',
   'inspected-glitchfix-855.css',
   'settings-overlap-858.css',
-  'flat-black-ios-861.css'
+  'flat-black-ios-861.css',
+  'dark-mode-pro-862.css'
 ];
 
 const scripts = [
