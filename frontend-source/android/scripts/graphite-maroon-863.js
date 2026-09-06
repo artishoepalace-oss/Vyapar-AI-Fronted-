@@ -71,13 +71,11 @@
   function initial(){
     const name=displayName();
     const parts=name.split(/\s+/).filter(Boolean);
-    return ((parts[0]&&parts[0][0])||'P')+((parts.length>1&&parts[parts.length-1][0])||'');
+    return (((parts[0]&&parts[0][0])||'P')+((parts.length>1&&parts[parts.length-1][0])||'')).slice(0,2).toUpperCase();
   }
 
   function openProfile(){
-    try{
-      if(typeof window.setTab==='function')window.setTab('settings',false);
-    }catch(_){ }
+    try{if(typeof window.setTab==='function')window.setTab('settings',false)}catch(_){ }
     const openAccount=()=>{
       const row=document.querySelector('#screen-settings [data-vy675-page="account"]');
       if(row){row.click();return true}
@@ -104,29 +102,39 @@
       chip.type='button';
       chip.className='vy863-profile-chip';
       chip.setAttribute('aria-label','Open account and plan');
-      chip.addEventListener('click',openProfile);
       actions.appendChild(chip);
+    }
+    if(chip.dataset.vy863Bound!=='1'){
+      chip.dataset.vy863Bound='1';
+      chip.addEventListener('click',openProfile);
     }
 
     const image=profileImage();
-    chip.innerHTML='<span class="vy863-profile-avatar">'+(image?'<img src="'+image.replace(/"/g,'&quot;')+'" alt="">':initial().slice(0,2).toUpperCase())+'</span><i class="vy863-plan-dot" aria-hidden="true"></i>';
-    chip.title=displayName()+' · '+planName().replace(/\s+Plan$/i,'');
+    const name=displayName();
+    const plan=planName().replace(/\s+Plan$/i,'');
+    const signature=[image,initial(),name,plan].join('|');
+    if(chip.dataset.vy863Signature!==signature){
+      chip.dataset.vy863Signature=signature;
+      chip.innerHTML='<span class="vy863-profile-avatar">'+(image?'<img src="'+image.replace(/"/g,'&quot;')+'" alt="">':initial())+'</span><i class="vy863-plan-dot" aria-hidden="true"></i>';
+      chip.title=name+' · '+plan;
+    }
   }
 
   function applyPlan(){
     const plan=normalizedPlan();
-    root.dataset.vy863Plan=plan;
+    if(root.dataset.vy863Plan!==plan)root.dataset.vy863Plan=plan;
     const card=document.getElementById('productionAccountCard');
-    if(card)card.dataset.vy863Plan=plan;
+    if(card&&card.dataset.vy863Plan!==plan)card.dataset.vy863Plan=plan;
     const host=document.getElementById('productionAccountCardHost');
-    if(host)host.dataset.vy863Plan=plan;
-    document.querySelectorAll('#screen-settings .settings-account-section').forEach(node=>node.dataset.vy863Plan=plan);
+    if(host&&host.dataset.vy863Plan!==plan)host.dataset.vy863Plan=plan;
+    document.querySelectorAll('#screen-settings .settings-account-section').forEach(node=>{
+      if(node.dataset.vy863Plan!==plan)node.dataset.vy863Plan=plan;
+    });
   }
 
   function removeBlueInlineStyles(){
     if(root.classList.contains('theme-light'))return;
-    const scope=document.querySelectorAll('#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings');
-    scope.forEach(screen=>{
+    document.querySelectorAll('#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings').forEach(screen=>{
       screen.querySelectorAll('[style]').forEach(node=>{
         const style=node.getAttribute('style')||'';
         if(/background(?:-color)?\s*:\s*(?:#(?:0a84ff|0071e3|2563eb|1d4ed8|0b3b68|0d3b66|123c66)|rgb\([^)]*(?:10\s*,\s*132\s*,\s*255|37\s*,\s*99\s*,\s*235)[^)]*\))/i.test(style)){
@@ -147,7 +155,7 @@
       const text=(row.textContent||'').toLowerCase();
       if(!text.includes('appearance & performance'))return;
       const sub=row.querySelector('small');
-      if(sub)sub.textContent='Theme follows your saved preference and device performance';
+      if(sub&&sub.textContent!=='Theme, motion and device performance')sub.textContent='Theme, motion and device performance';
     });
   }
 
