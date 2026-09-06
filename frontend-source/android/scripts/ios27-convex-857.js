@@ -24,8 +24,17 @@
 
   function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
 
+  function directChildByClass(surface,className){
+    if(!surface)return null;
+    for(let i=0;i<surface.children.length;i+=1){
+      const child=surface.children[i];
+      if(child.classList&&child.classList.contains(className))return child;
+    }
+    return null;
+  }
+
   function ensureLens(surface){
-    if(!surface||surface.querySelector(':scope > .vy857-convex-edge'))return;
+    if(!surface||directChildByClass(surface,'vy857-convex-edge'))return;
     const edge=document.createElement('i');
     edge.className='vy857-convex-edge';
     edge.setAttribute('aria-hidden','true');
@@ -47,7 +56,7 @@
     if(!surface)return;
     const point=pointFromEvent(event);
     const rect=surface.getBoundingClientRect();
-    if(!rect.width||!rect.height)return;
+    if(!rect.width||!rect.height||!Number.isFinite(point.clientX)||!Number.isFinite(point.clientY))return;
     const rx=clamp((point.clientX-rect.left)/rect.width,0,1);
     const ry=clamp((point.clientY-rect.top)/rect.height,0,1);
     const edgeY=Math.round((ry-.5)*9);
@@ -55,6 +64,7 @@
     surface.style.setProperty('--vy857-px',(rx*100).toFixed(1)+'%');
     surface.style.setProperty('--vy857-py',(ry*100).toFixed(1)+'%');
     surface.style.setProperty('--vy857-edge-y',edgeY+'px');
+    surface.style.setProperty('--vy857-red-edge-y',(-edgeY)+'px');
     surface.style.setProperty('--vy857-green-shift',(2+spread)+'px');
     surface.style.setProperty('--vy857-red-shift',(-2+spread)+'px');
     if(active)surface.classList.add('vy857-lens-active');
@@ -68,7 +78,7 @@
     updateLens(surface,event,event.type!=='pointerleave'&&event.type!=='touchend');
   }
 
-  ['pointerdown','pointermove','pointerenter','pointerleave','touchstart','touchmove','touchend'].forEach(type=>{
+  ['pointerdown','pointermove','pointerleave','touchstart','touchmove','touchend'].forEach(type=>{
     document.addEventListener(type,lensEvent,{passive:true,capture:true});
   });
 
@@ -123,7 +133,7 @@
     if(customerDue>0){
       return{
         title:'Review customer dues',
-        detail:'Today is recorded and stock looks stable. A quick due check can improve cash flow follow-up.',
+        detail:'Today is recorded and stock looks stable. A quick due check can improve cash-flow follow-up.',
         action:'Business',
         tab:'business',
         icon:'₹'
@@ -139,55 +149,73 @@
     };
   }
 
+  function recommendationSignature(data){
+    return [data.title,data.detail,data.action,data.tab,data.icon].join('|');
+  }
+
   function recommendationMarkup(data,compact){
-    return '<div class="vy857-smart-rec'+(compact?' is-compact':'')+'" data-vy857-rec="'+data.tab+'">'+
+    return '<div class="vy857-smart-rec'+(compact?' is-compact':'')+'" data-vy857-rec="'+data.tab+'" data-vy857-signature="'+recommendationSignature(data).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+
       '<div class="vy857-rec-orb">'+data.icon+'</div>'+
       '<div class="vy857-rec-copy"><span>NEXT BEST ACTION</span><b>'+data.title+'</b><small>'+data.detail+'</small></div>'+
       '<button type="button" class="vy857-rec-action" data-vy857-open="'+data.tab+'">'+data.action+'</button>'+
     '</div>';
   }
 
+  function updateRecommendationNode(rec,data){
+    if(!rec)return;
+    const signature=recommendationSignature(data);
+    if(rec.getAttribute('data-vy857-signature')===signature)return;
+    const copy=rec.querySelector('.vy857-rec-copy');
+    const orb=rec.querySelector('.vy857-rec-orb');
+    const button=rec.querySelector('.vy857-rec-action');
+    if(copy){
+      const kicker=copy.querySelector('span');
+      const title=copy.querySelector('b');
+      const detail=copy.querySelector('small');
+      if(kicker)kicker.textContent='NEXT BEST ACTION';
+      if(title)title.textContent=data.title;
+      if(detail)detail.textContent=data.detail;
+    }
+    if(orb)orb.textContent=data.icon;
+    if(button){button.textContent=data.action;button.setAttribute('data-vy857-open',data.tab);}
+    rec.setAttribute('data-vy857-rec',data.tab);
+    rec.setAttribute('data-vy857-signature',signature);
+  }
+
+  function directRecommendation(parent){
+    if(!parent)return null;
+    for(let i=0;i<parent.children.length;i+=1){
+      const child=parent.children[i];
+      if(child.classList&&child.classList.contains('vy857-smart-rec'))return child;
+    }
+    return null;
+  }
+
   function syncRecommendation(){
     const data=recommendation();
     const summary=document.getElementById('shopGrowthSummary');
     if(summary){
-      let rec=summary.querySelector(':scope > .vy857-smart-rec');
+      let rec=directRecommendation(summary);
       if(!rec){
         const foot=summary.querySelector('.shop-growth-foot');
         const holder=document.createElement('div');
         holder.innerHTML=recommendationMarkup(data,false);
         rec=holder.firstElementChild;
         if(foot)summary.insertBefore(rec,foot);else summary.appendChild(rec);
-      }else{
-        const copy=rec.querySelector('.vy857-rec-copy');
-        const orb=rec.querySelector('.vy857-rec-orb');
-        const button=rec.querySelector('.vy857-rec-action');
-        if(copy)copy.innerHTML='<span>NEXT BEST ACTION</span><b>'+data.title+'</b><small>'+data.detail+'</small>';
-        if(orb)orb.textContent=data.icon;
-        if(button){button.textContent=data.action;button.setAttribute('data-vy857-open',data.tab);}
-        rec.setAttribute('data-vy857-rec',data.tab);
-      }
+      }else updateRecommendationNode(rec,data);
     }
 
     const sheet=document.querySelector('.shop-progress-sheet');
     if(sheet){
-      let rec=sheet.querySelector(':scope > .vy857-smart-rec');
+      let rec=directRecommendation(sheet);
       if(!rec){
         const score=sheet.querySelector('.shop-sheet-score');
         const holder=document.createElement('div');
         holder.innerHTML=recommendationMarkup(data,true);
         rec=holder.firstElementChild;
-        if(score&&score.nextSibling)sheet.insertBefore(rec,score.nextSibling);
-        else if(score)score.parentNode.insertBefore(rec,score.nextSibling);
+        if(score)score.parentNode.insertBefore(rec,score.nextSibling);
         else sheet.insertBefore(rec,sheet.firstChild);
-      }else{
-        const copy=rec.querySelector('.vy857-rec-copy');
-        const orb=rec.querySelector('.vy857-rec-orb');
-        const button=rec.querySelector('.vy857-rec-action');
-        if(copy)copy.innerHTML='<span>NEXT BEST ACTION</span><b>'+data.title+'</b><small>'+data.detail+'</small>';
-        if(orb)orb.textContent=data.icon;
-        if(button){button.textContent=data.action;button.setAttribute('data-vy857-open',data.tab);}
-      }
+      }else updateRecommendationNode(rec,data);
     }
   }
 
