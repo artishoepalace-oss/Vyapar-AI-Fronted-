@@ -43,7 +43,9 @@ const uiStyles = [
   'dark-mode-pro-862.css',
   'ui-stability-862.css',
   'graphite-maroon-863.css',
-  'profile-light-863.css'
+  'profile-light-863.css',
+  'premium-tier-864.css',
+  'premium-light-864.css'
 ];
 
 const scripts = [
@@ -68,7 +70,8 @@ const scripts = [
   'inspected-glitchfix-855.js',
   'flat-black-ios-861.js',
   'ui-stability-862.js',
-  'graphite-maroon-863.js'
+  'graphite-maroon-863.js',
+  'premium-tier-864.js'
 ];
 
 function readSource(subdirectory, filename) {

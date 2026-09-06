@@ -1,0 +1,243 @@
+/* Vyapar AI 8.6.4.2026 — Premium graphite/tier authority.
+   Final dark-mode layer: no blue surfaces; Free=graphite, Pro=silver, Business=gold;
+   destructive actions=deep maroon; viewport-safe floating nav; lightweight Telegram-like motion. */
+
+html.vy861-flat-black:not(.theme-light){
+  --vy864-bg:#000000;
+  --vy864-surface:#0f1012;
+  --vy864-surface-2:#15171a;
+  --vy864-surface-3:#1c1f23;
+  --vy864-surface-4:#25292e;
+  --vy864-line:rgba(255,255,255,.10);
+  --vy864-line-strong:rgba(255,255,255,.18);
+  --vy864-text:#f7f7f8;
+  --vy864-muted:#9b9fa6;
+  --vy864-muted-2:#767c84;
+  --vy864-maroon:#5a1020;
+  --vy864-maroon-2:#74182d;
+  --vy864-maroon-press:#430b17;
+  --vy864-maroon-soft:rgba(116,24,45,.18);
+  --vy864-tier-accent:#a9afb6;
+  --vy864-tier-strong:#d5d9dd;
+  --vy864-tier-soft:rgba(169,175,182,.11);
+  --vy864-tier-line:rgba(169,175,182,.30);
+  --vy864-tier-glow:rgba(169,175,182,.12);
+  --blue:#a9afb6!important;
+  --teal:#a9afb6!important;
+  --android-accent:#a9afb6!important;
+  --p1-accent:#a9afb6!important;
+  --p1-accent-strong:#d5d9dd!important;
+  --p1-accent-soft:rgba(169,175,182,.11)!important;
+  color-scheme:dark!important;
+}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="pro"]{
+  --vy864-tier-accent:#d7dbe0;
+  --vy864-tier-strong:#f2f4f6;
+  --vy864-tier-soft:rgba(215,219,224,.12);
+  --vy864-tier-line:rgba(215,219,224,.38);
+  --vy864-tier-glow:rgba(215,219,224,.14);
+}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="business"]{
+  --vy864-tier-accent:#d4aa54;
+  --vy864-tier-strong:#f0ca75;
+  --vy864-tier-soft:rgba(212,170,84,.12);
+  --vy864-tier-line:rgba(212,170,84,.42);
+  --vy864-tier-glow:rgba(212,170,84,.16);
+}
+
+html.vy861-flat-black:not(.theme-light),
+html.vy861-flat-black:not(.theme-light) body,
+html.vy861-flat-black:not(.theme-light) .app,
+html.vy861-flat-black:not(.theme-light) main,
+html.vy861-flat-black:not(.theme-light) .screen{
+  background:#000!important;background-image:none!important;color:var(--vy864-text)!important;
+}
+html.vy861-flat-black:not(.theme-light) body{overflow-x:hidden!important}
+html.vy861-flat-black:not(.theme-light) .app{max-width:100vw!important;overflow-x:clip!important;padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))!important}
+
+/* Brand mark: black/maroon asset needs no white tile. */
+html.vy861-flat-black .logo,
+html.vy861-flat-black .auth-logo,
+html.vy861-flat-black .android-loader-logo img,
+html.vy861-flat-black #vy855BootGuard img,
+html.vy861-flat-black #vy647StartupSplash img{
+  background:transparent!important;box-shadow:none!important;object-fit:contain!important;
+}
+html.vy861-flat-black #vy855BootGuard img{width:82px!important;height:82px!important;border-radius:22px!important;clip-path:none!important;-webkit-clip-path:none!important}
+html.vy861-flat-black .android-loader-logo{background:transparent!important;box-shadow:none!important}
+html.vy861-flat-black .android-loader-bar{background:#1c1d20!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black .android-loader-bar>span{background:var(--vy864-tier-accent)!important;box-shadow:none!important}
+html.vy861-flat-black #tabLoader{display:none!important}
+
+/* Compact premium top bar. */
+html.vy861-flat-black:not(.theme-light) .top{
+  min-height:64px!important;padding:8px 10px!important;margin:0 10px 14px!important;border-radius:22px!important;
+  border:1px solid var(--vy864-line)!important;background:rgba(12,13,15,.92)!important;background-image:none!important;
+  box-shadow:0 7px 22px rgba(0,0,0,.32)!important;backdrop-filter:blur(18px) saturate(108%)!important;-webkit-backdrop-filter:blur(18px) saturate(108%)!important;
+}
+html.vy861-flat-black:not(.theme-light) .top .logo{width:44px!important;height:44px!important;border-radius:14px!important}
+html.vy861-flat-black:not(.theme-light) .top h1{font-size:20px!important;font-weight:820!important;letter-spacing:-.02em!important}
+html.vy861-flat-black:not(.theme-light) .top .tag{display:none!important}
+html.vy861-flat-black:not(.theme-light) #themeToggle,
+html.vy861-flat-black:not(.theme-light) #planBadge{display:none!important}
+html.vy861-flat-black:not(.theme-light) .vy863-profile-chip{
+  width:48px!important;height:48px!important;min-width:48px!important;border-radius:50%!important;
+  background:#17191c!important;border:1px solid var(--vy864-tier-line)!important;box-shadow:0 0 0 1px var(--vy864-tier-glow)!important;
+}
+html.vy861-flat-black:not(.theme-light) .vy863-profile-chip .vy863-profile-avatar{
+  width:38px!important;height:38px!important;background:#2a2d31!important;border:1px solid var(--vy864-tier-line)!important;color:#fff!important;
+}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="pro"] .vy863-profile-chip .vy863-profile-avatar{
+  background:linear-gradient(145deg,#5e6267,#e2e5e9 58%,#62666b)!important;color:#111!important;
+}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="business"] .vy863-profile-chip .vy863-profile-avatar{
+  background:linear-gradient(145deg,#5d451b,#d4aa54 58%,#6b501f)!important;color:#fff!important;
+}
+html.vy861-flat-black:not(.theme-light) .vy863-profile-chip .vy863-plan-dot{background:var(--vy864-tier-accent)!important;border-color:#0c0d0f!important}
+
+/* One neutral graphite hierarchy for every screen and popup. */
+html.vy861-flat-black:not(.theme-light) :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,
+  .vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,
+  .shop-growth-card,.chart-wrap,.notice,.code-output,.code-note,.code-preview,.subscription-card,.plan-card,
+  [class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"]
+){
+  background:var(--vy864-surface)!important;background-image:none!important;border-color:var(--vy864-line)!important;color:var(--vy864-text)!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black:not(.theme-light) :is(
+  .production-account-grid>div,.shop-growth-stat,.shop-growth-goal,.home-kpi,.home-stat,.p2-live-preview,.vy660-live-box,
+  .business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,.home-quick-action,
+  [class*="-metric"],[class*="-stat"],[class*="-tile"]
+){
+  background:var(--vy864-surface-2)!important;background-image:none!important;border-color:var(--vy864-line)!important;color:var(--vy864-text)!important;box-shadow:none!important;
+}
+
+/* Remove blue from semantic accents; tier colour is the only non-maroon accent. */
+html.vy861-flat-black:not(.theme-light) :is(
+  .home-section-kicker,.settings-kicker,.vy675-settings-eyebrow,.subscription-kicker,.plan-kicker,.analytics-kicker,
+  [class*="kicker"],[class*="eyebrow"],[class*="accent-text"],a
+){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black:not(.theme-light) :is(.progress,.progress-track,[class*="progress-track"]){background:#202328!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black:not(.theme-light) :is(.bar,.progress-bar,[class*="progress-fill"]){background:var(--vy864-tier-accent)!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) :is(.badge,.pill,.chip,.glass-chip,.small-badge){background:#191b1f!important;border-color:var(--vy864-line)!important;color:var(--vy864-text)!important}
+
+/* Settings and Account card: plan-aware, never navy. */
+html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list){
+  background:var(--vy864-surface)!important;background-image:none!important;border-color:var(--vy864-line)!important;box-shadow:none!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-row-icon,.vx622-settings-icon){
+  background:#202327!important;background-image:none!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-accent)!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){background:transparent!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row):active{background:rgba(255,255,255,.045)!important}
+html.vy861-flat-black:not(.theme-light) #screen-settings .vy675-settings-search input{background:transparent!important;border:0!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) #productionAccountCard,
+html.vy861-flat-black:not(.theme-light) .settings-account-section .production-account-card{
+  background:linear-gradient(150deg,#17191c 0%,#101113 64%,#0c0d0f 100%)!important;border:1px solid var(--vy864-tier-line)!important;box-shadow:0 14px 34px rgba(0,0,0,.34)!important;
+}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="pro"] #productionAccountCard,
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="pro"] .settings-account-section .production-account-card{
+  background:linear-gradient(150deg,#202327 0%,#111214 66%,#0c0d0f 100%)!important;
+}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="business"] #productionAccountCard,
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="business"] .settings-account-section .production-account-card{
+  background:linear-gradient(150deg,#211b10 0%,#12110e 48%,#0c0d0f 100%)!important;
+}
+html.vy861-flat-black:not(.theme-light) #productionAccountCard .production-avatar{background:#2b2e33!important;border-color:var(--vy864-tier-line)!important;color:#fff!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="pro"] #productionAccountCard .production-avatar{background:linear-gradient(145deg,#5b6066,#dce0e4 58%,#62676d)!important;color:#111!important}
+html.vy861-flat-black:not(.theme-light)[data-vy864-plan="business"] #productionAccountCard .production-avatar{background:linear-gradient(145deg,#654b1e,#d4aa54 58%,#725521)!important;color:#fff!important}
+html.vy861-flat-black:not(.theme-light) #productionAccountCard .production-plan{background:var(--vy864-tier-soft)!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black:not(.theme-light) #productionAccountCard .production-account-grid>div{background:rgba(255,255,255,.025)!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black:not(.theme-light) #productionAccountCard button:not(.danger):not([data-danger="true"]){background:#24272b!important;border-color:#3c4147!important;color:#fff!important}
+
+/* Forms: graphite fields, tier-colour focus ring. */
+html.vy861-flat-black:not(.theme-light) :is(input,select,textarea){
+  background:#17191c!important;background-image:none!important;border:1px solid #34383e!important;color:var(--vy864-text)!important;box-shadow:none!important;caret-color:var(--vy864-tier-accent)!important;
+}
+html.vy861-flat-black:not(.theme-light) :is(input,select,textarea):focus{border-color:var(--vy864-tier-accent)!important;box-shadow:0 0 0 3px var(--vy864-tier-soft)!important;outline:none!important}
+html.vy861-flat-black:not(.theme-light) :is(input,textarea)::placeholder{color:var(--vy864-muted-2)!important}
+html.vy861-flat-black:not(.theme-light) select option{background:#17191c!important;color:#fff!important}
+
+/* Buttons: premium graphite by default; no blue fills. */
+html.vy861-flat-black:not(.theme-light) :is(.btn,main button,.screen button):not(.nav button):not(.vy863-profile-chip):not(.danger):not([data-danger="true"]){
+  background:#202327!important;background-image:none!important;border-color:#383d43!important;color:#f5f5f6!important;box-shadow:none!important;
+}
+html.vy861-flat-black:not(.theme-light) :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){
+  background:#292d32!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important;
+}
+html.vy861-flat-black:not(.theme-light) :is(.btn,button):active{transform:scale(.975)!important}
+
+/* Deep-maroon destructive hierarchy. */
+html.vy861-flat-black:not(.theme-light) :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child,#productionAccountCard .danger){
+  background:var(--vy864-maroon)!important;background-image:none!important;border-color:var(--vy864-maroon-2)!important;color:#fff!important;box-shadow:none!important;
+}
+html.vy861-flat-black:not(.theme-light) :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child,#productionAccountCard .danger):active{background:var(--vy864-maroon-press)!important}
+html.vy861-flat-black:not(.theme-light) #productionAccountCard :is([onclick*="cancel" i],[class*="cancel" i]){background:#50101d!important;border-color:#7a1d32!important;color:#fff!important}
+
+/* Sales / Home / Business segmented controls and quick tools. */
+html.vy861-flat-black:not(.theme-light) .p1-modebar{background:#17191c!important;border-color:var(--vy864-line)!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) .p1-modebar button{background:#121315!important;border-color:#34383e!important;color:#c8cbd0!important}
+html.vy861-flat-black:not(.theme-light) .p1-modebar button:is(.active,[aria-selected="true"]){background:#292d32!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black:not(.theme-light) #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card){background:#15171a!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black:not(.theme-light) #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card) :is(svg,.icon,[class*="icon"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black:not(.theme-light) #screen-business :is(.vx621-icon,.business-icon,[class*="tool-icon"]){background:#202327!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-accent)!important}
+
+/* Calculator: remove blue display/total, use plan accent touches only. */
+html.vy861-flat-black:not(.theme-light) #screen-calculator :is(.card,.calculator-card,.calc-shell,.calc-display-wrap){background:#111214!important;border-color:var(--vy864-line)!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) #screen-calculator .calc-display{background:#17191c!important;border-color:#3a3f45!important;color:#fff!important}
+html.vy861-flat-black:not(.theme-light) #screen-calculator :is(.calc-total,.calculator-total,[class*="total"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black:not(.theme-light) #screen-calculator .calc-key{background:#1a1c20!important;border-color:#3a3e44!important;color:#f7f7f8!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) #screen-calculator .calc-key:is(.equals,.equal,.eq){background:#292d32!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black:not(.theme-light) #screen-calculator .calc-key:is(.clear,.danger){background:var(--vy864-maroon)!important;border-color:var(--vy864-maroon-2)!important;color:#fff!important}
+
+/* Insights / Plans / Subscription / Upload: tier accents, no iOS blue. */
+html.vy861-flat-black:not(.theme-light) #screen-analytics :is(.goal-ring,.yearly-goal-ring,.analytics-ring,[class*="ring"]){border-color:var(--vy864-tier-line)!important;background:var(--vy864-tier-soft)!important;background-image:none!important;color:var(--vy864-tier-strong)!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) #screen-analytics :is(.yearly-goal-value,.analytics-accent,[class*="accent"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black:not(.theme-light) #screen-subscription :is(.plan-card,.subscription-card,.pricing-card){background:#111214!important;border-color:var(--vy864-line)!important;box-shadow:none!important}
+html.vy861-flat-black:not(.theme-light) #screen-subscription :is(.plan-card.active,.plan-card.recommended,.pricing-card.active){border-color:var(--vy864-tier-line)!important;box-shadow:0 0 0 1px var(--vy864-tier-glow)!important}
+html.vy861-flat-black:not(.theme-light) #screen-subscription :is(.check,.checkmark,.feature-check,[class*="check"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black:not(.theme-light) #screen-upload :is(.upload-zone,.upload-card,[class*="upload-"][class*="card"]){background:#141619!important;border-color:var(--vy864-tier-line)!important}
+
+/* More sheet and all modal/sheet popups. */
+html.vy861-flat-black:not(.theme-light) :is(.android-sheet,.more-sheet,.glass-dialog,.subscription-dialog,.production-modal,.vx643-modal,[role="dialog"]){
+  background:#151619!important;background-image:none!important;border:1px solid #3a3e44!important;color:#fff!important;box-shadow:0 18px 50px rgba(0,0,0,.54)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black:not(.theme-light) :is(.android-sheet-row,.android-sheet-item,.more-item,.android-more-item){background:#181a1d!important;border-color:#33373c!important;color:#fff!important}
+html.vy861-flat-black:not(.theme-light) :is(.android-sheet-row,.android-sheet-item,.more-item,.android-more-item) :is(svg,.icon,[class*="icon"]){color:var(--vy864-tier-accent)!important;background:#24272b!important;border-color:var(--vy864-tier-line)!important}
+html.vy861-flat-black:not(.theme-light) :is(.android-sheet-close,.more-close,[data-close],.glass-dialog-close){background:#24272b!important;border-color:#41464c!important;color:#fff!important}
+html.vy861-flat-black:not(.theme-light) :is(.glass-dialog-overlay,.subscription-overlay,.android-sheet-overlay,.production-overlay,.shop-progress-overlay){background:rgba(0,0,0,.76)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* Floating navigation: always centered, never clipped off the left edge. */
+html.vy861-flat-black .nav{
+  position:fixed!important;left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+  width:auto!important;max-width:calc(100vw - 24px)!important;margin:0!important;transform:none!important;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important;box-sizing:border-box!important;
+  min-height:72px!important;padding:6px!important;border-radius:24px!important;overflow:hidden!important;z-index:100000!important;
+  background:rgba(12,13,15,.94)!important;background-image:none!important;border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.48)!important;backdrop-filter:blur(20px) saturate(108%)!important;-webkit-backdrop-filter:blur(20px) saturate(108%)!important;
+}
+html.vy861-flat-black .nav button{min-width:0!important;width:100%!important;max-width:none!important;margin:0!important;padding:7px 2px!important;border:0!important;border-radius:18px!important;background:transparent!important;color:#8f969e!important;overflow:hidden!important}
+html.vy861-flat-black .nav button.active{background:var(--vy864-tier-soft)!important;color:var(--vy864-tier-strong)!important;box-shadow:inset 0 0 0 1px var(--vy864-tier-line)!important}
+html.vy861-flat-black .nav button :is(svg,.android-nav-icon){color:inherit!important}
+html.vy861-flat-black .nav button .android-nav-icon{background:transparent!important;border:0!important}
+
+/* Lightweight motion: only opacity/transform/background/border; no heavy blur animation. */
+html.vy861-flat-black :is(button,.btn,.card,.nav,.android-sheet-row,.android-sheet-item,.more-item,.vy675-settings-row){
+  transition:transform .16s cubic-bezier(.2,.8,.2,1),opacity .16s ease,background-color .16s ease,border-color .16s ease,color .16s ease!important;
+}
+html.vy861-flat-black .screen:not(.hide){animation:vy864-screen-in .18s cubic-bezier(.2,.8,.2,1)}
+html.vy861-flat-black :is(.android-sheet,.more-sheet,.glass-dialog,.subscription-dialog,.production-modal,.vx643-modal){animation:vy864-sheet-in .18s cubic-bezier(.2,.8,.2,1)}
+@keyframes vy864-screen-in{from{opacity:.72;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes vy864-sheet-in{from{opacity:.72;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){html.vy861-flat-black *{animation:none!important;transition:none!important}}
+
+/* Old/slow WebView fallback: preserve layout and contrast, drop blur. */
+html.vy861-flat-black.perf-lite .top,
+html.vy861-flat-black.perf-lite .nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:#0d0e10!important;box-shadow:none!important}
+
+@media(max-width:380px){
+  html.vy861-flat-black .nav{left:8px!important;right:8px!important;max-width:calc(100vw - 16px)!important;padding:5px!important}
+  html.vy861-flat-black .nav button{font-size:11px!important;padding-inline:1px!important}
+  html.vy861-flat-black:not(.theme-light) .top{margin-left:8px!important;margin-right:8px!important}
+}

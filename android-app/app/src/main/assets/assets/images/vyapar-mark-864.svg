@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Vyapar AI">
+  <defs>
+    <linearGradient id="m" x1="32" y1="28" x2="220" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7a1830"/>
+      <stop offset="0.55" stop-color="#57101f"/>
+      <stop offset="1" stop-color="#2a070e"/>
+    </linearGradient>
+    <linearGradient id="v" x1="88" y1="70" x2="164" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d6d3d1"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="64" fill="#09090a"/>
+  <circle cx="128" cy="128" r="91" fill="url(#m)" stroke="#9a3049" stroke-width="3"/>
+  <circle cx="128" cy="128" r="76" fill="#0c0c0d" stroke="#ffffff" stroke-opacity="0.09" stroke-width="2"/>
+  <path d="M72 78h27l29 55 29-55h27l-56 101L72 78Z" fill="url(#v)"/>
+  <path d="M112 108h32l-16 29-16-29Z" fill="#5a1020"/>
+  <rect x="176" y="167" width="10" height="24" rx="5" fill="#7a1830"/>
+  <rect x="191" y="154" width="10" height="37" rx="5" fill="#aeb2b7"/>
+  <rect x="206" y="139" width="10" height="52" rx="5" fill="#7a1830"/>
+</svg>
