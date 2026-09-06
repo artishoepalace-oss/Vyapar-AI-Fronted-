@@ -51,9 +51,8 @@
     if(icon&&icon.getAttribute('href')!==LOGO){icon.setAttribute('href',LOGO);icon.setAttribute('type','image/svg+xml')}
   }
 
-  const blue=/\b(?:#(?:0a84ff|0071e3|2563eb|1d4ed8|0b3b68|0d3b66|123c66|2563e[bf]|3b82f6|2196f3)|rgba?\([^)]*(?:10\s*,\s*132\s*,\s*255|37\s*,\s*99\s*,\s*235|59\s*,\s*130\s*,\s*246|33\s*,\s*150\s*,\s*243)[^)]*\))\b/i;
+  const blue=/(?:#(?:0a84ff|0071e3|2563eb|1d4ed8|0b3b68|0d3b66|123c66|2563e[bf]|3b82f6|2196f3)|rgba?\([^)]*(?:10\s*,\s*132\s*,\s*255|37\s*,\s*99\s*,\s*235|59\s*,\s*130\s*,\s*246|33\s*,\s*150\s*,\s*243)[^)]*\))/i;
   function sanitizeInline(scope){
-    if(root.classList.contains('theme-light'))return;
     (scope||document).querySelectorAll?.('[style]').forEach(node=>{
       const style=node.style;
       for(let i=style.length-1;i>=0;i--){
@@ -61,14 +60,12 @@
         const value=style.getPropertyValue(prop)||'';
         if(!blue.test(value))continue;
         if(prop.startsWith('--'))style.setProperty(prop,'var(--vy864-tier-accent)');
-        else if(prop.includes('background'))style.setProperty(prop,'none','important');
-        else if(prop.includes('color')||prop.includes('border')||prop.includes('outline')||prop.includes('fill')||prop.includes('stroke'))style.removeProperty(prop);
+        else style.removeProperty(prop);
       }
     });
   }
 
   function normalizeDangerLabels(){
-    if(root.classList.contains('theme-light'))return;
     document.querySelectorAll('button,.btn').forEach(btn=>{
       const text=String(btn.textContent||'').trim().toLowerCase();
       if(/delete account|cancel at cycle end|manage cancellation|delete selected|delete record/.test(text))btn.classList.add('danger');
@@ -78,12 +75,7 @@
   function fixNav(){
     const nav=document.getElementById('nav');
     if(!nav)return;
-    nav.style.removeProperty('left');
-    nav.style.removeProperty('right');
-    nav.style.removeProperty('width');
-    nav.style.removeProperty('max-width');
-    nav.style.removeProperty('transform');
-    nav.style.removeProperty('margin');
+    ['left','right','width','max-width','transform','margin','margin-left','margin-right'].forEach(prop=>nav.style.removeProperty(prop));
     nav.scrollLeft=0;
   }
 
@@ -111,7 +103,6 @@
     normalize();
     if(document.body){
       new MutationObserver(records=>{
-        if(root.classList.contains('theme-light')){schedule();return}
         records.forEach(r=>r.addedNodes&&r.addedNodes.forEach(node=>{
           if(node.nodeType===1){normalizeLogos(node);sanitizeInline(node)}
         }));
