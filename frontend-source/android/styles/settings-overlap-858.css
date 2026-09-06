@@ -1,0 +1,22 @@
+/* Vyapar AI 8.5.8 — Settings sub-page overlap + transition hotfix.
+   <main> already offsets the fixed top glass bar. A sticky Settings header with
+   the same top offset moved over the first form row on Android WebView. */
+
+html.vy858-unified #screen-settings .vy675-page-header{
+  position:relative!important;
+  top:auto!important;
+  z-index:2!important;
+  margin:0 0 14px!important;
+}
+
+html.vy858-unified #screen-settings .vy675-page-body{
+  position:relative!important;
+  z-index:1!important;
+  clear:both!important;
+}
+
+/* 8.5.4 and 8.5.6 both observe the Settings hidden state. Only the newest
+   transition owner should animate, otherwise a second observer can restart it. */
+html.vy858-unified #screen-settings .vy675-settings-page.vy854-settings-in:not(.vy856-settings-in){
+  animation:none!important;
+}

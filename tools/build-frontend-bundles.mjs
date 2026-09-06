@@ -53,7 +53,8 @@ const uiStyles = [
   'liquid-lens-legacy-856.css',
   'ios27-convex-857.css',
   'ios27-convex-857-fix.css',
-  'ios-liquid-unified-858.css'
+  'ios-liquid-unified-858.css',
+  'settings-overlap-858.css'
 ];
 
 const scripts = [
