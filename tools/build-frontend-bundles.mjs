@@ -40,7 +40,8 @@ const uiStyles = [
   'inspected-glitchfix-855.css',
   'settings-overlap-858.css',
   'flat-black-ios-861.css',
-  'dark-mode-pro-862.css'
+  'dark-mode-pro-862.css',
+  'ui-stability-862.css'
 ];
 
 const scripts = [
@@ -63,7 +64,8 @@ const scripts = [
   'settings-center-675.js',
   'complete-ui-680.js',
   'inspected-glitchfix-855.js',
-  'flat-black-ios-861.js'
+  'flat-black-ios-861.js',
+  'ui-stability-862.js'
 ];
 
 function readSource(subdirectory, filename) {
