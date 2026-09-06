@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .github/v861/patch.part1 .github/v861/patch.part2 .github/v861/patch.part3 \
+          cat .github/v861/patch.part1 .github/v861/patch.part2fix .github/v861/patch.part3 \
             | base64 -d | gzip -d > /tmp/v861.patch
           git apply --check /tmp/v861.patch
           git apply /tmp/v861.patch
