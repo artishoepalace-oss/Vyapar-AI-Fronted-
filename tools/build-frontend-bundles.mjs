@@ -51,7 +51,8 @@ const uiStyles = [
   'inspected-glitchfix-855.css',
   'liquid-lens-motion-856.css',
   'liquid-lens-legacy-856.css',
-  'ios27-convex-857.css'
+  'ios27-convex-857.css',
+  'ios27-convex-857-fix.css'
 ];
 
 const scripts = [
