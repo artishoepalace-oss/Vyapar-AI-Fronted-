@@ -5,7 +5,9 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowBackground">@drawable/launch_screen</item>
         <item name="android:colorBackground">#000000</item>
-        <item name="android:colorAccent">#3184FF</item>
+        <item name="android:colorAccent">#B8BCC1</item>
+        <item name="android:colorControlActivated">#B8BCC1</item>
+        <item name="android:colorControlHighlight">#26282C</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">#000000</item>
         <item name="android:navigationBarColor">#000000</item>

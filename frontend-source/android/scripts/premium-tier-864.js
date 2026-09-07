@@ -1,9 +1,9 @@
-/* Vyapar AI 8.6.4 — cosmetic tier + premium motion coordinator.
+/* Vyapar AI 8.6.5 — cosmetic tier + premium motion coordinator.
    Presentation only: does not grant plans, change entitlements, auth or accounting logic. */
 (function(){
   'use strict';
   const root=document.documentElement;
-  const LOGO='assets/images/vyapar-mark-864.svg';
+  const LOGO='assets/images/logo.png';
   let queued=false;
 
   function readJson(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'');return v&&typeof v==='object'?v:fallback}catch(_){return fallback}}
@@ -48,7 +48,7 @@
       }
     });
     const icon=document.querySelector('link[rel="icon"]');
-    if(icon&&icon.getAttribute('href')!==LOGO){icon.setAttribute('href',LOGO);icon.setAttribute('type','image/svg+xml')}
+    if(icon&&icon.getAttribute('href')!==LOGO){icon.setAttribute('href',LOGO);icon.setAttribute('type','image/png')}
   }
 
   const blue=/(?:#(?:0a84ff|0071e3|2563eb|1d4ed8|0b3b68|0d3b66|123c66|2563e[bf]|3b82f6|2196f3)|rgba?\([^)]*(?:10\s*,\s*132\s*,\s*255|37\s*,\s*99\s*,\s*235|59\s*,\s*130\s*,\s*246|33\s*,\s*150\s*,\s*243)[^)]*\))/i;
@@ -75,7 +75,8 @@
   function fixNav(){
     const nav=document.getElementById('nav');
     if(!nav)return;
-    ['left','right','width','max-width','transform','margin','margin-left','margin-right'].forEach(prop=>nav.style.removeProperty(prop));
+    if(document.body && nav.parentElement!==document.body)document.body.appendChild(nav);
+    ['left','right','top','bottom','width','min-width','max-width','height','transform','translate','margin','margin-left','margin-right'].forEach(prop=>nav.style.removeProperty(prop));
     nav.scrollLeft=0;
   }
 
