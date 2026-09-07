@@ -1,0 +1,211 @@
+/* Vyapar AI 8.6.7 — final video-driven Android UI repair.
+   Exact selectors + no version change. This file must load LAST. */
+
+html.vy861-flat-black:not(.theme-light){
+  --vy867-final-bg:#000000;
+  --vy867-final-surface:#0f1012;
+  --vy867-final-surface-2:#17181a;
+  --vy867-final-control:#222428;
+  --vy867-final-line:rgba(255,255,255,.12);
+  --vy867-final-line-strong:#3a3e44;
+  --vy867-final-text:#f6f6f7;
+  --vy867-final-muted:#a3a7ad;
+}
+
+/* HOME — the two grid wrappers are layout only. Never paint the spaces between cards. */
+html.vy861-flat-black:not(.theme-light) #screen-home :is(
+  .home-section,
+  #homeQuickActionsMount,
+  .android-quick-actions,
+  .home-metrics
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-home :is(
+  .home-section,
+  #homeQuickActionsMount,
+  .android-quick-actions,
+  .home-metrics
+)::before,
+html.vy861-flat-black:not(.theme-light) #screen-home :is(
+  .home-section,
+  #homeQuickActionsMount,
+  .android-quick-actions,
+  .home-metrics
+)::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-home #homeQuickActionsMount,
+html.vy861-flat-black:not(.theme-light) #screen-home .android-quick-actions,
+html.vy861-flat-black:not(.theme-light) #screen-home .home-metrics{
+  padding:0!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-home .android-quick-actions,
+html.vy861-flat-black:not(.theme-light) #screen-home .home-metrics{
+  gap:10px!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-action,.home-metrics>.stat){
+  position:relative!important;
+  z-index:1!important;
+  margin:0!important;
+  background:var(--vy867-final-surface)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-final-line)!important;
+  box-shadow:none!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-home .home-metric-head{
+  padding:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* BUSINESS — replace every residual colored feature tile with graphite. */
+html.vy861-flat-black:not(.theme-light) #screen-business .vx621-feature-icon,
+html.vy861-flat-black:not(.theme-light) #screen-business .vy867-mono-customers{
+  background:var(--vy867-final-control)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-final-line-strong)!important;
+  color:#d0d3d7!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+html.vy861-flat-black #screen-business .vy867-mono-customers svg{
+  width:23px!important;
+  height:23px!important;
+  display:block!important;
+  color:inherit!important;
+  stroke:currentColor!important;
+  fill:none!important;
+}
+
+/* BOTTOM NAV — neutral grey only; no blue tint in icons or labels. */
+html.vy861-flat-black:not(.theme-light) #nav.nav{
+  background:rgba(12,13,15,.98)!important;
+  background-image:none!important;
+  border-color:#34373c!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.48)!important;
+}
+html.vy861-flat-black:not(.theme-light) #nav.nav button{
+  background:transparent!important;
+  background-image:none!important;
+  color:#a7abb0!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+html.vy861-flat-black:not(.theme-light) #nav.nav button :is(.android-nav-icon,.android-nav-label,svg,svg *){
+  color:inherit!important;
+  filter:grayscale(1) saturate(0)!important;
+}
+html.vy861-flat-black:not(.theme-light) #nav.nav button svg *{
+  stroke:currentColor!important;
+}
+html.vy861-flat-black:not(.theme-light) #nav.nav button.active{
+  background:#26282c!important;
+  background-image:none!important;
+  color:#ffffff!important;
+  border-color:#3c4046!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+
+/* MORE — exact geometry: float just above the five-tab dock, not a large empty gap. */
+html.vy861-flat-black #androidMoreSheet.android-sheet-overlay{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  padding:0!important;
+  margin:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  z-index:2147483200!important;
+}
+html.vy861-flat-black #androidMoreSheet.android-sheet-overlay>.android-sheet{
+  position:absolute!important;
+  left:8px!important;
+  right:8px!important;
+  top:auto!important;
+  bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+  width:auto!important;
+  max-width:620px!important;
+  margin:0 auto!important;
+  transform:none!important;
+  translate:none!important;
+  max-height:calc(100vh - 96px - env(safe-area-inset-bottom,0px))!important;
+  max-height:calc(100dvh - 96px - env(safe-area-inset-bottom,0px))!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  border:1px solid #373b40!important;
+  border-radius:24px!important;
+  background:#111214!important;
+  background-image:none!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.52)!important;
+}
+html.vy861-flat-black #androidMoreSheet .android-sheet-grid{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black:not(.theme-light) #androidMoreSheet .android-sheet-item{
+  background:var(--vy867-final-surface-2)!important;
+  background-image:none!important;
+  border:1px solid #30343a!important;
+  box-shadow:none!important;
+}
+
+/* APP UPDATES — Check for Update must match the black/grey system, never blue. */
+html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn,.btn.primary,button.primary),
+html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="update"] :is(.btn.primary,button.primary){
+  background:var(--vy867-final-control)!important;
+  background-image:none!important;
+  border:1px solid #3b3f45!important;
+  color:#ffffff!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn):active{
+  background:#2c2f34!important;
+  border-color:#50545a!important;
+}
+
+/* Re-assert neutral icon tiles in screens explicitly called out in the video. */
+html.vy861-flat-black:not(.theme-light) :is(#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+  .vx621-feature-icon,
+  .vy675-row-icon,
+  .vx622-settings-icon,
+  .android-sheet-item-icon
+){
+  background:var(--vy867-final-control)!important;
+  background-image:none!important;
+  border-color:var(--vy867-final-line-strong)!important;
+  color:#c9cdd2!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:390px){
+  html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
+  html.vy861-flat-black #androidMoreSheet.android-sheet-overlay>.android-sheet{
+    left:6px!important;
+    right:6px!important;
+    bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;
+    border-radius:22px!important;
+  }
+}
