@@ -33,13 +33,24 @@ jobs:
           cp /tmp/promote-869-dark-only.yml .github/workflows/promote-869-dark-only.yml
           cp -a /tmp/release869/. .release/
 
-      - name: Decode and apply exact 8.6.9 source patch
+      - name: Apply 8.6.9 source patch
         shell: bash
         run: |
           set -euo pipefail
-          cat .release/patch869.xz.part* | base64 -d | xz -d > /tmp/patch869.diff
-          git apply --check /tmp/patch869.diff
-          git apply --binary /tmp/patch869.diff
+          cat .release/minpatch869.part* | base64 -d | xz -d > /tmp/minpatch869.diff
+          git apply --check /tmp/minpatch869.diff
+          git apply --binary /tmp/minpatch869.diff
+
+      - name: Rebuild Android frontend bundles
+        run: node tools/build-frontend-bundles.mjs
+
+      - name: Apply exact Android bundle and logo patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .release/postpatch869.part* | base64 -d | xz -d > /tmp/postpatch869.diff
+          git apply --check /tmp/postpatch869.diff
+          git apply --binary /tmp/postpatch869.diff
 
       - name: Validate dark-only 8.6.9 source
         shell: bash
