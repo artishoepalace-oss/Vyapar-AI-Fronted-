@@ -1,0 +1,35 @@
+/* Vyapar AI 8.6.6.2026 — home/header storefront logo fit repair.
+   Final authority for the top-left brand mark only. */
+html.vy861-flat-black .top .brand .logo{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  flex:0 0 46px!important;
+  box-sizing:border-box!important;
+  padding:7px!important;
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  -webkit-clip-path:circle(50%)!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#151719!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;
+  transform:none!important;
+}
+html.vy861-flat-black.theme-light .top .brand .logo{
+  background:#fff!important;
+  border-color:rgba(0,0,0,.14)!important;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.025)!important;
+}
+@media(max-width:360px){
+  html.vy861-flat-black .top .brand .logo{
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    max-width:42px!important;
+    flex-basis:42px!important;
+    padding:6px!important;
+  }
+}
