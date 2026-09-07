@@ -1,0 +1,144 @@
+/* Vyapar AI 8.6.7 — same-version surface hierarchy cleanup.
+   Screenshot-driven final override: removes accidental background slabs and
+   nested wrapper cards introduced by broad legacy *-metric/*-workspace rules.
+   Real cards, controls, forms, records and feature tiles stay intact. */
+
+/* Layout-only grids must never paint a surface behind their child cards. */
+html.vy861-flat-black :is(
+  #screen-home .home-metrics,
+  #screen-home .android-quick-actions,
+  #screen-business .vx621-kpis,
+  #screen-business .stats,
+  #screen-sales .stats,
+  #screen-stock .stats,
+  .p611-grid,
+  .production-account-grid,
+  .vx621-feature-grid,
+  .adv-module-grid,
+  .business-calc-grid,
+  .shop-milestone-list
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+html.vy861-flat-black :is(
+  #screen-home .home-metrics,
+  #screen-business .vx621-kpis,
+  #screen-business .stats,
+  #screen-sales .stats,
+  #screen-stock .stats,
+  .p611-grid,
+  .production-account-grid
+){
+  padding:0!important;
+}
+
+/* A class such as home-metric-head was being caught by [class*="-metric"]
+   and rendered as a dark rectangle inside every KPI card. */
+html.vy861-flat-black :is(
+  #screen-home .home-metric-head,
+  #screen-home .home-section-heading,
+  .p2-preview-title,
+  .shop-sheet-title,
+  .vx621-section-head,
+  .vx621-group-head,
+  .business-section-head
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black #screen-home .home-metric-head{
+  padding:0!important;
+  border-radius:0!important;
+}
+
+/* Keep the four Home snapshot cells as the actual cards, with clean black
+   space between them instead of one rectangular parent slab. */
+html.vy861-flat-black #screen-home .home-metrics{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin:0!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black #screen-home .home-metrics>.stat{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+
+/* Business/Sales/Stock tool pages already contain real feature cards. Their
+   outer mode wrapper should be layout only, otherwise the UI becomes box-inside-box. */
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="daily"],
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="accounts"],
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="documents"],
+html.vy861-flat-black #screen-sales .p1-mode-section[data-p1-mode="billing"],
+html.vy861-flat-black #screen-stock .p1-mode-section[data-p1-mode="tools"]{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  padding:0!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="daily"]::before,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="daily"]::after,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="accounts"]::before,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="accounts"]::after,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="documents"]::before,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="documents"]::after,
+html.vy861-flat-black #screen-sales .p1-mode-section[data-p1-mode="billing"]::before,
+html.vy861-flat-black #screen-sales .p1-mode-section[data-p1-mode="billing"]::after,
+html.vy861-flat-black #screen-stock .p1-mode-section[data-p1-mode="tools"]::before,
+html.vy861-flat-black #screen-stock .p1-mode-section[data-p1-mode="tools"]::after{
+  display:none!important;
+  content:none!important;
+}
+
+/* Auth: keep the black/grey approved controls, but make every layout/form
+   wrapper transparent so legacy generic card styling cannot create extra boxes. */
+#vyaparOtpGate .auth-card,
+#vyaparOtpGate .auth-section,
+#vyaparOtpGate .auth-form,
+#vyaparOtpGate .auth-form>div,
+#vyaparOtpGate .auth-label-row,
+#vyaparOtpGate .password-setup-copy{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#vyaparOtpGate .auth-card{background:#090909!important}
+#vyaparOtpGate .auth-form>div,
+#vyaparOtpGate .auth-label-row{border-radius:0!important}
+
+/* Do not let generic late-theme rules repaint the intended auth controls. */
+#vyaparOtpGate :is(.auth-method-tabs,.auth-otp-row,.auth-input,.auth-primary,.auth-google,.auth-small-btn){
+  position:relative!important;
+  isolation:isolate!important;
+}
+
+/* Small phones: preserve useful spacing without reintroducing parent slabs. */
+@media(max-width:370px){
+  html.vy861-flat-black #screen-home .home-metrics{gap:8px!important}
+  html.vy861-flat-black #screen-home .home-metrics>.stat{border-radius:16px!important}
+}

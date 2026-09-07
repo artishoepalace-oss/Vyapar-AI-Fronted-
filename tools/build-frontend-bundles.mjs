@@ -49,7 +49,8 @@ const uiStyles = [
   'monochrome-black-865.css',
   'logo-fit-866.css',
   'auth-chat-867.css',
-  'auth-layout-fix-867.css'
+  'auth-layout-fix-867.css',
+  'surface-cleanup-867.css'
 ];
 
 const scripts = [
