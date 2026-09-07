@@ -1,13 +1,17 @@
-/* Vyapar AI 8.6.7 — same-version popup/nav clearance repair.
-   Keeps modal/sheet surfaces fully above the floating five-tab navigation on
-   Android/WebView while preserving the nav as the visible bottom-most control. */
+/* Vyapar AI 8.6.7 — same-version popup/nav interaction repair.
+   Popups own the whole viewport, including the floating nav area, so taps cannot
+   leak through to Home/Business/Sales/Stock/More while a sheet/dialog is open.
+   Bottom sheets still finish above the nav with a clear visual gap. */
 
 html.vy861-flat-black{
-  /* nav: 68px minimum height + 8px viewport offset + 8px breathing room */
-  --vy867-popup-nav-clearance:calc(84px + env(safe-area-inset-bottom,0px));
-  --vy867-popup-layer:2147481900;
+  --vy867-popup-nav-clearance:calc(86px + env(safe-area-inset-bottom,0px));
+  --vy867-popup-layer:2147483200;
+  --vy867-nav-layer:2147481200;
 }
 
+/* Full-screen modal ownership. The overlay covers the nav too, which blocks
+   accidental tab changes while a popup is visible. Padding keeps sheet content
+   physically above the floating nav instead of underneath it. */
 html.native-android :is(
   .glass-dialog-overlay,
   .subscription-overlay,
@@ -41,28 +45,47 @@ html.android-ui :is(
   .upgrade-plan-reference-popup
 ){
   position:fixed!important;
-  inset:0 0 var(--vy867-popup-nav-clearance) 0!important;
+  inset:0!important;
   z-index:var(--vy867-popup-layer)!important;
   box-sizing:border-box!important;
-  max-height:calc(100vh - var(--vy867-popup-nav-clearance))!important;
-  max-height:calc(100dvh - var(--vy867-popup-nav-clearance))!important;
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  padding-bottom:var(--vy867-popup-nav-clearance)!important;
   overflow:hidden!important;
   overscroll-behavior:contain!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
 }
 
-/* Bottom sheets now terminate above the nav instead of running behind it. */
+/* Bottom sheets sit in the usable area above the nav. */
+html.native-android :is(.android-sheet-overlay,.shop-progress-overlay,.vy6601-select-overlay),
+html.android-ui :is(.android-sheet-overlay,.shop-progress-overlay,.vy6601-select-overlay){
+  align-items:flex-end!important;
+  justify-content:center!important;
+}
+
 html.native-android :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet),
 html.android-ui :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
-  margin-bottom:0!important;
-  max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 12px)!important;
-  max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 12px)!important;
+  position:relative!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  translate:none!important;
+  margin:0!important;
+  max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 14px)!important;
+  max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 14px)!important;
   overflow-y:auto!important;
+  overflow-x:hidden!important;
   overscroll-behavior:contain!important;
   -webkit-overflow-scrolling:touch!important;
 }
 
-/* Confirmation/account/subscription cards remain fully visible; their action
-   buttons can no longer fall underneath the persistent bottom dock. */
+/* Confirmation/account/subscription cards never lose their buttons under nav. */
 html.native-android :is(
   .glass-dialog-card,
   .subscription-dialog,
@@ -82,19 +105,28 @@ html.android-ui :is(
   max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 24px)!important;
   max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 24px)!important;
   overflow-y:auto!important;
+  overflow-x:hidden!important;
   overscroll-behavior:contain!important;
   -webkit-overflow-scrolling:touch!important;
 }
 
-/* The nav intentionally stays one layer above the dimming overlay, but because
-   every popup ends 8px before it, there is no overlap or hidden content. */
+/* Keep nav visually behind the active popup. It stays visible through the dim
+   backdrop, but it is no longer clickable or able to cover popup content. */
 html.vy861-flat-black #nav.nav,
 html.vy861-flat-black .nav{
-  z-index:2147482000!important;
+  z-index:var(--vy867-nav-layer)!important;
+}
+
+/* Specific open-state guards for older Android WebViews/classes. */
+html.android-ui body.shop-progress-open .nav,
+html.native-android body.shop-progress-open .nav,
+html.android-ui body.glass-dialog-open .nav,
+html.native-android body.glass-dialog-open .nav{
+  pointer-events:none!important;
 }
 
 @media(max-height:620px){
   html.vy861-flat-black{
-    --vy867-popup-nav-clearance:calc(80px + env(safe-area-inset-bottom,0px));
+    --vy867-popup-nav-clearance:calc(82px + env(safe-area-inset-bottom,0px));
   }
 }
