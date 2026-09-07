@@ -51,7 +51,8 @@ const uiStyles = [
   'auth-chat-867.css',
   'auth-layout-fix-867.css',
   'surface-cleanup-867.css',
-  'popup-nav-clearance-867.css'
+  'popup-nav-clearance-867.css',
+  'video-final-867.css'
 ];
 
 const scripts = [
@@ -77,7 +78,8 @@ const scripts = [
   'flat-black-ios-861.js',
   'ui-stability-862.js',
   'graphite-maroon-863.js',
-  'premium-tier-864.js'
+  'premium-tier-864.js',
+  'video-final-867.js'
 ];
 
 function readSource(subdirectory, filename) {
