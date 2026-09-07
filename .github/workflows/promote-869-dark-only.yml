@@ -1,0 +1,115 @@
+name: Promote Vyapar AI 8.6.9.2026 Dark Only
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.release/READY-8692026'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  promote-dark-only:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decode and apply 8.6.9 source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .release/READY-8692026
+          cat .release/patch869.part* | base64 -d | gzip -d > /tmp/patch869.diff
+          git apply --check /tmp/patch869.diff
+          git apply --binary /tmp/patch869.diff
+          cat .release/logo869.part* | base64 -d > /tmp/vyapar-ai-logo-source.jpg
+
+      - name: Build rounded-square launcher and active logos
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y imagemagick
+          fi
+          convert /tmp/vyapar-ai-logo-source.jpg -crop 552x679+499+216 +repage -resize '156x192!' -background white -gravity center -extent 256x256 /tmp/vyapar-logo-256.png
+          convert /tmp/vyapar-ai-logo-source.jpg -crop 552x679+499+216 +repage -resize '190x232!' /tmp/vyapar-mark-190x232.png
+          convert -size 512x512 xc:none -fill white -draw 'roundrectangle 12,12 500,500 96,96' /tmp/vyapar-icon-bg.png
+          convert /tmp/vyapar-icon-bg.png /tmp/vyapar-mark-190x232.png -gravity center -compose over -composite /tmp/ic_launcher_512.png
+          convert /tmp/ic_launcher_512.png -resize 256x256 /tmp/ic_launcher.png
+          convert /tmp/vyapar-ai-logo-source.jpg branding/vyapar_ai_logo_maroon_arrow.png
+          cp /tmp/vyapar-ai-logo-source.jpg branding/vyapar_ai_logo_original.jpg
+          convert /tmp/vyapar-ai-logo-source.jpg branding/vyapar_ai_logo_full.png
+          for p in \
+            web/logo.png \
+            web/footer-logo.png \
+            web/assets/images/logo.png \
+            web/assets/images/footer-logo.png \
+            android-app/app/src/main/assets/logo.png \
+            android-app/app/src/main/assets/footer-logo.png \
+            android-app/app/src/main/assets/assets/images/logo.png \
+            android-app/app/src/main/assets/assets/images/footer-logo.png \
+            android-app/app/src/main/res/drawable-nodpi/startup_logo.png \
+            branding/vyapar_shop_logo_865.png; do
+            mkdir -p "$(dirname "$p")"
+            cp /tmp/vyapar-logo-256.png "$p"
+          done
+          cp /tmp/ic_launcher.png android-app/app/src/main/res/drawable/ic_launcher.png
+          cp /tmp/ic_launcher_512.png android-app/app/src/main/res/drawable/ic_launcher_512.png
+          cp /tmp/ic_launcher.png branding/ic_launcher.png
+          cp /tmp/ic_launcher_512.png branding/ic_launcher_512.png
+
+      - name: Rebuild Android frontend bundles
+        run: node tools/build-frontend-bundles.mjs
+
+      - name: Validate dark-only 8.6.9 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const root = JSON.parse(fs.readFileSync('version.json','utf8'));
+          const web = JSON.parse(fs.readFileSync('web/version.json','utf8'));
+          const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
+          const vn = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
+          const vc = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+          if (root.versionName !== '8.6.9.2026' || Number(root.versionCode) !== 8692026) throw new Error('root version mismatch');
+          if (web.versionName !== '8.6.9.2026' || Number(web.versionCode) !== 8692026 || web.version !== '8.6.9.2026') throw new Error('web version mismatch');
+          if (vn !== '8.6.9.2026' || vc !== 8692026) throw new Error('Gradle version mismatch');
+          NODE
+          if grep -RIl --exclude='*.md' --exclude-dir='.git' 'theme-light' web frontend-source android-app/app/src/main/assets | grep -q .; then
+            echo 'theme-light code remains' >&2
+            exit 1
+          fi
+          if grep -RIl --include='*.js' --include='*.html' -E 'theme-toggle|toggleTheme|prefers-color-scheme.*light' web frontend-source android-app/app/src/main/assets | grep -q .; then
+            echo 'theme switching code remains' >&2
+            exit 1
+          fi
+          grep -q 'android:icon="@drawable/ic_launcher"' android-app/app/src/main/AndroidManifest.xml
+          grep -q 'android:roundIcon="@drawable/ic_launcher"' android-app/app/src/main/AndroidManifest.xml
+          test ! -e android-app/app/src/main/res/drawable/ic_launcher_round.xml
+          test ! -e android-app/app/src/main/res/drawable-v26/ic_launcher_round.xml
+          test ! -e frontend-source/android/styles/premium-light-864.css
+          test ! -e frontend-source/android/styles/profile-light-863.css
+          for f in android-app/app/src/main/assets/*.js; do node --check "$f"; done
+          node --check web/app.js
+          node --check web/assets/scripts/vyapar-app.js
+          node --check frontend-source/android/scripts/app.js
+
+      - name: Commit production source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .release
+          rm -f .github/workflows/promote-869-dark-only.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Release Vyapar AI 8.6.9.2026 dark-only UI and rounded-square launcher'
+          git push origin HEAD:main
