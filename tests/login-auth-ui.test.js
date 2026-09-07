@@ -26,10 +26,24 @@ assert.match(webAuth, /auth-keyboard-open/, 'Auth layout must handle the softwar
 assert.match(webPlatformCss, /overflow-y:auto!important/, 'Android auth must remain vertically scrollable');
 assert.doesNotMatch(webPlatformCss, /\bzoom\s*:/, 'Android auth must not use CSS zoom because it breaks WebView input geometry');
 
-assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=20260906-flatblack861/, 'Web must load the combined script');
-assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=20260906-flatblack861/, 'Web must load the combined core styles');
-assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=20260906-flatblack861/, 'Android must load the combined script');
-assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=20260906-flatblack861/, 'Android must load the combined core styles');
-assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=20260906-flatblack861/, 'Android must load the combined UI styles');
+assert.match(webAuth, /class="auth-brand-row"/, 'Login must use the chat-approved left-aligned brand row');
+assert.match(webAuth, />Password<\/button>/, 'Login must expose the Password tab');
+assert.match(webAuth, />Email OTP<\/button>/, 'Login must expose the Email OTP tab');
+assert.match(webAuth, /id="form-signup-otp"/, 'Create Account must include an Email OTP flow');
+assert.match(webAuth, /id="signup-password-confirm"/, 'Create Account password flow must confirm the password');
+assert.match(webAuth, /id="auth-back-login"/, 'Create Account must provide a back-to-sign-in control');
+assert.match(webAuth, /switchLoginMode\("otp"\)/, 'Email OTP must be the default login method');
+
+const authUi = read('frontend-source', 'android', 'styles', 'auth-chat-867.css');
+assert.match(authUi, /--auth-bg:#090909!important/, 'Auth background must be black');
+assert.match(authUi, /background:#343434!important/, 'Selected tabs must use graphite grey');
+assert.match(authUi, /background:#ececec!important/, 'Primary auth action must use the light monochrome fill');
+assert.doesNotMatch(authUi, /\b(?:blue|teal|navy)\b/i, 'Auth-specific UI must not introduce blue/teal/navy styling');
+
+assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=20260907-auth867/, 'Web must load the combined script');
+assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=20260907-auth867/, 'Web must load the combined core styles');
+assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=20260907-auth867/, 'Android must load the combined script');
+assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=20260907-auth867/, 'Android must load the combined core styles');
+assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=20260907-auth867/, 'Android must load the combined UI styles');
 
 console.log('login-auth-ui: all checks passed');
