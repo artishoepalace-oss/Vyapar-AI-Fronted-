@@ -20,53 +20,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Decode and apply 8.6.9 source patch
+      - name: Restore clean 8.6.7 source baseline
         shell: bash
         run: |
           set -euo pipefail
           test -f .release/READY-8692026
-          cat .release/patch869.part* | base64 -d | gzip -d > /tmp/patch869.diff
-          git apply --check /tmp/patch869.diff
-          git apply --binary /tmp/patch869.diff
-          cat .release/logo869.part* | base64 -d > /tmp/vyapar-ai-logo-source.jpg
+          cp .github/workflows/promote-869-dark-only.yml /tmp/promote-869-dark-only.yml
+          cp -a .release /tmp/release869
+          git rm -rf .
+          git archive 01b072d7cb4b476410f928add945916de48792a1 | tar -x
+          mkdir -p .github/workflows .release
+          cp /tmp/promote-869-dark-only.yml .github/workflows/promote-869-dark-only.yml
+          cp -a /tmp/release869/. .release/
 
-      - name: Build rounded-square launcher and active logos
+      - name: Decode and apply exact 8.6.9 source patch
         shell: bash
         run: |
           set -euo pipefail
-          if ! command -v convert >/dev/null 2>&1; then
-            sudo apt-get update -y
-            sudo apt-get install -y imagemagick
-          fi
-          convert /tmp/vyapar-ai-logo-source.jpg -crop 552x679+499+216 +repage -resize '156x192!' -background white -gravity center -extent 256x256 /tmp/vyapar-logo-256.png
-          convert /tmp/vyapar-ai-logo-source.jpg -crop 552x679+499+216 +repage -resize '190x232!' /tmp/vyapar-mark-190x232.png
-          convert -size 512x512 xc:none -fill white -draw 'roundrectangle 12,12 500,500 96,96' /tmp/vyapar-icon-bg.png
-          convert /tmp/vyapar-icon-bg.png /tmp/vyapar-mark-190x232.png -gravity center -compose over -composite /tmp/ic_launcher_512.png
-          convert /tmp/ic_launcher_512.png -resize 256x256 /tmp/ic_launcher.png
-          convert /tmp/vyapar-ai-logo-source.jpg branding/vyapar_ai_logo_maroon_arrow.png
-          cp /tmp/vyapar-ai-logo-source.jpg branding/vyapar_ai_logo_original.jpg
-          convert /tmp/vyapar-ai-logo-source.jpg branding/vyapar_ai_logo_full.png
-          for p in \
-            web/logo.png \
-            web/footer-logo.png \
-            web/assets/images/logo.png \
-            web/assets/images/footer-logo.png \
-            android-app/app/src/main/assets/logo.png \
-            android-app/app/src/main/assets/footer-logo.png \
-            android-app/app/src/main/assets/assets/images/logo.png \
-            android-app/app/src/main/assets/assets/images/footer-logo.png \
-            android-app/app/src/main/res/drawable-nodpi/startup_logo.png \
-            branding/vyapar_shop_logo_865.png; do
-            mkdir -p "$(dirname "$p")"
-            cp /tmp/vyapar-logo-256.png "$p"
-          done
-          cp /tmp/ic_launcher.png android-app/app/src/main/res/drawable/ic_launcher.png
-          cp /tmp/ic_launcher_512.png android-app/app/src/main/res/drawable/ic_launcher_512.png
-          cp /tmp/ic_launcher.png branding/ic_launcher.png
-          cp /tmp/ic_launcher_512.png branding/ic_launcher_512.png
-
-      - name: Rebuild Android frontend bundles
-        run: node tools/build-frontend-bundles.mjs
+          cat .release/patch869.xz.part* | base64 -d | xz -d > /tmp/patch869.diff
+          git apply --check /tmp/patch869.diff
+          git apply --binary /tmp/patch869.diff
 
       - name: Validate dark-only 8.6.9 source
         shell: bash
@@ -87,7 +60,7 @@ jobs:
             echo 'theme-light code remains' >&2
             exit 1
           fi
-          if grep -RIl --include='*.js' --include='*.html' -E 'theme-toggle|toggleTheme|prefers-color-scheme.*light' web frontend-source android-app/app/src/main/assets | grep -q .; then
+          if grep -RIl --include='*.js' --include='*.html' -E 'theme-toggle|toggleTheme|setTheme\(.light|prefers-color-scheme.*light' web frontend-source android-app/app/src/main/assets | grep -q .; then
             echo 'theme switching code remains' >&2
             exit 1
           fi
