@@ -1,0 +1,100 @@
+/* Vyapar AI 8.6.7 — same-version popup/nav clearance repair.
+   Keeps modal/sheet surfaces fully above the floating five-tab navigation on
+   Android/WebView while preserving the nav as the visible bottom-most control. */
+
+html.vy861-flat-black{
+  /* nav: 68px minimum height + 8px viewport offset + 8px breathing room */
+  --vy867-popup-nav-clearance:calc(84px + env(safe-area-inset-bottom,0px));
+  --vy867-popup-layer:2147481900;
+}
+
+html.native-android :is(
+  .glass-dialog-overlay,
+  .subscription-overlay,
+  .subscription-dialog-backdrop,
+  .shop-progress-overlay,
+  .vx643-modal-overlay,
+  .production-overlay,
+  .android-permission-overlay,
+  .android-sheet-overlay,
+  .account-delete-overlay,
+  .vy6601-select-overlay,
+  #vyaparDeleteConfirm,
+  #vyaparAccountDeleteConfirm,
+  .upgrade-plan-popup,
+  .upgrade-plan-reference-popup
+),
+html.android-ui :is(
+  .glass-dialog-overlay,
+  .subscription-overlay,
+  .subscription-dialog-backdrop,
+  .shop-progress-overlay,
+  .vx643-modal-overlay,
+  .production-overlay,
+  .android-permission-overlay,
+  .android-sheet-overlay,
+  .account-delete-overlay,
+  .vy6601-select-overlay,
+  #vyaparDeleteConfirm,
+  #vyaparAccountDeleteConfirm,
+  .upgrade-plan-popup,
+  .upgrade-plan-reference-popup
+){
+  position:fixed!important;
+  inset:0 0 var(--vy867-popup-nav-clearance) 0!important;
+  z-index:var(--vy867-popup-layer)!important;
+  box-sizing:border-box!important;
+  max-height:calc(100vh - var(--vy867-popup-nav-clearance))!important;
+  max-height:calc(100dvh - var(--vy867-popup-nav-clearance))!important;
+  overflow:hidden!important;
+  overscroll-behavior:contain!important;
+}
+
+/* Bottom sheets now terminate above the nav instead of running behind it. */
+html.native-android :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet),
+html.android-ui :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
+  margin-bottom:0!important;
+  max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 12px)!important;
+  max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 12px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* Confirmation/account/subscription cards remain fully visible; their action
+   buttons can no longer fall underneath the persistent bottom dock. */
+html.native-android :is(
+  .glass-dialog-card,
+  .subscription-dialog,
+  .production-modal,
+  .vx643-modal,
+  .android-permission-card,
+  .account-delete-dialog
+),
+html.android-ui :is(
+  .glass-dialog-card,
+  .subscription-dialog,
+  .production-modal,
+  .vx643-modal,
+  .android-permission-card,
+  .account-delete-dialog
+){
+  max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 24px)!important;
+  max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 24px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* The nav intentionally stays one layer above the dimming overlay, but because
+   every popup ends 8px before it, there is no overlap or hidden content. */
+html.vy861-flat-black #nav.nav,
+html.vy861-flat-black .nav{
+  z-index:2147482000!important;
+}
+
+@media(max-height:620px){
+  html.vy861-flat-black{
+    --vy867-popup-nav-clearance:calc(80px + env(safe-area-inset-bottom,0px));
+  }
+}
