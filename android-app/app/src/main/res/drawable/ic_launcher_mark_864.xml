@@ -1,28 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="#5A1020"
-        android:pathData="M54,12 C77.2,12 96,30.8 96,54 C96,77.2 77.2,96 54,96 C30.8,96 12,77.2 12,54 C12,30.8 30.8,12 54,12 Z"/>
-    <path
-        android:fillColor="#0C0C0D"
-        android:pathData="M54,20 C72.8,20 88,35.2 88,54 C88,72.8 72.8,88 54,88 C35.2,88 20,72.8 20,54 C20,35.2 35.2,20 54,20 Z"/>
-    <path
-        android:fillColor="#F5F3F2"
-        android:pathData="M30,33 L41,33 L54,58 L67,33 L78,33 L54,77 Z"/>
-    <path
-        android:fillColor="#5A1020"
-        android:pathData="M47,45 L61,45 L54,58 Z"/>
-    <path
-        android:fillColor="#7A1830"
-        android:pathData="M73,69 L77,69 L77,79 L73,79 Z"/>
-    <path
-        android:fillColor="#BFC3C7"
-        android:pathData="M80,64 L84,64 L84,79 L80,79 Z"/>
-    <path
-        android:fillColor="#7A1830"
-        android:pathData="M87,58 L91,58 L91,79 L87,79 Z"/>
-</vector>
+<!-- Compatibility alias: always render the current supplied Vyapar AI storefront mark. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_launcher" />
+</layer-list>
