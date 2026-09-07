@@ -1,0 +1,58 @@
+/* Vyapar AI 8.6.7 same-version auth viewport hotfix.
+   Keeps the black/grey chat-approved auth UI as a true full-screen overlay. */
+html.native-android #vyaparOtpGate,
+html.vy861-flat-black #vyaparOtpGate,
+#vyaparOtpGate{
+  position:fixed!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
+  inset:0!important;
+  z-index:2147483647!important;
+  display:block!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  box-sizing:border-box!important;
+  isolation:isolate!important;
+  background:#090909!important;
+  background-image:none!important;
+}
+#vyaparOtpGate::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+#vyaparOtpGate *,#vyaparOtpGate *::before,#vyaparOtpGate *::after{box-sizing:border-box!important}
+
+html.native-android #vyaparOtpGate .auth-page,
+#vyaparOtpGate .auth-page{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+html.native-android #vyaparOtpGate .auth-card,
+#vyaparOtpGate .auth-card{
+  width:100%!important;
+  min-width:0!important;
+  max-width:390px!important;
+}
+#vyaparOtpGate .auth-brand-row{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  width:100%!important;
+  min-width:0!important;
+}
+html.native-android #vyaparOtpGate .auth-title,
+#vyaparOtpGate .auth-title{
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+}
+html.native-android #vyaparOtpGate .auth-google,
+#vyaparOtpGate .auth-google{margin:0!important}
