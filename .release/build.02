@@ -1,0 +1,3 @@
+dy_path: RELEASE_${{ steps.version.outputs.version_name }}.md
+          files: VyaparAI-${{ steps.version.outputs.version_name }}.apk
+          overwrite_files: true
