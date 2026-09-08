@@ -1,0 +1,30 @@
+/* Vyapar AI 20.10.2004.00001.2026 — low-border surface hierarchy.
+   Separates sections with shade + spacing instead of outlines, flattens nested cards,
+   removes heavy shadows, tightens padding, and softens the bottom navigation shell. */
+
+html.vy861-flat-black {
+  --vy20-page:#000000;
+  --vy20-surface:#0d0e10;
+  --vy20-surface-raised:#111316;
+  --vy20-surface-inner:#141619;
+  --vy20-line:rgba(255,255,255,.035);
+  --vy20-line-soft:rgba(255,255,255,.018);
+  --vy20-shadow:0 1px 4px rgba(0,0,0,.16);
+}
+html.vy861-flat-black body,html.vy861-flat-black .app,html.vy861-flat-black main,html.vy861-flat-black .screen{background:var(--vy20-page)!important}
+html.vy861-flat-black main :is(.card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,.production-account-card,.vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.notice,.code-output,.code-note,.code-preview,.subscription-card,.plan-card,.calculator-card,.calc-shell,[class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"]){background:var(--vy20-surface)!important;background-image:none!important;border-color:var(--vy20-line)!important;box-shadow:none!important}
+html.vy861-flat-black main :is(.business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,.home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,.production-account-grid>div,.p2-live-preview,.vy660-live-box,[class*="-metric"],[class*="-stat"],[class*="-tile"]){background:var(--vy20-surface-raised)!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important}
+html.vy861-flat-black main :is(.card,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,.vx621-hero,.vx621-group,.home-section-card,.shop-growth-card,.subscription-card,.plan-card,[class*="-panel"],[class*="-workspace-card"],[class*="-summary-card"]) :is(.card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,.home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,.production-account-grid>div,.vx621-kpi,.vx621-context,.vx621-recent,[class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"],[class*="-metric"],[class*="-stat"],[class*="-tile"]){background:var(--vy20-surface-inner)!important;background-image:none!important;border-color:transparent!important;outline:0!important;box-shadow:none!important}
+html.vy861-flat-black main :is(.card,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,.vx621-hero,.vx621-group,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.notice,.subscription-card,.plan-card,[class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"]){padding:12px!important}
+html.vy861-flat-black main :is(.business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,.home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,.production-account-grid>div,[class*="-metric"],[class*="-stat"],[class*="-tile"]){padding:9px 10px!important}
+html.vy861-flat-black .screen > :is(.card,.settings-section,.home-section-card,.business-module-card,.sales-card,.stock-card,[class*="-panel"],[class*="-workspace-card"]) + :is(.card,.settings-section,.home-section-card,.business-module-card,.sales-card,.stock-card,[class*="-panel"],[class*="-workspace-card"]){margin-top:10px!important}
+html.vy861-flat-black :is(.section-title,.section-head,.card-title,.settings-title,[class*="-section-title"],[class*="-section-head"]){margin-bottom:7px!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list){background:var(--vy20-surface)!important;border-color:var(--vy20-line)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){background:transparent!important;border-color:var(--vy20-line-soft)!important;box-shadow:none!important}
+html.vy861-flat-black .top{background:rgba(13,14,16,.97)!important;border-color:var(--vy20-line)!important;box-shadow:var(--vy20-shadow)!important}
+html.vy861-flat-black :is(.glass-dialog,.subscription-dialog,.android-sheet,.production-dialog,.modal-content,.sheet-content,[role="dialog"]){border-color:var(--vy20-line)!important;box-shadow:0 2px 9px rgba(0,0,0,.20)!important}
+html.vy861-flat-black #nav.nav,html.vy861-flat-black .nav{background:rgba(12,13,15,.97)!important;background-image:none!important;border:1px solid var(--vy20-line)!important;box-shadow:0 1px 5px rgba(0,0,0,.18)!important;outline:0!important}
+html.vy861-flat-black #nav.nav :is(button,.nav-item),html.vy861-flat-black .nav :is(button,.nav-item){border-color:transparent!important;box-shadow:none!important}
+html.vy861-flat-black #nav.nav :is(button,.nav-item):is(.active,[aria-current="page"],[aria-selected="true"]),html.vy861-flat-black .nav :is(button,.nav-item):is(.active,[aria-current="page"],[aria-selected="true"]){background:rgba(255,255,255,.065)!important;border-color:rgba(255,255,255,.025)!important;box-shadow:none!important}
+html.vy861-flat-black.theme-light{--vy20-page:#f5f5f7;--vy20-surface:#fafafb;--vy20-surface-raised:#fff;--vy20-surface-inner:#f8f8fa;--vy20-line:rgba(0,0,0,.04);--vy20-line-soft:rgba(0,0,0,.025);--vy20-shadow:0 1px 4px rgba(0,0,0,.055)}
+html.vy861-flat-black.theme-light .top,html.vy861-flat-black.theme-light #nav.nav,html.vy861-flat-black.theme-light .nav{background:rgba(250,250,251,.97)!important}
