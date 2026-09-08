@@ -1,5 +1,5 @@
 <resources>
-    <!-- Android 12-16+: use the same circular Vyapar AI icon as launcher/native handoff. -->
+    <!-- Android 12-16+: use the production Vyapar AI launcher artwork for the native splash handoff. -->
     <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
@@ -13,7 +13,7 @@
         <item name="android:navigationBarColor">#000000</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowSplashScreenBackground">#000000</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_round</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
         <item name="android:windowSplashScreenIconBackgroundColor">#000000</item>
         <item name="android:windowSplashScreenAnimationDuration">0</item>
     </style>
