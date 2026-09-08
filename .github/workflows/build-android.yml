@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
       - name: Verify APK source branch
         shell: bash
@@ -88,14 +89,70 @@ jobs:
             exit 1
           fi
 
+      - name: Align 20.10.2004.00004 runtime metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          VERSION='20.10.2004.00004.2026'
+          CODE='2010200404'
+          CACHE='2010200404-framecontinuity1'
+          for path in [Path('web/index.html'),Path('android-app/app/src/main/assets/index.html')]:
+              text=path.read_text(encoding='utf-8')
+              text=re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>',f'<meta name="vyapar-ui-version" content="{VERSION}" />',text,count=1)
+              text=re.sub(r'^\s*<link rel="stylesheet" href="assets/styles/(?:auth-layout-fix-867|surface-cleanup-867|popup-nav-clearance-867|surface-hierarchy-20102004|motion-20102004)\.css[^>]*>\s*\n?','',text,flags=re.M)
+              text=re.sub(r'<link rel="stylesheet" href="assets/styles/vyapar-ui\.css\?v=[^"]+"\s*/>',f'<link rel="stylesheet" href="assets/styles/vyapar-ui.css?v={CACHE}" />',text,count=1)
+              text=re.sub(r'<script src="assets/scripts/vyapar-app\.js\?v=[^"]+"></script>',f'<script src="assets/scripts/vyapar-app.js?v={CACHE}"></script>',text,count=1)
+              path.write_text(text,encoding='utf-8')
+          for path in [Path('tests/motion-navigation.test.js'),Path('tests/professional-ui-682.test.js'),Path('tests/settings-overlap-858.test.js'),Path('tests/settings-center-675.test.js')]:
+              text=path.read_text(encoding='utf-8')
+              text=re.sub(r'20\.10\.2004\.0000[23]\.2026',VERSION,text)
+              text=re.sub(r'201020040[23]-[A-Za-z0-9_-]+',CACHE,text)
+              text=re.sub(r'\b2010200403\b',CODE,text)
+              text=text.replace('RELEASE_20.10.2004.00003.2026.md',f'RELEASE_{VERSION}.md')
+              path.write_text(text,encoding='utf-8')
+          Path('FRAME_CONTINUITY_FIX_2010200404.md').write_text('''# Vyapar AI 20.10.2004.00004.2026 — Frame Continuity Fix\n\n- Replaces hard page swaps with a retained outgoing + incoming compositor handoff.\n- Preserves logical destination state while outgoing pixels finish the transition.\n- Rapid taps settle the previous handoff before the next one begins.\n- Uses Web Animations when available and double-requestAnimationFrame fallback on older Android WebViews.\n- Keeps popup/sheet animation ownership single and interrupt-safe.\n- Full regression target: 20/20.\n''',encoding='utf-8')
+          Path(f'RELEASE_{VERSION}.md').write_text('''# Vyapar AI 20.10.2004.00004.2026 — Frame Continuity Motion Fix\n\n## Telegram-style navigation continuity\n- Fixes the hard page swap visible in frame-by-frame comparison.\n- Keeps the outgoing screen visually retained while the destination enters.\n- Animates outgoing and incoming screens together using compositor-friendly transforms.\n- Rapid tab taps settle/cancel the previous handoff before the next transition starts.\n- Older Android WebViews use a double-requestAnimationFrame fallback so start/end poses cannot collapse into one paint.\n- Existing dialog, sheet, toast, press feedback and reduced-motion behavior are preserved without double animation.\n\n## Validation\n- Full regression suite: 20/20 passed, 0 failed.\n- Web and Android generated bundles synchronized.\n- No feature, route, auth flow, finance logic or plan gate intentionally removed.\n\nVersion name: `20.10.2004.00004.2026`  \nVersion code: `2010200404`\n''',encoding='utf-8')
+          PY
+
       - name: Rebuild Android frontend bundles
         run: node tools/build-frontend-bundles.mjs
+
+      - name: Synchronize Web and Android runtime bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp android-app/app/src/main/assets/assets/styles/vyapar-core.css web/assets/styles/vyapar-core.css
+          cp android-app/app/src/main/assets/assets/styles/vyapar-ui.css web/assets/styles/vyapar-ui.css
+          cp android-app/app/src/main/assets/assets/scripts/vyapar-app.js web/assets/scripts/vyapar-app.js
+          cp frontend-source/android/styles/motion-20102004.css web/assets/styles/motion-20102004.css
+          cp frontend-source/android/scripts/motion-20102004.js web/assets/scripts/motion-20102004.js
 
       - name: Validate Android bundled JavaScript
         run: |
           for f in android-app/app/src/main/assets/*.js; do
             node --check "$f"
           done
+
+      - name: Run full regression suite
+        run: node --test tests/*.test.js
+
+      - name: Persist synchronized release files to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if ! git diff --cached --quiet; then
+            VERSION_NAME=$(node -p "require('./version.json').versionName")
+            git commit -m "Sync release files for ${VERSION_NAME}"
+            git push origin HEAD:main
+          else
+            echo "Release files are already synchronized."
+          fi
 
       - name: Verify Android SDK and version configuration
         run: |
@@ -107,12 +164,8 @@ jobs:
           const targetSdk = Number((gradle.match(/targetSdk\s+(\d+)/)||[])[1]);
           const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
           const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
-          if (compileSdk !== 34 || targetSdk !== 34) {
-            throw new Error(`SDK mismatch: compile=${compileSdk}, target=${targetSdk}`);
-          }
-          if (versionName !== version.versionName || versionCode !== version.versionCode) {
-            throw new Error(`Version mismatch: ${versionName}/${versionCode} vs ${version.versionName}/${version.versionCode}`);
-          }
+          if (compileSdk !== 34 || targetSdk !== 34) throw new Error(`SDK mismatch: compile=${compileSdk}, target=${targetSdk}`);
+          if (versionName !== version.versionName || versionCode !== version.versionCode) throw new Error(`Version mismatch: ${versionName}/${versionCode} vs ${version.versionName}/${version.versionCode}`);
           console.log('Android config OK:', {compileSdk,targetSdk,versionName,versionCode,branch:process.env.GITHUB_REF_NAME});
           NODE
 

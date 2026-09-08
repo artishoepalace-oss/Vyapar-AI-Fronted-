@@ -116,3 +116,13 @@ html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet{
   animation:none!important;
   animation-name:none!important;
 }
+
+/* 20.10.2004.00003 frame-continuity handoff.
+   Outgoing keeps .hide for navigation semantics while inline display temporarily keeps its pixels alive. */
+html.vy-motion-ready.vy-page-transitioning body{overflow-x:hidden!important}
+html.vy-motion-ready body .screen.vy-page-outgoing,
+html.vy-motion-ready body .screen.vy-page-incoming{
+  animation:none!important;transition:none!important;transform-style:flat!important;
+  backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
+}
+html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important}
