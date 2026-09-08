@@ -9055,3 +9055,300 @@ html.vy861-flat-black :is(#screen-business,#screen-sales,#screen-stock,#screen-s
     border-radius:22px!important;
   }
 }
+
+/* ===== STYLE SOURCE: surface-hierarchy-20102004.css ===== */
+
+/* Vyapar AI 20.10.2004 — quiet surface hierarchy.
+   Page shade + spacing carries hierarchy; outlines and shadows stay intentionally near-invisible. */
+
+html.vy861-flat-black {
+  --vy20-page:#000000;
+  --vy20-surface:#0c0d0f;
+  --vy20-surface-raised:#111215;
+  --vy20-surface-inner:#151619;
+  --vy20-line:rgba(255,255,255,.018);
+  --vy20-line-soft:rgba(255,255,255,.012);
+  --vy20-shadow:none;
+}
+
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen {
+  background:var(--vy20-page)!important;
+}
+
+/* Main sections: slightly lighter than the page, no card halo. */
+html.vy861-flat-black main :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .production-card,.production-account-card,.vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,
+  .vx621-recent,.home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.notice,
+  .code-output,.code-note,.code-preview,.subscription-card,.plan-card,.calculator-card,.calc-shell,
+  [class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"]
+) {
+  background:var(--vy20-surface)!important;
+  background-image:none!important;
+  border-color:var(--vy20-line)!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+
+/* Action and metric surfaces rely on tone, not a visible outline. */
+html.vy861-flat-black main :is(
+  .business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,
+  .home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,
+  .production-account-grid>div,.p2-live-preview,.vy660-live-box,
+  [class*="-metric"],[class*="-stat"],[class*="-tile"]
+) {
+  background:var(--vy20-surface-raised)!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+
+/* Nested cards become borderless inner surfaces, so there is no box-inside-box look. */
+html.vy861-flat-black main :is(
+  .card,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,
+  .vx621-hero,.vx621-group,.home-section-card,.shop-growth-card,.subscription-card,.plan-card,
+  [class*="-panel"],[class*="-workspace-card"],[class*="-summary-card"]
+) :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,
+  .home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,
+  .production-account-grid>div,.vx621-kpi,.vx621-context,.vx621-recent,
+  [class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"],
+  [class*="-metric"],[class*="-stat"],[class*="-tile"]
+) {
+  background:var(--vy20-surface-inner)!important;
+  background-image:none!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+
+/* Slightly tighter density without crushing controls. */
+html.vy861-flat-black main :is(
+  .card,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,
+  .vx621-hero,.vx621-group,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,
+  .shop-growth-card,.chart-wrap,.notice,.subscription-card,.plan-card,
+  [class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"]
+) {
+  padding:10px 11px!important;
+}
+html.vy861-flat-black main :is(
+  .business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,
+  .home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,
+  .production-account-grid>div,[class*="-metric"],[class*="-stat"],[class*="-tile"]
+) {
+  padding:8px 9px!important;
+}
+
+/* Section separation comes from breathing room + tone instead of outlines. */
+html.vy861-flat-black .screen > :is(
+  .card,.settings-section,.home-section-card,.business-module-card,.sales-card,.stock-card,
+  [class*="-panel"],[class*="-workspace-card"]
+) + :is(
+  .card,.settings-section,.home-section-card,.business-module-card,.sales-card,.stock-card,
+  [class*="-panel"],[class*="-workspace-card"]
+) {
+  margin-top:12px!important;
+}
+html.vy861-flat-black :is(.section-title,.section-head,.card-title,.settings-title,[class*="-section-title"],[class*="-section-head"]) {
+  margin-bottom:6px!important;
+}
+
+/* Settings list: rows are flat; only a hairline divider remains. */
+html.vy861-flat-black #screen-settings :is(
+  .vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,
+  .vy675-page-body>.settings-section,.vx622-settings-list
+) {
+  background:var(--vy20-surface)!important;
+  border-color:var(--vy20-line)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row) {
+  background:transparent!important;
+  border-color:var(--vy20-line-soft)!important;
+  box-shadow:none!important;
+}
+
+/* Header/dialog/nav framing is deliberately minimal. */
+html.vy861-flat-black .top {
+  background:rgba(12,13,15,.97)!important;
+  border-color:var(--vy20-line)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black :is(
+  .glass-dialog,.subscription-dialog,.android-sheet,.production-dialog,.modal-content,.sheet-content,
+  [role="dialog"]
+) {
+  border-color:var(--vy20-line)!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.12)!important;
+}
+html.vy861-flat-black #nav.nav,
+html.vy861-flat-black .nav {
+  background:rgba(11,12,14,.97)!important;
+  background-image:none!important;
+  border:1px solid var(--vy20-line)!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+html.vy861-flat-black #nav.nav :is(button,.nav-item),
+html.vy861-flat-black .nav :is(button,.nav-item) {
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #nav.nav :is(button,.nav-item):is(.active,[aria-current="page"],[aria-selected="true"]),
+html.vy861-flat-black .nav :is(button,.nav-item):is(.active,[aria-current="page"],[aria-selected="true"]) {
+  background:rgba(255,255,255,.055)!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Light fallback. */
+html.vy861-flat-black.theme-light {
+  --vy20-page:#f4f4f6;
+  --vy20-surface:#fafafb;
+  --vy20-surface-raised:#ffffff;
+  --vy20-surface-inner:#f7f7f9;
+  --vy20-line:rgba(0,0,0,.022);
+  --vy20-line-soft:rgba(0,0,0,.014);
+  --vy20-shadow:none;
+}
+html.vy861-flat-black.theme-light .top,
+html.vy861-flat-black.theme-light #nav.nav,
+html.vy861-flat-black.theme-light .nav {
+  background:rgba(250,250,251,.97)!important;
+}
+
+/* ===== STYLE SOURCE: motion-20102004.css ===== */
+
+/* Vyapar AI 20.10.2004.00002 — final Telegram-fast motion authority.
+   JS owns page/dialog/sheet transforms. CSS only provides micro feedback and disables legacy duplicate motion. */
+html.vy-motion-ready{
+  --vy-motion-ease:cubic-bezier(.16,1,.3,1);
+  --vy-motion-ease-soft:cubic-bezier(.2,.8,.2,1);
+  --vy-motion-fast:78ms;
+  --vy-motion-ui:125ms;
+  --vy-motion-page:205ms;
+}
+html.vy-motion-ready body .app{overflow:visible!important}
+html.vy-motion-ready body .top{position:sticky!important;top:8px!important;z-index:100!important}
+html.vy-motion-ready body .screen{
+  overflow-x:clip;overflow-anchor:none;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  animation:none!important;transition:none!important;transform-origin:50% 50%;
+}
+
+/* Fast tactile feedback only. No shadow/filter animation. */
+html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.settings-row,.vy675-settings-row,.vx622-settings-row):not(:disabled){
+  transition-property:transform,opacity,background-color,color,border-color!important;
+  transition-duration:var(--vy-motion-fast),110ms,var(--vy-motion-ui),var(--vy-motion-ui),var(--vy-motion-ui)!important;
+  transition-timing-function:var(--vy-motion-ease-soft)!important;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.settings-row,.vy675-settings-row,.vx622-settings-row):not(:disabled):active{
+  transform:translate3d(0,0,0) scale(.978)!important;
+}
+html.vy-motion-ready body input,
+html.vy-motion-ready body select,
+html.vy-motion-ready body textarea{
+  transition:border-color var(--vy-motion-ui) ease,background-color var(--vy-motion-ui) ease!important;
+}
+html.vy-motion-ready body button:focus-visible,
+html.vy-motion-ready body a:focus-visible{outline:2px solid rgba(211,213,217,.72)!important;outline-offset:3px!important}
+
+/* Brand/logo remains stationary during navigation. */
+html.vy-motion-ready body .top .brand .logo{
+  padding:0!important;border:0!important;border-radius:12px!important;clip-path:none!important;-webkit-clip-path:none!important;
+  background:transparent!important;box-shadow:none!important;object-fit:contain!important;object-position:center!important;filter:none!important;
+}
+html.vy-motion-ready body #vyaparOtpGate .auth-logo-box{
+  padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:20px!important;overflow:hidden!important;
+}
+html.vy-motion-ready body #vyaparOtpGate .auth-logo{
+  width:100%!important;height:100%!important;object-fit:contain!important;padding:0!important;border-radius:20px!important;background:transparent!important;transform:none!important;
+}
+
+/* Bottom navigation: fixed geometry, fast response, no halo. */
+html.vy-motion-ready body #nav.nav{
+  left:8px!important;right:8px!important;width:auto!important;max-width:620px!important;margin:0 auto!important;
+  bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;transform:none!important;height:68px!important;min-height:68px!important;
+  box-sizing:border-box!important;border-radius:26px!important;padding:5px!important;background:rgba(12,13,15,.975)!important;
+  border:1px solid rgba(255,255,255,.018)!important;box-shadow:none!important;
+}
+html.vy-motion-ready body #nav.nav button[data-android-tab]{border-radius:20px!important}
+html.vy-motion-ready body #nav.nav button.active{background:rgba(255,255,255,.06)!important;color:#fff!important}
+html.vy-motion-ready body #nav.nav button[data-android-tab]:not(:disabled):active{transform:translate3d(0,1px,0) scale(.968)!important}
+html.vy-motion-ready body #nav.nav .android-nav-icon{
+  transition:transform 125ms var(--vy-motion-ease),background-color var(--vy-motion-ui) ease!important;
+}
+html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-2px,0) scale(1.035)!important}
+
+/* One JS motion owner for all known overlays/cards. */
+html.vy-motion-ready body :is(
+  .glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,
+  .android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.upgrade-popup-overlay,
+  .vy6601-select-overlay,.plan-success-overlay
+){animation:none!important;-webkit-tap-highlight-color:transparent}
+html.vy-motion-ready body :is(
+  .glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-sheet,
+  .account-delete-dialog,.upgrade-popup-box,.upgrade-plan-reference-card,.vy6601-select-sheet,.modal-card,.sheet-content
+){
+  animation:none!important;transition-property:transform,opacity!important;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:flat;
+}
+html.vy-motion-ready body :is(
+  .android-sheet,.shop-progress-sheet,.glass-dialog-card,.subscription-dialog,.production-modal,.vx643-modal,
+  .vy6601-select-sheet,.upgrade-plan-reference-card,.modal-card,.sheet-content
+){overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-behavior:auto!important}
+
+/* More sheet: one continuous list surface. */
+html.vy-motion-ready body #androidMoreSheet .android-sheet{transform-origin:50% 100%!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-grid{display:flex!important;flex-direction:column!important;gap:0!important;border-color:rgba(255,255,255,.018)!important;box-shadow:none!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-item{min-height:60px!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.04)!important;background:transparent!important;border-radius:0!important;padding:9px 8px!important;box-shadow:none!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-item:last-child{border-bottom:0!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon{color:#d3d5d9!important;background:#222428!important;border-radius:12px!important;transition:transform 110ms var(--vy-motion-ease),background-color 120ms ease!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-item:active .android-sheet-item-icon{transform:scale(.95)!important}
+html.vy-motion-ready body #shopProgressSheet .shop-progress-sheet{max-height:calc(100dvh - 110px - env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
+
+html.vy-motion-ready body .glass-toast{
+  animation:none!important;transition:opacity 120ms ease,transform 145ms var(--vy-motion-ease)!important;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy-motion-ready body .screen,
+  html.vy-motion-ready body :is(button,.btn,[role="button"],input,select,textarea,.android-nav-icon,.android-sheet-item-icon,
+    .glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,
+    .android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.upgrade-popup-overlay,
+    .vy6601-select-overlay,.plan-success-overlay,.glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
+    .production-modal,.android-sheet,.account-delete-dialog,.upgrade-popup-box,.upgrade-plan-reference-card,.vy6601-select-sheet){
+    animation:none!important;transition:none!important;
+  }
+  html.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled):active{transform:none!important}
+}
+
+/* Specificity shield: older release layers used high-specificity !important keyframes.
+   This final rule guarantees one animation owner even when those legacy selectors still exist in the bundle. */
+html.vy861-flat-black.vy-motion-ready body .screen:not(.hide),
+html.vy861-flat-black.vy-motion-ready body :is(
+  .glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,
+  .android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.upgrade-popup-overlay,
+  .vy6601-select-overlay,.plan-success-overlay,.glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
+  .production-modal,.android-sheet,.account-delete-dialog,.upgrade-popup-box,.upgrade-plan-reference-card,
+  .vy6601-select-sheet,.modal-card,.sheet-content
+),
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet{
+  animation:none!important;
+  animation-name:none!important;
+}
+
+/* 20.10.2004.00003 frame-continuity handoff.
+   Outgoing keeps .hide for navigation semantics while inline display temporarily keeps its pixels alive. */
+html.vy-motion-ready.vy-page-transitioning body{overflow-x:hidden!important}
+html.vy-motion-ready body .screen.vy-page-outgoing,
+html.vy-motion-ready body .screen.vy-page-incoming{
+  animation:none!important;transition:none!important;transform-style:flat!important;
+  backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
+}
+html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important}
