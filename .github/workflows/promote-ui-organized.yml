@@ -145,30 +145,33 @@ jobs:
                   path.write_text(text, encoding='utf-8')
 
           release_note = Path(f'RELEASE_{VERSION}.md')
-          release_note.write_text(f'''# Vyapar AI {VERSION} — Organized UI & Source Cleanup
-
-## Highlights
-
-- Added fast local search for Business tools with multi-word matching, result count, empty state, reset and Escape handling.
-- Simplified Business workspace copy and improved scanability without removing business/accounting/auth/subscription behavior.
-- Flattened nested UI surfaces, standardized controls and focus states, and improved responsive single-column layouts.
-- Consolidated frontend ownership around `frontend-source/android/` and deterministic shared Web + Android bundles.
-- Removed 141 obsolete duplicate/legacy paths and moved 62 historical implementation/release files into organized documentation folders.
-- Preserved existing runtime logic while reducing repository clutter and generated-source drift.
-
-## Validation
-
-- Shared frontend bundles are rebuilt from canonical source before Android compilation.
-- Runtime/source verification and the full Node test suite run before the release commit/build.
-- Supplied organized build validation baseline: 23/23 tests passing.
-
-## Release identity
-
-- Version name: `{VERSION}`
-- Version code: `{CODE}`
-- Channel: `production-{VERSION}`
-- Date: `2026-09-09`
-''', encoding='utf-8')
+          release_lines = [
+              f'# Vyapar AI {VERSION} — Organized UI & Source Cleanup',
+              '',
+              '## Highlights',
+              '',
+              '- Added fast local search for Business tools with multi-word matching, result count, empty state, reset and Escape handling.',
+              '- Simplified Business workspace copy and improved scanability without removing business/accounting/auth/subscription behavior.',
+              '- Flattened nested UI surfaces, standardized controls and focus states, and improved responsive single-column layouts.',
+              '- Consolidated frontend ownership around `frontend-source/android/` and deterministic shared Web + Android bundles.',
+              '- Removed 141 obsolete duplicate/legacy paths and moved 62 historical implementation/release files into organized documentation folders.',
+              '- Preserved existing runtime logic while reducing repository clutter and generated-source drift.',
+              '',
+              '## Validation',
+              '',
+              '- Shared frontend bundles are rebuilt from canonical source before Android compilation.',
+              '- Runtime/source verification and the full Node test suite run before the release commit/build.',
+              '- Supplied organized build validation baseline: 23/23 tests passing.',
+              '',
+              '## Release identity',
+              '',
+              f'- Version name: `{VERSION}`',
+              f'- Version code: `{CODE}`',
+              f'- Channel: `production-{VERSION}`',
+              '- Date: `2026-09-09`',
+              ''
+          ]
+          release_note.write_text('\n'.join(release_lines), encoding='utf-8')
           PY
 
       - name: Rebuild and verify organized runtime
