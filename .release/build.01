@@ -1,0 +1,89 @@
+ text, count=1)
+              path.write_text(text, encoding='utf-8')
+          print('Runtime metadata:', VERSION, CODE, CACHE)
+          PY
+
+      - name: Rebuild Android and web frontend bundles
+        run: npm run build
+
+      - name: Verify frontend bundles and runtime
+        run: npm run verify
+
+      - name: Persist synchronized generated release files to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION_NAME=$(node -p "require('./version.json').versionName")
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            web/index.html \
+            android-app/app/src/main/assets/index.html \
+            web/assets/styles/vyapar-core.css \
+            web/assets/styles/vyapar-ui.css \
+            web/assets/scripts/vyapar-app.js \
+            android-app/app/src/main/assets/assets/styles/vyapar-core.css \
+            android-app/app/src/main/assets/assets/styles/vyapar-ui.css \
+            android-app/app/src/main/assets/assets/scripts/vyapar-app.js
+          if ! git diff --cached --quiet; then
+            git commit -m "[skip ci] Sync generated release files for ${VERSION_NAME}"
+            git push origin HEAD:main
+          else
+            echo "Generated release files are already synchronized."
+          fi
+
+      - name: Verify Android SDK and version configuration
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const version = JSON.parse(fs.readFileSync('version.json','utf8'));
+          const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
+          const compileSdk = Number((gradle.match(/compileSdk\s+(\d+)/)||[])[1]);
+          const targetSdk = Number((gradle.match(/targetSdk\s+(\d+)/)||[])[1]);
+          const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
+          const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+          if (compileSdk !== 34 || targetSdk !== 34) throw new Error(`SDK mismatch: compile=${compileSdk}, target=${targetSdk}`);
+          if (versionName !== version.versionName || versionCode !== Number(version.versionCode)) throw new Error(`Version mismatch: ${versionName}/${versionCode} vs ${version.versionName}/${version.versionCode}`);
+          console.log('Android config OK:', {compileSdk,targetSdk,versionName,versionCode});
+          NODE
+
+      - name: Generate Gradle wrapper
+        working-directory: android-app
+        run: gradle wrapper --gradle-version 8.7 --distribution-type bin
+
+      - name: Build debug APK
+        working-directory: android-app
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug \
+            -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
+            --stacktrace \
+            --no-daemon
+
+      - name: Read app version
+        id: version
+        working-directory: android-app
+        run: |
+          VERSION_NAME=$(node -p "require('../version.json').versionName")
+          VERSION_CODE=$(node -p "require('../version.json').versionCode")
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK
+        run: |
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk \
+            "VyaparAI-${{ steps.version.outputs.version_name }}.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VyaparAI-${{ steps.version.outputs.version_name }}-apk
+          path: VyaparAI-${{ steps.version.outputs.version_name }}.apk
+
+      - name: Create or update GitHub Release from main
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version_name }}
+          name: Vyapar AI v${{ steps.version.outputs.version_name }} - Main Android
+          target_commitish: main
+          bo
