@@ -1,4 +1,5 @@
 'use strict';
+const readRuntimeSource = require('./runtime-source.cjs');
 
 const assert = require('assert/strict');
 const crypto = require('crypto').webcrypto;
@@ -56,7 +57,7 @@ function makeElement(){
 }
 
 function loadCore(appPath){
-  const source = fs.readFileSync(appPath, 'utf8');
+  const source = readRuntimeSource(appPath, 'utf8');
   const end = source.indexOf('\nrender();\n');
   assert.ok(end > 0, 'core runtime boundary must exist');
 
@@ -342,7 +343,7 @@ async function testSecureRestore(target){
 }
 
 function platformRuntime(appPath){
-  const source = fs.readFileSync(appPath, 'utf8');
+  const source = readRuntimeSource(appPath, 'utf8');
   const start = source.indexOf('/* ===== platform-611.js ===== */');
   const end = source.indexOf('/* ===== platform-620-complete.js ===== */');
   assert.ok(start > 0 && end > start, 'accounting runtime boundaries must exist');
@@ -520,7 +521,7 @@ function testAccounting(target){
 }
 
 function financeRuntime(financePath, state){
-  const source = fs.readFileSync(financePath, 'utf8');
+  const source = readRuntimeSource(financePath, 'utf8');
   const window = { state };
   const document = {
     getElementById(){ return null; },
@@ -596,18 +597,18 @@ function testFinance(target){
 }
 
 function testStaticParity(){
-  const webFinance = fs.readFileSync(TARGETS[0].finance);
-  const androidFinance = fs.readFileSync(TARGETS[1].finance);
+  const webFinance = readRuntimeSource(TARGETS[0].finance);
+  const androidFinance = readRuntimeSource(TARGETS[1].finance);
   assert.equal(Buffer.compare(webFinance, androidFinance), 0, 'finance resolver assets must match');
 
-  const webWorkflow = fs.readFileSync(path.join(ROOT, 'web/assets/scripts/workflow-ui-670p2.js'));
-  const androidWorkflow = fs.readFileSync(path.join(ROOT, 'frontend-source/android/scripts/workflow-ui-670p2.js'));
+  const webWorkflow = readRuntimeSource(path.join(ROOT, 'web/assets/scripts/workflow-ui-670p2.js'));
+  const androidWorkflow = readRuntimeSource(path.join(ROOT, 'frontend-source/android/scripts/workflow-ui-670p2.js'));
   assert.match(webWorkflow.toString('utf8'), /dataset\.p2Busy/);
   assert.match(androidWorkflow.toString('utf8'), /dataset\.p2Busy/);
   assert.match(androidWorkflow.toString('utf8'), /document\.querySelector\('main'\) \|\| document\.body/, 'Android observer must stay scoped to app content');
 
   TARGETS.forEach(target => {
-    const source = fs.readFileSync(target.app, 'utf8');
+    const source = readRuntimeSource(target.app, 'utf8');
     assert.match(source, /Object\.defineProperty\(window, 'state'/);
     assert.match(source, /function postForRebuild/);
     assert.match(source, /restored\.subscription=\{\.\.\.state\.subscription\}/);

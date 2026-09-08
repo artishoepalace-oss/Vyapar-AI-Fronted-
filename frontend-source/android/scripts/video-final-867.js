@@ -71,20 +71,7 @@
   }
 
   function fixMoreGeometry(){
-    var overlay=document.getElementById('androidMoreSheet');
-    if(!overlay) return;
-    important(overlay,'padding','0');
-    var sheet=overlay.querySelector('.android-sheet');
-    if(!sheet) return;
-    important(sheet,'position','absolute');
-    important(sheet,'left',window.innerWidth<=390?'6px':'8px');
-    important(sheet,'right',window.innerWidth<=390?'6px':'8px');
-    important(sheet,'top','auto');
-    important(sheet,'bottom','calc('+(window.innerWidth<=390?'80px':'82px')+' + env(safe-area-inset-bottom,0px))');
-    important(sheet,'width','auto');
-    important(sheet,'margin','0 auto');
-    important(sheet,'transform','none');
-    important(sheet,'border-radius',window.innerWidth<=390?'22px':'24px');
+    // CSS owns sheet geometry; never overwrite an in-flight transform.
   }
 
   var queued=false;

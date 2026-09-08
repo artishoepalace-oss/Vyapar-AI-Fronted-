@@ -55,6 +55,7 @@ const uiStyles = [
 
 const scripts = [
   'android-session-flow-647.js',
+  'motion-20102004.js',
   'auth.js',
   'platform-android.js',
   'performance-android7-16.js',
@@ -107,3 +108,8 @@ function writeBundle(subdirectory, outputName, filenames, sectionLabel) {
 writeBundle('styles', 'vyapar-core.css', coreStyles, 'STYLE SOURCE');
 writeBundle('styles', 'vyapar-ui.css', uiStyles, 'STYLE SOURCE');
 writeBundle('scripts', 'vyapar-app.js', scripts, 'SCRIPT SOURCE');
+
+// These layers load after the combined UI stylesheet in index.html.
+for (const filename of ['surface-hierarchy-20102004.css', 'motion-20102004.css']) {
+  fs.copyFileSync(path.join(sourceDir, 'styles', filename), path.join(runtimeDir, 'styles', filename));
+}

@@ -262,9 +262,12 @@ protected void onCreate(Bundle savedInstanceState) {
             @Override
             public void onComplete(long requestId) {
                 if (startupCover == null) return;
-                ViewGroup parent = (ViewGroup) startupCover.getParent();
-                if (parent != null) parent.removeView(startupCover);
-                startupCover = null;
+                final FrameLayout cover = startupCover;
+                cover.animate().alpha(0f).setDuration(160L).withEndAction(() -> {
+                    ViewGroup parent = (ViewGroup) cover.getParent();
+                    if (parent != null) parent.removeView(cover);
+                    if (startupCover == cover) startupCover = null;
+                }).start();
             }
         });
     }

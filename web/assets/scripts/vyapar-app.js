@@ -154,6 +154,185 @@
   window.addEventListener('load',function(){hideLegacyLoader();refresh()},{once:true});
 })();
 
+/* ===== SCRIPT SOURCE: motion-20102004.js ===== */
+
+/* Vyapar AI — one motion owner for navigation, forms and dialogs.
+ * Transitions use transform/opacity only. No page clones, frame loops or API changes.
+ * Inline priorities intentionally supersede legacy animation:none UI layers.
+ */
+(function(){
+  'use strict';
+  if(window.vyaparMotion) return;
+  const running=new WeakMap();
+  const overlays=new WeakMap();
+  const positions=Object.create(null);
+  const ranks={home:0,business:1,sales:2,stock:3,analytics:4,upload:5,calculator:6,subscription:7,settings:8};
+  const overlaySelector='.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.vy6601-select-overlay';
+  const closeSelector='#closeShopProgress,.android-sheet-close,#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
+  const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
+  function reduced(){return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);}
+  function duration(ms){
+    if(reduced()) return 0;
+    // Auto still has motion on Android 7/8; Lite shortens motion instead of removing it.
+    return document.documentElement.classList.contains('perf-lite') ? Math.round(ms*.8) : ms;
+  }
+  function cancel(node){ const job=node && running.get(node); if(job) job.cancel(); }
+  function tween(node,from,to,ms,done){
+    if(!node) {if(done)done();return;}
+    cancel(node);
+    const time=duration(ms);
+    if(!time || !node.isConnected){if(done)done();return;}
+    const props=['transition','will-change',...Object.keys(from)];
+    const saved=props.map(prop=>[prop,node.style.getPropertyValue(prop),node.style.getPropertyPriority(prop)]);
+    let frame=0,timer=0,finished=false;
+    const restore=()=>{
+      if(finished)return;
+      finished=true; cancelAnimationFrame(frame); clearTimeout(timer);
+      node.removeEventListener('transitionend',end);
+      node.style.setProperty('transition','none','important');
+      saved.filter(entry=>entry[0]!=='transition').forEach(([p,v,priority])=>{if(v)node.style.setProperty(p,v,priority);else node.style.removeProperty(p);});
+      const entry=saved[0]; if(entry[1])node.style.setProperty(entry[0],entry[1],entry[2]);else node.style.removeProperty(entry[0]);
+      running.delete(node);
+    };
+    const finish=()=>{if(finished)return;restore();if(done)done();};
+    const end=event=>{if(event.target===node && Object.prototype.hasOwnProperty.call(to,event.propertyName))finish();};
+    running.set(node,{cancel:restore});
+    node.style.setProperty('transition','none','important');
+    node.style.setProperty('will-change',Object.keys(from).join(','),'important');
+    Object.keys(from).forEach(p=>node.style.setProperty(p,from[p],'important'));
+    // One bounded layout read per interaction establishes the first transition frame.
+    void node.offsetWidth;
+    node.addEventListener('transitionend',end);
+    frame=requestAnimationFrame(()=>{
+      if(finished)return;
+      node.style.setProperty('transition',Object.keys(to).map(p=>p+' '+time+'ms cubic-bezier(.22,.75,.2,1)').join(','),'important');
+      Object.keys(to).forEach(p=>node.style.setProperty(p,to[p],'important'));
+      timer=setTimeout(finish,time+64);
+    });
+  }
+  function enter(node,direction){
+    if(!node || reduced())return;
+    cancel(node);
+    const base=getComputedStyle(node).transform;
+    const rest=base==='none'?'':base+' ';
+    const distance=Math.min(64,Math.round((window.innerWidth||360)*.16))*(direction<0?-1:1);
+    tween(node,{transform:rest+'translate3d('+distance+'px,0,0)',opacity:'.94'},{transform:base,opacity:'1'},290);
+  }
+  function scrollToPosition(top){
+    const roots=[document.documentElement,document.body,document.scrollingElement].filter((node,index,all)=>node && all.indexOf(node)===index);
+    const saved=roots.map(node=>[node,node.style.getPropertyValue('scroll-behavior'),node.style.getPropertyPriority('scroll-behavior')]);
+    roots.forEach(node=>node.style.setProperty('scroll-behavior','auto','important'));
+    window.scrollTo(0,Math.max(0,Number(top)||0));
+    saved.forEach(([node,value,priority])=>{if(value)node.style.setProperty('scroll-behavior',value,priority);else node.style.removeProperty('scroll-behavior');});
+  }
+  function autoTop(){try{return typeof state!=='undefined' && state.settings && state.settings.autoScrollTop===true;}catch(_){return false;}}
+  function beforePage(previous,next){
+    const top=Math.max(0,window.scrollY || (document.scrollingElement||document.documentElement).scrollTop || 0);
+    positions[previous]=top;
+    cancel(document.getElementById('screen-'+previous));
+    return {previous,next,top: autoTop()?0:(Object.prototype.hasOwnProperty.call(positions,next)?positions[next]:0)};
+  }
+  function afterPage(context,node){
+    if(!context || !node)return;
+    scrollToPosition(context.top);
+    if(context.previous!==context.next && !document.documentElement.classList.contains('vy855-booting')){
+      enter(node,(ranks[context.next]||0)<(ranks[context.previous]||0)?-1:1);
+    }
+  }
+  function visible(node){return node && node.isConnected && !node.hidden && getComputedStyle(node).display!=='none' && getComputedStyle(node).visibility!=='hidden';}
+  function topOverlay(){return Array.from(document.querySelectorAll(overlaySelector)).filter(visible).pop();}
+  function focusables(node){return Array.from(node.querySelectorAll(focusSelector)).filter(el=>visible(el) && el.getClientRects().length);}
+  function openOverlay(overlay){
+    if(overlays.has(overlay) || !visible(overlay))return;
+    const card=overlay.querySelector('[role="dialog"],.android-sheet,.shop-progress-sheet,.production-modal');
+    if(!card)return;
+    const info={card,trigger:document.activeElement,finish:null};
+    overlays.set(overlay,info);
+    overlay.addEventListener('click',event=>{
+      if(overlay.__vyClosing){event.preventDefault();event.stopImmediatePropagation();}
+    },true);
+    cancel(card);
+    const base=getComputedStyle(card).transform;
+    const rest=base==='none'?'':base+' ';
+    tween(overlay,{opacity:'.25'},{opacity:'1'},220);
+    tween(card,{transform:rest+'translate3d(0,32px,0) scale(.975)'},{transform:base},290);
+    requestAnimationFrame(()=>{
+      if(!overlay.isConnected || overlay.__vyClosing)return;
+      if(!overlay.contains(document.activeElement)){
+        const target=focusables(card)[0]||card;
+        if(target===card)card.setAttribute('tabindex','-1');
+        try{target.focus({preventScroll:true});}catch(_){}
+      }
+    });
+  }
+  function cancelOverlay(overlay){
+    const info=overlays.get(overlay);
+    cancel(overlay); if(info)cancel(info.card);
+    if(info && info.finish)info.finish();
+    overlays.delete(overlay);
+  }
+  function closeOverlay(overlay,callback){
+    if(!overlay){if(callback)callback();return;}
+    if(overlay.__vyClosing)return;
+    if(!overlays.has(overlay))openOverlay(overlay);
+    const info=overlays.get(overlay)||{card:overlay.querySelector('[role="dialog"]'),trigger:null};
+    overlay.__vyClosing=true;
+    // Freeze repeated clicks while keeping the backdrop in place during the exit.
+    overlay.style.setProperty('pointer-events','auto','important');
+    let finished=false;
+    const finish=()=>{
+      if(finished)return;finished=true;
+      cancel(overlay);cancel(info.card);overlays.delete(overlay);
+      if(callback)callback();else overlay.remove();
+      if(info.trigger && info.trigger.isConnected && (document.activeElement===document.body || overlay.contains(document.activeElement))){
+        try{info.trigger.focus({preventScroll:true});}catch(_){}
+      }
+    };
+    info.finish=finish;overlays.set(overlay,info);
+    cancel(overlay);cancel(info.card);
+    if(!duration(180)){finish();return;}
+    const card=info.card;
+    if(card){const base=getComputedStyle(card).transform; tween(card,{transform:base},{transform:(base==='none'?'':base+' ')+'translate3d(0,22px,0) scale(.98)'},180);}
+    tween(overlay,{opacity:'1'},{opacity:'0'},180,finish);
+  }
+  function dismissTop(){
+    const overlay=topOverlay();
+    if(!overlay)return false;
+    if(overlay.__vyClosing)return true;
+    const close=overlay.querySelector(closeSelector);
+    if(close){close.click();return true;}
+    return false;
+  }
+  window.vyaparMotion={enter,cancel,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop};
+  function boot(){
+    document.documentElement.classList.add('vy-motion-ready');
+    document.querySelectorAll(overlaySelector).forEach(openOverlay);
+    new MutationObserver(records=>{
+      records.forEach(record=>record.addedNodes.forEach(node=>{
+        if(node.nodeType!==1)return;
+        if(node.matches(overlaySelector))openOverlay(node);
+        node.querySelectorAll(overlaySelector).forEach(openOverlay);
+      }));
+    }).observe(document.body,{childList:true,subtree:true});
+    document.addEventListener('keydown',event=>{
+      const overlay=topOverlay();if(!overlay)return;
+      if(event.key==='Escape' && dismissTop()){event.preventDefault();event.stopImmediatePropagation();return;}
+      if(event.key!=='Tab')return;
+      const items=focusables(overlay);if(!items.length){event.preventDefault();return;}
+      const first=items[0],last=items[items.length-1];
+      if(event.shiftKey && (document.activeElement===first || !overlay.contains(document.activeElement))){event.preventDefault();last.focus();}
+      else if(!event.shiftKey && (document.activeElement===last || !overlay.contains(document.activeElement))){event.preventDefault();first.focus();}
+    },true);
+    document.addEventListener('toggle',event=>{
+      if(event.target.tagName==='DETAILS' && event.target.open){
+        Array.from(event.target.children).filter(node=>node.tagName!=='SUMMARY').forEach(node=>enter(node,1));
+      }
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+
+
 /* ===== SCRIPT SOURCE: auth.js ===== */
 
 (function(){
@@ -349,19 +528,24 @@
   }
   function showLogin(){
     clearMessage();els.login.classList.remove("hidden");els.signup.classList.add("hidden");els.setup.classList.add("hidden");els.back.classList.add("hidden");els.title.textContent="Welcome Back";els.subtitle.textContent="Sign in to manage your smart business.";resetScroll();
+    if(window.vyaparMotion) window.vyaparMotion.enter(els.login,-1);
   }
   function showSignup(){
     clearMessage();els.login.classList.add("hidden");els.signup.classList.remove("hidden");els.setup.classList.add("hidden");els.back.classList.remove("hidden");els.title.textContent="Create Account";els.subtitle.textContent="Create your Vyapar AI account and start managing your business.";switchSignupMode("password");resetScroll();
+    if(window.vyaparMotion) window.vyaparMotion.enter(els.signup,1);
   }
   function switchLoginMode(mode){
     const otp=mode==="otp";els.passForm.classList.toggle("hidden",otp);els.otpForm.classList.toggle("hidden",!otp);els.passTab.classList.toggle("active",!otp);els.otpTab.classList.toggle("active",otp);els.passTab.setAttribute("aria-selected",String(!otp));els.otpTab.setAttribute("aria-selected",String(otp));els.passTab.tabIndex=otp?-1:0;els.otpTab.tabIndex=otp?0:-1;
     if(otp&&els.loginEmail.value.trim()&&!els.loginOtpEmail.value.trim())els.loginOtpEmail.value=els.loginEmail.value.trim();clearMessage();
+    if(window.vyaparMotion) window.vyaparMotion.enter(otp?els.otpForm:els.passForm,otp?1:-1);
   }
   function switchSignupMode(mode){
     const otp=mode==="otp";els.signupForm.classList.toggle("hidden",otp);els.signupOtpForm.classList.toggle("hidden",!otp);els.signupPassTab.classList.toggle("active",!otp);els.signupOtpTab.classList.toggle("active",otp);els.signupPassTab.setAttribute("aria-selected",String(!otp));els.signupOtpTab.setAttribute("aria-selected",String(otp));els.signupPassTab.tabIndex=otp?-1:0;els.signupOtpTab.tabIndex=otp?0:-1;clearMessage();
+    if(window.vyaparMotion) window.vyaparMotion.enter(otp?els.signupOtpForm:els.signupForm,otp?1:-1);
   }
   function showPasswordSetup(data,method,recovery){
     saveSession(data,method);pendingAuthData=data;pendingAuthMethod=method;els.login.classList.add("hidden");els.signup.classList.add("hidden");els.setup.classList.remove("hidden");els.back.classList.add("hidden");els.title.textContent=recovery?"Recreate your password":"Create your password";els.subtitle.textContent=recovery?"Email verified. Set a new password to continue.":"Email verified. Create a password to finish setup.";els.setupCopy.textContent=els.subtitle.textContent;els.setupPassword.value="";els.setupConfirm.value="";clearMessage();resetScroll();
+    if(window.vyaparMotion) window.vyaparMotion.enter(els.setup,1);
   }
 
   els.passTab.addEventListener("click",()=>switchLoginMode("password"));
@@ -493,6 +677,7 @@
 
   switchLoginMode("otp");showLogin();restoreSession();
 })();
+
 
 /* ===== SCRIPT SOURCE: platform-android.js ===== */
 
@@ -1242,14 +1427,20 @@ function esc(value){
 /* Universal Liquid Glass dialog/toast system (v4.0.0) */
 let __glassDialogOpen = false;
 let __glassDialogResolver = null;
-function closeGlassDialog(result=false){
+function closeGlassDialog(result=false, immediate=false){
   const node=document.getElementById('vyaparGlassDialog');
-  if(node) node.remove();
-  document.body.classList.remove('glass-dialog-open');
-  __glassDialogOpen=false;
+  if(node && node.__vyClosing && !immediate) return;
   const resolve=__glassDialogResolver;
   __glassDialogResolver=null;
-  if(resolve) resolve(result);
+  __glassDialogOpen=false;
+  if(node && node.__glassKey) document.removeEventListener('keydown',node.__glassKey);
+  const finish=()=>{
+    if(node) node.remove();
+    if(!document.getElementById('vyaparGlassDialog')) document.body.classList.remove('glass-dialog-open');
+    if(resolve) resolve(result);
+  };
+  if(node && window.vyaparMotion && !immediate) window.vyaparMotion.closeOverlay(node,finish);
+  else { if(node && window.vyaparMotion) window.vyaparMotion.cancelOverlay(node); finish(); }
 }
 function showGlassDialog(options={}){
   const title=String(options.title||'Vyapar AI');
@@ -1258,7 +1449,7 @@ function showGlassDialog(options={}){
   const confirmMode=!!options.confirm;
   const okText=options.okText || (confirmMode ? 'Confirm' : 'OK');
   const cancelText=options.cancelText || 'Cancel';
-  closeGlassDialog(false);
+  closeGlassDialog(false, true);
   const overlay=document.createElement('div');
   overlay.id='vyaparGlassDialog';
   overlay.className='glass-dialog-overlay';
@@ -1281,8 +1472,9 @@ function showGlassDialog(options={}){
   if(cancel) cancel.onclick=()=>finish(false);
   overlay.addEventListener('click',e=>{if(e.target===overlay && confirmMode) finish(false);});
   const key=(e)=>{if(e.key==='Escape'){e.preventDefault();finish(false);} };
-  document.addEventListener('keydown',key,{once:true});
-  setTimeout(()=>overlay.querySelector('[data-glass-ok]')?.focus(),20);
+  overlay.__glassKey=key;
+  document.addEventListener('keydown',key);
+  setTimeout(()=>{try{overlay.querySelector('[data-glass-ok]')?.focus({preventScroll:true});}catch(_){}},20);
   if(!confirmMode) return Promise.resolve(true);
   return new Promise(resolve=>{__glassDialogResolver=resolve;});
 }
@@ -1569,8 +1761,12 @@ function setTab(tab, withLoader = false){
   const requiredPlan = requiredPlanForTab(tab);
   if(requiredPlan && !requirePlan(requiredPlan)) return false;
 
-  if(withLoader) showTabLoader();
-
+  const destination = document.getElementById('screen-' + tab);
+  if(!destination) return false;
+  if(currentTab===tab && !destination.classList.contains('hide')) return true;
+  const previousTab = currentTab;
+  const motion = window.vyaparMotion;
+  const navigation = motion ? motion.beforePage(previousTab, tab) : null;
   currentTab = tab;
 
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hide'));
@@ -1588,6 +1784,7 @@ function setTab(tab, withLoader = false){
   if(tab === 'analytics'){
     setTimeout(drawAnalyticsCharts, 0);
   }
+  if(motion) motion.afterPage(navigation, screen);
 
   return true;
 }
@@ -1833,6 +2030,7 @@ function totals(){
 }
 
 function handleNativeBackPress(){
+  if(window.vyaparMotion && window.vyaparMotion.dismissTop()) return true;
   const modalSelectors = ['#upgradePlanPopup','#planSuccessPopup','#paymentCancelPopup','#paymentLoader','#vyaparDeleteConfirm','#vyaparAccountDeleteConfirm','#androidMoreSheet','#androidPermissionSheet','.production-overlay'];
   for(const selector of modalSelectors){
     const node=document.querySelector(selector);
@@ -5018,9 +5216,9 @@ function showPlanSuccessPopup(planName){
     </section>`;
   document.body.appendChild(popup);
   document.body.classList.add('subscription-dialog-open');
-  const close=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');if(planName==='business'&&typeof setTab==='function')setTab('business',false)};
+  const close=()=>{if(popup.__vyClosing)return;const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');if(planName==='business'&&typeof setTab==='function')setTab('business',false)};if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish()};
   document.getElementById('closePlanSuccessPopup').onclick=close;
-  setTimeout(()=>{if(document.getElementById('planSuccessPopup')){popup.remove();document.body.classList.remove('subscription-dialog-open')}},5000);
+  setTimeout(()=>{if(popup.isConnected && !popup.__vyClosing){const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open')};if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish()}},5000);
 }
 
 function showPaymentCancelPopup(planName){
@@ -5038,9 +5236,10 @@ function showPaymentCancelPopup(planName){
     </section>`;
   document.body.appendChild(popup);
   document.body.classList.add('subscription-dialog-open');
-  document.getElementById('retryPaymentBtn').onclick=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');startPayment(planName)};
-  document.getElementById('closeCancelPopup').onclick=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open')};
-  popup.addEventListener('click',event=>{if(event.target===popup){popup.remove();document.body.classList.remove('subscription-dialog-open')}});
+  const close=()=>{if(popup.__vyClosing)return;const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open')};if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish()};
+  document.getElementById('retryPaymentBtn').onclick=()=>{if(popup.__vyClosing)return;close();startPayment(planName)};
+  document.getElementById('closeCancelPopup').onclick=close;
+  popup.addEventListener('click',event=>{if(event.target===popup)close()});
 }
 function showUpgradePopup(requiredPlan, currentPlan){
   document.getElementById('upgradePlanPopup')?.remove();
@@ -5067,11 +5266,8 @@ function showUpgradePopup(requiredPlan, currentPlan){
   const close = () => {
     if(closing) return;
     closing = true;
-    popup.classList.add('closing');
-    setTimeout(() => {
-      popup.remove();
-      document.body.classList.remove('subscription-dialog-open');
-    }, 150);
+    const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');};
+    if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish();
   };
 
   document.getElementById('closeUpgradePopup').onclick = close;
@@ -6578,7 +6774,7 @@ render();
         : "login";
 
     function close(){
-      modal.remove();
+      if(window.vyaparMotion) window.vyaparMotion.closeOverlay(modal); else modal.remove();
       pendingAfterAuth = null;
     }
 
@@ -6891,7 +7087,7 @@ render();
       overlay.id='vyaparAccountDeleteConfirm'; overlay.className='account-delete-overlay';
       overlay.innerHTML=`<div class="account-delete-card" role="dialog" aria-modal="true"><div class="account-delete-icon">!</div><div class="account-delete-kicker">PERMANENT ACTION</div><h2>${title}</h2><p>${message}</p><div class="account-delete-actions"><button type="button" class="btn" id="accountDeleteCancel">Cancel</button><button type="button" class="btn danger" id="accountDeleteConfirm">Delete Account</button></div></div>`;
       document.body.appendChild(overlay);
-      const finish=v=>{overlay.remove();resolve(v)};
+      const finish=v=>{if(window.vyaparMotion)window.vyaparMotion.closeOverlay(overlay,()=>{overlay.remove();resolve(v)});else{overlay.remove();resolve(v)}};
       overlay.querySelector('#accountDeleteCancel').onclick=()=>finish(false);
       overlay.querySelector('#accountDeleteConfirm').onclick=()=>finish(true);
       overlay.addEventListener('click',e=>{if(e.target===overlay) finish(false)});
@@ -9277,91 +9473,17 @@ render();
       .find(function(node){ return !node.classList.contains("hide"); });
     return screen ? screen.id.replace("screen-", "") : "home";
   }
-  function installNavGlassInteraction(nav, buttons, currentIndex){
-    const indicator=nav.querySelector(".android-nav-glass-indicator");
-    if(!indicator||!buttons.length)return;
-
-    let activeIndex=Math.max(0,Math.min(buttons.length-1,currentIndex));
-    let metrics=[],navRect=null;
-    let pendingGesture=false,dragging=false,pointerId=null,captured=false;
-    let startX=0,startY=0,startPos=0,pos=0,lastX=0,lastTime=0,velocity=0;
-    let suppressClickUntil=0,shineTimer=null,raf=0,pendingPaint=null;
-
-    const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-    function readMetrics(){
-      navRect=nav.getBoundingClientRect();
-      metrics=buttons.map(button=>{const r=button.getBoundingClientRect();return{x:r.left-navRect.left,width:r.width,center:r.left-navRect.left+r.width/2}});
-    }
-    function ensureMetrics(){if(metrics.length!==buttons.length)readMetrics()}
-    function bounds(){ensureMetrics();return{start:metrics[0].x,end:metrics[metrics.length-1].x}}
-    function positionForIndex(index){ensureMetrics();return metrics[clamp(index,0,metrics.length-1)].x}
-    function indexForPosition(value,width){
-      ensureMetrics();const center=value+(width||metrics[activeIndex].width)/2;let best=0,dist=Infinity;
-      metrics.forEach((m,i)=>{const d=Math.abs(center-m.center);if(d<dist){dist=d;best=i}});return best;
-    }
-    function paintNow(value,animate,widthIndex){
-      ensureMetrics();const b=bounds();pos=clamp(value,b.start,b.end);
-      const m=metrics[clamp(widthIndex==null?activeIndex:widthIndex,0,metrics.length-1)];
-      indicator.style.width=m.width+"px";
-      indicator.style.transition=animate?"transform .26s cubic-bezier(.22,1,.36,1),width .16s ease":"none";
-      indicator.style.transform=`translate3d(${pos}px,0,0)`;
-    }
-    function schedulePaint(value,widthIndex){
-      pendingPaint=[value,widthIndex];if(raf)return;
-      raf=requestAnimationFrame(()=>{raf=0;const p=pendingPaint;pendingPaint=null;if(p)paintNow(p[0],false,p[1])});
-    }
-    function visual(index,shine){
-      activeIndex=clamp(index,0,buttons.length-1);
-      buttons.forEach((button,i)=>{const on=i===activeIndex;button.classList.toggle("active",on);if(on)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current")});
-      if(shine){
-        nav.classList.add("android-nav-shine");clearTimeout(shineTimer);
-        shineTimer=setTimeout(()=>nav.classList.remove("android-nav-shine"),360);
-      }
-    }
-    function navigate(index){
-      const button=buttons[index];if(!button)return;const tab=button.getAttribute("data-android-tab");
-      if(tab==="more"){moreSheetTrigger=button;openMoreSheet();return}
-      if(typeof window.setTab==="function")window.setTab(tab,false);
-    }
-
-    // Use click/tap navigation on Android/mobile. The previous drag-preview path could
-    // briefly illuminate another tab and cause unnecessary re-renders before the requested
-    // screen settled. Keeping one deliberate tap path makes the bar feel immediate and stable.
-    if(document.documentElement.classList.contains("desktop-web")){
-      visual(activeIndex,false);
-      indicator.style.display="none";
-      buttons.forEach((button,index)=>button.addEventListener("click",()=>{
-        if(index===activeIndex && button.getAttribute("data-android-tab")!=="more") return;
-        visual(index,false);
-        navigate(index);
-      }));
-      return;
-    }
-
-    function settle(index,doNavigate){
-      index=clamp(index,0,buttons.length-1);
-      if(index===activeIndex && buttons[index]?.getAttribute("data-android-tab")!=="more"){
-        paintNow(positionForIndex(index),true,index);
-        return;
-      }
-      visual(index,true);
-      readMetrics();
-      paintNow(positionForIndex(index),true,index);
-      if(doNavigate) navigate(index);
-    }
-
-    readMetrics();
-    visual(activeIndex,false);
-    paintNow(positionForIndex(activeIndex),false,activeIndex);
-    buttons.forEach((button,index)=>button.addEventListener("click",event=>{
+  function installNavGlassInteraction(nav){
+    if(nav.dataset.motionNavBound) return;
+    nav.dataset.motionNavBound='1';
+    nav.addEventListener('click', function(event){
+      const button=event.target.closest('button[data-android-tab]');
+      if(!button || !nav.contains(button)) return;
       event.preventDefault();
-      settle(index,true);
-    }));
-    window.addEventListener("resize",()=>{
-      if(!document.contains(nav)) return;
-      readMetrics();
-      paintNow(positionForIndex(activeIndex),false,activeIndex);
-    },{passive:true,once:true});
+      const tab=button.dataset.androidTab;
+      if(tab==='more'){ moreSheetTrigger=button; openMoreSheet(); }
+      else if(typeof window.setTab==='function') window.setTab(tab,false);
+    });
   }
 
 
@@ -9379,8 +9501,25 @@ render();
       ["more","More"]
     ];
     let activeIndex = 0;
+    const existing=nav.querySelectorAll('button[data-android-tab]');
+    if(existing.length===5){
+      existing.forEach(function(button){
+        const id=button.dataset.androidTab;
+        const active=id==='more'?moreActive:current===id;
+        const locked=id!=='more' && tabIsLocked(id);
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',String(active));
+        if(active) button.setAttribute('aria-current','page'); else button.removeAttribute('aria-current');
+        if(button.classList.contains('is-locked')!==locked){
+          button.classList.toggle('is-locked',locked);
+          button.innerHTML='<span class="android-nav-icon">'+icons[id]+'</span><span class="android-nav-label">'+items.find(item=>item[0]===id)[1]+'</span>'+(locked?navLockSvg:'');
+        }
+        button.setAttribute('aria-label',items.find(item=>item[0]===id)[1]+(locked?' — Business plan required':''));
+      });
+      return;
+    }
 
-    nav.innerHTML = '<span class="android-nav-glass-indicator" aria-hidden="true"></span>' + items.map(function(item, index){
+    nav.innerHTML = items.map(function(item, index){
       const id = item[0];
       const active = id === "more" ? moreActive : current === id;
       if(active) activeIndex = index;
@@ -9505,8 +9644,9 @@ render();
   function closeMoreSheet(restoreNav){
     const shouldRestore = restoreNav !== false;
     const sheet = document.getElementById("androidMoreSheet");
-    if(sheet) sheet.remove();
-    document.body.classList.remove("android-sheet-open");
+    if(sheet && sheet.__vyClosing) return;
+    const finish=()=>{ if(sheet) sheet.remove(); document.body.classList.remove("android-sheet-open"); renderNav(); };
+    if(sheet && window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
     const trigger = moreSheetTrigger;
     moreSheetTrigger = null;
     if(shouldRestore){
@@ -9574,20 +9714,17 @@ render();
     const closeButton = overlay.querySelector(".android-sheet-close");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);
-      setTimeout(function(){ closeButton.focus(); }, 0);
+      setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
     }
   }
 
   if(originalSetTab){
     window.setTab = function(tab, withLoader){
       const result = originalSetTab.call(this, tab, withLoader);
-      if(result !== false){
-        const root = document.scrollingElement || document.documentElement;
-        root.scrollTop = 0;
-        document.body.scrollTop = 0;
-      }
+      if(result === false) return result;
+      renderNav();
+      updateHeader();
       requestAnimationFrame(function(){
-        if(result !== false) window.scrollTo(0, 0);
         renderNav();
         updateHeader();
         improveCurrentScreen();
@@ -9780,7 +9917,7 @@ render();
 
     const close = function(mark){
       if(mark) localStorage.setItem("vyapar_ai_permission_intro_v1","1");
-      overlay.remove();
+      if(window.vyaparMotion) window.vyaparMotion.closeOverlay(overlay); else overlay.remove();
     };
     overlay.querySelector("#permissionContinue").onclick = function(){
       localStorage.setItem("vyapar_ai_permission_intro_v1","1");
@@ -11395,6 +11532,7 @@ else setTimeout(init,0);
 window.VyaparUI622={version:VERSION,refresh:init};
 })();
 
+
 /* ===== SCRIPT SOURCE: security-ui-643.js ===== */
 
 /* Vyapar AI 6.5.7 — Android password verification + refresh-aware account password policy */
@@ -11468,7 +11606,7 @@ window.VyaparUI622={version:VERSION,refresh:init};
         </div>\
       </div>';
     document.body.appendChild(overlay);
-    var close=function(){overlay.remove()};
+    var close=function(){if(window.vyaparMotion)window.vyaparMotion.closeOverlay(overlay);else overlay.remove()};
     overlay.querySelector('[data-cancel]').onclick=close;
     overlay.addEventListener('click',function(e){if(e.target===overlay)close()});
     var save=overlay.querySelector('[data-save]');
@@ -11621,6 +11759,7 @@ window.VyaparUI622={version:VERSION,refresh:init};
   window.addEventListener('load',schedule,{once:true});
   schedule();
 })();
+
 
 /* ===== SCRIPT SOURCE: plan-badge-menu-645.js ===== */
 
@@ -11897,7 +12036,10 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
       </div>`;
     document.body.appendChild(sheet);
     document.body.classList.add('shop-progress-open');
-    const close = () => { sheet.remove(); document.body.classList.remove('shop-progress-open'); };
+    const close = () => {
+      const finish=()=>{ sheet.remove(); document.body.classList.remove('shop-progress-open'); };
+      if(window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
+    };
     sheet.querySelector('#closeShopProgress').addEventListener('click', close);
     sheet.addEventListener('click', event => { if(event.target === sheet) close(); });
   }
@@ -11942,6 +12084,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once:true });
   else boot();
 })();
+
 
 /* ===== SCRIPT SOURCE: audit-fixes-658.js ===== */
 
@@ -12234,8 +12377,8 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
 
   function closeUpdatePrompt(){
     const popup=document.getElementById('vy670UpdatePrompt');
-    if(popup)popup.remove();
-    document.body.classList.remove('subscription-dialog-open');
+    const finish=()=>{if(popup)popup.remove();document.body.classList.remove('subscription-dialog-open')};
+    if(popup && window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish();
   }
   function openUpdateUrl(url){
     if(!url)return;
@@ -12317,6 +12460,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
   setTimeout(()=>{try{if(typeof window.renderHome==='function')window.renderHome();}catch(_){}try{if(typeof window.renderSales==='function')window.renderSales();}catch(_){}try{if(typeof window.renderSettings==='function')window.renderSettings();}catch(_){}placeFooter();enhanceSales();},0);
 })();
 
+
 /* ===== SCRIPT SOURCE: audit-stage2-6601.js ===== */
 
 /* Vyapar AI 6.6.0.1 — Stage 2 audit repairs */
@@ -12344,11 +12488,12 @@ function footer(){document.querySelectorAll('#appLegalFooter').forEach(f=>{const
 const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];function dates(root=document){root.querySelectorAll('td,time').forEach(x=>{if(x.children.length)return;const t=x.textContent.trim(),m=t.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)x.textContent=Number(m[3])+' '+MN[Number(m[2])-1]+' '+m[1]})}
 function labels(root=document){root.querySelectorAll('.pill,.auth-help').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform';if(/^Vyapar AI\s+6\./.test(x.textContent))x.textContent='Vyapar AI '+VER});const sale=[...document.querySelectorAll('#screen-sales .card')].find(c=>c.querySelector('h2')?.textContent==='Sales Records'),td=sale&&[...sale.querySelectorAll('tbody td')].find(x=>/No sale records yet/.test(x.textContent));if(td)td.textContent='No item-wise sales yet. Daily Quick Entry and monthly manual records are tracked separately.'}
 function otp(){const g=document.getElementById('vyaparOtpGate');if(!g||g.dataset.v6601)return;g.dataset.v6601='1';const l=document.getElementById('login-otp-code'),u=document.getElementById('signup-otp');l?.parentElement?.classList.add('vy6601-login-step');document.getElementById('login-otp-submit')?.classList.add('vy6601-login-step');u?.parentElement?.classList.add('vy6601-signup-step');const tab=document.getElementById('tab-login-otp'),sub=document.getElementById('login-otp-submit');if(tab)tab.textContent='Email OTP';if(sub)sub.textContent='Verify & Sign In';const msg=document.getElementById('auth-message');if(msg)new MutationObserver(()=>{if(msg.classList.contains('success')&&/sent|verification code/i.test(msg.textContent)){const sign=!document.getElementById('signup-section')?.classList.contains('hidden');g.classList.add(sign?'vy6601-signup-sent':'vy6601-login-sent')}}).observe(msg,{attributes:true,childList:true,characterData:true,subtree:true});const tabs=g.querySelector('.auth-method-tabs');if(tabs){let sx=null;tabs.addEventListener('touchstart',e=>sx=e.touches?.[0]?.clientX??null,{capture:true,passive:true});tabs.addEventListener('touchend',e=>{if(sx===null)return;const dx=(e.changedTouches?.[0]?.clientX??sx)-sx;sx=null;if(Math.abs(dx)>=24){e.preventDefault();e.stopImmediatePropagation()}},{capture:true,passive:false})}}
-let last=0;function closeSel(){document.getElementById('vy6601Select')?.remove()}function openSel(s){if(!s||s.disabled)return;closeSel();last=Date.now();const o=document.createElement('div');o.id='vy6601Select';o.className='vy6601-select-overlay';o.innerHTML='<div class="vy6601-select-sheet"><div class="vy6601-select-head"><b>Choose an option</b><button>×</button></div><div class="vy6601-select-options"></div></div>';const list=o.querySelector('.vy6601-select-options');[...s.options].forEach(x=>{const b=document.createElement('button');b.textContent=x.textContent;b.disabled=x.disabled;b.className=x.selected?'selected':'';b.onclick=()=>{s.value=x.value;s.dispatchEvent(new Event('change',{bubbles:true}));closeSel()};list.appendChild(b)});o.querySelector('.vy6601-select-head button').onclick=closeSel;o.onclick=e=>{if(e.target===o)closeSel()};document.body.appendChild(o)}function selects(){if(!document.documentElement.classList.contains('native-android')||document.documentElement.dataset.v6601sel)return;document.documentElement.dataset.v6601sel='1';document.addEventListener('touchstart',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();openSel(s)},{capture:true,passive:false});document.addEventListener('click',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-last>600)openSel(s)},true)}
+let last=0;function closeSel(immediate){const node=document.getElementById('vy6601Select');if(!node)return;if(immediate===true){if(window.vyaparMotion)window.vyaparMotion.cancelOverlay(node);node.remove()}else if(window.vyaparMotion)window.vyaparMotion.closeOverlay(node);else node.remove()}function openSel(s){if(!s||s.disabled)return;closeSel(true);last=Date.now();const o=document.createElement('div');o.id='vy6601Select';o.className='vy6601-select-overlay';o.innerHTML='<div class="vy6601-select-sheet" role="dialog" aria-modal="true" aria-label="Choose an option"><div class="vy6601-select-head"><b>Choose an option</b><button>×</button></div><div class="vy6601-select-options"></div></div>';const list=o.querySelector('.vy6601-select-options');[...s.options].forEach(x=>{const b=document.createElement('button');b.textContent=x.textContent;b.disabled=x.disabled;b.className=x.selected?'selected':'';b.onclick=()=>{s.value=x.value;s.dispatchEvent(new Event('change',{bubbles:true}));closeSel()};list.appendChild(b)});o.querySelector('.vy6601-select-head button').onclick=closeSel;o.onclick=e=>{if(e.target===o)closeSel()};document.body.appendChild(o)}function selects(){if(!document.documentElement.classList.contains('native-android')||document.documentElement.dataset.v6601sel)return;document.documentElement.dataset.v6601sel='1';document.addEventListener('touchstart',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();openSel(s)},{capture:true,passive:false});document.addEventListener('click',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-last>600)openSel(s)},true)}
 function fix(root=document){S();profitCard();yearFilter();business();footer();labels(root);dates(root);otp();selects()}
 function wrap(n,fn){const old=window[n];if(typeof old!=='function'||old.__6601)return;const w=function(){S();const r=old.apply(this,arguments);fn();return r};w.__6601=1;window[n]=w}wrap('renderSales',()=>{profitCard();yearFilter();labels();dates(document.getElementById('screen-sales')||document)});wrap('renderBusiness',()=>{business();dates(document.getElementById('screen-business')||document)});wrap('renderSettings',footer);
 const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=setTimeout(()=>fix(document),55)});ob.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>{try{renderHome?.();renderSales?.();renderBusiness?.();renderSettings?.()}catch(_){}fix()},0);
 })();
+
 
 /* ===== SCRIPT SOURCE: production-ui-670p1.js ===== */
 
@@ -12405,9 +12550,14 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     bar.addEventListener('click', function(event){
       const button = event.target.closest('button[data-mode]');
       if(!button) return;
+      const previous=savedMode(screenId,modes.items[0][0]);
+      if(previous===button.dataset.mode)return;
       saveMode(screenId, button.dataset.mode);
       applyMode(screen, screenId, modes);
-      button.scrollIntoView({block:'nearest', inline:'nearest'});
+      if(window.vyaparMotion){
+        const direction=modes.items.findIndex(item=>item[0]===button.dataset.mode)<modes.items.findIndex(item=>item[0]===previous)?-1:1;
+        screen.querySelectorAll('.p1-mode-section[data-p1-mode]').forEach(node=>{if(!node.hidden)window.vyaparMotion.enter(node,direction)});
+      }
     });
 
     screen.insertBefore(bar, beforeNode || screen.firstChild);
@@ -12631,6 +12781,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     setView: function(screen, mode){ saveMode(screen, mode); schedule(); }
   };
 })();
+
 
 /* ===== SCRIPT SOURCE: workflow-ui-670p2.js ===== */
 
@@ -13895,6 +14046,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     });
   }
 
+  let homeScrollPosition = 0;
+
   function openHome(scrollTop) {
     const scr = screen();
     if (!scr) return;
@@ -13906,13 +14059,17 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     shell.querySelector('.vy675-settings-home').hidden = false;
     shell.querySelector('.vy675-settings-page').hidden = true;
     updateStatuses();
-    if (scrollTop) window.scrollTo(0, 0);
+    if (scrollTop && window.vyaparMotion) {
+      window.vyaparMotion.scrollTo(homeScrollPosition);
+      window.vyaparMotion.enter(shell.querySelector('.vy675-settings-home'), -1);
+    }
   }
 
   function openPage(id, scrollTop) {
     const scr = screen();
     const item = ALL_ITEMS.find(candidate => candidate.id === id);
     if (!scr || !item) return;
+    if(scrollTop && !activePage) homeScrollPosition=window.scrollY || 0;
     const shell = ensureShell(scr);
     const map = collectCards(scr);
     const page = shell.querySelector('.vy675-settings-page');
@@ -13934,7 +14091,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     scr.classList.add('vy675-page-open');
     shell.querySelector('.vy675-settings-home').hidden = true;
     page.hidden = false;
-    if (scrollTop) window.scrollTo(0, 0);
+    if (scrollTop && window.vyaparMotion) { window.vyaparMotion.scrollTo(0); window.vyaparMotion.enter(page, 1); }
   }
 
   function removePreviousSettingsUi(scr) {
@@ -13983,38 +14140,15 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   function installScrollBehaviour() {
-    const current = window.setTab;
-    if (typeof current !== 'function' || current.__vy675ScrollBehaviour) return;
-    const wrapped = function (tab, withLoader) {
-      let previous = '';
-      try { previous = typeof currentTab === 'string' ? currentTab : ''; } catch (_) {}
-      const root = document.scrollingElement || document.documentElement;
-      const previousY = Math.max(0, Number(window.scrollY || root.scrollTop || document.body.scrollTop || 0));
-      const autoTop = autoTopEnabled();
-      if (!autoTop && previous) scrollPositions[previous] = previousY;
-      const result = current.call(this, tab, withLoader);
-      requestAnimationFrame(() => {
-        if (result === false) return;
-        if (autoTop) {
-          window.scrollTo(0, 0);
-          return;
-        }
-        const target = Object.prototype.hasOwnProperty.call(scrollPositions, tab)
-          ? scrollPositions[tab]
-          : (tab === previous ? previousY : 0);
-        window.scrollTo(0, Math.max(0, target));
-      });
-      return result;
-    };
-    wrapped.__vy675ScrollBehaviour = true;
-    window.setTab = wrapped;
+    // Main navigation owns synchronous scroll restoration through vyaparMotion.
   }
 
   function installNativeBack() {
     const current = window.handleNativeBackPress;
     if (typeof current === 'function' && current.__vy675SettingsBack) return;
     const wrapped = function () {
-      if (screen()?.classList.contains('vy675-page-open')) {
+      if(window.vyaparMotion && window.vyaparMotion.dismissTop()) return true;
+      if (screen() && !screen().classList.contains('hide') && screen().classList.contains('vy675-page-open')) {
         openHome(true);
         return true;
       }
@@ -14043,7 +14177,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && screen()?.classList.contains('vy675-page-open')) openHome(false);
+    if (!event.defaultPrevented && event.key === 'Escape' && screen() && !screen().classList.contains('hide') && screen().classList.contains('vy675-page-open')) openHome(true);
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
@@ -14052,6 +14186,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   window.vy675SettingsHome = () => openHome(true);
   window.vy675OpenSettingsPage = id => openPage(id, true);
 })();
+
 
 /* ===== SCRIPT SOURCE: complete-ui-680.js ===== */
 
@@ -14135,25 +14270,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     return Object.prototype.hasOwnProperty.call(ranks, tab) ? ranks[tab] : 4;
   };
 
-  const finalSetTab = typeof window.setTab === 'function' ? window.setTab : null;
-  if (finalSetTab) {
-    window.setTab = function (tab, withLoader) {
-      const previousTab = currentVisibleTab();
-      const result = finalSetTab.call(this, tab, withLoader);
-      if (result === false || previousTab === tab || reducedMotion()) return result;
-
-      const screen = document.getElementById('screen-' + tab);
-      if (!screen) return result;
-      screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
-      void screen.offsetWidth;
-      screen.classList.add(tabRank(tab) < tabRank(previousTab) ? 'vy-telegram-page-from-left' : 'vy-telegram-page-from-right');
-      clearTimeout(screen.__vyTelegramPageTimer);
-      screen.__vyTelegramPageTimer = setTimeout(() => {
-        screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
-      }, 320);
-      return result;
-    };
-  }
+  // Page motion is coordinated once by vyaparMotion in the core navigator.
 
   const syncNativeTheme = () => {
     try {
@@ -14180,6 +14297,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
 })();
+
 
 /* ===== SCRIPT SOURCE: inspected-glitchfix-855.js ===== */
 
@@ -14468,12 +14586,6 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   if(previousSetTab&&!previousSetTab.__vy861Wrapped){
     const wrapped=function(tab,withLoader){
       const result=previousSetTab.call(this,tab,false);
-      if(result!==false){
-        const scroller=document.scrollingElement||document.documentElement;
-        scroller.scrollTop=0;
-        if(document.body)document.body.scrollTop=0;
-        try{window.scrollTo({top:0,left:0,behavior:'auto'});}catch(_){window.scrollTo(0,0);}
-      }
       requestAnimationFrame(()=>{decorateNav();syncModalState();cleanupOptics();});
       return result;
     };
@@ -14518,6 +14630,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();
+
 
 /* ===== SCRIPT SOURCE: ui-stability-862.js ===== */
 
@@ -14988,20 +15101,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   function fixMoreGeometry(){
-    var overlay=document.getElementById('androidMoreSheet');
-    if(!overlay) return;
-    important(overlay,'padding','0');
-    var sheet=overlay.querySelector('.android-sheet');
-    if(!sheet) return;
-    important(sheet,'position','absolute');
-    important(sheet,'left',window.innerWidth<=390?'6px':'8px');
-    important(sheet,'right',window.innerWidth<=390?'6px':'8px');
-    important(sheet,'top','auto');
-    important(sheet,'bottom','calc('+(window.innerWidth<=390?'80px':'82px')+' + env(safe-area-inset-bottom,0px))');
-    important(sheet,'width','auto');
-    important(sheet,'margin','0 auto');
-    important(sheet,'transform','none');
-    important(sheet,'border-radius',window.innerWidth<=390?'22px':'24px');
+    // CSS owns sheet geometry; never overwrite an in-flight transform.
   }
 
   var queued=false;

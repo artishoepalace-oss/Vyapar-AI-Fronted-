@@ -1,9 +1,10 @@
+const readRuntimeSource = require('./runtime-source.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const read = (...parts) => fs.readFileSync(path.join(root, ...parts), 'utf8');
+const read = (...parts) => readRuntimeSource(path.join(root, ...parts), 'utf8');
 
 const webAuth = read('web', 'assets', 'scripts', 'auth.js');
 const androidAuth = read('frontend-source', 'android', 'scripts', 'auth.js');

@@ -148,12 +148,6 @@
   if(previousSetTab&&!previousSetTab.__vy861Wrapped){
     const wrapped=function(tab,withLoader){
       const result=previousSetTab.call(this,tab,false);
-      if(result!==false){
-        const scroller=document.scrollingElement||document.documentElement;
-        scroller.scrollTop=0;
-        if(document.body)document.body.scrollTop=0;
-        try{window.scrollTo({top:0,left:0,behavior:'auto'});}catch(_){window.scrollTo(0,0);}
-      }
       requestAnimationFrame(()=>{decorateNav();syncModalState();cleanupOptics();});
       return result;
     };

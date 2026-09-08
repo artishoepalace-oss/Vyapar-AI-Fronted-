@@ -191,19 +191,24 @@
   }
   function showLogin(){
     clearMessage();els.login.classList.remove("hidden");els.signup.classList.add("hidden");els.setup.classList.add("hidden");els.back.classList.add("hidden");els.title.textContent="Welcome Back";els.subtitle.textContent="Sign in to manage your smart business.";resetScroll();
+    if(window.vyaparMotion) window.vyaparMotion.enter(els.login,-1);
   }
   function showSignup(){
     clearMessage();els.login.classList.add("hidden");els.signup.classList.remove("hidden");els.setup.classList.add("hidden");els.back.classList.remove("hidden");els.title.textContent="Create Account";els.subtitle.textContent="Create your Vyapar AI account and start managing your business.";switchSignupMode("password");resetScroll();
+    if(window.vyaparMotion) window.vyaparMotion.enter(els.signup,1);
   }
   function switchLoginMode(mode){
     const otp=mode==="otp";els.passForm.classList.toggle("hidden",otp);els.otpForm.classList.toggle("hidden",!otp);els.passTab.classList.toggle("active",!otp);els.otpTab.classList.toggle("active",otp);els.passTab.setAttribute("aria-selected",String(!otp));els.otpTab.setAttribute("aria-selected",String(otp));els.passTab.tabIndex=otp?-1:0;els.otpTab.tabIndex=otp?0:-1;
     if(otp&&els.loginEmail.value.trim()&&!els.loginOtpEmail.value.trim())els.loginOtpEmail.value=els.loginEmail.value.trim();clearMessage();
+    if(window.vyaparMotion) window.vyaparMotion.enter(otp?els.otpForm:els.passForm,otp?1:-1);
   }
   function switchSignupMode(mode){
     const otp=mode==="otp";els.signupForm.classList.toggle("hidden",otp);els.signupOtpForm.classList.toggle("hidden",!otp);els.signupPassTab.classList.toggle("active",!otp);els.signupOtpTab.classList.toggle("active",otp);els.signupPassTab.setAttribute("aria-selected",String(!otp));els.signupOtpTab.setAttribute("aria-selected",String(otp));els.signupPassTab.tabIndex=otp?-1:0;els.signupOtpTab.tabIndex=otp?0:-1;clearMessage();
+    if(window.vyaparMotion) window.vyaparMotion.enter(otp?els.signupOtpForm:els.signupForm,otp?1:-1);
   }
   function showPasswordSetup(data,method,recovery){
     saveSession(data,method);pendingAuthData=data;pendingAuthMethod=method;els.login.classList.add("hidden");els.signup.classList.add("hidden");els.setup.classList.remove("hidden");els.back.classList.add("hidden");els.title.textContent=recovery?"Recreate your password":"Create your password";els.subtitle.textContent=recovery?"Email verified. Set a new password to continue.":"Email verified. Create a password to finish setup.";els.setupCopy.textContent=els.subtitle.textContent;els.setupPassword.value="";els.setupConfirm.value="";clearMessage();resetScroll();
+    if(window.vyaparMotion) window.vyaparMotion.enter(els.setup,1);
   }
 
   els.passTab.addEventListener("click",()=>switchLoginMode("password"));

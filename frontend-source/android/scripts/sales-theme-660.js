@@ -88,8 +88,8 @@
 
   function closeUpdatePrompt(){
     const popup=document.getElementById('vy670UpdatePrompt');
-    if(popup)popup.remove();
-    document.body.classList.remove('subscription-dialog-open');
+    const finish=()=>{if(popup)popup.remove();document.body.classList.remove('subscription-dialog-open')};
+    if(popup && window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish();
   }
   function openUpdateUrl(url){
     if(!url)return;

@@ -250,7 +250,10 @@
       </div>`;
     document.body.appendChild(sheet);
     document.body.classList.add('shop-progress-open');
-    const close = () => { sheet.remove(); document.body.classList.remove('shop-progress-open'); };
+    const close = () => {
+      const finish=()=>{ sheet.remove(); document.body.classList.remove('shop-progress-open'); };
+      if(window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
+    };
     sheet.querySelector('#closeShopProgress').addEventListener('click', close);
     sheet.addEventListener('click', event => { if(event.target === sheet) close(); });
   }

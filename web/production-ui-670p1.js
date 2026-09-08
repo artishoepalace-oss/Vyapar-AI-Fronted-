@@ -51,9 +51,14 @@
     bar.addEventListener('click', function(event){
       const button = event.target.closest('button[data-mode]');
       if(!button) return;
+      const previous=savedMode(screenId,modes.items[0][0]);
+      if(previous===button.dataset.mode)return;
       saveMode(screenId, button.dataset.mode);
       applyMode(screen, screenId, modes);
-      button.scrollIntoView({block:'nearest', inline:'nearest'});
+      if(window.vyaparMotion){
+        const direction=modes.items.findIndex(item=>item[0]===button.dataset.mode)<modes.items.findIndex(item=>item[0]===previous)?-1:1;
+        screen.querySelectorAll('.p1-mode-section[data-p1-mode]').forEach(node=>{if(!node.hidden)window.vyaparMotion.enter(node,direction)});
+      }
     });
 
     screen.insertBefore(bar, beforeNode || screen.firstChild);

@@ -69,7 +69,7 @@
         </div>\
       </div>';
     document.body.appendChild(overlay);
-    var close=function(){overlay.remove()};
+    var close=function(){if(window.vyaparMotion)window.vyaparMotion.closeOverlay(overlay);else overlay.remove()};
     overlay.querySelector('[data-cancel]').onclick=close;
     overlay.addEventListener('click',function(e){if(e.target===overlay)close()});
     var save=overlay.querySelector('[data-save]');

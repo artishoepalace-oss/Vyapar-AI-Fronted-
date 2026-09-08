@@ -1,4 +1,5 @@
 'use strict';
+const readRuntimeSource = require('./runtime-source.cjs');
 const assert=require('assert/strict');
 const fs=require('fs');
 const path=require('path');
@@ -8,9 +9,9 @@ const pairs=[
   ['frontend-source/android/scripts/audit-fixes-658.js','frontend-source/android/scripts/audit-stage2-6601.js','frontend-source/android/scripts/sales-theme-660.js']
 ];
 for(const [legacyRel,stageRel,updateRel] of pairs){
-  const legacy=fs.readFileSync(path.join(ROOT,legacyRel),'utf8');
-  const stage=fs.readFileSync(path.join(ROOT,stageRel),'utf8');
-  const update=fs.readFileSync(path.join(ROOT,updateRel),'utf8');
+  const legacy=readRuntimeSource(path.join(ROOT,legacyRel),'utf8');
+  const stage=readRuntimeSource(path.join(ROOT,stageRel),'utf8');
+  const update=readRuntimeSource(path.join(ROOT,updateRel),'utf8');
   assert.ok(!legacy.includes("wrap.className='vy658-year-filter'"), legacyRel+' must not inject the legacy Year selector');
   assert.ok(stage.includes("existing.slice(1).forEach(x=>x.remove())"), stageRel+' must dedupe canonical Year selectors');
   assert.ok(update.includes("popup.id='vy670UpdatePrompt'"), updateRel+' must render the in-app update modal');

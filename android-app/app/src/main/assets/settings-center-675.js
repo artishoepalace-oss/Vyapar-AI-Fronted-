@@ -288,6 +288,8 @@
     });
   }
 
+  let homeScrollPosition = 0;
+
   function openHome(scrollTop) {
     const scr = screen();
     if (!scr) return;
@@ -299,13 +301,17 @@
     shell.querySelector('.vy675-settings-home').hidden = false;
     shell.querySelector('.vy675-settings-page').hidden = true;
     updateStatuses();
-    if (scrollTop) window.scrollTo(0, 0);
+    if (scrollTop && window.vyaparMotion) {
+      window.vyaparMotion.scrollTo(homeScrollPosition);
+      window.vyaparMotion.enter(shell.querySelector('.vy675-settings-home'), -1);
+    }
   }
 
   function openPage(id, scrollTop) {
     const scr = screen();
     const item = ALL_ITEMS.find(candidate => candidate.id === id);
     if (!scr || !item) return;
+    if(scrollTop && !activePage) homeScrollPosition=window.scrollY || 0;
     const shell = ensureShell(scr);
     const map = collectCards(scr);
     const page = shell.querySelector('.vy675-settings-page');
@@ -327,7 +333,7 @@
     scr.classList.add('vy675-page-open');
     shell.querySelector('.vy675-settings-home').hidden = true;
     page.hidden = false;
-    if (scrollTop) window.scrollTo(0, 0);
+    if (scrollTop && window.vyaparMotion) { window.vyaparMotion.scrollTo(0); window.vyaparMotion.enter(page, 1); }
   }
 
   function removePreviousSettingsUi(scr) {
@@ -376,38 +382,15 @@
   }
 
   function installScrollBehaviour() {
-    const current = window.setTab;
-    if (typeof current !== 'function' || current.__vy675ScrollBehaviour) return;
-    const wrapped = function (tab, withLoader) {
-      let previous = '';
-      try { previous = typeof currentTab === 'string' ? currentTab : ''; } catch (_) {}
-      const root = document.scrollingElement || document.documentElement;
-      const previousY = Math.max(0, Number(window.scrollY || root.scrollTop || document.body.scrollTop || 0));
-      const autoTop = autoTopEnabled();
-      if (!autoTop && previous) scrollPositions[previous] = previousY;
-      const result = current.call(this, tab, withLoader);
-      requestAnimationFrame(() => {
-        if (result === false) return;
-        if (autoTop) {
-          window.scrollTo(0, 0);
-          return;
-        }
-        const target = Object.prototype.hasOwnProperty.call(scrollPositions, tab)
-          ? scrollPositions[tab]
-          : (tab === previous ? previousY : 0);
-        window.scrollTo(0, Math.max(0, target));
-      });
-      return result;
-    };
-    wrapped.__vy675ScrollBehaviour = true;
-    window.setTab = wrapped;
+    // Main navigation owns synchronous scroll restoration through vyaparMotion.
   }
 
   function installNativeBack() {
     const current = window.handleNativeBackPress;
     if (typeof current === 'function' && current.__vy675SettingsBack) return;
     const wrapped = function () {
-      if (screen()?.classList.contains('vy675-page-open')) {
+      if(window.vyaparMotion && window.vyaparMotion.dismissTop()) return true;
+      if (screen() && !screen().classList.contains('hide') && screen().classList.contains('vy675-page-open')) {
         openHome(true);
         return true;
       }
@@ -436,7 +419,7 @@
   }
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && screen()?.classList.contains('vy675-page-open')) openHome(false);
+    if (!event.defaultPrevented && event.key === 'Escape' && screen() && !screen().classList.contains('hide') && screen().classList.contains('vy675-page-open')) openHome(true);
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

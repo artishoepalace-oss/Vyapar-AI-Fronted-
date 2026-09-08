@@ -567,14 +567,20 @@ function esc(value){
 /* Universal Liquid Glass dialog/toast system (v4.0.0) */
 let __glassDialogOpen = false;
 let __glassDialogResolver = null;
-function closeGlassDialog(result=false){
+function closeGlassDialog(result=false, immediate=false){
   const node=document.getElementById('vyaparGlassDialog');
-  if(node) node.remove();
-  document.body.classList.remove('glass-dialog-open');
-  __glassDialogOpen=false;
+  if(node && node.__vyClosing && !immediate) return;
   const resolve=__glassDialogResolver;
   __glassDialogResolver=null;
-  if(resolve) resolve(result);
+  __glassDialogOpen=false;
+  if(node && node.__glassKey) document.removeEventListener('keydown',node.__glassKey);
+  const finish=()=>{
+    if(node) node.remove();
+    if(!document.getElementById('vyaparGlassDialog')) document.body.classList.remove('glass-dialog-open');
+    if(resolve) resolve(result);
+  };
+  if(node && window.vyaparMotion && !immediate) window.vyaparMotion.closeOverlay(node,finish);
+  else { if(node && window.vyaparMotion) window.vyaparMotion.cancelOverlay(node); finish(); }
 }
 function showGlassDialog(options={}){
   const title=String(options.title||'Vyapar AI');
@@ -583,7 +589,7 @@ function showGlassDialog(options={}){
   const confirmMode=!!options.confirm;
   const okText=options.okText || (confirmMode ? 'Confirm' : 'OK');
   const cancelText=options.cancelText || 'Cancel';
-  closeGlassDialog(false);
+  closeGlassDialog(false, true);
   const overlay=document.createElement('div');
   overlay.id='vyaparGlassDialog';
   overlay.className='glass-dialog-overlay';
@@ -606,8 +612,9 @@ function showGlassDialog(options={}){
   if(cancel) cancel.onclick=()=>finish(false);
   overlay.addEventListener('click',e=>{if(e.target===overlay && confirmMode) finish(false);});
   const key=(e)=>{if(e.key==='Escape'){e.preventDefault();finish(false);} };
-  document.addEventListener('keydown',key,{once:true});
-  setTimeout(()=>overlay.querySelector('[data-glass-ok]')?.focus(),20);
+  overlay.__glassKey=key;
+  document.addEventListener('keydown',key);
+  setTimeout(()=>{try{overlay.querySelector('[data-glass-ok]')?.focus({preventScroll:true});}catch(_){}},20);
   if(!confirmMode) return Promise.resolve(true);
   return new Promise(resolve=>{__glassDialogResolver=resolve;});
 }
@@ -894,8 +901,12 @@ function setTab(tab, withLoader = false){
   const requiredPlan = requiredPlanForTab(tab);
   if(requiredPlan && !requirePlan(requiredPlan)) return false;
 
-  if(withLoader) showTabLoader();
-
+  const destination = document.getElementById('screen-' + tab);
+  if(!destination) return false;
+  if(currentTab===tab && !destination.classList.contains('hide')) return true;
+  const previousTab = currentTab;
+  const motion = window.vyaparMotion;
+  const navigation = motion ? motion.beforePage(previousTab, tab) : null;
   currentTab = tab;
 
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hide'));
@@ -913,6 +924,7 @@ function setTab(tab, withLoader = false){
   if(tab === 'analytics'){
     setTimeout(drawAnalyticsCharts, 0);
   }
+  if(motion) motion.afterPage(navigation, screen);
 
   return true;
 }
@@ -1158,6 +1170,7 @@ function totals(){
 }
 
 function handleNativeBackPress(){
+  if(window.vyaparMotion && window.vyaparMotion.dismissTop()) return true;
   const modalSelectors = ['#upgradePlanPopup','#planSuccessPopup','#paymentCancelPopup','#paymentLoader','#vyaparDeleteConfirm','#vyaparAccountDeleteConfirm','#androidMoreSheet','#androidPermissionSheet','.production-overlay'];
   for(const selector of modalSelectors){
     const node=document.querySelector(selector);
@@ -4343,9 +4356,9 @@ function showPlanSuccessPopup(planName){
     </section>`;
   document.body.appendChild(popup);
   document.body.classList.add('subscription-dialog-open');
-  const close=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');if(planName==='business'&&typeof setTab==='function')setTab('business',false)};
+  const close=()=>{if(popup.__vyClosing)return;const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');if(planName==='business'&&typeof setTab==='function')setTab('business',false)};if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish()};
   document.getElementById('closePlanSuccessPopup').onclick=close;
-  setTimeout(()=>{if(document.getElementById('planSuccessPopup')){popup.remove();document.body.classList.remove('subscription-dialog-open')}},5000);
+  setTimeout(()=>{if(popup.isConnected && !popup.__vyClosing){const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open')};if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish()}},5000);
 }
 
 function showPaymentCancelPopup(planName){
@@ -4363,9 +4376,10 @@ function showPaymentCancelPopup(planName){
     </section>`;
   document.body.appendChild(popup);
   document.body.classList.add('subscription-dialog-open');
-  document.getElementById('retryPaymentBtn').onclick=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');startPayment(planName)};
-  document.getElementById('closeCancelPopup').onclick=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open')};
-  popup.addEventListener('click',event=>{if(event.target===popup){popup.remove();document.body.classList.remove('subscription-dialog-open')}});
+  const close=()=>{if(popup.__vyClosing)return;const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open')};if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish()};
+  document.getElementById('retryPaymentBtn').onclick=()=>{if(popup.__vyClosing)return;close();startPayment(planName)};
+  document.getElementById('closeCancelPopup').onclick=close;
+  popup.addEventListener('click',event=>{if(event.target===popup)close()});
 }
 function showUpgradePopup(requiredPlan, currentPlan){
   document.getElementById('upgradePlanPopup')?.remove();
@@ -4392,11 +4406,8 @@ function showUpgradePopup(requiredPlan, currentPlan){
   const close = () => {
     if(closing) return;
     closing = true;
-    popup.classList.add('closing');
-    setTimeout(() => {
-      popup.remove();
-      document.body.classList.remove('subscription-dialog-open');
-    }, 150);
+    const finish=()=>{popup.remove();document.body.classList.remove('subscription-dialog-open');};
+    if(window.vyaparMotion)window.vyaparMotion.closeOverlay(popup,finish);else finish();
   };
 
   document.getElementById('closeUpgradePopup').onclick = close;
@@ -5903,7 +5914,7 @@ render();
         : "login";
 
     function close(){
-      modal.remove();
+      if(window.vyaparMotion) window.vyaparMotion.closeOverlay(modal); else modal.remove();
       pendingAfterAuth = null;
     }
 
@@ -6216,7 +6227,7 @@ render();
       overlay.id='vyaparAccountDeleteConfirm'; overlay.className='account-delete-overlay';
       overlay.innerHTML=`<div class="account-delete-card" role="dialog" aria-modal="true"><div class="account-delete-icon">!</div><div class="account-delete-kicker">PERMANENT ACTION</div><h2>${title}</h2><p>${message}</p><div class="account-delete-actions"><button type="button" class="btn" id="accountDeleteCancel">Cancel</button><button type="button" class="btn danger" id="accountDeleteConfirm">Delete Account</button></div></div>`;
       document.body.appendChild(overlay);
-      const finish=v=>{overlay.remove();resolve(v)};
+      const finish=v=>{if(window.vyaparMotion)window.vyaparMotion.closeOverlay(overlay,()=>{overlay.remove();resolve(v)});else{overlay.remove();resolve(v)}};
       overlay.querySelector('#accountDeleteCancel').onclick=()=>finish(false);
       overlay.querySelector('#accountDeleteConfirm').onclick=()=>finish(true);
       overlay.addEventListener('click',e=>{if(e.target===overlay) finish(false)});
@@ -8602,91 +8613,17 @@ render();
       .find(function(node){ return !node.classList.contains("hide"); });
     return screen ? screen.id.replace("screen-", "") : "home";
   }
-  function installNavGlassInteraction(nav, buttons, currentIndex){
-    const indicator=nav.querySelector(".android-nav-glass-indicator");
-    if(!indicator||!buttons.length)return;
-
-    let activeIndex=Math.max(0,Math.min(buttons.length-1,currentIndex));
-    let metrics=[],navRect=null;
-    let pendingGesture=false,dragging=false,pointerId=null,captured=false;
-    let startX=0,startY=0,startPos=0,pos=0,lastX=0,lastTime=0,velocity=0;
-    let suppressClickUntil=0,shineTimer=null,raf=0,pendingPaint=null;
-
-    const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-    function readMetrics(){
-      navRect=nav.getBoundingClientRect();
-      metrics=buttons.map(button=>{const r=button.getBoundingClientRect();return{x:r.left-navRect.left,width:r.width,center:r.left-navRect.left+r.width/2}});
-    }
-    function ensureMetrics(){if(metrics.length!==buttons.length)readMetrics()}
-    function bounds(){ensureMetrics();return{start:metrics[0].x,end:metrics[metrics.length-1].x}}
-    function positionForIndex(index){ensureMetrics();return metrics[clamp(index,0,metrics.length-1)].x}
-    function indexForPosition(value,width){
-      ensureMetrics();const center=value+(width||metrics[activeIndex].width)/2;let best=0,dist=Infinity;
-      metrics.forEach((m,i)=>{const d=Math.abs(center-m.center);if(d<dist){dist=d;best=i}});return best;
-    }
-    function paintNow(value,animate,widthIndex){
-      ensureMetrics();const b=bounds();pos=clamp(value,b.start,b.end);
-      const m=metrics[clamp(widthIndex==null?activeIndex:widthIndex,0,metrics.length-1)];
-      indicator.style.width=m.width+"px";
-      indicator.style.transition=animate?"transform .26s cubic-bezier(.22,1,.36,1),width .16s ease":"none";
-      indicator.style.transform=`translate3d(${pos}px,0,0)`;
-    }
-    function schedulePaint(value,widthIndex){
-      pendingPaint=[value,widthIndex];if(raf)return;
-      raf=requestAnimationFrame(()=>{raf=0;const p=pendingPaint;pendingPaint=null;if(p)paintNow(p[0],false,p[1])});
-    }
-    function visual(index,shine){
-      activeIndex=clamp(index,0,buttons.length-1);
-      buttons.forEach((button,i)=>{const on=i===activeIndex;button.classList.toggle("active",on);if(on)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current")});
-      if(shine){
-        nav.classList.add("android-nav-shine");clearTimeout(shineTimer);
-        shineTimer=setTimeout(()=>nav.classList.remove("android-nav-shine"),360);
-      }
-    }
-    function navigate(index){
-      const button=buttons[index];if(!button)return;const tab=button.getAttribute("data-android-tab");
-      if(tab==="more"){moreSheetTrigger=button;openMoreSheet();return}
-      if(typeof window.setTab==="function")window.setTab(tab,false);
-    }
-
-    // Use click/tap navigation on Android/mobile. The previous drag-preview path could
-    // briefly illuminate another tab and cause unnecessary re-renders before the requested
-    // screen settled. Keeping one deliberate tap path makes the bar feel immediate and stable.
-    if(document.documentElement.classList.contains("desktop-web")){
-      visual(activeIndex,false);
-      indicator.style.display="none";
-      buttons.forEach((button,index)=>button.addEventListener("click",()=>{
-        if(index===activeIndex && button.getAttribute("data-android-tab")!=="more") return;
-        visual(index,false);
-        navigate(index);
-      }));
-      return;
-    }
-
-    function settle(index,doNavigate){
-      index=clamp(index,0,buttons.length-1);
-      if(index===activeIndex && buttons[index]?.getAttribute("data-android-tab")!=="more"){
-        paintNow(positionForIndex(index),true,index);
-        return;
-      }
-      visual(index,true);
-      readMetrics();
-      paintNow(positionForIndex(index),true,index);
-      if(doNavigate) navigate(index);
-    }
-
-    readMetrics();
-    visual(activeIndex,false);
-    paintNow(positionForIndex(activeIndex),false,activeIndex);
-    buttons.forEach((button,index)=>button.addEventListener("click",event=>{
+  function installNavGlassInteraction(nav){
+    if(nav.dataset.motionNavBound) return;
+    nav.dataset.motionNavBound='1';
+    nav.addEventListener('click', function(event){
+      const button=event.target.closest('button[data-android-tab]');
+      if(!button || !nav.contains(button)) return;
       event.preventDefault();
-      settle(index,true);
-    }));
-    window.addEventListener("resize",()=>{
-      if(!document.contains(nav)) return;
-      readMetrics();
-      paintNow(positionForIndex(activeIndex),false,activeIndex);
-    },{passive:true,once:true});
+      const tab=button.dataset.androidTab;
+      if(tab==='more'){ moreSheetTrigger=button; openMoreSheet(); }
+      else if(typeof window.setTab==='function') window.setTab(tab,false);
+    });
   }
 
 
@@ -8704,8 +8641,25 @@ render();
       ["more","More"]
     ];
     let activeIndex = 0;
+    const existing=nav.querySelectorAll('button[data-android-tab]');
+    if(existing.length===5){
+      existing.forEach(function(button){
+        const id=button.dataset.androidTab;
+        const active=id==='more'?moreActive:current===id;
+        const locked=id!=='more' && tabIsLocked(id);
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',String(active));
+        if(active) button.setAttribute('aria-current','page'); else button.removeAttribute('aria-current');
+        if(button.classList.contains('is-locked')!==locked){
+          button.classList.toggle('is-locked',locked);
+          button.innerHTML='<span class="android-nav-icon">'+icons[id]+'</span><span class="android-nav-label">'+items.find(item=>item[0]===id)[1]+'</span>'+(locked?navLockSvg:'');
+        }
+        button.setAttribute('aria-label',items.find(item=>item[0]===id)[1]+(locked?' — Business plan required':''));
+      });
+      return;
+    }
 
-    nav.innerHTML = '<span class="android-nav-glass-indicator" aria-hidden="true"></span>' + items.map(function(item, index){
+    nav.innerHTML = items.map(function(item, index){
       const id = item[0];
       const active = id === "more" ? moreActive : current === id;
       if(active) activeIndex = index;
@@ -8830,8 +8784,9 @@ render();
   function closeMoreSheet(restoreNav){
     const shouldRestore = restoreNav !== false;
     const sheet = document.getElementById("androidMoreSheet");
-    if(sheet) sheet.remove();
-    document.body.classList.remove("android-sheet-open");
+    if(sheet && sheet.__vyClosing) return;
+    const finish=()=>{ if(sheet) sheet.remove(); document.body.classList.remove("android-sheet-open"); renderNav(); };
+    if(sheet && window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
     const trigger = moreSheetTrigger;
     moreSheetTrigger = null;
     if(shouldRestore){
@@ -8899,20 +8854,17 @@ render();
     const closeButton = overlay.querySelector(".android-sheet-close");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);
-      setTimeout(function(){ closeButton.focus(); }, 0);
+      setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
     }
   }
 
   if(originalSetTab){
     window.setTab = function(tab, withLoader){
       const result = originalSetTab.call(this, tab, withLoader);
-      if(result !== false){
-        const root = document.scrollingElement || document.documentElement;
-        root.scrollTop = 0;
-        document.body.scrollTop = 0;
-      }
+      if(result === false) return result;
+      renderNav();
+      updateHeader();
       requestAnimationFrame(function(){
-        if(result !== false) window.scrollTo(0, 0);
         renderNav();
         updateHeader();
         improveCurrentScreen();
@@ -9105,7 +9057,7 @@ render();
 
     const close = function(mark){
       if(mark) localStorage.setItem("vyapar_ai_permission_intro_v1","1");
-      overlay.remove();
+      if(window.vyaparMotion) window.vyaparMotion.closeOverlay(overlay); else overlay.remove();
     };
     overlay.querySelector("#permissionContinue").onclick = function(){
       localStorage.setItem("vyapar_ai_permission_intro_v1","1");

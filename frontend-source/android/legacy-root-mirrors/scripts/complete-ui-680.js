@@ -78,25 +78,7 @@
     return Object.prototype.hasOwnProperty.call(ranks, tab) ? ranks[tab] : 4;
   };
 
-  const finalSetTab = typeof window.setTab === 'function' ? window.setTab : null;
-  if (finalSetTab) {
-    window.setTab = function (tab, withLoader) {
-      const previousTab = currentVisibleTab();
-      const result = finalSetTab.call(this, tab, withLoader);
-      if (result === false || previousTab === tab || reducedMotion()) return result;
-
-      const screen = document.getElementById('screen-' + tab);
-      if (!screen) return result;
-      screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
-      void screen.offsetWidth;
-      screen.classList.add(tabRank(tab) < tabRank(previousTab) ? 'vy-telegram-page-from-left' : 'vy-telegram-page-from-right');
-      clearTimeout(screen.__vyTelegramPageTimer);
-      screen.__vyTelegramPageTimer = setTimeout(() => {
-        screen.classList.remove('vy-telegram-page-from-left', 'vy-telegram-page-from-right');
-      }, 320);
-      return result;
-    };
-  }
+  // Page motion is coordinated once by vyaparMotion in the core navigator.
 
   const syncNativeTheme = () => {
     try {
