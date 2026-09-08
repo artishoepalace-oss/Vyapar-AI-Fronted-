@@ -696,20 +696,53 @@ function persistThemeWithoutRender(){
 function runThemeTransition(nextTheme, x, y){
   const html = document.documentElement;
   const body = document.body;
+  const targetTheme = nextTheme === 'light' ? 'light' : 'dark';
+  const androidMode = html.classList.contains('android-ui') || html.classList.contains('native-android');
+  const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  const commitTheme = () => {
+    state.settings = state.settings || {};
+    state.settings.theme = targetTheme;
+    applyTheme();
+    persistThemeWithoutRender();
+  };
+
   html.classList.add('theme-transitioning');
   body.classList.add('theme-transitioning');
-  playThemeRipple(x, y);
-
-  state.settings = state.settings || {};
-  state.settings.theme = nextTheme === 'light' ? 'light' : 'dark';
-  applyTheme();
-  persistThemeWithoutRender();
 
   clearTimeout(window.__vyThemeTransitionTimer);
-  window.__vyThemeTransitionTimer = setTimeout(() => {
+  const finishTransition = () => {
     html.classList.remove('theme-transitioning');
     body.classList.remove('theme-transitioning');
-  }, 360);
+    document.querySelectorAll('.vx657-theme-crossfade').forEach(node => node.remove());
+  };
+
+  if(androidMode && !reduceMotion && typeof document.startViewTransition === 'function'){
+    try{
+      playThemeRipple(x, y);
+      const transition = document.startViewTransition(() => commitTheme());
+      transition.finished.finally(finishTransition);
+      window.__vyThemeTransitionTimer = setTimeout(finishTransition, 760);
+      return;
+    }catch(error){}
+  }
+
+  if(androidMode && !reduceMotion){
+    const veil = document.createElement('div');
+    const wasLight = html.classList.contains('theme-light');
+    veil.className = 'vx657-theme-crossfade ' + (wasLight ? 'from-light' : 'from-dark');
+    document.body.appendChild(veil);
+    requestAnimationFrame(() => {
+      commitTheme();
+      playThemeRipple(x, y);
+      requestAnimationFrame(() => veil.classList.add('is-fading'));
+    });
+    window.__vyThemeTransitionTimer = setTimeout(finishTransition, 560);
+    return;
+  }
+
+  commitTheme();
+  window.__vyThemeTransitionTimer = setTimeout(finishTransition, 360);
 }
 
 function toggleTheme(ev){
@@ -4105,8 +4138,12 @@ async function startPayment(planName){
   }
 
   if(typeof Razorpay === 'undefined'){
-    alert('Razorpay script missing in index.html');
-    return;
+    try{
+      await window.vyaparWaitForRazorpay?.(12000);
+    }catch(error){
+      alert(error?.message || 'Razorpay checkout is unavailable');
+      return;
+    }
   }
 
   const API_BASE = (typeof API_BASE_URL !== 'undefined')
@@ -4335,7 +4372,7 @@ function showUpgradePopup(requiredPlan, currentPlan){
 
   const business = requiredPlan === 'business';
   const plan = business ? 'Business' : 'Pro';
-  const asset = business ? 'subscription-business-gold.png' : 'subscription-pro-silver.png';
+  const asset = business ? 'assets/images/subscription-business-gold.png' : 'assets/images/subscription-pro-silver.png';
 
   const popup = document.createElement('div');
   popup.id = 'upgradePlanPopup';
@@ -4500,10 +4537,10 @@ function renderSettings(){
           <div class="settings-section-icon">?</div>
         </div>
         <div class="settings-link-grid">
-          <a class="btn" href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
-          <a class="btn" href="terms.html" target="_blank" rel="noopener">Terms</a>
-          <a class="btn" href="refund.html" target="_blank" rel="noopener">Refund Policy</a>
-          <a class="btn danger" href="delete-account.html" target="_blank" rel="noopener">Delete Account</a>
+          <a class="btn" href="pages/legal/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+          <a class="btn" href="pages/legal/terms.html" target="_blank" rel="noopener">Terms</a>
+          <a class="btn" href="pages/legal/refund.html" target="_blank" rel="noopener">Refund Policy</a>
+          <a class="btn danger" href="pages/legal/delete-account.html" target="_blank" rel="noopener">Delete Account</a>
         </div>
       </div>
     </div>
@@ -5176,7 +5213,7 @@ render();
       error.data =
         data;
 
-      // auth.js already performs one automatic refresh + replay for protected requests.
+      // assets/scripts/auth.js already performs one automatic refresh + replay for protected requests.
       // A remaining 401 means re-authentication is required; do not wipe local state or
       // force-reload from this generic transport layer. The account bootstrap can decide
       // when to present the login gate without destroying cached business data.
@@ -5195,69 +5232,20 @@ render();
       return "free";
     }
 
-    const subscription =
-      account && account.subscription
-        ? account.subscription
-        : null;
+    const plan =
+      account &&
+      account.subscription
+        ? account
+            .subscription
+            .plan
+        : "free";
 
-    const plan = String(
-      subscription && subscription.plan
-        ? subscription.plan
-        : "free"
-    ).trim().toLowerCase();
-
-    if(plan !== "pro" && plan !== "business"){
-      return "free";
-    }
-
-    const status = String(
-      subscription && subscription.status
-        ? subscription.status
-        : ""
-    ).trim().toLowerCase();
-
-    const endValue =
-      subscription && subscription.currentEnd
-        ? new Date(subscription.currentEnd).getTime()
-        : 0;
-
-    const hardInactive =
-      /^(expired|failed|none|inactive)$/.test(status);
-
-    const endedCancellation =
-      /^(cancelled|canceled)$/.test(status) &&
-      (!endValue || endValue <= Date.now());
-
-    return hardInactive || endedCancellation
-      ? "free"
-      : plan;
-  }
-
-  function paidPlanVerifiedBadge(plan){
-    if(plan !== "pro" && plan !== "business"){
-      return "";
-    }
-
-    const label =
+    return (
+      plan === "pro" ||
       plan === "business"
-        ? "Business verified"
-        : "Pro verified";
-
-    return `
-      <span
-        class="vy645-plan-tick ${plan}"
-        role="img"
-        aria-label="${label}"
-        title="${label}"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="m9.7 16.6-4.2-4.2 1.8-1.8 2.4 2.4 6.9-6.9 1.8 1.8z"
-          ></path>
-        </svg>
-      </span>
-    `;
+    )
+      ? plan
+      : "free";
   }
 
   function hasBusinessData(value){
@@ -6320,8 +6308,6 @@ render();
     const plan =
       currentAccountPlan();
 
-    card.dataset.accountPlan = plan;
-
     const lastSync =
       localStorage.getItem(
         CLOUD_SYNC_TIME_KEY
@@ -6338,11 +6324,7 @@ render();
     if(loggedIn){
       card.innerHTML = `
         <div class="production-account-head">
-          <div
-            class="production-avatar${plan === "pro" || plan === "business" ? ` vy648-plan-avatar ${plan}` : ""}"
-            data-plan="${plan}"
-            aria-label="${plan === "business" ? "Business plan account" : plan === "pro" ? "Pro plan account" : "Free plan account"}"
-          >
+          <div class="production-avatar">
             ${escapeHtml(
               (
                 account.user.name ||
@@ -6359,7 +6341,6 @@ render();
                 account.user.name ||
                 "User"
               )}
-              ${paidPlanVerifiedBadge(plan)}
             </h3>
 
             <p>
@@ -6676,10 +6657,62 @@ render();
   }
 
   function injectLegalFooter(){
-    // Legacy production footer used to render a second copy of the legal links.
-    // Keep a single canonical footer: #appLegalFooter, created by ensureLegalFooter().
-    const duplicate = document.getElementById("productionLegalFooter");
-    if(duplicate) duplicate.remove();
+    if(
+      document.getElementById(
+        "productionLegalFooter"
+      )
+    ){
+      return;
+    }
+
+    const footer =
+      document.createElement(
+        "footer"
+      );
+
+    footer.id =
+      "productionLegalFooter";
+
+    footer.className =
+      "production-footer";
+
+    footer.innerHTML = `
+      <span>
+        © ${new Date().getFullYear()} Vyapar AI
+      </span>
+
+      <a
+        href="pages/legal/privacy.html"
+        target="_blank" rel="noopener noreferrer"
+      >
+        Privacy
+      </a>
+
+      <a
+        href="pages/legal/terms.html"
+        target="_blank" rel="noopener noreferrer"
+      >
+        Terms
+      </a>
+
+      <a
+        href="pages/legal/refund.html"
+        target="_blank" rel="noopener noreferrer"
+      >
+        Refund
+      </a>
+
+      <a
+        href="pages/legal/delete-account.html"
+        target="_blank" rel="noopener noreferrer"
+      >
+        Delete Account
+      </a>
+    `;
+
+    document.body.appendChild(
+      footer
+    );
   }
 
   async function startSubscription(
@@ -6740,12 +6773,16 @@ render();
       typeof Razorpay ===
       "undefined"
     ){
-      premiumToast(
-        "Razorpay checkout script missing in index.html",
-        "error"
-      );
+      try{
+        await window.vyaparWaitForRazorpay?.(12000);
+      }catch(error){
+        premiumToast(
+          error && error.message ? error.message : "Razorpay checkout is unavailable",
+          "error"
+        );
 
-      return;
+        return;
+      }
     }
 
     if(paymentBusy){
@@ -7370,7 +7407,6 @@ render();
           );
         color:#fff;
         font-weight:950;
-        border:1px solid transparent;
       }
 
       .production-account-head h3{
@@ -8236,7 +8272,7 @@ render();
     if(!state.appLock?.enabled || byId('fs607Lock'))return;
     const d=document.createElement('div');
     d.id='fs607Lock'; d.className='fs607-lock';
-    d.innerHTML=`<div class="fs607-lock-card"><img src="logo.png" alt=""><h2>Vyapar AI Locked</h2><p class="muted">Enter your app PIN</p>
+    d.innerHTML=`<div class="fs607-lock-card"><img src="assets/images/logo.png" alt=""><h2>Vyapar AI Locked</h2><p class="muted">Enter your app PIN</p>
       <input id="fs607LockPin" inputmode="numeric" maxlength="8" type="password" placeholder="PIN">
       <button class="btn primary" id="fs607UnlockBtn">Unlock</button><div id="fs607LockError" class="muted"></div></div>`;
     document.body.appendChild(d);
@@ -8779,13 +8815,13 @@ render();
       footer.className = "app-legal-footer vy659-settings-footer";
     }
     footer.innerHTML =
-      '<img class="vy659-footer-logo" src="footer-logo.png" alt="Vyapar AI">' +
+      '<img class="vy659-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI">' +
       '<span>© 2026 Vyapar AI. All Rights Reserved.</span>' +
       '<span class="app-legal-links">' +
-        '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
-        '<a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>' +
-        '<a href="refund.html" target="_blank" rel="noopener noreferrer">Refund</a>' +
-        '<a href="delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>' +
+        '<a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
+        '<a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a>' +
+        '<a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a>' +
+        '<a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>' +
       '</span>' +
       '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
     settings.appendChild(footer);

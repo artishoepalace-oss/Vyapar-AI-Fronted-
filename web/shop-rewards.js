@@ -1,7 +1,6 @@
-/* Vyapar AI 6.5.3 web small-shop growth & reward system, ported from Android. */
+/* Vyapar AI Android-only small-shop growth & reward system. */
 (function(){
   'use strict';
-  if(!document.documentElement.classList.contains('web-ui')) return;
 
   const REWARD_STORE = 'vyapar_ai_shop_rewards_v1';
 

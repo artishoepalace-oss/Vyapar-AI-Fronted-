@@ -553,3 +553,26 @@ html.vy-professional-ui #vy647StartupSplash .vy647-splash-bar i {
     animation-duration: .001ms !important;
   }
 }
+
+
+/* 6.8.2 maintenance: prevent top header actions from overflowing narrow screens. */
+.android-ui .top, .top{min-width:0;max-width:100%;}
+.android-ui .brand, .brand{min-width:0;flex:1 1 auto;overflow:hidden;}
+.android-ui .brand > div, .brand > div{min-width:0;}
+.android-ui .top-actions, .top-actions{min-width:0;flex:0 1 auto;max-width:48%;}
+.android-ui .top-actions .badge, .top-actions .badge{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.android-ui .theme-toggle, .theme-toggle{flex:0 0 auto;}
+@media (max-width:520px){
+  .top{gap:8px;}
+  .brand{gap:8px;}
+  .top-actions{gap:5px;max-width:46%;}
+  .android-ui .top-actions{max-width:46%;}
+  .android-ui .badge{max-width:82px;padding-inline:8px!important;}
+}
+@media (max-width:390px){
+  .android-ui .brand .tag,.brand .tag{display:none;}
+  .android-ui .brand h1,.brand h1{font-size:17px!important;}
+  .android-ui .logo,.logo{width:40px!important;height:40px!important;flex-basis:40px;}
+  .android-ui .top-actions,.top-actions{max-width:44%;}
+  .android-ui .badge{max-width:70px;}
+}

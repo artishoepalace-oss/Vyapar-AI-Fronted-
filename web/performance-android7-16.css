@@ -1,0 +1,219 @@
+/* Vyapar AI — Android 7–16 adaptive rendering pass (2026-09-01)
+   Goal: preserve the Liquid Glass look while reducing expensive live compositing,
+   especially while the finger is moving and on low-RAM / older WebView devices. */
+
+html.android-ui{
+  -webkit-tap-highlight-color:transparent;
+  text-rendering:optimizeLegibility;
+}
+html.android-ui body{
+  overscroll-behavior-y:none;
+}
+html.android-ui button,
+html.android-ui .btn,
+html.android-ui a,
+html.android-ui [role="button"]{
+  touch-action:manipulation;
+}
+html.android-ui main,
+html.android-ui .screen,
+html.android-ui .scroll,
+html.android-ui .p611-table,
+html.android-ui .android-sheet,
+html.android-ui .vy6601-select-options{
+  overscroll-behavior:contain;
+}
+html.android-ui img{
+  image-rendering:auto;
+}
+
+/* Android 7–8 / low-RAM: translucent surfaces instead of live backdrop sampling.
+   The visual hierarchy stays intact, but scrolling no longer has to re-blur the page. */
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat,
+html.android-ui.perf-tier-legacy .top,
+html.android-ui.perf-tier-legacy .nav,
+html.android-ui.perf-tier-legacy .android-sheet,
+html.android-ui.perf-tier-legacy .android-sheet-overlay,
+html.android-ui.perf-tier-legacy .android-sheet-item,
+html.android-ui.perf-tier-legacy .settings-section,
+html.android-ui.perf-tier-legacy .production-account-card,
+html.android-ui.perf-tier-legacy .btn,
+html.android-ui.perf-tier-legacy .pill,
+html.android-ui.perf-tier-legacy .glass-chip,
+html.android-ui.perf-tier-legacy .theme-toggle,
+html.android-ui.perf-tier-legacy .badge,
+html.android-ui.perf-tier-legacy input,
+html.android-ui.perf-tier-legacy select,
+html.android-ui.perf-tier-legacy textarea,
+html.android-ui.perf-low-ram .card,
+html.android-ui.perf-low-ram .stat,
+html.android-ui.perf-low-ram .top,
+html.android-ui.perf-low-ram .nav,
+html.android-ui.perf-low-ram .android-sheet,
+html.android-ui.perf-low-ram .android-sheet-overlay,
+html.android-ui.perf-low-ram .android-sheet-item{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat,
+html.android-ui.perf-tier-legacy .settings-section,
+html.android-ui.perf-tier-legacy .production-account-card{
+  box-shadow:0 5px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html.android-ui.perf-tier-legacy .nav{
+  box-shadow:0 8px 24px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html.android-ui.perf-tier-legacy body::before,
+html.android-ui.perf-tier-legacy body::after,
+html.android-ui.perf-tier-legacy .card::before,
+html.android-ui.perf-tier-legacy .card::after,
+html.android-ui.perf-tier-legacy .stat::before,
+html.android-ui.perf-tier-legacy .stat::after{
+  animation:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-tier-legacy [style*="background-attachment: fixed"],
+html.android-ui.perf-tier-legacy body{
+  background-attachment:scroll!important;
+}
+html.android-ui.perf-tier-legacy *{
+  scroll-behavior:auto!important;
+}
+html.android-ui.perf-tier-legacy .android-nav-glass-indicator,
+html.android-ui.perf-tier-legacy .android-sheet-item,
+html.android-ui.perf-tier-legacy .card,
+html.android-ui.perf-tier-legacy .stat{
+  will-change:auto!important;
+}
+
+/* Android 9–11: retain a small amount of glass, cap blur/raster cost. */
+html.android-ui.perf-tier-mid .nav,
+html.android-ui.perf-tier-mid .top,
+html.android-ui.perf-tier-mid .android-sheet{
+  backdrop-filter:blur(6px) saturate(128%)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(128%)!important;
+}
+html.android-ui.perf-tier-mid .card,
+html.android-ui.perf-tier-mid .stat,
+html.android-ui.perf-tier-mid .settings-section,
+html.android-ui.perf-tier-mid .production-account-card{
+  backdrop-filter:blur(4px) saturate(122%)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(122%)!important;
+}
+html.android-ui.perf-tier-mid .btn,
+html.android-ui.perf-tier-mid .pill,
+html.android-ui.perf-tier-mid .glass-chip,
+html.android-ui.perf-tier-mid input,
+html.android-ui.perf-tier-mid select,
+html.android-ui.perf-tier-mid textarea{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Android 12–16+: higher visual quality, but avoid the original 20–34px live blur. */
+html.android-ui.perf-tier-modern .nav,
+html.android-ui.perf-tier-modern .top,
+html.android-ui.perf-tier-modern .android-sheet{
+  backdrop-filter:blur(10px) saturate(138%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(138%)!important;
+}
+html.android-ui.perf-tier-modern .card,
+html.android-ui.perf-tier-modern .stat,
+html.android-ui.perf-tier-modern .settings-section,
+html.android-ui.perf-tier-modern .production-account-card{
+  backdrop-filter:blur(8px) saturate(132%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(132%)!important;
+}
+html.android-ui.perf-tier-modern .btn,
+html.android-ui.perf-tier-modern .pill,
+html.android-ui.perf-tier-modern .glass-chip,
+html.android-ui.perf-tier-modern input,
+html.android-ui.perf-tier-modern select,
+html.android-ui.perf-tier-modern textarea{
+  backdrop-filter:blur(3px) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(3px) saturate(118%)!important;
+}
+
+/* The existing adaptive FPS governor toggles these classes on <html>.
+   These same-element selectors make the governor actually affect Android rendering. */
+html.android-ui.perf-adaptive-balanced .nav,
+html.android-ui.perf-adaptive-balanced .top,
+html.android-ui.perf-adaptive-balanced .android-sheet{
+  backdrop-filter:blur(6px) saturate(128%)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(128%)!important;
+}
+html.android-ui.perf-adaptive-balanced .card,
+html.android-ui.perf-adaptive-balanced .stat,
+html.android-ui.perf-adaptive-balanced .settings-section,
+html.android-ui.perf-adaptive-balanced .production-account-card{
+  backdrop-filter:blur(4px) saturate(122%)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(122%)!important;
+}
+html.android-ui.perf-adaptive-smooth .card,
+html.android-ui.perf-adaptive-smooth .stat,
+html.android-ui.perf-adaptive-smooth .top,
+html.android-ui.perf-adaptive-smooth .nav,
+html.android-ui.perf-adaptive-smooth .android-sheet,
+html.android-ui.perf-adaptive-smooth .android-sheet-overlay,
+html.android-ui.perf-adaptive-smooth .android-sheet-item,
+html.android-ui.perf-adaptive-smooth .settings-section,
+html.android-ui.perf-adaptive-smooth .production-account-card,
+html.android-ui.perf-adaptive-smooth .btn,
+html.android-ui.perf-adaptive-smooth .pill,
+html.android-ui.perf-adaptive-smooth input,
+html.android-ui.perf-adaptive-smooth select,
+html.android-ui.perf-adaptive-smooth textarea{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-adaptive-smooth .card::before,
+html.android-ui.perf-adaptive-smooth .card::after,
+html.android-ui.perf-adaptive-smooth .stat::before,
+html.android-ui.perf-adaptive-smooth .stat::after{
+  animation-play-state:paused!important;
+}
+
+/* Finger-down / scroll path: temporarily remove live blur and decorative work.
+   This class changes only at scroll start/end, not on every scroll event. */
+html.android-ui.perf-scrolling .card,
+html.android-ui.perf-scrolling .stat,
+html.android-ui.perf-scrolling .top,
+html.android-ui.perf-scrolling .nav,
+html.android-ui.perf-scrolling .android-sheet,
+html.android-ui.perf-scrolling .android-sheet-overlay,
+html.android-ui.perf-scrolling .android-sheet-item,
+html.android-ui.perf-scrolling .settings-section,
+html.android-ui.perf-scrolling .production-account-card{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+html.android-ui.perf-scrolling body::before,
+html.android-ui.perf-scrolling body::after,
+html.android-ui.perf-scrolling .card::before,
+html.android-ui.perf-scrolling .card::after,
+html.android-ui.perf-scrolling .stat::before,
+html.android-ui.perf-scrolling .stat::after,
+html.android-ui.perf-scrolling .android-nav-glass-indicator::before,
+html.android-ui.perf-scrolling .android-nav-glass-indicator::after{
+  animation-play-state:paused!important;
+}
+html.android-ui.perf-scrolling .card,
+html.android-ui.perf-scrolling .stat{
+  box-shadow:0 4px 14px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+
+/* Big local artwork should not block the first interactive frame. */
+html.android-ui img[loading="lazy"]{
+  content-visibility:auto;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html.android-ui *{
+    scroll-behavior:auto!important;
+  }
+}
