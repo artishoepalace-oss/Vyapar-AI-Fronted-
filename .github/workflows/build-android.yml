@@ -102,7 +102,7 @@ jobs:
           for path in [Path('web/index.html'),Path('android-app/app/src/main/assets/index.html')]:
               text=path.read_text(encoding='utf-8')
               text=re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>',f'<meta name="vyapar-ui-version" content="{VERSION}" />',text,count=1)
-              text=re.sub(r'^\s*<link rel="stylesheet" href="assets/styles/(?:auth-layout-fix-867|surface-cleanup-867|popup-nav-clearance-867|surface-hierarchy-20102004|motion-20102004)\.css[^>]*>\s*\n?','',text,flags=re.M)
+              text=re.sub(r'^[ \t]*<link rel="stylesheet" href="assets/styles/(?:auth-layout-fix-867|surface-cleanup-867|popup-nav-clearance-867|surface-hierarchy-20102004|motion-20102004)\.css[^>]*>[ \t]*\n?','',text,flags=re.M)
               text=re.sub(r'<link rel="stylesheet" href="assets/styles/vyapar-ui\.css\?v=[^"]+"\s*/>',f'<link rel="stylesheet" href="assets/styles/vyapar-ui.css?v={CACHE}" />',text,count=1)
               text=re.sub(r'<script src="assets/scripts/vyapar-app\.js\?v=[^"]+"></script>',f'<script src="assets/scripts/vyapar-app.js?v={CACHE}"></script>',text,count=1)
               path.write_text(text,encoding='utf-8')
@@ -143,12 +143,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          VERSION_NAME=$(node -p "require('./version.json').versionName")
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add \
+            web/index.html \
+            android-app/app/src/main/assets/index.html \
+            web/assets/styles/vyapar-core.css \
+            web/assets/styles/vyapar-ui.css \
+            web/assets/scripts/vyapar-app.js \
+            web/assets/styles/motion-20102004.css \
+            web/assets/scripts/motion-20102004.js \
+            android-app/app/src/main/assets/assets/styles/vyapar-core.css \
+            android-app/app/src/main/assets/assets/styles/vyapar-ui.css \
+            android-app/app/src/main/assets/assets/scripts/vyapar-app.js \
+            FRAME_CONTINUITY_FIX_2010200404.md \
+            "RELEASE_${VERSION_NAME}.md"
           if ! git diff --cached --quiet; then
-            VERSION_NAME=$(node -p "require('./version.json').versionName")
-            git commit -m "Sync release files for ${VERSION_NAME}"
+            git commit -m "[skip ci] Sync release files for ${VERSION_NAME}"
             git push origin HEAD:main
           else
             echo "Release files are already synchronized."
