@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base64 -d .release/dark869.xz.b64 | xz -d > /tmp/dark869.diff
+          cat .release/dark869.part* | base64 -d | xz -d > /tmp/dark869.diff
           git apply --check /tmp/dark869.diff
           git apply --binary /tmp/dark869.diff
           python .release/dark869_prepare.py pre
