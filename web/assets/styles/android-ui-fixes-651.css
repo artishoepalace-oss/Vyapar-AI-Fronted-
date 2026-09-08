@@ -19,32 +19,14 @@ html.android-ui .vx621-bulk-actions.vx622-bulk-menu.is-open>.vx622-menu-panel{
 html.android-ui .vx622-menu-trigger{font-size:23px!important;line-height:1!important;letter-spacing:1px!important}
 html.android-ui .vx622-menu-item{min-height:44px!important;font-size:13px!important}
 
-/* Strong Android light-mode readability across every primary screen. */
-html.android-ui.theme-light body,
-html.android-ui.theme-light .screen{color:#10273b!important}
-html.android-ui.theme-light .screen h1,
-html.android-ui.theme-light .screen h2,
-html.android-ui.theme-light .screen h3,
-html.android-ui.theme-light .screen h4,
-html.android-ui.theme-light .screen strong,
-html.android-ui.theme-light .screen b{color:#10273b}
-html.android-ui.theme-light .screen p,
-html.android-ui.theme-light .screen small,
-html.android-ui.theme-light .screen .muted,
-html.android-ui.theme-light .screen label{color:#5d748b!important}
-html.android-ui.theme-light input,
-html.android-ui.theme-light textarea,
-html.android-ui.theme-light select{
-  color:#10273b!important;background:rgba(255,255,255,.82)!important;border-color:rgba(75,111,145,.24)!important;
-}
-html.android-ui.theme-light input::placeholder,
-html.android-ui.theme-light textarea::placeholder{color:#8294a7!important;opacity:1}
-html.android-ui.theme-light .vx622-menu-panel{
-  background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(241,247,253,.99))!important;
-  border-color:rgba(75,111,145,.20)!important;box-shadow:0 18px 40px rgba(53,78,103,.18)!important;
-}
-html.android-ui.theme-light .vx622-menu-item{color:#203c56!important;background:rgba(69,123,176,.045)!important}
-html.android-ui.theme-light .vx622-menu-item.danger{color:#b2344a!important;background:rgba(194,57,80,.07)!important}
+
+
+
+
+
+
+
+
 
 /* Footer/signature is always the final identity line. */
 .app-legal-footer{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:center!important;gap:8px 12px!important}
@@ -53,8 +35,7 @@ html.android-ui.theme-light .vx622-menu-item.danger{color:#b2344a!important;back
   display:block!important;flex-basis:100%!important;margin-top:4px!important;text-align:center!important;
   font-weight:850!important;font-style:italic!important;letter-spacing:.025em!important;color:var(--android-text,#0b2545)!important;
 }
-html.android-ui.theme-light .app-legal-footer .gupta-legacy-signature,
-html.android-ui.theme-light .android-sheet-legal .gupta-legacy-signature{color:#15324d!important}
+
 .android-sheet-legal .gupta-legacy-signature{padding-top:5px!important}
 
 @media(max-width:520px){

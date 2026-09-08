@@ -71,13 +71,13 @@
   window.monthlyStatsForYear=combinedMonthlyStatsForYear;
 
   function footerMarkup(){
-    return '<img class="vy659-footer-logo" src="footer-logo.png" alt="Vyapar AI">'+
+    return '<img class="vy659-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI">'+
       '<span>© 2026 Vyapar AI. All Rights Reserved.</span>'+
       '<span class="app-legal-links">'+
-        '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>'+
-        '<a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>'+
-        '<a href="refund.html" target="_blank" rel="noopener noreferrer">Refund</a>'+
-        '<a href="delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>'+
+        '<a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>'+
+        '<a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a>'+
+        '<a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a>'+
+        '<a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a>'+
       '</span>'+
       '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
   }

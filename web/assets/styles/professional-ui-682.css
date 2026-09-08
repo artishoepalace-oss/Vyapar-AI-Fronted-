@@ -23,27 +23,9 @@ html.vy-professional-ui {
   color-scheme: dark;
 }
 
-html.vy-professional-ui.theme-light {
-  --pro-bg: #f4f7fb;
-  --pro-bg-deep: #eef3f9;
-  --pro-surface: #ffffff;
-  --pro-surface-raised: #ffffff;
-  --pro-surface-soft: #f5f8fc;
-  --pro-text: #10243c;
-  --pro-muted: #60738a;
-  --pro-line: rgba(35, 76, 119, .13);
-  --pro-blue: #2477d4;
-  --pro-blue-bright: #3187e7;
-  --pro-blue-soft: rgba(36, 119, 212, .10);
-  --pro-green: #168b60;
-  --pro-amber: #a66b06;
-  --pro-red: #cb3f55;
-  --pro-shadow: 0 12px 30px rgba(34, 67, 103, .10);
-  --pro-shadow-soft: 0 6px 18px rgba(34, 67, 103, .08);
-  color-scheme: light;
-}
 
-html.vy-professional-ui:not(.theme-light) body {
+
+html.vy-professional-ui body {
   color: var(--pro-text) !important;
   background:
     radial-gradient(38rem 24rem at 6% -4%, rgba(49, 127, 221, .24), transparent 68%),
@@ -51,12 +33,7 @@ html.vy-professional-ui:not(.theme-light) body {
     linear-gradient(180deg, var(--pro-bg-deep), var(--pro-bg) 44%, #061426) !important;
 }
 
-html.vy-professional-ui.theme-light body {
-  color: var(--pro-text) !important;
-  background:
-    radial-gradient(34rem 20rem at 3% -3%, rgba(49, 135, 231, .11), transparent 70%),
-    linear-gradient(180deg, #fbfdff, var(--pro-bg) 48%, #f8fbff) !important;
-}
+
 
 html.vy-professional-ui body {
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
@@ -190,11 +167,7 @@ html.vy-professional-ui #screen-home .home-overview::after {
   box-shadow: 0 0 0 22px rgba(255, 255, 255, .025), 0 0 0 48px rgba(255, 255, 255, .018);
 }
 
-html.vy-professional-ui.theme-light #screen-home .home-overview {
-  background:
-    radial-gradient(19rem 13rem at 95% 4%, rgba(255, 255, 255, .20), transparent 66%),
-    linear-gradient(145deg, #135caa, #2781dc 62%, #3a92e7) !important;
-}
+
 
 html.vy-professional-ui #screen-home .home-overview h2,
 html.vy-professional-ui #screen-home .home-overview b,
@@ -274,9 +247,7 @@ html.vy-professional-ui #screen-business .vx621-group {
   box-shadow: none !important;
 }
 
-html.vy-professional-ui.theme-light #screen-business .vx621-group {
-  background: rgba(238, 244, 251, .72) !important;
-}
+
 
 html.vy-professional-ui #screen-business .vx621-feature-card,
 html.vy-professional-ui .vx621-sales-tools .vx621-feature-card,
@@ -370,11 +341,7 @@ html.vy-professional-ui textarea {
   color: var(--pro-text) !important;
 }
 
-html.vy-professional-ui.theme-light input,
-html.vy-professional-ui.theme-light select,
-html.vy-professional-ui.theme-light textarea {
-  background: #f8fafd !important;
-}
+
 
 html.vy-professional-ui input:focus,
 html.vy-professional-ui select:focus,
@@ -461,11 +428,7 @@ html.vy-professional-ui .nav {
   -webkit-backdrop-filter: blur(22px) saturate(118%) !important;
 }
 
-html.vy-professional-ui.theme-light .nav {
-  border-color: rgba(35, 76, 119, .14) !important;
-  background: rgba(255, 255, 255, .98) !important;
-  box-shadow: 0 13px 30px rgba(34, 67, 103, .14) !important;
-}
+
 
 html.vy-professional-ui .nav button[data-android-tab] {
   border: 0 !important;
@@ -478,10 +441,7 @@ html.vy-professional-ui .nav button[data-android-tab] .android-nav-label {
   color: #8fa9c2 !important;
 }
 
-html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-icon,
-html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-label {
-  color: #60778e !important;
-}
+
 
 html.vy-professional-ui .nav button.active[data-android-tab] {
   background: linear-gradient(145deg, #226fc9, #3b91f7) !important;

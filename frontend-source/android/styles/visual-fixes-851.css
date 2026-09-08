@@ -25,12 +25,7 @@ html.native-android .top{
   backdrop-filter:blur(16px) saturate(120%)!important;
   -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
 }
-html.android-ui.theme-light .top,
-html.native-android.theme-light .top{
-  background:rgba(250,252,255,.97)!important;
-  border-bottom-color:rgba(55,85,115,.13)!important;
-  box-shadow:0 4px 16px rgba(40,70,105,.08)!important;
-}
+
 html.android-ui .brand,
 html.native-android .brand{
   min-width:0!important;
@@ -103,13 +98,7 @@ html.native-android #themeToggle{
   overflow:hidden!important;
   transform:none!important;
 }
-html.android-ui.theme-light #themeToggle,
-html.native-android.theme-light #themeToggle{
-  border-color:rgba(45,100,155,.16)!important;
-  background:#fff!important;
-  color:#227fc8!important;
-  box-shadow:0 4px 13px rgba(43,78,112,.09)!important;
-}
+
 html.android-ui #themeToggle::before,
 html.native-android #themeToggle::before{display:none!important;content:none!important;}
 html.android-ui #themeToggle::after,
@@ -124,11 +113,7 @@ html.native-android #themeToggle::after{
   transform-origin:center!important;
   transition:transform .24s cubic-bezier(.2,.75,.25,1),opacity .18s ease!important;
 }
-html.android-ui.theme-light #themeToggle::after,
-html.native-android.theme-light #themeToggle::after{
-  content:"☀"!important;
-  transform:rotate(12deg) scale(.96)!important;
-}
+
 
 /* Lightweight Telegram-style page switching: one transform + opacity only. */
 @keyframes vyTelegramPageFromRight{
@@ -174,35 +159,10 @@ html.native-android .vx657-theme-crossfade{
 html.android-ui .vx657-theme-crossfade.is-fading,
 html.native-android .vx657-theme-crossfade.is-fading{opacity:0!important;}
 
-/* Sales light mode contrast repair: remove the accidental dark live-profit boxes. */
-html.android-ui.theme-light #screen-sales #vy660ProfitCard,
-html.native-android.theme-light #screen-sales #vy660ProfitCard{
-  background:#fff!important;
-  color:#14263d!important;
-  border-color:rgba(49,111,176,.16)!important;
-  box-shadow:0 12px 28px rgba(36,72,110,.09)!important;
-}
-html.android-ui.theme-light #screen-sales .vy660-live-box,
-html.native-android.theme-light #screen-sales .vy660-live-box{
-  background:linear-gradient(145deg,#f8fbff,#edf6ff)!important;
-  border-color:rgba(49,135,245,.20)!important;
-  color:#10263d!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.96)!important;
-}
-html.android-ui.theme-light #screen-sales .vy660-live-box>span,
-html.android-ui.theme-light #screen-sales .vy660-live-box>small,
-html.android-ui.theme-light #screen-sales .vy660-note,
-html.native-android.theme-light #screen-sales .vy660-live-box>span,
-html.native-android.theme-light #screen-sales .vy660-live-box>small,
-html.native-android.theme-light #screen-sales .vy660-note{
-  color:#61778d!important;
-  opacity:1!important;
-}
-html.android-ui.theme-light #screen-sales .vy660-live-box>b,
-html.native-android.theme-light #screen-sales .vy660-live-box>b{
-  color:#0c2b49!important;
-  opacity:1!important;
-}
+
+
+
+
 
 /* Exactly one verification badge; make the canonical gold/silver mark brighter. */
 .production-account-head .vy647-plan-mark{display:none!important;}

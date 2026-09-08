@@ -25,7 +25,7 @@
     if(document.getElementById('vy647StartupSplash'))return;
     var splash=document.createElement('div');
     splash.id='vy647StartupSplash';
-    splash.innerHTML='<div class="vy647-splash-core"><img src="logo.png" alt="Vyapar AI"><strong>Vyapar AI</strong><span>Loading secure session…</span><div class="vy647-splash-bar"><i></i></div></div>';
+    splash.innerHTML='<div class="vy647-splash-core"><img src="assets/images/logo.png" alt="Vyapar AI"><strong>Vyapar AI</strong><span>Loading secure session…</span><div class="vy647-splash-bar"><i></i></div></div>';
     document.body.appendChild(splash);
   }
 
@@ -56,7 +56,7 @@
     var gate=document.createElement('div');
     gate.id='vy647PasswordGate';
     gate.innerHTML='<main class="vy647-lock-card" role="dialog" aria-modal="true" aria-labelledby="vy647LockTitle">'+
-      '<img src="logo.png" alt="Vyapar AI"><h1 id="vy647LockTitle">Welcome Back</h1><p>Enter your account password to open Vyapar AI.</p>'+
+      '<img src="assets/images/logo.png" alt="Vyapar AI"><h1 id="vy647LockTitle">Welcome Back</h1><p>Enter your account password to open Vyapar AI.</p>'+
       '<label>Account</label><div class="vy647-email">'+esc(email)+'</div><label for="vy647Password">Password</label>'+
       '<input id="vy647Password" type="password" autocomplete="current-password" placeholder="Enter password">'+
       '<div id="vy647LockError" class="vy647-lock-error" aria-live="polite"></div><button id="vy647Unlock" type="button">Unlock App</button>'+
@@ -101,12 +101,11 @@
   }
 
   function decoratePlanIdentity(){
+    // plan-badge-menu-645 is the single owner of the paid verification mark.
+    // Older builds added .vy647-plan-mark from this observer as well, which
+    // produced two ticks and an endless mutation/paint loop on some WebViews.
     var card=document.getElementById('productionAccountCard');if(!card)return;
-    var title=card.querySelector('.production-account-head h3');if(!title)return;
-    var plan=resolvePlan(),badge=title.querySelector('.vy647-plan-mark');
-    if(!plan){if(badge)badge.remove();return}
-    if(!badge){badge=document.createElement('span');badge.className='vy647-plan-mark';badge.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m9.7 16.6-4.2-4.2 1.8-1.8 2.4 2.4 6.9-6.9 1.8 1.8z"/></svg>';title.appendChild(badge)}
-    badge.className='vy647-plan-mark '+plan;badge.title=plan==='business'?'Business verified':'Pro verified';badge.setAttribute('aria-label',badge.title);
+    card.querySelectorAll('.vy647-plan-mark').forEach(function(mark){mark.remove()});
   }
 
   var refreshQueued=false;

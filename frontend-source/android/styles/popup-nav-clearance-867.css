@@ -129,7 +129,7 @@ html.native-android body.glass-dialog-open .nav{
    Final screenshot/video-driven override. Keeps the requested black + grey
    visual system and removes the remaining blue/navy surfaces without changing
    business logic, data, navigation or subscription semantics. */
-html.vy861-flat-black:not(.theme-light){
+html.vy861-flat-black{
   --vy867-qa-surface:#0f1012;
   --vy867-qa-surface-2:#161719;
   --vy867-qa-surface-3:#202226;
@@ -142,7 +142,7 @@ html.vy861-flat-black:not(.theme-light){
 
 /* Home: remove the accidental parent slabs/centre seams seen around Quick
    Access and At a glance. Only the real child cards paint a surface. */
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-actions,.home-metrics){
+html.vy861-flat-black #screen-home :is(.android-quick-actions,.home-metrics){
   background:transparent!important;
   background-image:none!important;
   border:0!important;
@@ -151,14 +151,14 @@ html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-actions,
   gap:10px!important;
   overflow:visible!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-action,.home-metrics>.stat){
+html.vy861-flat-black #screen-home :is(.android-quick-action,.home-metrics>.stat){
   background:var(--vy867-qa-surface)!important;
   background-image:none!important;
   border:1px solid var(--vy867-qa-line-soft)!important;
   box-shadow:none!important;
   border-radius:18px!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home .home-metric-head{
+html.vy861-flat-black #screen-home .home-metric-head{
   background:transparent!important;
   border:0!important;
   box-shadow:none!important;
@@ -166,7 +166,7 @@ html.vy861-flat-black:not(.theme-light) #screen-home .home-metric-head{
 
 /* Business / Sales / Stock: the blue icon tiles marked in the recording become
    neutral graphite; the icon itself stays readable silver/grey. */
-html.vy861-flat-black:not(.theme-light) :is(
+html.vy861-flat-black :is(
   .vx621-feature-icon,
   .android-sheet-item-icon,
   .android-sheet-row .icon,
@@ -183,7 +183,7 @@ html.vy861-flat-black:not(.theme-light) :is(
   color:var(--vy867-qa-icon)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(
+html.vy861-flat-black :is(
   #screen-business .vx621-feature-grid,
   #screen-sales .vx621-feature-grid,
   #screen-stock .vx621-feature-grid
@@ -193,7 +193,7 @@ html.vy861-flat-black:not(.theme-light) :is(
   box-shadow:none!important;
   gap:12px!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(
+html.vy861-flat-black :is(
   #screen-business .vx621-feature-card,
   #screen-sales .vx621-feature-card,
   #screen-stock .vx621-feature-card
@@ -205,33 +205,33 @@ html.vy861-flat-black:not(.theme-light) :is(
 }
 
 /* Daily Quick Entry: remove the last blue information strip. */
-html.vy861-flat-black:not(.theme-light) #screen-sales .vy660-daily-note{
+html.vy861-flat-black #screen-sales .vy660-daily-note{
   background:var(--vy867-qa-surface-2)!important;
   background-image:none!important;
   border:1px solid var(--vy867-qa-line)!important;
   color:var(--vy867-qa-text)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-sales .vy660-daily-note span{
+html.vy861-flat-black #screen-sales .vy660-daily-note span{
   color:var(--vy867-qa-muted)!important;
 }
 
 /* More bottom sheet: neutral surface + predictable spacing. The sheet remains
    entirely above the persistent nav because the overlay reserves nav clearance. */
-html.vy861-flat-black:not(.theme-light) :is(.android-sheet,.more-sheet){
+html.vy861-flat-black :is(.android-sheet,.more-sheet){
   background:#111214!important;
   background-image:none!important;
   border-color:#363a40!important;
   box-shadow:0 -16px 42px rgba(0,0,0,.48)!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.android-sheet-grid,.more-sheet-grid){
+html.vy861-flat-black :is(.android-sheet-grid,.more-sheet-grid){
   background:transparent!important;
   background-image:none!important;
   border:0!important;
   box-shadow:none!important;
   gap:8px!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.android-sheet-item,.android-sheet-row,.more-item,.android-more-item){
+html.vy861-flat-black :is(.android-sheet-item,.android-sheet-row,.more-item,.android-more-item){
   background:var(--vy867-qa-surface-2)!important;
   background-image:none!important;
   border:1px solid #30343a!important;
@@ -241,7 +241,7 @@ html.vy861-flat-black:not(.theme-light) :is(.android-sheet-item,.android-sheet-r
 
 /* Insights: remove the remaining coloured/navy card surfaces and make the goal
    ring neutral grey. Data charts may keep their data colours for readability. */
-html.vy861-flat-black:not(.theme-light) #screen-analytics :is(
+html.vy861-flat-black #screen-analytics :is(
   .insight-hero-card,
   .pnl-legend-item,
   .month-compare-card,
@@ -254,17 +254,17 @@ html.vy861-flat-black:not(.theme-light) #screen-analytics :is(
   border-color:var(--vy867-qa-line-soft)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-analytics .insight-goal-ring{
+html.vy861-flat-black #screen-analytics .insight-goal-ring{
   background:conic-gradient(#b8bcc1 var(--p),#24262a 0)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-analytics .insight-goal-ring::after{
+html.vy861-flat-black #screen-analytics .insight-goal-ring::after{
   background:var(--vy867-qa-surface)!important;
 }
 
 /* Account & plan: the large blue card shown in the recording is now graphite;
    Business may keep only its gold badge/avatar accent. */
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="account"] :is(
+html.vy861-flat-black #screen-settings[data-vy675-page="account"] :is(
   #productionAccountCard,
   .production-account-card,
   .settings-account-section .production-account-card
@@ -274,13 +274,13 @@ html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="accoun
   border-color:var(--vy864-tier-line,var(--vy867-qa-line))!important;
   box-shadow:0 14px 34px rgba(0,0,0,.32)!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="account"] .production-account-grid>div{
+html.vy861-flat-black #screen-settings[data-vy675-page="account"] .production-account-grid>div{
   background:var(--vy867-qa-surface-2)!important;
   background-image:none!important;
   border-color:var(--vy867-qa-line)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="account"] .production-actions button:not(.danger):not([data-danger="true"]){
+html.vy861-flat-black #screen-settings[data-vy675-page="account"] .production-actions button:not(.danger):not([data-danger="true"]){
   background:var(--vy867-qa-surface-3)!important;
   background-image:none!important;
   border-color:#3b3f45!important;
@@ -290,28 +290,28 @@ html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="accoun
 
 /* Business profile: force every field/select and its containing card away from
    the navy/blue palette called out at the end of the recording. */
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="profile"] .vy675-page-body>.settings-section,
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="profile"] .settings-card{
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] .vy675-page-body>.settings-section,
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] .settings-card{
   background:var(--vy867-qa-surface)!important;
   background-image:none!important;
   border-color:var(--vy867-qa-line-soft)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="profile"] :is(input,select,textarea){
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] :is(input,select,textarea){
   background:var(--vy867-qa-surface-2)!important;
   background-image:none!important;
   border:1px solid var(--vy867-qa-line)!important;
   color:var(--vy867-qa-text)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="profile"] :is(input,select,textarea):focus{
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] :is(input,select,textarea):focus{
   border-color:#686d73!important;
   box-shadow:0 0 0 3px rgba(255,255,255,.06)!important;
 }
 
 /* Old Android WebView safety: no generic blue focus/tap flash survives in the
    marked screens. */
-html.vy861-flat-black:not(.theme-light) :is(
+html.vy861-flat-black :is(
   #screen-business,
   #screen-sales,
   #screen-stock,
@@ -322,8 +322,8 @@ html.vy861-flat-black:not(.theme-light) :is(
 }
 
 @media(max-width:390px){
-  html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
-  html.vy861-flat-black:not(.theme-light) :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
+  html.vy861-flat-black #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
+  html.vy861-flat-black :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
     width:calc(100% - 12px)!important;
     border-radius:22px 22px 0 0!important;
   }

@@ -484,43 +484,12 @@ html.production-ui-p1 body.vyapar-keyboard-open .nav {
   transform: translate(-50%, 16px) !important;
 }
 
-/* Light mode retains the same hierarchy and contrast. */
-html.production-ui-p1.theme-light {
-  --p1-bg: #edf3f8;
-  --p1-bg-deep: #e5edf5;
-  --p1-surface: rgba(255, 255, 255, .88);
-  --p1-surface-raised: rgba(255, 255, 255, .96);
-  --p1-surface-soft: rgba(21, 54, 87, .045);
-  --p1-border: rgba(52, 83, 112, .15);
-  --p1-border-strong: rgba(45, 103, 163, .26);
-  --p1-text: #102338;
-  --p1-muted: #62758a;
-  color-scheme: light;
-}
-html.production-ui-p1.theme-light body {
-  background: linear-gradient(180deg, #edf4fa, #e4edf5) !important;
-  color: var(--p1-text) !important;
-}
-html.production-ui-p1.theme-light .top,
-html.production-ui-p1.theme-light .card,
-html.production-ui-p1.theme-light .stat,
-html.production-ui-p1.theme-light .settings-section,
-html.production-ui-p1.theme-light .production-account-card,
-html.production-ui-p1.theme-light .vx621-group,
-html.production-ui-p1.theme-light .shop-growth-card {
-  background: rgba(255, 255, 255, .88) !important;
-  color: var(--p1-text) !important;
-}
-html.production-ui-p1.theme-light input,
-html.production-ui-p1.theme-light select,
-html.production-ui-p1.theme-light textarea,
-html.production-ui-p1.theme-light .p1-modebar {
-  background: rgba(245, 249, 253, .94) !important;
-  color: var(--p1-text) !important;
-}
-html.production-ui-p1.theme-light .android-sheet { background: #f4f8fc !important; }
-html.production-ui-p1.theme-light.android-ui .nav,
-html.production-ui-p1.theme-light.native-android .nav { background: rgba(248, 252, 255, .96) !important; }
+
+
+
+
+
+
 
 @media (max-width: 430px) {
   html.production-ui-p1 .app { padding-inline: 9px !important; }
@@ -931,16 +900,9 @@ html.workflow-ui-p2 .p2-live-region {
 
 @keyframes p2Spin { to { transform: rotate(360deg); } }
 
-html.workflow-ui-p2.theme-light {
-  --p2-field-bg: rgba(244, 249, 253, .92);
-}
 
-html.workflow-ui-p2.theme-light .p2-live-preview,
-html.workflow-ui-p2.theme-light .p2-advanced-fields,
-html.workflow-ui-p2.theme-light .p2-preview-metric,
-html.workflow-ui-p2.theme-light .p2-pos-step {
-  background: rgba(230, 239, 248, .62) !important;
-}
+
+
 
 @media (max-width: 560px) {
   html.workflow-ui-p2 .p2-live-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -994,7 +956,7 @@ html.commercial-ui-v1 {
   color-scheme: light;
 }
 
-html.commercial-ui-v1:not(.theme-light) {
+html.commercial-ui-v1 {
   --cu-bg: #0B1220;
   --cu-surface: #121B2A;
   --cu-surface-soft: #182334;
@@ -1557,7 +1519,7 @@ html.native-android .top {
   -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
 }
 
-html.native-android:not(.theme-light) .top {
+html.native-android .top {
   border-bottom-color: #263449 !important;
   background: rgba(11, 18, 32, .96) !important;
 }
@@ -2012,12 +1974,7 @@ html.native-android .cu-help-button {
   font-size: 13px !important;
   font-weight: 900 !important;
 }
-html.theme-light.commercial-ui-v1 .cu-help-button,
-html.theme-light.native-android .cu-help-button {
-  background: rgba(36, 87, 214, .10) !important;
-  color: #2457d6 !important;
-  border-color: rgba(36, 87, 214, .20) !important;
-}
+
 html.commercial-ui-v1 .cu-help-panel,
 html.native-android .cu-help-panel {
   position: fixed !important;
@@ -2041,11 +1998,7 @@ html.native-android .cu-help-panel {
   white-space: normal !important;
   word-break: break-word !important;
 }
-html.theme-light.commercial-ui-v1 .cu-help-panel,
-html.theme-light.native-android .cu-help-panel {
-  background: rgba(255, 255, 255, .98) !important;
-  color: #1f3248 !important;
-}
+
 html.commercial-ui-v1 .cu-help.is-open .cu-help-panel,
 html.native-android .cu-help.is-open .cu-help-panel {
   display: block !important;
@@ -2767,27 +2720,11 @@ html.native-android .vx621-feature-card {
   display: none !important;
 }
 
-html.theme-light #screen-settings.vy675-settings-ready {
-  --vy675-bg: var(--cu-bg, #f5f7fa);
-  --vy675-surface: #fff;
-  --vy675-surface-soft: #f1f4f8;
-  --vy675-border: rgba(44, 66, 90, .13);
-  --vy675-text: #172231;
-  --vy675-muted: #68788a;
-  --vy675-blue: #2864dc;
-  --vy675-blue-soft: #edf3ff;
-}
 
-html.theme-light #screen-settings .vy675-settings-list {
-  box-shadow: 0 8px 22px rgba(32, 55, 82, .055);
-}
 
-html.theme-light #screen-settings .vy675-settings-search input,
-html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
-html.theme-light #screen-settings .vy675-page-body select,
-html.theme-light #screen-settings .vy675-page-body textarea {
-  color-scheme: light;
-}
+
+
+
 
 @media (max-width: 520px) {
   #screen-settings .vy675-settings-intro {
@@ -3039,17 +2976,7 @@ html.commercial-ui-v1 #screen-sales .p2-preview-metric b {
   --vy-nav-safe: calc(92px + env(safe-area-inset-bottom));
 }
 
-html.theme-light {
-  --vy-bg-0: #eef6ff;
-  --vy-bg-1: #f9fbff;
-  --vy-surface: rgba(255, 255, 255, .94);
-  --vy-surface-strong: #ffffff;
-  --vy-surface-soft: rgba(245, 249, 255, .96);
-  --vy-text: #13243a;
-  --vy-muted: #61748a;
-  --vy-line: rgba(75, 103, 136, .15);
-  --vy-shadow: 0 12px 30px rgba(47, 78, 111, .10);
-}
+
 
 html,
 body {
@@ -3059,7 +2986,7 @@ body {
 }
 
 html { color-scheme: dark; }
-html.theme-light { color-scheme: light; }
+
 
 body {
   color: var(--vy-text) !important;
@@ -3072,13 +2999,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-html.theme-light body {
-  background:
-    radial-gradient(circle at 4% 0%, rgba(77, 156, 255, .16), transparent 27%),
-    radial-gradient(circle at 98% 9%, rgba(247, 119, 185, .10), transparent 22%),
-    radial-gradient(circle at 50% 82%, rgba(53, 210, 234, .09), transparent 27%),
-    linear-gradient(180deg, #f7fbff, #eef5fc 52%, #f8fbff) !important;
-}
+
 
 body::before,
 body::after { opacity: .38 !important; }
@@ -3339,12 +3260,7 @@ textarea {
   font-size: 14px !important;
 }
 
-html.theme-light input,
-html.theme-light select,
-html.theme-light textarea {
-  background: #f8fbff !important;
-  color: #14263b !important;
-}
+
 
 input::placeholder,
 textarea::placeholder { color: var(--vy-muted) !important; opacity: .82 !important; }
@@ -3607,7 +3523,7 @@ table th {
   -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
   touch-action: manipulation !important;
 }
-html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
+
 
 .nav button,
 .nav .nav-item {
@@ -3837,13 +3753,7 @@ body {
     linear-gradient(180deg, #061426, #071a2c 52%, #061321) !important;
 }
 
-html.theme-light body {
-  background:
-    radial-gradient(circle at 4% 0%, rgba(50, 149, 255, .24), transparent 28%),
-    radial-gradient(circle at 98% 10%, rgba(255, 95, 178, .17), transparent 24%),
-    radial-gradient(circle at 50% 84%, rgba(18, 217, 238, .15), transparent 29%),
-    linear-gradient(180deg, #f8fbff, #eaf4ff 54%, #f7fbff) !important;
-}
+
 
 /* Each primary screen gets a recognisable, saturated color family. */
 #screen-home { --vy-screen-rgb: 50, 149, 255; --vy-screen-accent: #3295ff; }
@@ -4062,19 +3972,9 @@ html.theme-light body {
   box-shadow: 0 10px 24px rgba(232,61,89,.24) !important;
 }
 
-html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
-html.theme-light #screen-settings .vy675-page-body select,
-html.theme-light #screen-settings .vy675-page-body textarea {
-  background: linear-gradient(145deg,rgba(18,217,238,.10),rgba(50,149,255,.06)),#fff !important;
-}
-html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard {
-  background:
-    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.20),transparent 62%),
-    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.15),transparent 66%),
-    #fff !important;
-}
-html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid,
-html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid > div { border-color: rgba(44,66,90,.15) !important; }
+
+
+
 
 @media (max-width: 520px) {
   #screen-settings .vy675-page-header { grid-template-columns: 44px minmax(0,1fr) !important; gap: 11px !important; }
@@ -4100,7 +4000,7 @@ html.theme-light #screen-settings[data-vy675-page="account"] .production-account
   --vy-red: #e14d61;
 }
 
-html:not(.theme-light) {
+html {
   --vy-bg-0: #061326;
   --vy-bg-1: #081b31;
   --vy-surface: rgba(12, 31, 52, .92);
@@ -4112,27 +4012,15 @@ html:not(.theme-light) {
   --vy-shadow: 0 16px 38px rgba(0, 5, 14, .28);
 }
 
-html:not(.theme-light) body {
+html body {
   background:
     radial-gradient(36rem 25rem at 8% 0%, rgba(37, 112, 205, .22), transparent 68%),
     linear-gradient(180deg, #061326 0%, #081b31 52%, #061426 100%) !important;
 }
 
-html.theme-light {
-  --vy-bg-0: #ffffff;
-  --vy-bg-1: #f7faff;
-  --vy-surface: #ffffff;
-  --vy-surface-strong: #ffffff;
-  --vy-surface-soft: #f7faff;
-  --vy-text: #14263d;
-  --vy-muted: #63758a;
-  --vy-line: rgba(51, 95, 143, .15);
-  --vy-shadow: 0 12px 28px rgba(39, 74, 113, .09);
-}
 
-html.theme-light body {
-  background: linear-gradient(180deg, #ffffff 0%, #f7faff 54%, #ffffff 100%) !important;
-}
+
+
 
 #screen-home,
 #screen-business,
@@ -4167,24 +4055,7 @@ html.theme-light body {
   box-shadow: var(--vy-shadow) !important;
 }
 
-html.theme-light #screen-home .card,
-html.theme-light #screen-home .stat,
-html.theme-light #screen-business .card,
-html.theme-light #screen-business .vx621-feature-card,
-html.theme-light #screen-business .vx621-group,
-html.theme-light #screen-sales .card,
-html.theme-light #screen-sales .stat,
-html.theme-light #screen-stock .card,
-html.theme-light #screen-stock .stat,
-html.theme-light .business-module-card,
-html.theme-light .adv-module,
-html.theme-light .p611-card,
-html.theme-light .p620-report-card {
-  color: #14263d !important;
-  border-color: rgba(51, 95, 143, .15) !important;
-  background: #ffffff !important;
-  box-shadow: 0 12px 28px rgba(39,74,113,.09) !important;
-}
+
 
 #screen-home .home-metrics .stat:nth-child(n),
 .vx621-feature-card,
@@ -4205,16 +4076,9 @@ html.theme-light .p620-report-card {
   color: #5aa7ff !important;
 }
 
-html.theme-light #screen-home .android-quick-action:nth-child(n) {
-  background: #ffffff !important;
-}
 
-html.theme-light #screen-home .android-quick-action:nth-child(n) .android-quick-action-icon,
-html.theme-light .vx621-feature-icon,
-html.theme-light .adv-module b,
-html.theme-light .business-module-card h3 {
-  color: #236fc9 !important;
-}
+
+
 
 .nav {
   border-color: rgba(75, 147, 220, .30) !important;
@@ -4233,15 +4097,10 @@ html.theme-light .business-module-card h3 {
 .nav button.active[data-android-tab] .android-nav-icon,
 .nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
 
-html.theme-light .nav {
-  border-color: rgba(51,95,143,.16) !important;
-  background: rgba(255,255,255,.97) !important;
-  box-shadow: 0 14px 32px rgba(39,74,113,.13) !important;
-}
-html.theme-light .nav button[data-android-tab] .android-nav-icon { color: #5c7b9b !important; }
-html.theme-light .nav button[data-android-tab] .android-nav-label { color: #60758b !important; }
-html.theme-light .nav button.active[data-android-tab] .android-nav-icon,
-html.theme-light .nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
+
+
+
+
 
 .android-sheet-item[data-tab] {
   --vy-sheet-color: #5aa7ff;
@@ -4253,12 +4112,9 @@ html.theme-light .nav button.active[data-android-tab] .android-nav-label { color
   color: #5aa7ff !important;
   background: rgba(49,135,245,.12) !important;
 }
-html.theme-light .android-sheet {
-  background: #ffffff !important;
-  border-color: rgba(51,95,143,.16) !important;
-}
-html.theme-light .android-sheet-item[data-tab] { background: #ffffff !important; }
-html.theme-light .android-sheet-item[data-tab] .android-sheet-item-icon { color: #236fc9 !important; }
+
+
+
 
 #screen-settings .vy675-settings-row {
   --vy-row-accent: #3187f5 !important;
@@ -4269,7 +4125,7 @@ html.theme-light .android-sheet-item[data-tab] .android-sheet-item-icon { color:
   border-color: rgba(49,135,245,.18) !important;
   background: rgba(49,135,245,.11) !important;
 }
-html.theme-light #screen-settings .vy675-settings-row .vy675-row-icon { color: #236fc9 !important; }
+
 
 #screen-settings .vy675-page-back {
   border-color: rgba(49,135,245,.32) !important;
@@ -4289,17 +4145,13 @@ html.theme-light #screen-settings .vy675-settings-row .vy675-row-icon { color: #
   border-color: rgba(49,135,245,.24) !important;
   background: rgba(12,31,52,.82) !important;
 }
-html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
-html.theme-light #screen-settings .vy675-page-body select,
-html.theme-light #screen-settings .vy675-page-body textarea {
-  background: #ffffff !important;
-}
+
 
 #screen-settings[data-vy675-page="account"] #productionAccountCard {
   border-color: rgba(49,135,245,.30) !important;
   background: linear-gradient(145deg,rgba(49,135,245,.14),rgba(255,255,255,.025)),rgba(12,35,55,.94) !important;
 }
-html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard { background: #ffffff !important; }
+
 
 #screen-settings[data-vy675-page="account"] .production-actions button:nth-child(n),
 #screen-settings[data-vy675-page="update"] #fs607Settings > button,
@@ -4346,27 +4198,9 @@ html.vy-professional-ui {
   color-scheme: dark;
 }
 
-html.vy-professional-ui.theme-light {
-  --pro-bg: #f4f7fb;
-  --pro-bg-deep: #eef3f9;
-  --pro-surface: #ffffff;
-  --pro-surface-raised: #ffffff;
-  --pro-surface-soft: #f5f8fc;
-  --pro-text: #10243c;
-  --pro-muted: #60738a;
-  --pro-line: rgba(35, 76, 119, .13);
-  --pro-blue: #2477d4;
-  --pro-blue-bright: #3187e7;
-  --pro-blue-soft: rgba(36, 119, 212, .10);
-  --pro-green: #168b60;
-  --pro-amber: #a66b06;
-  --pro-red: #cb3f55;
-  --pro-shadow: 0 12px 30px rgba(34, 67, 103, .10);
-  --pro-shadow-soft: 0 6px 18px rgba(34, 67, 103, .08);
-  color-scheme: light;
-}
 
-html.vy-professional-ui:not(.theme-light) body {
+
+html.vy-professional-ui body {
   color: var(--pro-text) !important;
   background:
     radial-gradient(38rem 24rem at 6% -4%, rgba(49, 127, 221, .24), transparent 68%),
@@ -4374,12 +4208,7 @@ html.vy-professional-ui:not(.theme-light) body {
     linear-gradient(180deg, var(--pro-bg-deep), var(--pro-bg) 44%, #061426) !important;
 }
 
-html.vy-professional-ui.theme-light body {
-  color: var(--pro-text) !important;
-  background:
-    radial-gradient(34rem 20rem at 3% -3%, rgba(49, 135, 231, .11), transparent 70%),
-    linear-gradient(180deg, #fbfdff, var(--pro-bg) 48%, #f8fbff) !important;
-}
+
 
 html.vy-professional-ui body {
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
@@ -4513,11 +4342,7 @@ html.vy-professional-ui #screen-home .home-overview::after {
   box-shadow: 0 0 0 22px rgba(255, 255, 255, .025), 0 0 0 48px rgba(255, 255, 255, .018);
 }
 
-html.vy-professional-ui.theme-light #screen-home .home-overview {
-  background:
-    radial-gradient(19rem 13rem at 95% 4%, rgba(255, 255, 255, .20), transparent 66%),
-    linear-gradient(145deg, #135caa, #2781dc 62%, #3a92e7) !important;
-}
+
 
 html.vy-professional-ui #screen-home .home-overview h2,
 html.vy-professional-ui #screen-home .home-overview b,
@@ -4597,9 +4422,7 @@ html.vy-professional-ui #screen-business .vx621-group {
   box-shadow: none !important;
 }
 
-html.vy-professional-ui.theme-light #screen-business .vx621-group {
-  background: rgba(238, 244, 251, .72) !important;
-}
+
 
 html.vy-professional-ui #screen-business .vx621-feature-card,
 html.vy-professional-ui .vx621-sales-tools .vx621-feature-card,
@@ -4693,11 +4516,7 @@ html.vy-professional-ui textarea {
   color: var(--pro-text) !important;
 }
 
-html.vy-professional-ui.theme-light input,
-html.vy-professional-ui.theme-light select,
-html.vy-professional-ui.theme-light textarea {
-  background: #f8fafd !important;
-}
+
 
 html.vy-professional-ui input:focus,
 html.vy-professional-ui select:focus,
@@ -4784,11 +4603,7 @@ html.vy-professional-ui .nav {
   -webkit-backdrop-filter: blur(22px) saturate(118%) !important;
 }
 
-html.vy-professional-ui.theme-light .nav {
-  border-color: rgba(35, 76, 119, .14) !important;
-  background: rgba(255, 255, 255, .98) !important;
-  box-shadow: 0 13px 30px rgba(34, 67, 103, .14) !important;
-}
+
 
 html.vy-professional-ui .nav button[data-android-tab] {
   border: 0 !important;
@@ -4801,10 +4616,7 @@ html.vy-professional-ui .nav button[data-android-tab] .android-nav-label {
   color: #8fa9c2 !important;
 }
 
-html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-icon,
-html.vy-professional-ui.theme-light .nav button[data-android-tab] .android-nav-label {
-  color: #60778e !important;
-}
+
 
 html.vy-professional-ui .nav button.active[data-android-tab] {
   background: linear-gradient(145deg, #226fc9, #3b91f7) !important;
@@ -5208,12 +5020,7 @@ html.native-android .top{
   backdrop-filter:blur(16px) saturate(120%)!important;
   -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
 }
-html.android-ui.theme-light .top,
-html.native-android.theme-light .top{
-  background:rgba(250,252,255,.97)!important;
-  border-bottom-color:rgba(55,85,115,.13)!important;
-  box-shadow:0 4px 16px rgba(40,70,105,.08)!important;
-}
+
 html.android-ui .brand,
 html.native-android .brand{
   min-width:0!important;
@@ -5286,13 +5093,7 @@ html.native-android #themeToggle{
   overflow:hidden!important;
   transform:none!important;
 }
-html.android-ui.theme-light #themeToggle,
-html.native-android.theme-light #themeToggle{
-  border-color:rgba(45,100,155,.16)!important;
-  background:#fff!important;
-  color:#227fc8!important;
-  box-shadow:0 4px 13px rgba(43,78,112,.09)!important;
-}
+
 html.android-ui #themeToggle::before,
 html.native-android #themeToggle::before{display:none!important;content:none!important;}
 html.android-ui #themeToggle::after,
@@ -5307,11 +5108,7 @@ html.native-android #themeToggle::after{
   transform-origin:center!important;
   transition:transform .24s cubic-bezier(.2,.75,.25,1),opacity .18s ease!important;
 }
-html.android-ui.theme-light #themeToggle::after,
-html.native-android.theme-light #themeToggle::after{
-  content:"☀"!important;
-  transform:rotate(12deg) scale(.96)!important;
-}
+
 
 /* Lightweight Telegram-style page switching: one transform + opacity only. */
 @keyframes vyTelegramPageFromRight{
@@ -5357,35 +5154,10 @@ html.native-android .vx657-theme-crossfade{
 html.android-ui .vx657-theme-crossfade.is-fading,
 html.native-android .vx657-theme-crossfade.is-fading{opacity:0!important;}
 
-/* Sales light mode contrast repair: remove the accidental dark live-profit boxes. */
-html.android-ui.theme-light #screen-sales #vy660ProfitCard,
-html.native-android.theme-light #screen-sales #vy660ProfitCard{
-  background:#fff!important;
-  color:#14263d!important;
-  border-color:rgba(49,111,176,.16)!important;
-  box-shadow:0 12px 28px rgba(36,72,110,.09)!important;
-}
-html.android-ui.theme-light #screen-sales .vy660-live-box,
-html.native-android.theme-light #screen-sales .vy660-live-box{
-  background:linear-gradient(145deg,#f8fbff,#edf6ff)!important;
-  border-color:rgba(49,135,245,.20)!important;
-  color:#10263d!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.96)!important;
-}
-html.android-ui.theme-light #screen-sales .vy660-live-box>span,
-html.android-ui.theme-light #screen-sales .vy660-live-box>small,
-html.android-ui.theme-light #screen-sales .vy660-note,
-html.native-android.theme-light #screen-sales .vy660-live-box>span,
-html.native-android.theme-light #screen-sales .vy660-live-box>small,
-html.native-android.theme-light #screen-sales .vy660-note{
-  color:#61778d!important;
-  opacity:1!important;
-}
-html.android-ui.theme-light #screen-sales .vy660-live-box>b,
-html.native-android.theme-light #screen-sales .vy660-live-box>b{
-  color:#0c2b49!important;
-  opacity:1!important;
-}
+
+
+
+
 
 /* Exactly one verification badge; make the canonical gold/silver mark brighter. */
 .production-account-head .vy647-plan-mark{display:none!important;}
@@ -5449,12 +5221,7 @@ html.native-android .nav{
   transform:translateX(-50%)!important;
   touch-action:manipulation!important;
 }
-html.android-ui.theme-light .nav,
-html.native-android.theme-light .nav{
-  border-color:rgba(51,87,119,.13)!important;
-  background:rgba(255,255,255,.98)!important;
-  box-shadow:0 9px 24px rgba(37,69,102,.13)!important;
-}
+
 html.android-ui .android-nav-glass-indicator,
 html.native-android .android-nav-glass-indicator{display:none!important;}
 html.android-ui .nav button[data-android-tab],
@@ -5479,8 +5246,7 @@ html.native-android .nav button[data-android-tab]{
   transform:none!important;
   transition:color .16s ease!important;
 }
-html.android-ui.theme-light .nav button[data-android-tab],
-html.native-android.theme-light .nav button[data-android-tab]{color:#64798d!important;}
+
 html.android-ui .nav button.active[data-android-tab],
 html.native-android .nav button.active[data-android-tab]{
   background:transparent!important;
@@ -5505,10 +5271,7 @@ html.native-android .nav button.active .android-nav-icon{
   transform:translateY(-1px)!important;
   filter:none!important;
 }
-html.android-ui.theme-light .nav button.active .android-nav-icon,
-html.native-android.theme-light .nav button.active .android-nav-icon{
-  background:rgba(34,158,217,.12)!important;
-}
+
 html.android-ui .nav .android-nav-icon svg,
 html.native-android .nav .android-nav-icon svg{width:21px!important;height:21px!important;stroke-width:2!important;}
 html.android-ui .nav .android-nav-label,
@@ -5558,12 +5321,7 @@ html.native-android .android-sheet{
   backdrop-filter:blur(18px) saturate(116%)!important;
   -webkit-backdrop-filter:blur(18px) saturate(116%)!important;
 }
-html.android-ui.theme-light .android-sheet,
-html.native-android.theme-light .android-sheet{
-  border-color:rgba(47,89,127,.14)!important;
-  background:#f8fbff!important;
-  box-shadow:0 -14px 36px rgba(39,73,107,.17)!important;
-}
+
 html.android-ui .android-sheet-handle,
 html.native-android .android-sheet-handle{
   width:42px!important;
@@ -5584,8 +5342,7 @@ html.android-ui .android-sheet-titlebar h3,
 html.native-android .android-sheet-titlebar h3{margin:0!important;font-size:23px!important;}
 html.android-ui .android-sheet-titlebar p,
 html.native-android .android-sheet-titlebar p{margin:2px 0 0!important;font-size:11px!important;color:#91a8bb!important;}
-html.android-ui.theme-light .android-sheet-titlebar p,
-html.native-android.theme-light .android-sheet-titlebar p{color:#6a7e91!important;}
+
 html.android-ui .android-sheet-close,
 html.native-android .android-sheet-close{
   width:40px!important;
@@ -5599,8 +5356,7 @@ html.native-android .android-sheet-close{
   color:#eef8ff!important;
   box-shadow:none!important;
 }
-html.android-ui.theme-light .android-sheet-close,
-html.native-android.theme-light .android-sheet-close{background:#eef6fd!important;color:#2d628d!important;border-color:rgba(54,95,131,.13)!important;}
+
 html.android-ui .android-sheet-grid,
 html.native-android .android-sheet-grid{
   display:grid!important;
@@ -5611,8 +5367,7 @@ html.native-android .android-sheet-grid{
   border-radius:17px!important;
   background:rgba(7,25,42,.24)!important;
 }
-html.android-ui.theme-light .android-sheet-grid,
-html.native-android.theme-light .android-sheet-grid{background:#fff!important;border-color:rgba(53,91,126,.12)!important;}
+
 html.android-ui .android-sheet-item,
 html.native-android .android-sheet-item{
   min-height:62px!important;
@@ -5633,8 +5388,7 @@ html.native-android .android-sheet-item{
 }
 html.android-ui .android-sheet-item:last-child,
 html.native-android .android-sheet-item:last-child{border-bottom:0!important;}
-html.android-ui.theme-light .android-sheet-item,
-html.native-android.theme-light .android-sheet-item{color:#172b3d!important;border-bottom-color:rgba(54,91,124,.11)!important;}
+
 html.android-ui .android-sheet-item:active,
 html.native-android .android-sheet-item:active{background:rgba(53,169,244,.10)!important;}
 html.android-ui .android-sheet-item-icon,
@@ -5729,10 +5483,7 @@ html.vy855-inspected-fix #vyaparOtpGate .auth-card{
   border-radius:28px!important;
   box-shadow:0 16px 38px rgba(0,6,18,.22),inset 0 1px 0 rgba(255,255,255,.08)!important;
 }
-html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-card,
-html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-card{
-  box-shadow:0 14px 34px rgba(42,73,103,.11),inset 0 1px 0 #fff!important;
-}
+
 
 html.vy855-inspected-fix #vyaparOtpGate .auth-method-tabs{
   position:relative!important;
@@ -5786,14 +5537,8 @@ html.vy855-inspected-fix #vyaparOtpGate .auth-method-tab.active{
   background:linear-gradient(180deg,#2189f5,#0d6fd3)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 10px rgba(0,78,168,.22)!important;
 }
-html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-method-tab:not(.active),
-html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-method-tab:not(.active){
-  color:#5f7488!important;
-}
-html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-method-tab[disabled]:not(.active),
-html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-method-tab[disabled]:not(.active){
-  color:#71869a!important;
-}
+
+
 
 /* Keep the email field usable on ~360 CSS-pixel Android screens. 8.5.5 had
    expanded Get OTP to 116/105px, which crushed and clipped the email input. */
@@ -5829,18 +5574,12 @@ html.vy855-inspected-fix #vyaparOtpGate .auth-input::placeholder{
   color:rgba(196,213,227,.60)!important;
   opacity:1!important;
 }
-html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-input::placeholder,
-html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-input::placeholder{
-  color:rgba(76,98,117,.62)!important;
-}
+
 html.vy855-inspected-fix #vyaparOtpGate .auth-subtitle{
   color:#91a8bb!important;
   opacity:1!important;
 }
-html.vy855-inspected-fix.theme-light #vyaparOtpGate .auth-subtitle,
-html.vy855-inspected-fix #vyaparOtpGate:not(.auth-dark) .auth-subtitle{
-  color:#657b8e!important;
-}
+
 
 @media(max-width:348px){
   html.vy855-inspected-fix #vyaparOtpGate .auth-card{padding-left:14px!important;padding-right:14px!important}
@@ -5912,20 +5651,7 @@ html.vy861-flat-black{
   color-scheme:dark;
   background:#000!important;
 }
-html.vy861-flat-black.theme-light{
-  --vy861-bg:#f5f5f7;
-  --vy861-bg-soft:#f2f2f7;
-  --vy861-surface:#ffffff;
-  --vy861-surface-2:#f7f7fa;
-  --vy861-surface-3:#efeff4;
-  --vy861-text:#111113;
-  --vy861-muted:#6e6e73;
-  --vy861-line:#d9d9de;
-  --vy861-line-strong:#c7c7cc;
-  --vy861-shadow:0 12px 30px rgba(0,0,0,.08);
-  color-scheme:light;
-  background:#f5f5f7!important;
-}
+
 
 /* Canonical app tokens: force old blue/liquid variables onto flat surfaces. */
 html.vy861-flat-black,
@@ -5952,10 +5678,7 @@ html.vy861-flat-black body{
   --android-border:var(--vy861-line)!important;
   --android-accent:var(--vy861-accent)!important;
 }
-html.vy861-flat-black.theme-light,
-html.vy861-flat-black.theme-light body{
-  --nav-bg:rgba(250,250,252,.86)!important;
-}
+
 
 html.vy861-flat-black body{
   margin:0!important;
@@ -5989,11 +5712,7 @@ html.vy861-flat-black .top{
   backdrop-filter:blur(34px) saturate(1.35)!important;
   -webkit-backdrop-filter:blur(34px) saturate(1.35)!important;
 }
-html.vy861-flat-black.theme-light .top{
-  border-color:rgba(0,0,0,.08)!important;
-  background:rgba(250,250,252,.84)!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.08)!important;
-}
+
 html.vy861-flat-black .brand{gap:10px!important;min-width:0!important}
 html.vy861-flat-black .logo{
   width:44px!important;height:44px!important;padding:3px!important;
@@ -6015,7 +5734,7 @@ html.vy861-flat-black #themeToggle{
   color:transparent!important;font-size:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
 html.vy861-flat-black #themeToggle::before{content:'☾'!important;color:var(--vy861-text)!important;font-size:18px!important;line-height:1!important}
-html.vy861-flat-black.theme-light #themeToggle::before{content:'☀'!important}
+
 html.vy861-flat-black #themeToggle::after{display:none!important}
 
 html.vy861-flat-black .nav{
@@ -6028,9 +5747,7 @@ html.vy861-flat-black .nav{
   box-shadow:0 -10px 34px rgba(0,0,0,.34)!important;
   backdrop-filter:blur(36px) saturate(1.38)!important;-webkit-backdrop-filter:blur(36px) saturate(1.38)!important;
 }
-html.vy861-flat-black.theme-light .nav{
-  border-color:rgba(0,0,0,.08)!important;background:rgba(250,250,252,.88)!important;box-shadow:0 -8px 28px rgba(0,0,0,.08)!important;
-}
+
 html.vy861-flat-black .android-nav-glass-indicator{display:none!important}
 html.vy861-flat-black .nav button{
   min-width:0!important;min-height:54px!important;padding:7px 3px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;
@@ -6118,12 +5835,7 @@ html.vy861-flat-black :is(
   background:rgba(0,0,0,.62)!important;background-image:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-html.vy861-flat-black.theme-light :is(
-  .glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,
-  .production-overlay,.android-permission-overlay,.android-sheet-overlay,
-  #vyaparDeleteConfirm,#vyaparAccountDeleteConfirm,.account-delete-overlay,
-  .upgrade-plan-popup,.upgrade-plan-reference-popup
-){background:rgba(0,0,0,.28)!important}
+
 
 html.vy861-flat-black :is(
   .glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
@@ -6138,11 +5850,7 @@ html.vy861-flat-black :is(
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
   animation:vy861SheetIn .20s cubic-bezier(.22,.78,.2,1)!important;
 }
-html.vy861-flat-black.theme-light :is(
-  .glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
-  .production-modal,.android-permission-card,.android-sheet,.account-delete-card,
-  .upgrade-plan-reference-card
-){box-shadow:0 22px 60px rgba(0,0,0,.16)!important}
+
 @keyframes vy861SheetIn{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 html.vy861-flat-black :is(.android-sheet-handle,.shop-sheet-handle){width:42px!important;height:5px!important;margin:0 auto 14px!important;border-radius:999px!important;background:var(--vy861-line-strong)!important}
@@ -6219,8 +5927,7 @@ html.vy861-flat-black #vyaparOtpGate .auth-loading-overlay{background:var(--vy86
 html.vy861-flat-black #vyaparOtpGate .auth-loading-card{background:var(--vy861-surface)!important;border:1px solid var(--vy861-line)!important;color:var(--vy861-text)!important;box-shadow:none!important}
 html.vy861-flat-black.vy861-auth-handoff,
 html.vy861-flat-black.vy861-auth-handoff body{background:#000!important}
-html.vy861-flat-black.theme-light.vy861-auth-handoff,
-html.vy861-flat-black.theme-light.vy861-auth-handoff body{background:#f5f5f7!important}
+
 
 /* Startup/loader follows theme and never paints the previous navy. */
 html.vy861-flat-black #vy855BootGuard,
@@ -6240,7 +5947,7 @@ html.vy861-flat-black :is(
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   html.vy861-flat-black .top{background:#090909!important}
   html.vy861-flat-black .nav{background:#070707!important}
-  html.vy861-flat-black.theme-light .top,html.vy861-flat-black.theme-light .nav{background:#fafafc!important}
+  
 }
 
 @media(max-width:800px){
@@ -6256,4 +5963,3095 @@ html.vy861-flat-black :is(
 
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black *{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ===== STYLE SOURCE: dark-mode-pro-862.css ===== */
+
+/* Vyapar AI — production dark-mode polish layer.
+   Loaded after flat-black-ios-861.css. Dark theme only; light theme is untouched.
+   Goals: true-black shell, consistent neutral surfaces, stronger contrast, no legacy navy leaks,
+   reliable form/dialog/nav styling, and low-cost motion suitable for Android 7-16. */
+
+html.vy861-flat-black{
+  --dm-bg:#000000;
+  --dm-bg-soft:#070809;
+  --dm-surface:#0d0f12;
+  --dm-surface-raised:#14171b;
+  --dm-surface-soft:#1a1e23;
+  --dm-surface-pressed:#20252b;
+  --dm-text:#f7f8fa;
+  --dm-text-strong:#ffffff;
+  --dm-muted:#a8adb5;
+  --dm-muted-2:#7f8791;
+  --dm-line:rgba(255,255,255,.10);
+  --dm-line-strong:rgba(255,255,255,.17);
+  --dm-blue:#0a84ff;
+  --dm-blue-press:#0071e3;
+  --dm-blue-soft:rgba(10,132,255,.16);
+  --dm-green:#30d158;
+  --dm-orange:#ff9f0a;
+  --dm-red:#ff453a;
+  --dm-purple:#bf5af2;
+  --dm-shadow:0 12px 30px rgba(0,0,0,.34);
+  --dm-shadow-soft:0 7px 20px rgba(0,0,0,.24);
+
+  /* Redirect the older design systems so legacy modules stop leaking navy. */
+  --bg:var(--dm-bg)!important;
+  --app-bg:var(--dm-bg)!important;
+  --card:var(--dm-surface)!important;
+  --card2:var(--dm-surface-raised)!important;
+  --input:var(--dm-surface-raised)!important;
+  --nav-bg:rgba(7,8,10,.92)!important;
+  --text:var(--dm-text)!important;
+  --muted:var(--dm-muted)!important;
+  --line:var(--dm-line)!important;
+  --line-strong:var(--dm-line-strong)!important;
+  --teal:var(--dm-blue)!important;
+  --green:var(--dm-green)!important;
+  --gold:var(--dm-orange)!important;
+  --red:var(--dm-red)!important;
+
+  --p1-bg:var(--dm-bg)!important;
+  --p1-bg-deep:var(--dm-bg)!important;
+  --p1-surface:var(--dm-surface)!important;
+  --p1-surface-raised:var(--dm-surface-raised)!important;
+  --p1-surface-soft:var(--dm-surface-soft)!important;
+  --p1-border:var(--dm-line)!important;
+  --p1-border-strong:var(--dm-line-strong)!important;
+  --p1-text:var(--dm-text)!important;
+  --p1-muted:var(--dm-muted)!important;
+  --p1-accent:var(--dm-blue)!important;
+  --p1-accent-strong:var(--dm-blue-press)!important;
+  --p1-accent-soft:var(--dm-blue-soft)!important;
+  --p1-positive:var(--dm-green)!important;
+  --p1-warning:var(--dm-orange)!important;
+  --p1-danger:var(--dm-red)!important;
+
+  --android-bg:var(--dm-bg)!important;
+  --android-surface:var(--dm-surface)!important;
+  --android-surface-2:var(--dm-surface-raised)!important;
+  --android-text:var(--dm-text)!important;
+  --android-muted:var(--dm-muted)!important;
+  --android-border:var(--dm-line)!important;
+  --android-accent:var(--dm-blue)!important;
+
+  color-scheme:dark!important;
+  background:#000!important;
+}
+
+html.vy861-flat-black,
+html.vy861-flat-black body{
+  background:#000!important;
+  background-image:none!important;
+  color:var(--dm-text)!important;
+}
+html.vy861-flat-black body::before,
+html.vy861-flat-black body::after{display:none!important;content:none!important}
+html.vy861-flat-black ::selection{background:rgba(10,132,255,.34);color:#fff}
+html.vy861-flat-black{scrollbar-color:#34383e #090a0c}
+
+/* Kill old theme-transition optics/dots permanently. */
+html.vy861-flat-black :is(.vy852-theme-bloom,.vy853-theme-reveal,.vy854-theme-wipe,.vy855-theme-curtain,.theme-ripple,.vx657-theme-crossfade,.vy856-liquid-lens,.vy856-liquid-orb,.android-nav-glass-indicator){display:none!important;content:none!important;animation:none!important}
+
+/* Header: dense black material, high contrast, no blue/navy wash. */
+html.vy861-flat-black .top{
+  border:1px solid var(--dm-line)!important;
+  background:rgba(9,10,12,.90)!important;
+  background-image:none!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.38),inset 0 -1px 0 rgba(255,255,255,.025)!important;
+  backdrop-filter:blur(22px) saturate(115%)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
+}
+html.vy861-flat-black .top h1{color:var(--dm-text-strong)!important;font-weight:800!important}
+html.vy861-flat-black .top .tag{color:var(--dm-muted)!important}
+html.vy861-flat-black #planBadge,
+html.vy861-flat-black #themeToggle{
+  border-color:var(--dm-line)!important;
+  background:var(--dm-surface-raised)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #themeToggle:active{background:var(--dm-surface-pressed)!important;transform:scale(.94)!important}
+
+/* Main surfaces: neutral charcoal hierarchy, never dark blue. */
+html.vy861-flat-black :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .production-account-card,.production-card,.vx621-group,.vx621-kpi,.vx621-hero,.vx621-context,.vx621-recent,
+  .home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.code-output,.code-note,.code-preview,
+  [class*="-panel"],[class*="-section-card"]
+){
+  border-color:var(--dm-line)!important;
+  background:var(--dm-surface)!important;
+  background-image:none!important;
+  color:var(--dm-text)!important;
+  box-shadow:var(--dm-shadow-soft)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black :is(.card,.settings-section,.business-module-card,.production-account-card,.home-growth-card,.home-section-card):active{border-color:var(--dm-line-strong)!important}
+
+html.vy861-flat-black :is(h1,h2,h3,h4,h5,h6,strong,b,.title,.heading){color:var(--dm-text-strong)!important}
+html.vy861-flat-black :is(p,small,.muted,.subtle,.helper,.hint,.description,.settings-field-note){color:var(--dm-muted)!important}
+html.vy861-flat-black hr{border-color:var(--dm-line)!important}
+
+/* Strong, consistent inputs. */
+html.vy861-flat-black :is(input,select,textarea){
+  border:1px solid var(--dm-line)!important;
+  background:var(--dm-surface-raised)!important;
+  background-image:none!important;
+  color:var(--dm-text)!important;
+  caret-color:var(--dm-blue)!important;
+  box-shadow:none!important;
+  color-scheme:dark!important;
+}
+html.vy861-flat-black :is(input,select,textarea):hover{border-color:var(--dm-line-strong)!important}
+html.vy861-flat-black :is(input,select,textarea):focus{
+  border-color:var(--dm-blue)!important;
+  box-shadow:0 0 0 3px rgba(10,132,255,.18)!important;
+  outline:none!important;
+}
+html.vy861-flat-black :is(input,textarea)::placeholder{color:var(--dm-muted-2)!important;opacity:1!important}
+html.vy861-flat-black select option{background:#111317!important;color:#f7f8fa!important}
+
+/* Button hierarchy: obvious primary, calm secondary, clear destructive. */
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch){
+  border-color:var(--dm-line)!important;
+  background:var(--dm-surface-raised)!important;
+  background-image:none!important;
+  color:var(--dm-text)!important;
+  box-shadow:none!important;
+  -webkit-tap-highlight-color:transparent;
+}
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch):hover{border-color:var(--dm-line-strong)!important;background:var(--dm-surface-soft)!important}
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch):active{transform:scale(.975)!important;background:var(--dm-surface-pressed)!important}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){
+  border-color:var(--dm-blue)!important;background:var(--dm-blue)!important;color:#fff!important;
+}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary):active{background:var(--dm-blue-press)!important}
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child){border-color:var(--dm-red)!important;background:var(--dm-red)!important;color:#fff!important}
+html.vy861-flat-black :is(.btn.success,button.success,.success-action){border-color:var(--dm-green)!important;background:var(--dm-green)!important;color:#07120a!important}
+html.vy861-flat-black :is(.btn.gold,.btn.warning,.button-warning){border-color:var(--dm-orange)!important;background:var(--dm-orange)!important;color:#111!important}
+
+/* Bottom nav: one compact black dock with a crisp blue active state. */
+html.vy861-flat-black .nav{
+  border-color:var(--dm-line)!important;
+  background:rgba(8,9,11,.94)!important;
+  background-image:none!important;
+  box-shadow:0 -10px 30px rgba(0,0,0,.42)!important;
+  backdrop-filter:blur(24px) saturate(112%)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(112%)!important;
+}
+html.vy861-flat-black .nav button{color:#858c96!important;background:transparent!important}
+html.vy861-flat-black .nav button.active{color:#4aa3ff!important;background:rgba(10,132,255,.15)!important}
+html.vy861-flat-black .nav button.active .android-nav-icon{background:rgba(10,132,255,.13)!important}
+html.vy861-flat-black .nav button:active{background:rgba(10,132,255,.11)!important}
+
+/* Tables and records: readable on OLED black, with row separation. */
+html.vy861-flat-black :is(table,.table){color:var(--dm-text)!important;background:transparent!important}
+html.vy861-flat-black :is(table,.table) th{
+  background:#111419!important;color:#c9cdd3!important;border-color:var(--dm-line)!important;font-weight:760!important;
+}
+html.vy861-flat-black :is(table,.table) td{border-color:var(--dm-line)!important;color:var(--dm-text)!important}
+html.vy861-flat-black :is(table,.table) tbody tr:nth-child(even){background:rgba(255,255,255,.018)!important}
+html.vy861-flat-black :is(table,.table) tbody tr:active{background:rgba(10,132,255,.08)!important}
+
+/* Progress, badges and notices retain semantic meaning without noisy gradients. */
+html.vy861-flat-black :is(.pill,.chip,.glass-chip,.small-badge,.badge){border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
+html.vy861-flat-black .progress{border-color:var(--dm-line)!important;background:#1b1f24!important}
+html.vy861-flat-black .bar{background:var(--dm-blue)!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black .notice{background:#14120d!important;border-color:var(--dm-line)!important;border-left-color:var(--dm-orange)!important;color:var(--dm-text)!important}
+html.vy861-flat-black .notice.success{background:#0e1510!important;border-left-color:var(--dm-green)!important}
+html.vy861-flat-black .notice.bad{background:#170e0e!important;border-left-color:var(--dm-red)!important}
+
+/* Settings: force every nested settings namespace to the same neutral palette. */
+html.vy861-flat-black #screen-settings.vy675-settings-ready{
+  --vy675-bg:#000!important;
+  --vy675-surface:var(--dm-surface)!important;
+  --vy675-surface-soft:var(--dm-surface-raised)!important;
+  --vy675-border:var(--dm-line)!important;
+  --vy675-text:var(--dm-text)!important;
+  --vy675-muted:var(--dm-muted)!important;
+  --vy675-blue:var(--dm-blue)!important;
+  --vy675-blue-soft:var(--dm-blue-soft)!important;
+  background:#000!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list,.production-account-card){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){border-color:var(--dm-line)!important;background:transparent!important;color:var(--dm-text)!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row):active{background:rgba(10,132,255,.08)!important}
+html.vy861-flat-black #screen-settings .vy675-page-header{background:#000!important}
+html.vy861-flat-black #screen-settings .vy675-page-back{border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;color:var(--dm-text)!important}
+
+/* Sales / stock / business cards were common sources of accidental navy blocks. */
+html.vy861-flat-black #screen-sales :is(#vy660ProfitCard,.vy660-live-box,[class*="profit"],[class*="sales-summary"]),
+html.vy861-flat-black #screen-stock :is([class*="stock-card"],[class*="stock-summary"],[class*="inventory-card"]),
+html.vy861-flat-black #screen-business :is([class*="business-card"],[class*="business-module"],[class*="kpi"]){
+  border-color:var(--dm-line)!important;background:var(--dm-surface)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black #screen-sales .vy660-live-box{background:var(--dm-surface-raised)!important}
+html.vy861-flat-black #screen-sales .vy660-live-box :is(span,small){color:var(--dm-muted)!important}
+html.vy861-flat-black #screen-sales .vy660-live-box b{color:var(--dm-text-strong)!important}
+
+/* Universal dialog/sheet treatment. */
+html.vy861-flat-black :is(.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.upgrade-plan-reference-popup,#vyaparDeleteConfirm,#vyaparAccountDeleteConfirm){
+  background:rgba(0,0,0,.72)!important;background-image:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black :is(.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]){
+  border:1px solid var(--dm-line-strong)!important;
+  background:#131518!important;background-image:none!important;color:var(--dm-text)!important;
+  box-shadow:0 22px 60px rgba(0,0,0,.58)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black .android-sheet :is(.android-sheet-row,.android-sheet-item,.more-item){border-color:var(--dm-line)!important;background:transparent!important;color:var(--dm-text)!important}
+html.vy861-flat-black .android-sheet :is(.android-sheet-row,.android-sheet-item,.more-item):active{background:rgba(10,132,255,.09)!important}
+
+/* Login/auth: no white flash, no navy patch, strong input contrast. */
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate,.login-page,.login-shell){background:#000!important;background-image:none!important;color:var(--dm-text)!important}
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate) :is(.auth-card,.login-card,[class*="auth-card"]){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;background-image:none!important;box-shadow:var(--dm-shadow)!important}
+html.vy861-flat-black :is(#appLoader,#tabLoader){background:#000!important;color:var(--dm-text)!important}
+html.vy861-flat-black .tab-loader-card{border-color:var(--dm-line)!important;background:#121417!important;color:var(--dm-text)!important;box-shadow:var(--dm-shadow)!important}
+
+/* Focus and touch feedback. */
+html.vy861-flat-black :is(button,a,input,select,textarea):focus-visible{outline:2px solid rgba(74,163,255,.88)!important;outline-offset:2px!important}
+html.vy861-flat-black a{color:#5eabff}
+html.vy861-flat-black a:active{color:#89c1ff}
+
+/* Low-end Android: keep all dark-mode fixes but remove expensive effects. */
+html.vy861-flat-black.perf-lite .top,
+html.vy861-flat-black.perf-lite .nav,
+html.vy861-flat-black .perf-lite .top,
+html.vy861-flat-black .perf-lite .nav{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  background:#0a0b0d!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:520px){
+  html.vy861-flat-black .app{padding-left:11px!important;padding-right:11px!important}
+  html.vy861-flat-black .top{margin-left:0!important;margin-right:0!important;border-radius:18px!important}
+  html.vy861-flat-black .card{border-radius:16px!important}
+  html.vy861-flat-black .nav{border-radius:20px 20px 0 0!important}
+}
+
+/* ===== STYLE SOURCE: ui-stability-862.css ===== */
+
+/* Vyapar AI 8.6.2 — screenshot-driven Android UI stability layer.
+   Loaded last. Light mode is intentionally untouched.
+   Dark mode uses true black + neutral graphite surfaces; blue is an action/accent only. */
+
+html.vy861-flat-black{
+  --vy862-black:#000000;
+  --vy862-surface:#0d0f11;
+  --vy862-surface-2:#14171a;
+  --vy862-surface-3:#1b1f23;
+  --vy862-border:rgba(255,255,255,.105);
+  --vy862-border-strong:rgba(255,255,255,.17);
+  --vy862-text:#f7f7f8;
+  --vy862-muted:#9da3ab;
+  --vy862-blue:#0a84ff;
+  --vy862-blue-soft:rgba(10,132,255,.14);
+  --vy862-red:#ff453a;
+  --vy862-green:#30d158;
+  --vy862-orange:#ff9f0a;
+  color-scheme:dark!important;
+}
+
+html.vy861-flat-black,
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{
+  background:#000!important;
+  background-image:none!important;
+  color:var(--vy862-text)!important;
+}
+
+/* Prevent fixed bottom navigation from covering the last card/row. */
+html.vy861-flat-black .app{
+  padding-bottom:calc(112px + env(safe-area-inset-bottom))!important;
+}
+html.vy861-flat-black .screen{
+  padding-bottom:20px!important;
+}
+
+/* Compact, native-feeling header. Screenshot build was too tall and card-like. */
+html.vy861-flat-black .top{
+  min-height:58px!important;
+  margin:0 0 12px!important;
+  padding:8px 10px!important;
+  border:1px solid var(--vy862-border)!important;
+  border-radius:16px!important;
+  background:rgba(8,9,10,.92)!important;
+  background-image:none!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.34)!important;
+  backdrop-filter:blur(24px) saturate(112%)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(112%)!important;
+}
+html.vy861-flat-black .brand{gap:9px!important;min-width:0!important}
+html.vy861-flat-black .brand .logo{
+  width:38px!important;min-width:38px!important;height:38px!important;
+  padding:2px!important;border-radius:50%!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:#fff!important;box-shadow:none!important;
+}
+html.vy861-flat-black .brand h1{
+  font-size:19px!important;line-height:1.08!important;font-weight:800!important;
+}
+html.vy861-flat-black .brand .tag{display:none!important}
+html.vy861-flat-black .top-actions{gap:6px!important}
+html.vy861-flat-black #planBadge{display:none!important}
+html.vy861-flat-black #themeToggle{
+  width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;
+  border-radius:50%!important;border:1px solid var(--vy862-border)!important;
+  background:var(--vy862-surface-2)!important;color:transparent!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #themeToggle::before{
+  content:'☾'!important;display:block!important;color:#f7f7f8!important;
+  font-size:18px!important;line-height:1!important;
+}
+html.vy861-flat-black #themeToggle::after{display:none!important;content:none!important}
+
+/* The important screenshot repair: old business/home modules were still navy. */
+html.vy861-flat-black #screen-home :is(
+  .card,.stat,#shopGrowthSummary,.shop-growth-card,.shop-growth-stat,.shop-streak,
+  .home-growth-card,.home-section-card,.home-summary-card,.home-hero-card,
+  [class*="home-card"],[class*="summary-card"]
+),
+html.vy861-flat-black #screen-business :is(
+  .card,.stat,.vx621-shell,.vx621-hero,.vx621-kpis,.vx621-kpi,.vx621-section,
+  .vx621-command-section,.vx621-group,.vx621-context,.vx621-recent,
+  .business-section,.business-module-card,.business-card,.business-workspace-card,
+  [class*="business-card"],[class*="business-module"],[class*="command-card"],[class*="workspace-card"]
+),
+html.vy861-flat-black #screen-sales :is(
+  .card,.stat,#vy660ProfitCard,.vy660-live-box,.sales-card,[class*="sales-card"],[class*="profit-card"]
+),
+html.vy861-flat-black #screen-stock :is(
+  .card,.stat,.stock-card,[class*="stock-card"],[class*="inventory-card"],[class*="stock-summary"]
+){
+  background:var(--vy862-surface)!important;
+  background-image:none!important;
+  border-color:var(--vy862-border)!important;
+  color:var(--vy862-text)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Nested metric cells get a slight elevation, not another blue panel. */
+html.vy861-flat-black #screen-home :is(.shop-growth-stat,.shop-streak,.stat),
+html.vy861-flat-black #screen-business :is(.vx621-kpi,.stat),
+html.vy861-flat-black #screen-sales :is(.vy660-live-box,.stat),
+html.vy861-flat-black #screen-stock .stat{
+  background:var(--vy862-surface-2)!important;
+  border-color:var(--vy862-border)!important;
+}
+
+/* Remove decorative blue washes/glows from module pseudo elements. */
+html.vy861-flat-black #screen-home :is(.card,.shop-growth-card,.home-growth-card)::before,
+html.vy861-flat-black #screen-home :is(.card,.shop-growth-card,.home-growth-card)::after,
+html.vy861-flat-black #screen-business :is(.card,.vx621-hero,.vx621-section,.vx621-group,.business-module-card)::before,
+html.vy861-flat-black #screen-business :is(.card,.vx621-hero,.vx621-section,.vx621-group,.business-module-card)::after{
+  display:none!important;content:none!important;background:none!important;
+}
+
+/* Typography/contrast inside previously blue cards. */
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) :is(h1,h2,h3,h4,b,strong){
+  color:#fff!important;
+}
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) :is(p,small,.muted,.description,.helper){
+  color:var(--vy862-muted)!important;
+}
+
+/* Buttons: blue remains only for primary actions; secondary buttons are graphite. */
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) button:not(.nav button):not(.primary):not(.danger):not(.success):not(.gold),
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) .btn:not(.primary):not(.danger):not(.success):not(.gold){
+  background:var(--vy862-surface-2)!important;
+  background-image:none!important;
+  border-color:var(--vy862-border)!important;
+  color:var(--vy862-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black :is(.btn.primary,button.primary,.vx621-action.primary,.production-primary){
+  background:var(--vy862-blue)!important;background-image:none!important;
+  border-color:var(--vy862-blue)!important;color:#fff!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-business :is(.btn,.vx621-action,button){
+  min-height:46px!important;border-radius:13px!important;
+}
+
+/* Business launcher/panel geometry: less nesting and less giant empty space. */
+html.vy861-flat-black #screen-business :is(.vx621-hero,.vx621-section,.vx621-command-section,.business-section,.vx621-group){
+  border-radius:17px!important;
+}
+html.vy861-flat-black #screen-business :is(.vx621-kpis,.stats){gap:9px!important}
+html.vy861-flat-black #screen-business .vx621-kpi{min-height:94px!important;padding:13px!important}
+html.vy861-flat-black #screen-business :is(.actions,.vx621-actions){gap:8px!important}
+
+/* Home progress card becomes calm OLED charcoal instead of blue-on-blue. */
+html.vy861-flat-black #shopGrowthSummary{
+  border-radius:18px!important;background:var(--vy862-surface)!important;
+}
+html.vy861-flat-black #shopGrowthSummary .home-section-kicker{color:#4aa3ff!important}
+html.vy861-flat-black #shopGrowthSummary :is(.shop-growth-stat,.shop-streak){
+  background:var(--vy862-surface-2)!important;border-color:var(--vy862-border)!important;
+}
+
+/* Bottom nav: compact black dock, no rectangular outer ghost border, no content overlap. */
+html.vy861-flat-black .nav{
+  left:50%!important;right:auto!important;bottom:0!important;
+  width:min(calc(100% - 18px),620px)!important;
+  min-height:68px!important;height:auto!important;
+  padding:5px 6px calc(6px + env(safe-area-inset-bottom))!important;
+  border:1px solid var(--vy862-border)!important;border-bottom:0!important;
+  border-radius:18px 18px 0 0!important;
+  background:rgba(7,8,9,.95)!important;background-image:none!important;
+  box-shadow:0 -8px 26px rgba(0,0,0,.40)!important;
+  transform:translateX(-50%)!important;
+  backdrop-filter:blur(24px) saturate(110%)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(110%)!important;
+  overflow:hidden!important;
+}
+html.vy861-flat-black .nav button[data-android-tab],
+html.vy861-flat-black .nav button{
+  min-height:56px!important;height:56px!important;border:0!important;
+  background:transparent!important;color:#8c939d!important;box-shadow:none!important;
+}
+html.vy861-flat-black .nav button.active{
+  background:var(--vy862-blue-soft)!important;color:#55a8ff!important;
+}
+html.vy861-flat-black .nav button.active .android-nav-icon{
+  background:transparent!important;color:inherit!important;
+}
+
+/* Settings are neutral; old app-lock visuals are removed without hiding other preferences. */
+html.vy861-flat-black #screen-settings{
+  background:#000!important;color:var(--vy862-text)!important;
+}
+html.vy861-flat-black #screen-settings :is(
+  .vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,
+  .vy675-page-body>.settings-section,.vx622-settings-list,.production-account-card
+){
+  background:var(--vy862-surface)!important;border-color:var(--vy862-border)!important;box-shadow:none!important;
+}
+html.vy861-flat-black #vx622AppLockSection .vx622-switch,
+html.vy861-flat-black #vx622AppLockSection .vx643-security-status{display:none!important}
+html.vy861-flat-black #vyaparOtpGate .auth-method-tab.vx643-password-locked{
+  opacity:1!important;pointer-events:auto!important;cursor:pointer!important;
+}
+
+/* Universal popup language remains opaque graphite; no navy modal. */
+html.vy861-flat-black :is(
+  .glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,
+  .android-permission-card,.android-sheet,.account-delete-dialog,[role="dialog"]
+){
+  background:#121416!important;background-image:none!important;
+  border-color:var(--vy862-border-strong)!important;color:var(--vy862-text)!important;
+  box-shadow:0 22px 58px rgba(0,0,0,.58)!important;
+}
+
+/* Dark auth page: black shell + graphite form only. */
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate,.login-page,.login-shell){
+  background:#000!important;background-image:none!important;color:var(--vy862-text)!important;
+}
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate) :is(.auth-card,.login-card,[class*="auth-card"]){
+  background:var(--vy862-surface)!important;background-image:none!important;
+  border-color:var(--vy862-border)!important;box-shadow:none!important;
+}
+
+@media(max-width:520px){
+  html.vy861-flat-black .app{padding-left:10px!important;padding-right:10px!important}
+  html.vy861-flat-black .top{border-radius:15px!important}
+  html.vy861-flat-black #screen-business :is(.vx621-hero,.vx621-section,.business-section,.vx621-group){border-radius:15px!important}
+}
+
+/* ===== STYLE SOURCE: graphite-maroon-863.css ===== */
+
+/* Vyapar AI 8.6.3.2026 — Graphite / Maroon dark UI authority.
+   Screenshot-driven final layer: remove legacy blue surfaces, keep light mode intact,
+   add a floating nav dock, plan-aware account styling, and deep-maroon destructive actions. */
+
+html.vy861-flat-black{
+  --v863-bg:#000000;
+  --v863-surface:#101113;
+  --v863-surface-2:#16181b;
+  --v863-surface-3:#1d2024;
+  --v863-surface-4:#25292e;
+  --v863-line:rgba(255,255,255,.10);
+  --v863-line-strong:rgba(255,255,255,.17);
+  --v863-text:#f6f7f8;
+  --v863-muted:#9da3ab;
+  --v863-muted-2:#7f858d;
+  --v863-silver:#c9ced4;
+  --v863-silver-2:#9ea5ad;
+  --v863-gold:#d8ad55;
+  --v863-gold-2:#f1ca72;
+  --v863-maroon:#68182a;
+  --v863-maroon-press:#50101e;
+  --v863-maroon-line:#9a3049;
+  --v863-green:#3f9e64;
+  --v863-orange:#c68232;
+
+  --bg:var(--v863-bg)!important;
+  --app-bg:var(--v863-bg)!important;
+  --card:var(--v863-surface)!important;
+  --card2:var(--v863-surface-2)!important;
+  --input:var(--v863-surface-2)!important;
+  --text:var(--v863-text)!important;
+  --muted:var(--v863-muted)!important;
+  --line:var(--v863-line)!important;
+  --line-strong:var(--v863-line-strong)!important;
+  --teal:var(--v863-silver)!important;
+  --android-bg:var(--v863-bg)!important;
+  --android-surface:var(--v863-surface)!important;
+  --android-surface-2:var(--v863-surface-2)!important;
+  --android-text:var(--v863-text)!important;
+  --android-muted:var(--v863-muted)!important;
+  --android-border:var(--v863-line)!important;
+  --android-accent:var(--v863-silver)!important;
+  --p1-bg:var(--v863-bg)!important;
+  --p1-bg-deep:var(--v863-bg)!important;
+  --p1-surface:var(--v863-surface)!important;
+  --p1-surface-raised:var(--v863-surface-2)!important;
+  --p1-surface-soft:var(--v863-surface-3)!important;
+  --p1-border:var(--v863-line)!important;
+  --p1-border-strong:var(--v863-line-strong)!important;
+  --p1-text:var(--v863-text)!important;
+  --p1-muted:var(--v863-muted)!important;
+  --p1-accent:var(--v863-silver)!important;
+  --p1-accent-strong:var(--v863-text)!important;
+  --p1-accent-soft:rgba(201,206,212,.10)!important;
+}
+
+/* Kill the old per-screen blue design tokens. */
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings,#screen-calculator,#screen-analytics,#screen-upload){
+  --vy-screen-rgb:150,156,163!important;
+  --vy-screen-accent:#aeb4bb!important;
+  --vy-screen-accent-soft:rgba(174,180,187,.10)!important;
+  --vy-screen-accent-strong:#d7dbe0!important;
+}
+
+html.vy861-flat-black,
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{
+  background:#000!important;
+  background-image:none!important;
+  color:var(--v863-text)!important;
+}
+
+/* Top bar: compact black chrome. Theme control is replaced by profile chip in JS. */
+html.vy861-flat-black .top{
+  min-height:66px!important;
+  padding:9px 11px!important;
+  margin:0 0 14px!important;
+  border-radius:20px!important;
+  border:1px solid var(--v863-line)!important;
+  background:rgba(12,13,15,.92)!important;
+  background-image:none!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.34)!important;
+  backdrop-filter:blur(20px) saturate(105%)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(105%)!important;
+}
+html.vy861-flat-black .top .logo{width:42px!important;height:42px!important}
+html.vy861-flat-black .top h1{font-size:20px!important}
+html.vy861-flat-black #themeToggle{display:none!important}
+html.vy861-flat-black #planBadge{display:none!important}
+html.vy861-flat-black .vy863-profile-chip{
+  width:46px!important;height:46px!important;min-width:46px!important;flex:0 0 46px!important;
+  padding:0!important;border-radius:50%!important;border:1px solid var(--v863-line-strong)!important;
+  display:grid!important;place-items:center!important;position:relative!important;overflow:visible!important;
+  background:var(--v863-surface-2)!important;color:var(--v863-text)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)!important;
+}
+html.vy861-flat-black .vy863-profile-chip .vy863-profile-avatar{
+  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;overflow:hidden;
+  background:#2a2d31;color:#fff;font-weight:800;font-size:15px;letter-spacing:-.02em;
+  border:1px solid rgba(255,255,255,.14);
+}
+html.vy861-flat-black .vy863-profile-chip .vy863-profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+html.vy861-flat-black .vy863-profile-chip .vy863-plan-dot{
+  position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;
+  border:2px solid #0c0d0f;background:#7f858d;
+}
+html.vy861-flat-black[data-vy863-plan="business"] .vy863-profile-chip{border-color:rgba(216,173,85,.60)!important;box-shadow:0 0 0 1px rgba(216,173,85,.12),0 6px 18px rgba(0,0,0,.28)!important}
+html.vy861-flat-black[data-vy863-plan="business"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#6f531f,#d8ad55 56%,#5f4519);border-color:rgba(241,202,114,.68)}
+html.vy861-flat-black[data-vy863-plan="business"] .vy863-profile-chip .vy863-plan-dot{background:var(--v863-gold-2)}
+html.vy861-flat-black[data-vy863-plan="pro"] .vy863-profile-chip{border-color:rgba(201,206,212,.60)!important}
+html.vy861-flat-black[data-vy863-plan="pro"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#555a60,#c9ced4 56%,#53585e);color:#111;border-color:rgba(238,241,244,.68)}
+html.vy861-flat-black[data-vy863-plan="pro"] .vy863-profile-chip .vy863-plan-dot{background:#e2e5e9}
+
+/* Universal graphite surfaces across all primary workspaces. */
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .production-card,.production-account-card,.vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,.vx621-recent,
+  .home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.notice,.code-output,.code-note,.code-preview,
+  [class*="-card"],[class*="-tile"],[class*="-panel"],[class*="-summary"],[class*="-workspace"]
+){
+  background:var(--v863-surface)!important;
+  background-image:none!important;
+  border-color:var(--v863-line)!important;
+  color:var(--v863-text)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+
+/* Secondary/nested surfaces use a slightly lighter graphite, never navy. */
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+  .production-account-grid>div,.shop-growth-stat,.shop-growth-goal,.home-kpi,.home-stat,
+  .vx621-action-card,.vx621-tool,.vx621-action,.business-tool,.business-action,
+  .p2-live-preview,.vy660-live-box,.settings-field,.settings-row,[class*="-metric"],[class*="-stat"]
+){
+  background:var(--v863-surface-2)!important;
+  background-image:none!important;
+  border-color:var(--v863-line)!important;
+  color:var(--v863-text)!important;
+  box-shadow:none!important;
+}
+
+/* Business blue panels seen in screenshots. */
+html.vy861-flat-black #screen-business :is(
+  .vx621-section,.vx621-command-section,.business-section,.business-module-card,.business-command-card,
+  .business-workspace,.business-tool-card,.vx621-group,.vx621-context,.vx621-hero,[class*="business-"][class*="card"]
+){
+  background:var(--v863-surface)!important;background-image:none!important;border-color:var(--v863-line)!important;box-shadow:none!important;
+}
+html.vy861-flat-black #screen-business :is(.vx621-icon,.business-icon,[class*="tool-icon"]){
+  background:var(--v863-surface-3)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-silver)!important;
+}
+
+/* Home quick access / shop progress: remove the remaining blue tile. */
+html.vy861-flat-black #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card,[class*="quick-"][class*="card"],[class*="quick-"][class*="action"]){
+  background:var(--v863-surface-2)!important;background-image:none!important;border-color:var(--v863-line)!important;color:var(--v863-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card):active{background:var(--v863-surface-4)!important}
+html.vy861-flat-black #screen-home :is(.home-section-kicker,.settings-kicker,[class*="kicker"]){color:var(--v863-silver-2)!important}
+
+/* Sales/business mode bars: graphite capsule with white selected state. */
+html.vy861-flat-black .p1-modebar{
+  background:var(--v863-surface-2)!important;background-image:none!important;border:1px solid var(--v863-line)!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black .p1-modebar button{
+  background:var(--v863-surface)!important;background-image:none!important;border-color:var(--v863-line)!important;color:#c4c9cf!important;box-shadow:none!important;
+}
+html.vy861-flat-black .p1-modebar button[aria-selected="true"],
+html.vy861-flat-black .p1-modebar button.active{
+  background:var(--v863-surface-4)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;
+}
+
+/* Settings: search, icons, rows and forms are all neutral graphite. */
+html.vy861-flat-black #screen-settings :is(.vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list){
+  background:var(--v863-surface)!important;background-image:none!important;border-color:var(--v863-line)!important;box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings .vy675-settings-search input{
+  background:transparent!important;border:0!important;box-shadow:none!important;color:var(--v863-text)!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-row-icon,.vx622-settings-icon){
+  background:var(--v863-surface-3)!important;background-image:none!important;border-color:var(--v863-line)!important;color:var(--v863-silver)!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){
+  background:transparent!important;background-image:none!important;border-color:var(--v863-line)!important;color:var(--v863-text)!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row):active{background:rgba(255,255,255,.045)!important}
+html.vy861-flat-black #screen-settings .vy675-settings-eyebrow{color:var(--v863-silver-2)!important}
+
+html.vy861-flat-black :is(input,select,textarea){
+  background:var(--v863-surface-2)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black :is(input,select,textarea):focus{
+  border-color:#777e86!important;box-shadow:0 0 0 3px rgba(201,206,212,.11)!important;outline:none!important;
+}
+html.vy861-flat-black :is(input,textarea)::placeholder{color:var(--v863-muted-2)!important}
+html.vy861-flat-black select option{background:#17191c!important;color:#fff!important}
+
+/* Neutral action hierarchy. No blue fills in dark mode. */
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy863-profile-chip):not(.danger):not([data-danger="true"]){
+  background:var(--v863-surface-2)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){
+  background:#2b2f34!important;background-image:none!important;border-color:#464b52!important;color:#fff!important;
+}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary):active{background:#353a40!important}
+html.vy861-flat-black #productionAccountCard button:not(.danger):not([data-danger="true"]){
+  background:#25292e!important;background-image:none!important;border-color:#444950!important;color:#fff!important;
+}
+
+/* Deep-maroon destructive system: calm, premium, unmistakably destructive. */
+html.vy861-flat-black :is(
+  .btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child,
+  #productionAccountCard .danger,.production-danger,.destructive,.delete-action,.cancel-subscription-action
+){
+  background:var(--v863-maroon)!important;background-image:none!important;border-color:var(--v863-maroon-line)!important;color:#fff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 7px 18px rgba(74,9,27,.20)!important;
+}
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],.production-danger,.destructive,.delete-action):active{background:var(--v863-maroon-press)!important;transform:scale(.975)!important}
+
+/* Account card: graphite base + plan-aware metallic accents. */
+html.vy861-flat-black #productionAccountCard,
+html.vy861-flat-black #productionAccountCard .production-account-card{
+  background:linear-gradient(180deg,#15171a,#101113)!important;
+  border:1px solid var(--v863-line-strong)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.30)!important;
+}
+html.vy861-flat-black #productionAccountCard .production-account-grid>div{
+  background:rgba(255,255,255,.025)!important;border-color:var(--v863-line)!important;
+}
+html.vy861-flat-black #productionAccountCard .production-plan{
+  background:#2a2d31!important;background-image:none!important;border:1px solid #474c52!important;color:#e6e9ed!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="business"]{
+  border-color:rgba(216,173,85,.42)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.30),inset 0 1px 0 rgba(241,202,114,.09)!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="business"] .production-avatar{
+  background:linear-gradient(145deg,#6b501e,#d8ad55 55%,#5c4217)!important;color:#fff!important;border-color:rgba(241,202,114,.60)!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="business"] .production-plan{
+  background:#3a2d13!important;border-color:rgba(216,173,85,.58)!important;color:#f4d58d!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="pro"]{
+  border-color:rgba(201,206,212,.38)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="pro"] .production-avatar{
+  background:linear-gradient(145deg,#555a60,#c9ced4 55%,#51565b)!important;color:#111!important;border-color:rgba(238,241,244,.58)!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="pro"] .production-plan{
+  background:#2d3034!important;border-color:#666c73!important;color:#eef1f4!important;
+}
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="free"] .production-avatar{
+  background:#31353a!important;color:#f4f5f6!important;border-color:#555b62!important;
+}
+
+/* Floating nav dock. */
+html.vy861-flat-black .app{padding-bottom:126px!important}
+html.vy861-flat-black .screen{padding-bottom:18px!important}
+html.vy861-flat-black .nav{
+  left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;
+  width:auto!important;max-width:none!important;margin:0!important;padding:7px!important;
+  border:1px solid var(--v863-line-strong)!important;border-radius:26px!important;
+  background:rgba(13,14,16,.94)!important;background-image:none!important;
+  box-shadow:0 14px 38px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(22px) saturate(105%)!important;-webkit-backdrop-filter:blur(22px) saturate(105%)!important;
+}
+html.vy861-flat-black .nav button{
+  min-height:58px!important;border-radius:18px!important;background:transparent!important;background-image:none!important;color:#8d949c!important;
+}
+html.vy861-flat-black .nav button.active{
+  background:#22262b!important;background-image:none!important;color:#f4f6f8!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)!important;
+}
+html.vy861-flat-black .nav button.active :is(svg,.android-nav-icon){color:#f4f6f8!important;stroke:currentColor!important}
+html.vy861-flat-black .nav button:active{background:#2a2f35!important}
+
+/* Dialogs/sheets stay neutral graphite; destructive confirmation uses maroon action only. */
+html.vy861-flat-black :is(.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]){
+  background:#15171a!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-text)!important;
+}
+html.vy861-flat-black :is(.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay){background:rgba(0,0,0,.74)!important}
+
+@media(max-width:520px){
+  html.vy861-flat-black .app{padding-left:10px!important;padding-right:10px!important;padding-bottom:124px!important}
+  html.vy861-flat-black .top{border-radius:18px!important}
+  html.vy861-flat-black .nav{left:10px!important;right:10px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;border-radius:24px!important}
+  html.vy861-flat-black .nav button{min-height:56px!important;border-radius:17px!important}
+}
+
+/* Light mode intentionally remains under the existing verified light-theme rules. */
+
+/* ===== STYLE SOURCE: premium-tier-864.css ===== */
+
+/* Vyapar AI 8.6.4.2026 — Premium graphite/tier authority.
+   Final dark-mode layer: no blue surfaces; Free=graphite, Pro=silver, Business=gold;
+   destructive actions=deep maroon; viewport-safe floating nav; lightweight Telegram-like motion. */
+
+html.vy861-flat-black{
+  --vy864-bg:#000000;
+  --vy864-surface:#0f1012;
+  --vy864-surface-2:#15171a;
+  --vy864-surface-3:#1c1f23;
+  --vy864-surface-4:#25292e;
+  --vy864-line:rgba(255,255,255,.10);
+  --vy864-line-strong:rgba(255,255,255,.18);
+  --vy864-text:#f7f7f8;
+  --vy864-muted:#9b9fa6;
+  --vy864-muted-2:#767c84;
+  --vy864-maroon:#5a1020;
+  --vy864-maroon-2:#74182d;
+  --vy864-maroon-press:#430b17;
+  --vy864-maroon-soft:rgba(116,24,45,.18);
+  --vy864-tier-accent:#a9afb6;
+  --vy864-tier-strong:#d5d9dd;
+  --vy864-tier-soft:rgba(169,175,182,.11);
+  --vy864-tier-line:rgba(169,175,182,.30);
+  --vy864-tier-glow:rgba(169,175,182,.12);
+  --blue:#a9afb6!important;
+  --teal:#a9afb6!important;
+  --android-accent:#a9afb6!important;
+  --p1-accent:#a9afb6!important;
+  --p1-accent-strong:#d5d9dd!important;
+  --p1-accent-soft:rgba(169,175,182,.11)!important;
+  color-scheme:dark!important;
+}
+html.vy861-flat-black[data-vy864-plan="pro"]{
+  --vy864-tier-accent:#d7dbe0;
+  --vy864-tier-strong:#f2f4f6;
+  --vy864-tier-soft:rgba(215,219,224,.12);
+  --vy864-tier-line:rgba(215,219,224,.38);
+  --vy864-tier-glow:rgba(215,219,224,.14);
+}
+html.vy861-flat-black[data-vy864-plan="business"]{
+  --vy864-tier-accent:#d4aa54;
+  --vy864-tier-strong:#f0ca75;
+  --vy864-tier-soft:rgba(212,170,84,.12);
+  --vy864-tier-line:rgba(212,170,84,.42);
+  --vy864-tier-glow:rgba(212,170,84,.16);
+}
+
+html.vy861-flat-black,
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{
+  background:#000!important;background-image:none!important;color:var(--vy864-text)!important;
+}
+html.vy861-flat-black body{overflow-x:hidden!important}
+html.vy861-flat-black .app{max-width:100vw!important;overflow-x:clip!important;padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))!important}
+
+/* Brand mark: black/maroon asset needs no white tile. */
+html.vy861-flat-black .logo,
+html.vy861-flat-black .auth-logo,
+html.vy861-flat-black .android-loader-logo img,
+html.vy861-flat-black #vy855BootGuard img,
+html.vy861-flat-black #vy647StartupSplash img{
+  background:transparent!important;box-shadow:none!important;object-fit:contain!important;
+}
+html.vy861-flat-black #vy855BootGuard img{width:82px!important;height:82px!important;border-radius:22px!important;clip-path:none!important;-webkit-clip-path:none!important}
+html.vy861-flat-black .android-loader-logo{background:transparent!important;box-shadow:none!important}
+html.vy861-flat-black .android-loader-bar{background:#1c1d20!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black .android-loader-bar>span{background:var(--vy864-tier-accent)!important;box-shadow:none!important}
+html.vy861-flat-black #tabLoader{display:none!important}
+
+/* Compact premium top bar. */
+html.vy861-flat-black .top{
+  min-height:64px!important;padding:8px 10px!important;margin:0 10px 14px!important;border-radius:22px!important;
+  border:1px solid var(--vy864-line)!important;background:rgba(12,13,15,.92)!important;background-image:none!important;
+  box-shadow:0 7px 22px rgba(0,0,0,.32)!important;backdrop-filter:blur(18px) saturate(108%)!important;-webkit-backdrop-filter:blur(18px) saturate(108%)!important;
+}
+html.vy861-flat-black .top .logo{width:44px!important;height:44px!important;border-radius:14px!important}
+html.vy861-flat-black .top h1{font-size:20px!important;font-weight:820!important;letter-spacing:-.02em!important}
+html.vy861-flat-black .top .tag{display:none!important}
+html.vy861-flat-black #themeToggle,
+html.vy861-flat-black #planBadge{display:none!important}
+html.vy861-flat-black .vy863-profile-chip{
+  width:48px!important;height:48px!important;min-width:48px!important;border-radius:50%!important;
+  background:#17191c!important;border:1px solid var(--vy864-tier-line)!important;box-shadow:0 0 0 1px var(--vy864-tier-glow)!important;
+}
+html.vy861-flat-black .vy863-profile-chip .vy863-profile-avatar{
+  width:38px!important;height:38px!important;background:#2a2d31!important;border:1px solid var(--vy864-tier-line)!important;color:#fff!important;
+}
+html.vy861-flat-black[data-vy864-plan="pro"] .vy863-profile-chip .vy863-profile-avatar{
+  background:linear-gradient(145deg,#5e6267,#e2e5e9 58%,#62666b)!important;color:#111!important;
+}
+html.vy861-flat-black[data-vy864-plan="business"] .vy863-profile-chip .vy863-profile-avatar{
+  background:linear-gradient(145deg,#5d451b,#d4aa54 58%,#6b501f)!important;color:#fff!important;
+}
+html.vy861-flat-black .vy863-profile-chip .vy863-plan-dot{background:var(--vy864-tier-accent)!important;border-color:#0c0d0f!important}
+
+/* One neutral graphite hierarchy for every screen and popup. */
+html.vy861-flat-black :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-card,
+  .vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,
+  .shop-growth-card,.chart-wrap,.notice,.code-output,.code-note,.code-preview,.subscription-card,.plan-card,
+  [class*="-panel"],[class*="-section-card"],[class*="-workspace-card"],[class*="-summary-card"]
+){
+  background:var(--vy864-surface)!important;background-image:none!important;border-color:var(--vy864-line)!important;color:var(--vy864-text)!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black :is(
+  .production-account-grid>div,.shop-growth-stat,.shop-growth-goal,.home-kpi,.home-stat,.p2-live-preview,.vy660-live-box,
+  .business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,.home-quick-action,
+  [class*="-metric"],[class*="-stat"],[class*="-tile"]
+){
+  background:var(--vy864-surface-2)!important;background-image:none!important;border-color:var(--vy864-line)!important;color:var(--vy864-text)!important;box-shadow:none!important;
+}
+
+/* Remove blue from semantic accents; tier colour is the only non-maroon accent. */
+html.vy861-flat-black :is(
+  .home-section-kicker,.settings-kicker,.vy675-settings-eyebrow,.subscription-kicker,.plan-kicker,.analytics-kicker,
+  [class*="kicker"],[class*="eyebrow"],[class*="accent-text"],a
+){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black :is(.progress,.progress-track,[class*="progress-track"]){background:#202328!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black :is(.bar,.progress-bar,[class*="progress-fill"]){background:var(--vy864-tier-accent)!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black :is(.badge,.pill,.chip,.glass-chip,.small-badge){background:#191b1f!important;border-color:var(--vy864-line)!important;color:var(--vy864-text)!important}
+
+/* Settings and Account card: plan-aware, never navy. */
+html.vy861-flat-black #screen-settings :is(.vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list){
+  background:var(--vy864-surface)!important;background-image:none!important;border-color:var(--vy864-line)!important;box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-row-icon,.vx622-settings-icon){
+  background:#202327!important;background-image:none!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-accent)!important;
+}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){background:transparent!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row):active{background:rgba(255,255,255,.045)!important}
+html.vy861-flat-black #screen-settings .vy675-settings-search input{background:transparent!important;border:0!important;box-shadow:none!important}
+html.vy861-flat-black #productionAccountCard,
+html.vy861-flat-black .settings-account-section .production-account-card{
+  background:linear-gradient(150deg,#17191c 0%,#101113 64%,#0c0d0f 100%)!important;border:1px solid var(--vy864-tier-line)!important;box-shadow:0 14px 34px rgba(0,0,0,.34)!important;
+}
+html.vy861-flat-black[data-vy864-plan="pro"] #productionAccountCard,
+html.vy861-flat-black[data-vy864-plan="pro"] .settings-account-section .production-account-card{
+  background:linear-gradient(150deg,#202327 0%,#111214 66%,#0c0d0f 100%)!important;
+}
+html.vy861-flat-black[data-vy864-plan="business"] #productionAccountCard,
+html.vy861-flat-black[data-vy864-plan="business"] .settings-account-section .production-account-card{
+  background:linear-gradient(150deg,#211b10 0%,#12110e 48%,#0c0d0f 100%)!important;
+}
+html.vy861-flat-black #productionAccountCard .production-avatar{background:#2b2e33!important;border-color:var(--vy864-tier-line)!important;color:#fff!important;box-shadow:none!important}
+html.vy861-flat-black[data-vy864-plan="pro"] #productionAccountCard .production-avatar{background:linear-gradient(145deg,#5b6066,#dce0e4 58%,#62676d)!important;color:#111!important}
+html.vy861-flat-black[data-vy864-plan="business"] #productionAccountCard .production-avatar{background:linear-gradient(145deg,#654b1e,#d4aa54 58%,#725521)!important;color:#fff!important}
+html.vy861-flat-black #productionAccountCard .production-plan{background:var(--vy864-tier-soft)!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black #productionAccountCard .production-account-grid>div{background:rgba(255,255,255,.025)!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black #productionAccountCard button:not(.danger):not([data-danger="true"]){background:#24272b!important;border-color:#3c4147!important;color:#fff!important}
+
+/* Forms: graphite fields, tier-colour focus ring. */
+html.vy861-flat-black :is(input,select,textarea){
+  background:#17191c!important;background-image:none!important;border:1px solid #34383e!important;color:var(--vy864-text)!important;box-shadow:none!important;caret-color:var(--vy864-tier-accent)!important;
+}
+html.vy861-flat-black :is(input,select,textarea):focus{border-color:var(--vy864-tier-accent)!important;box-shadow:0 0 0 3px var(--vy864-tier-soft)!important;outline:none!important}
+html.vy861-flat-black :is(input,textarea)::placeholder{color:var(--vy864-muted-2)!important}
+html.vy861-flat-black select option{background:#17191c!important;color:#fff!important}
+
+/* Buttons: premium graphite by default; no blue fills. */
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy863-profile-chip):not(.danger):not([data-danger="true"]){
+  background:#202327!important;background-image:none!important;border-color:#383d43!important;color:#f5f5f6!important;box-shadow:none!important;
+}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){
+  background:#292d32!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important;
+}
+html.vy861-flat-black :is(.btn,button):active{transform:scale(.975)!important}
+
+/* Deep-maroon destructive hierarchy. */
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child,#productionAccountCard .danger){
+  background:var(--vy864-maroon)!important;background-image:none!important;border-color:var(--vy864-maroon-2)!important;color:#fff!important;box-shadow:none!important;
+}
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child,#productionAccountCard .danger):active{background:var(--vy864-maroon-press)!important}
+html.vy861-flat-black #productionAccountCard :is([onclick*="cancel" i],[class*="cancel" i]){background:#50101d!important;border-color:#7a1d32!important;color:#fff!important}
+
+/* Sales / Home / Business segmented controls and quick tools. */
+html.vy861-flat-black .p1-modebar{background:#17191c!important;border-color:var(--vy864-line)!important;box-shadow:none!important}
+html.vy861-flat-black .p1-modebar button{background:#121315!important;border-color:#34383e!important;color:#c8cbd0!important}
+html.vy861-flat-black .p1-modebar button:is(.active,[aria-selected="true"]){background:#292d32!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card){background:#15171a!important;border-color:var(--vy864-line)!important}
+html.vy861-flat-black #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card) :is(svg,.icon,[class*="icon"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black #screen-business :is(.vx621-icon,.business-icon,[class*="tool-icon"]){background:#202327!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-accent)!important}
+
+/* Calculator: remove blue display/total, use plan accent touches only. */
+html.vy861-flat-black #screen-calculator :is(.card,.calculator-card,.calc-shell,.calc-display-wrap){background:#111214!important;border-color:var(--vy864-line)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-calculator .calc-display{background:#17191c!important;border-color:#3a3f45!important;color:#fff!important}
+html.vy861-flat-black #screen-calculator :is(.calc-total,.calculator-total,[class*="total"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black #screen-calculator .calc-key{background:#1a1c20!important;border-color:#3a3e44!important;color:#f7f7f8!important;box-shadow:none!important}
+html.vy861-flat-black #screen-calculator .calc-key:is(.equals,.equal,.eq){background:#292d32!important;border-color:var(--vy864-tier-line)!important;color:var(--vy864-tier-strong)!important}
+html.vy861-flat-black #screen-calculator .calc-key:is(.clear,.danger){background:var(--vy864-maroon)!important;border-color:var(--vy864-maroon-2)!important;color:#fff!important}
+
+/* Insights / Plans / Subscription / Upload: tier accents, no iOS blue. */
+html.vy861-flat-black #screen-analytics :is(.goal-ring,.yearly-goal-ring,.analytics-ring,[class*="ring"]){border-color:var(--vy864-tier-line)!important;background:var(--vy864-tier-soft)!important;background-image:none!important;color:var(--vy864-tier-strong)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-analytics :is(.yearly-goal-value,.analytics-accent,[class*="accent"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black #screen-subscription :is(.plan-card,.subscription-card,.pricing-card){background:#111214!important;border-color:var(--vy864-line)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-subscription :is(.plan-card.active,.plan-card.recommended,.pricing-card.active){border-color:var(--vy864-tier-line)!important;box-shadow:0 0 0 1px var(--vy864-tier-glow)!important}
+html.vy861-flat-black #screen-subscription :is(.check,.checkmark,.feature-check,[class*="check"]){color:var(--vy864-tier-accent)!important}
+html.vy861-flat-black #screen-upload :is(.upload-zone,.upload-card,[class*="upload-"][class*="card"]){background:#141619!important;border-color:var(--vy864-tier-line)!important}
+
+/* More sheet and all modal/sheet popups. */
+html.vy861-flat-black :is(.android-sheet,.more-sheet,.glass-dialog,.subscription-dialog,.production-modal,.vx643-modal,[role="dialog"]){
+  background:#151619!important;background-image:none!important;border:1px solid #3a3e44!important;color:#fff!important;box-shadow:0 18px 50px rgba(0,0,0,.54)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black :is(.android-sheet-row,.android-sheet-item,.more-item,.android-more-item){background:#181a1d!important;border-color:#33373c!important;color:#fff!important}
+html.vy861-flat-black :is(.android-sheet-row,.android-sheet-item,.more-item,.android-more-item) :is(svg,.icon,[class*="icon"]){color:var(--vy864-tier-accent)!important;background:#24272b!important;border-color:var(--vy864-tier-line)!important}
+html.vy861-flat-black :is(.android-sheet-close,.more-close,[data-close],.glass-dialog-close){background:#24272b!important;border-color:#41464c!important;color:#fff!important}
+html.vy861-flat-black :is(.glass-dialog-overlay,.subscription-overlay,.android-sheet-overlay,.production-overlay,.shop-progress-overlay){background:rgba(0,0,0,.76)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* Floating navigation: always centered, never clipped off the left edge. */
+html.vy861-flat-black .nav{
+  position:fixed!important;left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+  width:auto!important;max-width:calc(100vw - 24px)!important;margin:0!important;transform:none!important;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important;box-sizing:border-box!important;
+  min-height:72px!important;padding:6px!important;border-radius:24px!important;overflow:hidden!important;z-index:100000!important;
+  background:rgba(12,13,15,.94)!important;background-image:none!important;border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.48)!important;backdrop-filter:blur(20px) saturate(108%)!important;-webkit-backdrop-filter:blur(20px) saturate(108%)!important;
+}
+html.vy861-flat-black .nav button{min-width:0!important;width:100%!important;max-width:none!important;margin:0!important;padding:7px 2px!important;border:0!important;border-radius:18px!important;background:transparent!important;color:#8f969e!important;overflow:hidden!important}
+html.vy861-flat-black .nav button.active{background:var(--vy864-tier-soft)!important;color:var(--vy864-tier-strong)!important;box-shadow:inset 0 0 0 1px var(--vy864-tier-line)!important}
+html.vy861-flat-black .nav button :is(svg,.android-nav-icon){color:inherit!important}
+html.vy861-flat-black .nav button .android-nav-icon{background:transparent!important;border:0!important}
+
+/* Lightweight motion: only opacity/transform/background/border; no heavy blur animation. */
+html.vy861-flat-black :is(button,.btn,.card,.nav,.android-sheet-row,.android-sheet-item,.more-item,.vy675-settings-row){
+  transition:transform .16s cubic-bezier(.2,.8,.2,1),opacity .16s ease,background-color .16s ease,border-color .16s ease,color .16s ease!important;
+}
+html.vy861-flat-black .screen:not(.hide){animation:vy864-screen-in .18s cubic-bezier(.2,.8,.2,1)}
+html.vy861-flat-black :is(.android-sheet,.more-sheet,.glass-dialog,.subscription-dialog,.production-modal,.vx643-modal){animation:vy864-sheet-in .18s cubic-bezier(.2,.8,.2,1)}
+@keyframes vy864-screen-in{from{opacity:.72;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes vy864-sheet-in{from{opacity:.72;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){html.vy861-flat-black *{animation:none!important;transition:none!important}}
+
+/* Old/slow WebView fallback: preserve layout and contrast, drop blur. */
+html.vy861-flat-black.perf-lite .top,
+html.vy861-flat-black.perf-lite .nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:#0d0e10!important;box-shadow:none!important}
+
+@media(max-width:380px){
+  html.vy861-flat-black .nav{left:8px!important;right:8px!important;max-width:calc(100vw - 16px)!important;padding:5px!important}
+  html.vy861-flat-black .nav button{font-size:11px!important;padding-inline:1px!important}
+  html.vy861-flat-black .top{margin-left:8px!important;margin-right:8px!important}
+}
+
+/* ===== STYLE SOURCE: monochrome-black-865.css ===== */
+
+/* Vyapar AI 8.6.5.2026 — monochrome black UI repair.
+   Screenshot-driven final authority: removes residual navy/blue surfaces,
+   keeps Business gold + destructive maroon semantics, and hardens the five-tab
+   dock against left-edge clipping on older Android WebView builds. */
+
+html.vy861-flat-black{
+  --vy865-black:#000000;
+  --vy865-surface:#0e0f10;
+  --vy865-surface-2:#161719;
+  --vy865-surface-3:#202226;
+  --vy865-line:rgba(255,255,255,.12);
+  --vy865-line-strong:rgba(255,255,255,.20);
+  --vy865-text:#f7f7f8;
+  --vy865-muted:#9a9da3;
+  --vy865-neutral:#b8bcc1;
+  --vy865-neutral-strong:#f2f3f4;
+  --vy865-neutral-soft:rgba(184,188,193,.12);
+  --vy865-danger:#651629;
+  --vy865-danger-line:#8b2942;
+  --blue:var(--vy865-neutral)!important;
+  --teal:var(--vy865-neutral)!important;
+  --android-accent:var(--vy865-neutral)!important;
+  --android-accent-soft:var(--vy865-neutral-soft)!important;
+  --p1-accent:var(--vy865-neutral)!important;
+  --p1-accent-strong:var(--vy865-neutral-strong)!important;
+  --p1-accent-soft:var(--vy865-neutral-soft)!important;
+  --vy861-accent:var(--vy865-neutral)!important;
+  --vy861-accent-press:#d7dade!important;
+  --vy862-blue:var(--vy865-neutral)!important;
+  --vy862-blue-soft:var(--vy865-neutral-soft)!important;
+}
+
+html.vy861-flat-black,
+html.vy861-flat-black body{
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:hidden!important;
+  background:#000!important;
+}
+html.vy861-flat-black .app{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  overflow-x:clip!important;
+  margin:0!important;
+}
+
+/* New supplied storefront logo: no old circular white tile or blue treatment. */
+html.vy861-flat-black :is(.logo,.auth-logo,.android-loader-logo img,#vy855BootGuard img,#vy647StartupSplash img,#appLegalFooter img){
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  object-fit:contain!important;
+}
+html.vy861-flat-black .top .logo{padding:0!important;border-radius:12px!important}
+
+/* Dark mode: every old navy/blue surface becomes neutral graphite. */
+html.vy861-flat-black :is(
+  input,select,textarea,
+  .p620-report-card,.p2-live-preview,.vy660-live-box,.shop-sheet-score,
+  .production-account-grid>div,.production-account-card,.settings-account-section .production-account-card,
+  .vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vx622-settings-list,
+  .home-section-card,.home-growth-card,.business-module-card,.sales-card,.stock-card,
+  [class*="-summary-card"],[class*="-workspace-card"]
+){
+  background:#151719!important;
+  background-image:none!important;
+  border-color:var(--vy865-line)!important;
+  color:var(--vy865-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black :is(input,select,textarea):focus{
+  border-color:#666a70!important;
+  box-shadow:0 0 0 3px rgba(255,255,255,.07)!important;
+  outline:none!important;
+}
+html.vy861-flat-black select option{background:#151719!important;color:#fff!important}
+
+/* Primary/action buttons are black/graphite, never blue. */
+html.vy861-flat-black :is(
+  .btn.primary,button.primary,.production-primary,.subscription-dialog-primary,
+  .vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger),
+  #screen-settings .btn:not(.danger),#screen-settings button:not(.danger):not(.vy863-profile-chip):not(.android-sheet-close),
+  #fs607Settings .btn,#fs607Settings button
+){
+  background:#1b1d20!important;
+  background-image:none!important;
+  border-color:#3d4147!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,#fs607Settings .btn):active{
+  background:#292c31!important;
+  border-color:#565b62!important;
+}
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],#productionAccountCard .danger){
+  background:var(--vy865-danger)!important;
+  border-color:var(--vy865-danger-line)!important;
+  color:#fff!important;
+}
+
+/* Account & Plan: graphite/black body; plan tier may remain silver/gold only. */
+html.vy861-flat-black #productionAccountCard,
+html.vy861-flat-black .settings-account-section .production-account-card{
+  background:linear-gradient(155deg,#171819 0%,#0e0f10 58%,#08090a 100%)!important;
+  border-color:var(--vy864-tier-line,var(--vy865-line-strong))!important;
+}
+html.vy861-flat-black[data-vy864-plan="business"] #productionAccountCard,
+html.vy861-flat-black[data-vy864-plan="business"] .settings-account-section .production-account-card{
+  background:linear-gradient(155deg,#17150f 0%,#10100d 54%,#090a0b 100%)!important;
+}
+
+/* Custom Android select sheet seen in screenshots: black, neutral, selected row graphite. */
+html.vy861-flat-black .vy6601-select-overlay{
+  background:rgba(0,0,0,.76)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black .vy6601-select-sheet{
+  width:min(100%,620px)!important;
+  max-width:620px!important;
+  background:#111214!important;
+  background-image:none!important;
+  border-color:#3a3d42!important;
+  color:#fff!important;
+  box-shadow:0 -18px 55px rgba(0,0,0,.58)!important;
+}
+html.vy861-flat-black .vy6601-select-head{border-bottom-color:#2b2e32!important}
+html.vy861-flat-black .vy6601-select-head button{
+  background:#24272b!important;
+  color:#fff!important;
+  border:1px solid #393d42!important;
+}
+html.vy861-flat-black .vy6601-select-options button{
+  background:transparent!important;
+  color:#f0f1f2!important;
+  border-color:#292c30!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black .vy6601-select-options button.selected{
+  background:#26292d!important;
+  color:#fff!important;
+  font-weight:850!important;
+}
+html.vy861-flat-black .vy6601-select-options button:active{background:#303338!important}
+
+/* More sheet / popup icons: remove remaining bright blue iconography. */
+html.vy861-flat-black :is(
+  .android-sheet-item-icon,.android-sheet-row .icon,.more-item .icon,.android-more-item .icon,
+  .vy675-row-icon,.vx622-settings-icon
+){
+  background:#24262a!important;
+  border-color:#393c41!important;
+  color:var(--vy864-tier-accent,var(--vy865-neutral))!important;
+}
+html.vy861-flat-black :is(.android-sheet-item,.android-sheet-row,.more-item,.android-more-item){
+  background:#151719!important;
+  border-color:#303338!important;
+}
+html.vy861-flat-black :is(a,[class*="accent-text"],[class*="kicker"],[class*="eyebrow"]){
+  color:var(--vy864-tier-accent,var(--vy865-neutral))!important;
+}
+
+/* Five-tab navigation: attach to viewport with explicit left/right bounds.
+   width/translate/margins from earlier Telegram/liquid layers are neutralized. */
+html.vy861-flat-black #nav.nav,
+html.vy861-flat-black .nav{
+  position:fixed!important;
+  left:8px!important;
+  right:8px!important;
+  top:auto!important;
+  bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:68px!important;
+  margin:0!important;
+  padding:5px!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:2px!important;
+  transform:none!important;
+  translate:none!important;
+  overflow:hidden!important;
+  border:1px solid #32353a!important;
+  border-radius:22px!important;
+  background:rgba(12,13,15,.96)!important;
+  background-image:none!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.52)!important;
+  z-index:2147482000!important;
+}
+html.vy861-flat-black #nav.nav button,
+html.vy861-flat-black .nav button{
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:56px!important;
+  min-height:56px!important;
+  margin:0!important;
+  padding:5px 1px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:transparent!important;
+  color:#8f949a!important;
+  box-shadow:none!important;
+  transform:none!important;
+  overflow:hidden!important;
+}
+html.vy861-flat-black #nav.nav button.active,
+html.vy861-flat-black .nav button.active{
+  background:#24262a!important;
+  color:#fff!important;
+  box-shadow:inset 0 0 0 1px #3a3e43!important;
+}
+html.vy861-flat-black .nav button.active .android-nav-icon{background:transparent!important;color:inherit!important;transform:none!important}
+html.vy861-flat-black .android-nav-glass-indicator{display:none!important}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width:380px){
+  html.vy861-flat-black #nav.nav,html.vy861-flat-black .nav{left:6px!important;right:6px!important;padding:4px!important;gap:1px!important}
+  html.vy861-flat-black .nav button{font-size:10px!important;padding-inline:0!important}
+}
+
+/* ===== STYLE SOURCE: logo-fit-866.css ===== */
+
+/* Vyapar AI 8.6.6.2026 — home/header storefront logo fit repair.
+   Final authority for the top-left brand mark only. */
+html.vy861-flat-black .top .brand .logo{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  flex:0 0 46px!important;
+  box-sizing:border-box!important;
+  padding:7px!important;
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  -webkit-clip-path:circle(50%)!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#151719!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;
+  transform:none!important;
+}
+
+@media(max-width:360px){
+  html.vy861-flat-black .top .brand .logo{
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    max-width:42px!important;
+    flex-basis:42px!important;
+    padding:6px!important;
+  }
+}
+
+/* ===== Vyapar AI 8.6.8 brand + dark-surface fix ===== */
+html.vy861-flat-black{
+  --vy-brand:#8d1738;--vy-brand-strong:#a92c4e;--vy-brand-dark:#681027;--vy-brand-soft:rgba(141,23,56,.18);
+  --blue:var(--vy-brand)!important;--teal:var(--vy-brand)!important;--vy-blue:var(--vy-brand)!important;
+  --android-accent:var(--vy-brand)!important;--android-accent-soft:var(--vy-brand-soft)!important;
+  --native-primary:var(--vy-brand)!important;--vy675-blue:var(--vy-brand)!important;--vy675-blue-soft:var(--vy-brand-soft)!important;
+  --vy861-accent:var(--vy-brand)!important;--vy861-accent-press:var(--vy-brand-dark)!important;
+  --vy862-blue:var(--vy-brand)!important;--vy862-blue-soft:var(--vy-brand-soft)!important;
+  --pro-blue:var(--vy-brand)!important;--pro-blue-bright:var(--vy-brand-strong)!important;--pro-blue-soft:var(--vy-brand-soft)!important;
+}
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings,#screen-analytics,#screen-upload,#screen-calculator){
+  --vy-screen-rgb:141,23,56!important;--vy-screen-accent:var(--vy-brand)!important;--vy-screen-accent-soft:var(--vy-brand-soft)!important;
+}
+html.vy861-flat-black .top .brand .logo{background:#fff!important;border-color:rgba(169,44,78,.36)!important;box-shadow:none!important;filter:none!important;object-fit:contain!important}
+html.vy861-flat-black :is(.android-loader-logo img,#vy855BootGuard img,#vy647StartupSplash img,.vy647-splash-core img,.vy647-lock-card>img,.vy659-footer-logo,.vy6601-footer-logo,.legal-footer-logo,#appLegalFooter img){background:#fff!important;box-shadow:none!important;filter:none!important;object-fit:contain!important}
+html.vy861-flat-black #screen-home :is(.home-section,#homeQuickActionsMount,.android-quick-actions,.home-metrics,.home-section-heading,.home-metric-head){background:#000!important;background-image:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.vy861-flat-black #screen-home :is(.android-quick-action,.home-metrics>.stat){background:#0f1012!important;background-image:none!important;border-color:rgba(255,255,255,.13)!important;box-shadow:none!important}
+html.vy861-flat-black #vyaparOtpGate,html.vy861-flat-black #vyaparOtpGate .auth-page,html.vy861-flat-black #vyaparOtpGate .auth-card{background:#090909!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black #vyaparOtpGate :is(.auth-section,.auth-form,.auth-form>div,.auth-label-row,.auth-brand-row,.password-setup-copy){background:transparent!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black :is(.home-goal-track span,.bar,.shop-mini-track i){background:var(--vy-brand)!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black .shop-score-ring{background:conic-gradient(var(--vy-brand) calc(var(--score)*1%),rgba(255,255,255,.09) 0)!important}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.vx621-action.blue,.glass-dialog-btn:not(.secondary):not(.danger),.shop-progress-btn):not(.danger):not([data-danger="true"]){background:var(--vy-brand)!important;background-image:none!important;border-color:var(--vy-brand-strong)!important;color:#fff!important;box-shadow:none!important}
+html.vy861-flat-black :is(input,select,textarea):focus{border-color:var(--vy-brand)!important;box-shadow:0 0 0 3px rgba(141,23,56,.22)!important}
+html.vy861-flat-black #screen-home :is(.home-text-button,.home-metric-icon,.android-quick-action-icon,.home-next-icon),html.vy861-flat-black #androidMoreSheet :is(.android-sheet-item-arrow,.android-sheet-item-icon),html.vy861-flat-black #screen-settings :is(.vy675-row-chevron,.vy675-row-icon){color:var(--vy-brand-strong)!important}
+html.vy861-flat-black #nav.nav button{color:#a4a8ad!important}
+html.vy861-flat-black #nav.nav button.active{background:#241016!important;color:#fff!important;border-color:#5f1a2b!important;box-shadow:inset 0 0 0 1px rgba(169,44,78,.10)!important}
+html.vy861-flat-black #nav.nav button.active .android-nav-icon{color:var(--vy-brand-strong)!important}
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] :is(#fs607Settings button,#fs607Settings .btn,.btn.primary,button.primary){background:var(--vy-brand)!important;background-image:none!important;border:1px solid var(--vy-brand-strong)!important;color:#fff!important;box-shadow:none!important}
+
+/* ===== STYLE SOURCE: auth-chat-867.css ===== */
+
+/* Vyapar AI auth — chat-approved black & grey login/create-account UI. */
+
+html.native-android #vyaparOtpGate,
+html.vy861-flat-black #vyaparOtpGate,
+#vyaparOtpGate{
+  --auth-bg:#090909!important;
+  --auth-card:#090909!important;
+  --auth-soft:#151515!important;
+  --auth-soft-hover:#1c1c1c!important;
+  --auth-border:#242424!important;
+  --auth-text:#f2f2f2!important;
+  --auth-body:#ededed!important;
+  --auth-muted:#8a8a8a!important;
+  --auth-subtle:#5f5f5f!important;
+  --auth-accent:#e6e6e6!important;
+  --auth-primary:#ececec!important;
+  --auth-primary-hover:#dcdcdc!important;
+  --auth-ring:rgba(255,255,255,.12)!important;
+  --auth-error:#d7d7d7!important;
+  --auth-error-bg:#151515!important;
+  --auth-success:#d7d7d7!important;
+  --auth-success-bg:#151515!important;
+  background:#090909!important;
+  background-image:none!important;
+  color-scheme:dark!important;
+}
+
+html.native-android #vyaparOtpGate .auth-page,
+html.vy861-flat-black #vyaparOtpGate .auth-page,
+#vyaparOtpGate .auth-page{
+  min-height:var(--auth-viewport-height,100dvh)!important;
+  height:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:max(22px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))!important;
+  overflow:visible!important;
+  background:#090909!important;
+  background-image:none!important;
+}
+
+html.native-android #vyaparOtpGate .auth-card,
+html.vy861-flat-black #vyaparOtpGate .auth-card,
+#vyaparOtpGate .auth-card{
+  width:100%!important;
+  max-width:390px!important;
+  margin:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#090909!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+#vyaparOtpGate .auth-back{
+  width:43px!important;
+  height:43px!important;
+  min-width:43px!important;
+  min-height:43px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0 0 18px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:13px!important;
+  background:#171717!important;
+  color:#d6d6d6!important;
+  box-shadow:none!important;
+  font-size:20px!important;
+  line-height:1!important;
+  cursor:pointer!important;
+}
+#vyaparOtpGate .auth-back.hidden{display:none!important}
+
+#vyaparOtpGate .auth-brand-row{
+  display:flex!important;
+  align-items:center!important;
+  gap:13px!important;
+  min-width:0!important;
+  margin:0!important;
+}
+#vyaparOtpGate .auth-logo-box{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:14px!important;
+  background:#e9e9e9!important;
+  overflow:hidden!important;
+}
+html.native-android #vyaparOtpGate .auth-logo,
+html.vy861-flat-black #vyaparOtpGate .auth-logo,
+#vyaparOtpGate .auth-logo{
+  width:40px!important;
+  height:40px!important;
+  max-width:40px!important;
+  margin:0!important;
+  padding:1px!important;
+  object-fit:contain!important;
+  border:0!important;
+  border-radius:10px!important;
+  filter:none!important;
+  opacity:1!important;
+}
+html.native-android #vyaparOtpGate .auth-title,
+#vyaparOtpGate .auth-title{
+  min-width:0!important;
+  margin:0!important;
+  color:#f2f2f2!important;
+  text-align:left!important;
+  font-size:29px!important;
+  line-height:1.08!important;
+  font-weight:780!important;
+  letter-spacing:-.7px!important;
+}
+html.native-android #vyaparOtpGate .auth-subtitle,
+#vyaparOtpGate .auth-subtitle{
+  margin:7px 0 22px!important;
+  color:#888!important;
+  text-align:left!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+  font-weight:500!important;
+}
+
+#vyaparOtpGate .auth-section{display:block!important}
+#vyaparOtpGate .auth-section.hidden,
+#vyaparOtpGate .auth-form.hidden,
+#vyaparOtpGate #signup-password-otp-wrap.hidden{display:none!important}
+#vyaparOtpGate .auth-space-5>*+*{margin-top:20px!important}
+#vyaparOtpGate .auth-space-4>*+*{margin-top:16px!important}
+#vyaparOtpGate .auth-space-3>*+*{margin-top:14px!important}
+
+html.native-android #vyaparOtpGate .auth-method-tabs,
+html.vy861-flat-black #vyaparOtpGate .auth-method-tabs,
+#vyaparOtpGate .auth-method-tabs{
+  position:relative!important;
+  isolation:auto!important;
+  width:100%!important;
+  min-height:53px!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:0!important;
+  margin:0!important;
+  padding:4px!important;
+  overflow:visible!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#151515!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.native-android #vyaparOtpGate .auth-method-tabs::before,
+#vyaparOtpGate .auth-method-tabs::before{display:none!important;content:none!important}
+html.native-android #vyaparOtpGate .auth-method-tab,
+html.native-android #vyaparOtpGate .auth-method-tab.active,
+html.vy861-flat-black #vyaparOtpGate .auth-method-tab,
+html.vy861-flat-black #vyaparOtpGate .auth-method-tab.active,
+#vyaparOtpGate .auth-method-tab,
+#vyaparOtpGate .auth-method-tab.active{
+  position:relative!important;
+  z-index:auto!important;
+  width:100%!important;
+  min-height:45px!important;
+  margin:0!important;
+  padding:8px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:#747474!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  font-size:13px!important;
+  line-height:1.2!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  white-space:nowrap!important;
+}
+html.native-android #vyaparOtpGate .auth-method-tab.active,
+html.vy861-flat-black #vyaparOtpGate .auth-method-tab.active,
+#vyaparOtpGate .auth-method-tab.active{
+  background:#343434!important;
+  color:#fff!important;
+}
+
+html.native-android #vyaparOtpGate .auth-label,
+#vyaparOtpGate .auth-label{
+  display:block!important;
+  margin:0 0 8px 2px!important;
+  color:#bdbdbd!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:680!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+}
+#vyaparOtpGate .auth-label-row{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin:0 0 8px 2px!important;
+}
+#vyaparOtpGate .auth-label-row .auth-label{margin:0!important}
+html.native-android #vyaparOtpGate .auth-forgot,
+html.native-android #vyaparOtpGate .auth-switch button,
+#vyaparOtpGate .auth-forgot,
+#vyaparOtpGate .auth-switch button{
+  width:auto!important;
+  min-width:0!important;
+  min-height:30px!important;
+  margin:0!important;
+  padding:3px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:#e0e0e0!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  font-size:12px!important;
+  font-weight:750!important;
+}
+
+html.native-android #vyaparOtpGate .auth-input,
+html.vy861-flat-black #vyaparOtpGate .auth-input,
+#vyaparOtpGate .auth-input{
+  width:100%!important;
+  min-width:0!important;
+  min-height:52px!important;
+  height:52px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:15px!important;
+  outline:none!important;
+  background:#151515!important;
+  background-image:none!important;
+  color:#f2f2f2!important;
+  box-shadow:none!important;
+  font-size:16px!important;
+  line-height:1.2!important;
+  caret-color:#f2f2f2!important;
+}
+#vyaparOtpGate .auth-input::placeholder{color:#5f5f5f!important;opacity:1!important}
+#vyaparOtpGate .auth-input:focus{background:#1d1d1d!important;box-shadow:0 0 0 2px #353535!important}
+#vyaparOtpGate .auth-otp-code{
+  text-align:center!important;
+  letter-spacing:4px!important;
+  font-weight:760!important;
+}
+
+html.native-android #vyaparOtpGate .auth-otp-row,
+#vyaparOtpGate .auth-otp-row{
+  width:100%!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:stretch!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:4px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#151515!important;
+}
+html.native-android #vyaparOtpGate .auth-otp-row .auth-input,
+#vyaparOtpGate .auth-otp-row .auth-input{
+  width:100%!important;
+  min-width:0!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0 10px!important;
+  border-radius:11px!important;
+  background:transparent!important;
+}
+html.native-android #vyaparOtpGate .auth-small-btn,
+html.vy861-flat-black #vyaparOtpGate .auth-small-btn,
+#vyaparOtpGate .auth-small-btn{
+  width:auto!important;
+  min-width:91px!important;
+  max-width:none!important;
+  min-height:48px!important;
+  height:48px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  align-self:stretch!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:#373737!important;
+  background-image:none!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  font-size:13px!important;
+  line-height:1!important;
+  font-weight:780!important;
+  white-space:nowrap!important;
+}
+#vyaparOtpGate .auth-small-btn:hover{background:#404040!important}
+
+html.native-android #vyaparOtpGate .auth-primary,
+html.vy861-flat-black #vyaparOtpGate .auth-primary,
+#vyaparOtpGate .auth-primary{
+  width:100%!important;
+  min-height:52px!important;
+  height:52px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#ececec!important;
+  background-image:none!important;
+  color:#101010!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  font-size:15px!important;
+  line-height:1.2!important;
+  font-weight:830!important;
+}
+#vyaparOtpGate .auth-primary:hover{background:#dedede!important}
+html.native-android #vyaparOtpGate .auth-primary:active,
+#vyaparOtpGate .auth-primary:active,
+#vyaparOtpGate .auth-google:active,
+#vyaparOtpGate .auth-small-btn:active,
+#vyaparOtpGate .auth-back:active{transform:scale(.985)!important}
+
+html.native-android #vyaparOtpGate .auth-divider,
+#vyaparOtpGate .auth-divider{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:12px!important;
+  margin:21px 0 15px!important;
+  color:#666!important;
+  font-size:12px!important;
+}
+#vyaparOtpGate .auth-divider::before,
+#vyaparOtpGate .auth-divider::after{
+  content:""!important;
+  display:block!important;
+  height:1px!important;
+  flex:1!important;
+  border:0!important;
+  background:#242424!important;
+}
+html.vy861-flat-black #vyaparOtpGate .auth-divider span,
+#vyaparOtpGate .auth-divider span{
+  position:static!important;
+  padding:0!important;
+  background:transparent!important;
+  color:#666!important;
+  font-size:12px!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+}
+
+html.native-android #vyaparOtpGate .auth-google,
+html.vy861-flat-black #vyaparOtpGate .auth-google,
+#vyaparOtpGate .auth-google{
+  width:100%!important;
+  min-height:51px!important;
+  height:51px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:11px!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#171717!important;
+  background-image:none!important;
+  color:#ededed!important;
+  box-shadow:none!important;
+  font-size:14px!important;
+  line-height:1.2!important;
+  font-weight:720!important;
+}
+#vyaparOtpGate .auth-google svg{
+  width:22px!important;
+  height:22px!important;
+  padding:3px!important;
+  border-radius:50%!important;
+  background:#efefef!important;
+  flex:none!important;
+}
+
+html.native-android #vyaparOtpGate .auth-switch,
+#vyaparOtpGate .auth-switch{
+  margin:18px 0 0!important;
+  color:#777!important;
+  text-align:center!important;
+  font-size:13px!important;
+  line-height:1.5!important;
+}
+#vyaparOtpGate .auth-switch button{font-size:13px!important;font-weight:820!important}
+#vyaparOtpGate .auth-terms-copy{
+  margin:15px 8px 0!important;
+  color:#626262!important;
+  text-align:center!important;
+  font-size:11px!important;
+  line-height:1.5!important;
+}
+#vyaparOtpGate .auth-terms-copy a{color:#aaa!important;text-decoration:none!important}
+
+#vyaparOtpGate .auth-message{
+  display:none!important;
+  min-height:0!important;
+  margin:12px 0 0!important;
+  padding:10px 12px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:#151515!important;
+  color:#c7c7c7!important;
+  text-align:center!important;
+  font-size:12px!important;
+  line-height:1.4!important;
+}
+#vyaparOtpGate .auth-message.error,
+#vyaparOtpGate .auth-message.success{display:block!important;border:0!important;background:#151515!important;color:#c7c7c7!important}
+
+#vyaparOtpGate .password-setup-copy{
+  margin:0 0 18px!important;
+  color:#8a8a8a!important;
+  text-align:left!important;
+  font-size:13px!important;
+  line-height:1.5!important;
+}
+
+html.vy861-flat-black #vyaparOtpGate .auth-loading-overlay,
+#vyaparOtpGate .auth-loading-overlay{
+  background:#090909!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black #vyaparOtpGate .auth-loading-card,
+#vyaparOtpGate .auth-loading-card{
+  width:min(300px,88vw)!important;
+  padding:22px 20px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:#151515!important;
+  color:#ededed!important;
+  box-shadow:none!important;
+}
+#vyaparOtpGate .auth-loading-spinner{border-color:#333!important;border-top-color:#ececec!important}
+
+#vyaparOtpGate button:disabled{opacity:.55!important;cursor:wait!important}
+
+html.native-android #vyaparOtpGate.auth-keyboard-open .auth-page,
+#vyaparOtpGate.auth-keyboard-open .auth-page{align-items:flex-start!important}
+html.native-android #vyaparOtpGate.auth-keyboard-open .auth-card,
+#vyaparOtpGate.auth-keyboard-open .auth-card{margin-top:0!important;margin-bottom:12px!important}
+
+@media(max-width:520px){
+  html.native-android #vyaparOtpGate .auth-page,
+  #vyaparOtpGate .auth-page{
+    align-items:flex-start!important;
+    padding:calc(24px + env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))!important;
+  }
+  #vyaparOtpGate .auth-card{max-width:100%!important}
+}
+@media(max-width:350px){
+  html.native-android #vyaparOtpGate .auth-page,
+  #vyaparOtpGate .auth-page{padding-left:16px!important;padding-right:16px!important}
+  html.native-android #vyaparOtpGate .auth-title,#vyaparOtpGate .auth-title{font-size:25px!important}
+  html.native-android #vyaparOtpGate .auth-small-btn,#vyaparOtpGate .auth-small-btn{min-width:82px!important;font-size:12px!important}
+}
+@media(max-height:680px){
+  html.native-android #vyaparOtpGate .auth-page,#vyaparOtpGate .auth-page{padding-top:16px!important;padding-bottom:18px!important}
+  #vyaparOtpGate .auth-subtitle{margin-bottom:17px!important}
+  #vyaparOtpGate .auth-space-5>*+*{margin-top:15px!important}
+  #vyaparOtpGate .auth-space-4>*+*{margin-top:13px!important}
+  #vyaparOtpGate .auth-space-3>*+*{margin-top:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #vyaparOtpGate *{transition:none!important;scroll-behavior:auto!important}
+}
+#vyaparOtpGate .auth-google-mark{
+  width:26px!important;height:26px!important;display:grid!important;place-items:center!important;flex:none!important;
+  border-radius:50%!important;background:#efefef!important;color:#111!important;font-size:14px!important;font-weight:900!important;line-height:1!important;
+}
+
+/* ===== STYLE SOURCE: auth-layout-fix-867.css ===== */
+
+/* Vyapar AI 8.6.7 same-version auth hard layout reset.
+   Final override for Android/WebView: prevents legacy auth CSS from collapsing
+   the login form into a narrow column. Version intentionally unchanged. */
+
+html.native-android #vyaparOtpGate,
+html.vy861-flat-black #vyaparOtpGate,
+#vyaparOtpGate{
+  position:fixed!important;
+  inset:0!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
+  z-index:2147483647!important;
+  display:block!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  min-height:100vh!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  box-sizing:border-box!important;
+  isolation:isolate!important;
+  background:#090909!important;
+  background-image:none!important;
+  color:#f2f2f2!important;
+  writing-mode:horizontal-tb!important;
+  direction:ltr!important;
+}
+#vyaparOtpGate::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+#vyaparOtpGate *,
+#vyaparOtpGate *::before,
+#vyaparOtpGate *::after{
+  box-sizing:border-box!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+}
+
+/* The screenshot showed the card children being auto-placed into a tiny legacy
+   grid column. Force the auth shell back to one normal block flow. */
+html.native-android #vyaparOtpGate .auth-page,
+html.vy861-flat-black #vyaparOtpGate .auth-page,
+#vyaparOtpGate .auth-page{
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex-flow:column nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  min-height:var(--auth-viewport-height,100vh)!important;
+  height:auto!important;
+  margin:0!important;
+  padding:max(22px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))!important;
+  overflow:visible!important;
+  background:#090909!important;
+  background-image:none!important;
+  grid-template:none!important;
+  grid-template-columns:none!important;
+  grid-template-rows:none!important;
+  grid-template-areas:none!important;
+  columns:auto!important;
+}
+
+html.native-android #vyaparOtpGate .auth-card,
+html.vy861-flat-black #vyaparOtpGate .auth-card,
+#vyaparOtpGate .auth-card{
+  position:relative!important;
+  display:block!important;
+  float:none!important;
+  clear:both!important;
+  flex:none!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:390px!important;
+  inline-size:100%!important;
+  max-inline-size:390px!important;
+  margin:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#090909!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  grid-template:none!important;
+  grid-template-columns:none!important;
+  grid-template-rows:none!important;
+  grid-template-areas:none!important;
+  columns:auto!important;
+}
+
+#vyaparOtpGate .auth-card > *:not(.hidden),
+#vyaparOtpGate .auth-section:not(.hidden),
+#vyaparOtpGate .auth-form:not(.hidden),
+#vyaparOtpGate .auth-form > div,
+#vyaparOtpGate .auth-method-tabs,
+#vyaparOtpGate .auth-otp-row,
+#vyaparOtpGate .auth-divider,
+#vyaparOtpGate .auth-switch,
+#vyaparOtpGate .auth-terms-copy,
+#vyaparOtpGate .password-setup-copy,
+#vyaparOtpGate .auth-message{
+  float:none!important;
+  clear:both!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  inline-size:100%!important;
+  max-inline-size:none!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+
+#vyaparOtpGate .auth-section:not(.hidden),
+#vyaparOtpGate .auth-form:not(.hidden){
+  position:relative!important;
+  display:block!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  transform:none!important;
+  translate:none!important;
+  columns:auto!important;
+}
+#vyaparOtpGate .auth-section.hidden,
+#vyaparOtpGate .auth-form.hidden,
+#vyaparOtpGate #signup-password-otp-wrap.hidden,
+#vyaparOtpGate .hidden{display:none!important}
+
+#vyaparOtpGate .auth-brand-row{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:13px!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+}
+#vyaparOtpGate .auth-logo-box{
+  flex:0 0 46px!important;
+  width:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  height:46px!important;
+  min-height:46px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  background:#e9e9e9!important;
+}
+#vyaparOtpGate .auth-logo{
+  display:block!important;
+  width:40px!important;
+  min-width:40px!important;
+  max-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  margin:0!important;
+  padding:1px!important;
+  object-fit:contain!important;
+  border:0!important;
+  border-radius:10px!important;
+  filter:none!important;
+  opacity:1!important;
+}
+#vyaparOtpGate .auth-title{
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  color:#f2f2f2!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+  hyphens:none!important;
+  font-size:29px!important;
+  line-height:1.08!important;
+  font-weight:780!important;
+  letter-spacing:-.7px!important;
+}
+#vyaparOtpGate .auth-subtitle{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:7px 0 22px!important;
+  padding:0!important;
+  color:#888!important;
+  text-align:left!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+  font-weight:500!important;
+}
+
+#vyaparOtpGate .auth-method-tabs{
+  position:relative!important;
+  isolation:auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-rows:1fr!important;
+  gap:0!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  min-height:53px!important;
+  margin:0 0 20px!important;
+  padding:4px!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#151515!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  transform:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#vyaparOtpGate .auth-method-tabs::before{display:none!important;content:none!important}
+#vyaparOtpGate .auth-method-tab,
+#vyaparOtpGate .auth-method-tab.active{
+  position:relative!important;
+  z-index:1!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:45px!important;
+  min-height:45px!important;
+  margin:0!important;
+  padding:8px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:#747474!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  font-size:13px!important;
+  line-height:1.2!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+#vyaparOtpGate .auth-method-tab.active{background:#343434!important;color:#fff!important}
+
+#vyaparOtpGate .auth-form > div{
+  display:block!important;
+  margin:0 0 16px!important;
+  padding:0!important;
+}
+#vyaparOtpGate .auth-form > div:last-of-type{margin-bottom:16px!important}
+#vyaparOtpGate .auth-label,
+#vyaparOtpGate .auth-label-row{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+#vyaparOtpGate .auth-label{
+  display:block!important;
+  margin:0 0 8px 2px!important;
+  padding:0!important;
+  color:#bdbdbd!important;
+  text-align:left!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:680!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+}
+#vyaparOtpGate .auth-label-row{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin:0 0 8px 2px!important;
+  padding:0!important;
+}
+#vyaparOtpGate .auth-label-row .auth-label{width:auto!important;margin:0!important}
+
+#vyaparOtpGate .auth-input{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  inline-size:100%!important;
+  height:52px!important;
+  min-height:52px!important;
+  max-height:52px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:15px!important;
+  outline:0!important;
+  background:#151515!important;
+  background-image:none!important;
+  color:#f2f2f2!important;
+  box-shadow:none!important;
+  transform:none!important;
+  font-size:16px!important;
+  line-height:52px!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+}
+#vyaparOtpGate .auth-input::placeholder{color:#5f5f5f!important;opacity:1!important}
+#vyaparOtpGate .auth-input:focus{background:#1d1d1d!important;box-shadow:0 0 0 2px #353535!important}
+#vyaparOtpGate .auth-otp-code{text-align:center!important;letter-spacing:4px!important;font-weight:760!important}
+
+#vyaparOtpGate .auth-otp-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 92px!important;
+  grid-template-rows:52px!important;
+  align-items:stretch!important;
+  gap:7px!important;
+  margin:0!important;
+  padding:4px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#151515!important;
+  overflow:hidden!important;
+  transform:none!important;
+}
+#vyaparOtpGate .auth-otp-row .auth-input{
+  width:100%!important;
+  min-width:0!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  padding:0 10px!important;
+  border-radius:11px!important;
+  background:transparent!important;
+  line-height:44px!important;
+}
+#vyaparOtpGate .auth-small-btn{
+  display:block!important;
+  width:92px!important;
+  min-width:92px!important;
+  max-width:92px!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  margin:0!important;
+  padding:0 8px!important;
+  align-self:stretch!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:#373737!important;
+  background-image:none!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  font-size:13px!important;
+  line-height:44px!important;
+  font-weight:780!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
+#vyaparOtpGate .auth-primary,
+#vyaparOtpGate .auth-google{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:0!important;
+  transform:none!important;
+}
+#vyaparOtpGate .auth-primary{
+  height:52px!important;
+  min-height:52px!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#ececec!important;
+  background-image:none!important;
+  color:#101010!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  font-size:15px!important;
+  line-height:1.2!important;
+  font-weight:830!important;
+}
+#vyaparOtpGate .auth-divider{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:12px!important;
+  margin:21px 0 15px!important;
+  padding:0!important;
+  color:#666!important;
+  font-size:12px!important;
+}
+#vyaparOtpGate .auth-divider::before,
+#vyaparOtpGate .auth-divider::after{
+  content:""!important;
+  display:block!important;
+  flex:1 1 auto!important;
+  width:auto!important;
+  height:1px!important;
+  border:0!important;
+  background:#242424!important;
+}
+#vyaparOtpGate .auth-divider span{
+  flex:0 0 auto!important;
+  position:static!important;
+  width:auto!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  color:#666!important;
+  white-space:nowrap!important;
+}
+#vyaparOtpGate .auth-google{
+  height:51px!important;
+  min-height:51px!important;
+  gap:11px!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#171717!important;
+  background-image:none!important;
+  color:#ededed!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  font-size:14px!important;
+  line-height:1.2!important;
+  font-weight:720!important;
+}
+#vyaparOtpGate .auth-switch{
+  display:block!important;
+  margin:18px 0 0!important;
+  padding:0!important;
+  color:#777!important;
+  text-align:center!important;
+  white-space:normal!important;
+  font-size:13px!important;
+  line-height:1.5!important;
+}
+#vyaparOtpGate .auth-forgot,
+#vyaparOtpGate .auth-switch button{
+  display:inline-block!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:3px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#e0e0e0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  font-size:12px!important;
+  line-height:1.4!important;
+  font-weight:750!important;
+  white-space:nowrap!important;
+}
+
+/* Success handoff must never sit across the title as a horizontal toast. */
+#vyaparOtpGate .auth-loading-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483647!important;
+  display:none!important;
+  place-items:center!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:24px!important;
+  background:rgba(9,9,9,.92)!important;
+}
+#vyaparOtpGate.auth-loading .auth-loading-overlay{display:grid!important}
+#vyaparOtpGate .auth-loading-card{
+  position:static!important;
+  display:flex!important;
+  flex-flow:column nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:300px!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:22px 20px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:#171717!important;
+  box-shadow:none!important;
+  transform:none!important;
+  text-align:center!important;
+  white-space:normal!important;
+}
+#vyaparOtpGate .auth-loading-card strong,
+#vyaparOtpGate .auth-loading-card span{display:block!important;width:100%!important;text-align:center!important;white-space:normal!important}
+
+/* Keep the app/dashboard out of sight while authentication is active. */
+body > #vyaparOtpGate ~ .app,
+body > #vyaparOtpGate ~ #tabLoader{visibility:hidden!important}
+
+@media(max-width:370px){
+  #vyaparOtpGate .auth-page{
+    padding-left:16px!important;
+    padding-right:16px!important;
+  }
+  #vyaparOtpGate .auth-title{font-size:26px!important}
+  #vyaparOtpGate .auth-otp-row{grid-template-columns:minmax(0,1fr) 84px!important;gap:6px!important}
+  #vyaparOtpGate .auth-small-btn{width:84px!important;min-width:84px!important;max-width:84px!important;font-size:12px!important}
+}
+@media(max-width:330px){
+  #vyaparOtpGate .auth-page{padding-left:13px!important;padding-right:13px!important}
+  #vyaparOtpGate .auth-title{font-size:24px!important;letter-spacing:-.4px!important}
+  #vyaparOtpGate .auth-logo-box{flex-basis:42px!important;width:42px!important;min-width:42px!important;max-width:42px!important;height:42px!important;min-height:42px!important}
+  #vyaparOtpGate .auth-logo{width:36px!important;min-width:36px!important;max-width:36px!important;height:36px!important;min-height:36px!important;max-height:36px!important}
+}
+html.native-android #vyaparOtpGate.auth-keyboard-open .auth-page,
+#vyaparOtpGate.auth-keyboard-open .auth-page{justify-content:flex-start!important;align-items:center!important;padding-top:12px!important}
+
+/* ===== STYLE SOURCE: surface-cleanup-867.css ===== */
+
+/* Vyapar AI 8.6.7 — same-version surface hierarchy cleanup.
+   Screenshot-driven final override: removes accidental background slabs and
+   nested wrapper cards introduced by broad legacy *-metric/*-workspace rules.
+   Real cards, controls, forms, records and feature tiles stay intact. */
+
+/* Layout-only grids must never paint a surface behind their child cards. */
+html.vy861-flat-black :is(
+  #screen-home .home-metrics,
+  #screen-home .android-quick-actions,
+  #screen-business .vx621-kpis,
+  #screen-business .stats,
+  #screen-sales .stats,
+  #screen-stock .stats,
+  .p611-grid,
+  .production-account-grid,
+  .vx621-feature-grid,
+  .adv-module-grid,
+  .business-calc-grid,
+  .shop-milestone-list
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+html.vy861-flat-black :is(
+  #screen-home .home-metrics,
+  #screen-business .vx621-kpis,
+  #screen-business .stats,
+  #screen-sales .stats,
+  #screen-stock .stats,
+  .p611-grid,
+  .production-account-grid
+){
+  padding:0!important;
+}
+
+/* A class such as home-metric-head was being caught by [class*="-metric"]
+   and rendered as a dark rectangle inside every KPI card. */
+html.vy861-flat-black :is(
+  #screen-home .home-metric-head,
+  #screen-home .home-section-heading,
+  .p2-preview-title,
+  .shop-sheet-title,
+  .vx621-section-head,
+  .vx621-group-head,
+  .business-section-head
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black #screen-home .home-metric-head{
+  padding:0!important;
+  border-radius:0!important;
+}
+
+/* Keep the four Home snapshot cells as the actual cards, with clean black
+   space between them instead of one rectangular parent slab. */
+html.vy861-flat-black #screen-home .home-metrics{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin:0!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black #screen-home .home-metrics>.stat{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+
+/* Business/Sales/Stock tool pages already contain real feature cards. Their
+   outer mode wrapper should be layout only, otherwise the UI becomes box-inside-box. */
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="daily"],
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="accounts"],
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="documents"],
+html.vy861-flat-black #screen-sales .p1-mode-section[data-p1-mode="billing"],
+html.vy861-flat-black #screen-stock .p1-mode-section[data-p1-mode="tools"]{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  padding:0!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="daily"]::before,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="daily"]::after,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="accounts"]::before,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="accounts"]::after,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="documents"]::before,
+html.vy861-flat-black #screen-business .p1-mode-section[data-p1-mode="documents"]::after,
+html.vy861-flat-black #screen-sales .p1-mode-section[data-p1-mode="billing"]::before,
+html.vy861-flat-black #screen-sales .p1-mode-section[data-p1-mode="billing"]::after,
+html.vy861-flat-black #screen-stock .p1-mode-section[data-p1-mode="tools"]::before,
+html.vy861-flat-black #screen-stock .p1-mode-section[data-p1-mode="tools"]::after{
+  display:none!important;
+  content:none!important;
+}
+
+/* Auth: keep the black/grey approved controls, but make every layout/form
+   wrapper transparent so legacy generic card styling cannot create extra boxes. */
+#vyaparOtpGate .auth-card,
+#vyaparOtpGate .auth-section,
+#vyaparOtpGate .auth-form,
+#vyaparOtpGate .auth-form>div,
+#vyaparOtpGate .auth-label-row,
+#vyaparOtpGate .password-setup-copy{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#vyaparOtpGate .auth-card{background:#090909!important}
+#vyaparOtpGate .auth-form>div,
+#vyaparOtpGate .auth-label-row{border-radius:0!important}
+
+/* Do not let generic late-theme rules repaint the intended auth controls. */
+#vyaparOtpGate :is(.auth-method-tabs,.auth-otp-row,.auth-input,.auth-primary,.auth-google,.auth-small-btn){
+  position:relative!important;
+  isolation:isolate!important;
+}
+
+/* Small phones: preserve useful spacing without reintroducing parent slabs. */
+@media(max-width:370px){
+  html.vy861-flat-black #screen-home .home-metrics{gap:8px!important}
+  html.vy861-flat-black #screen-home .home-metrics>.stat{border-radius:16px!important}
+}
+
+/* ===== STYLE SOURCE: popup-nav-clearance-867.css ===== */
+
+/* Vyapar AI 8.6.7 — same-version popup/nav interaction repair.
+   Popups own the whole viewport, including the floating nav area, so taps cannot
+   leak through to Home/Business/Sales/Stock/More while a sheet/dialog is open.
+   Bottom sheets still finish above the nav with a clear visual gap. */
+
+html.vy861-flat-black{
+  --vy867-popup-nav-clearance:calc(86px + env(safe-area-inset-bottom,0px));
+  --vy867-popup-layer:2147483200;
+  --vy867-nav-layer:2147481200;
+}
+
+/* Full-screen modal ownership. The overlay covers the nav too, which blocks
+   accidental tab changes while a popup is visible. Padding keeps sheet content
+   physically above the floating nav instead of underneath it. */
+html.native-android :is(
+  .glass-dialog-overlay,
+  .subscription-overlay,
+  .subscription-dialog-backdrop,
+  .shop-progress-overlay,
+  .vx643-modal-overlay,
+  .production-overlay,
+  .android-permission-overlay,
+  .android-sheet-overlay,
+  .account-delete-overlay,
+  .vy6601-select-overlay,
+  #vyaparDeleteConfirm,
+  #vyaparAccountDeleteConfirm,
+  .upgrade-plan-popup,
+  .upgrade-plan-reference-popup
+),
+html.android-ui :is(
+  .glass-dialog-overlay,
+  .subscription-overlay,
+  .subscription-dialog-backdrop,
+  .shop-progress-overlay,
+  .vx643-modal-overlay,
+  .production-overlay,
+  .android-permission-overlay,
+  .android-sheet-overlay,
+  .account-delete-overlay,
+  .vy6601-select-overlay,
+  #vyaparDeleteConfirm,
+  #vyaparAccountDeleteConfirm,
+  .upgrade-plan-popup,
+  .upgrade-plan-reference-popup
+){
+  position:fixed!important;
+  inset:0!important;
+  z-index:var(--vy867-popup-layer)!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  padding-bottom:var(--vy867-popup-nav-clearance)!important;
+  overflow:hidden!important;
+  overscroll-behavior:contain!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+}
+
+/* Bottom sheets sit in the usable area above the nav. */
+html.native-android :is(.android-sheet-overlay,.shop-progress-overlay,.vy6601-select-overlay),
+html.android-ui :is(.android-sheet-overlay,.shop-progress-overlay,.vy6601-select-overlay){
+  align-items:flex-end!important;
+  justify-content:center!important;
+}
+
+html.native-android :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet),
+html.android-ui :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
+  position:relative!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  translate:none!important;
+  margin:0!important;
+  max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 14px)!important;
+  max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 14px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* Confirmation/account/subscription cards never lose their buttons under nav. */
+html.native-android :is(
+  .glass-dialog-card,
+  .subscription-dialog,
+  .production-modal,
+  .vx643-modal,
+  .android-permission-card,
+  .account-delete-dialog
+),
+html.android-ui :is(
+  .glass-dialog-card,
+  .subscription-dialog,
+  .production-modal,
+  .vx643-modal,
+  .android-permission-card,
+  .account-delete-dialog
+){
+  max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 24px)!important;
+  max-height:calc(100dvh - var(--vy867-popup-nav-clearance) - 24px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* Keep nav visually behind the active popup. It stays visible through the dim
+   backdrop, but it is no longer clickable or able to cover popup content. */
+html.vy861-flat-black #nav.nav,
+html.vy861-flat-black .nav{
+  z-index:var(--vy867-nav-layer)!important;
+}
+
+/* Specific open-state guards for older Android WebViews/classes. */
+html.android-ui body.shop-progress-open .nav,
+html.native-android body.shop-progress-open .nav,
+html.android-ui body.glass-dialog-open .nav,
+html.native-android body.glass-dialog-open .nav{
+  pointer-events:none!important;
+}
+
+/* ===== 8.6.7 video QA repair =====
+   Final screenshot/video-driven override. Keeps the requested black + grey
+   visual system and removes the remaining blue/navy surfaces without changing
+   business logic, data, navigation or subscription semantics. */
+html.vy861-flat-black{
+  --vy867-qa-surface:#0f1012;
+  --vy867-qa-surface-2:#161719;
+  --vy867-qa-surface-3:#202226;
+  --vy867-qa-line:#34383e;
+  --vy867-qa-line-soft:rgba(255,255,255,.10);
+  --vy867-qa-text:#f5f5f6;
+  --vy867-qa-muted:#9a9ea4;
+  --vy867-qa-icon:#c7cbd0;
+}
+
+/* Home: remove the accidental parent slabs/centre seams seen around Quick
+   Access and At a glance. Only the real child cards paint a surface. */
+html.vy861-flat-black #screen-home :is(.android-quick-actions,.home-metrics){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  gap:10px!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black #screen-home :is(.android-quick-action,.home-metrics>.stat){
+  background:var(--vy867-qa-surface)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-qa-line-soft)!important;
+  box-shadow:none!important;
+  border-radius:18px!important;
+}
+html.vy861-flat-black #screen-home .home-metric-head{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Business / Sales / Stock: the blue icon tiles marked in the recording become
+   neutral graphite; the icon itself stays readable silver/grey. */
+html.vy861-flat-black :is(
+  .vx621-feature-icon,
+  .android-sheet-item-icon,
+  .android-sheet-row .icon,
+  .more-item .icon,
+  .android-more-item .icon,
+  .vy675-row-icon,
+  .vx622-settings-icon,
+  .android-quick-action-icon,
+  .home-metric-icon
+){
+  background:var(--vy867-qa-surface-3)!important;
+  background-image:none!important;
+  border:1px solid #3a3e44!important;
+  color:var(--vy867-qa-icon)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black :is(
+  #screen-business .vx621-feature-grid,
+  #screen-sales .vx621-feature-grid,
+  #screen-stock .vx621-feature-grid
+){
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  gap:12px!important;
+}
+html.vy861-flat-black :is(
+  #screen-business .vx621-feature-card,
+  #screen-sales .vx621-feature-card,
+  #screen-stock .vx621-feature-card
+){
+  background:var(--vy867-qa-surface)!important;
+  background-image:none!important;
+  border-color:var(--vy867-qa-line-soft)!important;
+  box-shadow:none!important;
+}
+
+/* Daily Quick Entry: remove the last blue information strip. */
+html.vy861-flat-black #screen-sales .vy660-daily-note{
+  background:var(--vy867-qa-surface-2)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-qa-line)!important;
+  color:var(--vy867-qa-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-sales .vy660-daily-note span{
+  color:var(--vy867-qa-muted)!important;
+}
+
+/* More bottom sheet: neutral surface + predictable spacing. The sheet remains
+   entirely above the persistent nav because the overlay reserves nav clearance. */
+html.vy861-flat-black :is(.android-sheet,.more-sheet){
+  background:#111214!important;
+  background-image:none!important;
+  border-color:#363a40!important;
+  box-shadow:0 -16px 42px rgba(0,0,0,.48)!important;
+}
+html.vy861-flat-black :is(.android-sheet-grid,.more-sheet-grid){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  gap:8px!important;
+}
+html.vy861-flat-black :is(.android-sheet-item,.android-sheet-row,.more-item,.android-more-item){
+  background:var(--vy867-qa-surface-2)!important;
+  background-image:none!important;
+  border:1px solid #30343a!important;
+  border-radius:16px!important;
+  box-shadow:none!important;
+}
+
+/* Insights: remove the remaining coloured/navy card surfaces and make the goal
+   ring neutral grey. Data charts may keep their data colours for readability. */
+html.vy861-flat-black #screen-analytics :is(
+  .insight-hero-card,
+  .pnl-legend-item,
+  .month-compare-card,
+  .p620-report-card,
+  .notice,
+  [class*="summary-card"]
+){
+  background:var(--vy867-qa-surface)!important;
+  background-image:none!important;
+  border-color:var(--vy867-qa-line-soft)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-analytics .insight-goal-ring{
+  background:conic-gradient(#b8bcc1 var(--p),#24262a 0)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-analytics .insight-goal-ring::after{
+  background:var(--vy867-qa-surface)!important;
+}
+
+/* Account & plan: the large blue card shown in the recording is now graphite;
+   Business may keep only its gold badge/avatar accent. */
+html.vy861-flat-black #screen-settings[data-vy675-page="account"] :is(
+  #productionAccountCard,
+  .production-account-card,
+  .settings-account-section .production-account-card
+){
+  background:linear-gradient(155deg,#171819 0%,#0f1012 58%,#090a0b 100%)!important;
+  background-image:linear-gradient(155deg,#171819 0%,#0f1012 58%,#090a0b 100%)!important;
+  border-color:var(--vy864-tier-line,var(--vy867-qa-line))!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.32)!important;
+}
+html.vy861-flat-black #screen-settings[data-vy675-page="account"] .production-account-grid>div{
+  background:var(--vy867-qa-surface-2)!important;
+  background-image:none!important;
+  border-color:var(--vy867-qa-line)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings[data-vy675-page="account"] .production-actions button:not(.danger):not([data-danger="true"]){
+  background:var(--vy867-qa-surface-3)!important;
+  background-image:none!important;
+  border-color:#3b3f45!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+
+/* Business profile: force every field/select and its containing card away from
+   the navy/blue palette called out at the end of the recording. */
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] .vy675-page-body>.settings-section,
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] .settings-card{
+  background:var(--vy867-qa-surface)!important;
+  background-image:none!important;
+  border-color:var(--vy867-qa-line-soft)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] :is(input,select,textarea){
+  background:var(--vy867-qa-surface-2)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-qa-line)!important;
+  color:var(--vy867-qa-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings[data-vy675-page="profile"] :is(input,select,textarea):focus{
+  border-color:#686d73!important;
+  box-shadow:0 0 0 3px rgba(255,255,255,.06)!important;
+}
+
+/* Old Android WebView safety: no generic blue focus/tap flash survives in the
+   marked screens. */
+html.vy861-flat-black :is(
+  #screen-business,
+  #screen-sales,
+  #screen-stock,
+  #screen-analytics,
+  #screen-settings
+) *{
+  -webkit-tap-highlight-color:transparent!important;
+}
+
+@media(max-width:390px){
+  html.vy861-flat-black #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
+  html.vy861-flat-black :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
+    width:calc(100% - 12px)!important;
+    border-radius:22px 22px 0 0!important;
+  }
+}
+
+@media(max-height:620px){
+  html.vy861-flat-black{
+    --vy867-popup-nav-clearance:calc(82px + env(safe-area-inset-bottom,0px));
+  }
+}
+
+/* ===== STYLE SOURCE: video-final-867.css ===== */
+
+/* Vyapar AI 8.6.7 — final video-driven Android UI repair.
+   Exact selectors + no version change. This file must load LAST. */
+
+html.vy861-flat-black{
+  --vy867-final-bg:#000000;
+  --vy867-final-surface:#0f1012;
+  --vy867-final-surface-2:#17181a;
+  --vy867-final-control:#222428;
+  --vy867-final-line:rgba(255,255,255,.12);
+  --vy867-final-line-strong:#3a3e44;
+  --vy867-final-text:#f6f6f7;
+  --vy867-final-muted:#a3a7ad;
+}
+
+/* HOME — the two grid wrappers are layout only. Never paint the spaces between cards. */
+html.vy861-flat-black #screen-home :is(
+  .home-section,
+  #homeQuickActionsMount,
+  .android-quick-actions,
+  .home-metrics
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black #screen-home :is(
+  .home-section,
+  #homeQuickActionsMount,
+  .android-quick-actions,
+  .home-metrics
+)::before,
+html.vy861-flat-black #screen-home :is(
+  .home-section,
+  #homeQuickActionsMount,
+  .android-quick-actions,
+  .home-metrics
+)::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-home #homeQuickActionsMount,
+html.vy861-flat-black #screen-home .android-quick-actions,
+html.vy861-flat-black #screen-home .home-metrics{
+  padding:0!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black #screen-home .android-quick-actions,
+html.vy861-flat-black #screen-home .home-metrics{
+  gap:10px!important;
+}
+html.vy861-flat-black #screen-home :is(.android-quick-action,.home-metrics>.stat){
+  position:relative!important;
+  z-index:1!important;
+  margin:0!important;
+  background:var(--vy867-final-surface)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-final-line)!important;
+  box-shadow:none!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+html.vy861-flat-black #screen-home .home-metric-head{
+  padding:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* BUSINESS — replace every residual colored feature tile with graphite. */
+html.vy861-flat-black #screen-business .vx621-feature-icon,
+html.vy861-flat-black #screen-business .vy867-mono-customers{
+  background:var(--vy867-final-control)!important;
+  background-image:none!important;
+  border:1px solid var(--vy867-final-line-strong)!important;
+  color:#d0d3d7!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+html.vy861-flat-black #screen-business .vy867-mono-customers svg{
+  width:23px!important;
+  height:23px!important;
+  display:block!important;
+  color:inherit!important;
+  stroke:currentColor!important;
+  fill:none!important;
+}
+
+/* BOTTOM NAV — neutral grey only; no blue tint in icons or labels. */
+html.vy861-flat-black #nav.nav{
+  background:rgba(12,13,15,.98)!important;
+  background-image:none!important;
+  border-color:#34373c!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.48)!important;
+}
+html.vy861-flat-black #nav.nav button{
+  background:transparent!important;
+  background-image:none!important;
+  color:#a7abb0!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+html.vy861-flat-black #nav.nav button :is(.android-nav-icon,.android-nav-label,svg,svg *){
+  color:inherit!important;
+  filter:grayscale(1) saturate(0)!important;
+}
+html.vy861-flat-black #nav.nav button svg *{
+  stroke:currentColor!important;
+}
+html.vy861-flat-black #nav.nav button.active{
+  background:#26282c!important;
+  background-image:none!important;
+  color:#ffffff!important;
+  border-color:#3c4046!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+
+/* MORE — exact geometry: float just above the five-tab dock, not a large empty gap. */
+html.vy861-flat-black #androidMoreSheet.android-sheet-overlay{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  padding:0!important;
+  margin:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  z-index:2147483200!important;
+}
+html.vy861-flat-black #androidMoreSheet.android-sheet-overlay>.android-sheet{
+  position:absolute!important;
+  left:8px!important;
+  right:8px!important;
+  top:auto!important;
+  bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+  width:auto!important;
+  max-width:620px!important;
+  margin:0 auto!important;
+  transform:none!important;
+  translate:none!important;
+  max-height:calc(100vh - 96px - env(safe-area-inset-bottom,0px))!important;
+  max-height:calc(100dvh - 96px - env(safe-area-inset-bottom,0px))!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  border:1px solid #373b40!important;
+  border-radius:24px!important;
+  background:#111214!important;
+  background-image:none!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.52)!important;
+}
+html.vy861-flat-black #androidMoreSheet .android-sheet-grid{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #androidMoreSheet .android-sheet-item{
+  background:var(--vy867-final-surface-2)!important;
+  background-image:none!important;
+  border:1px solid #30343a!important;
+  box-shadow:none!important;
+}
+
+/* APP UPDATES — Check for Update must match the black/grey system, never blue. */
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn,.btn.primary,button.primary),
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] :is(.btn.primary,button.primary){
+  background:var(--vy867-final-control)!important;
+  background-image:none!important;
+  border:1px solid #3b3f45!important;
+  color:#ffffff!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn):active{
+  background:#2c2f34!important;
+  border-color:#50545a!important;
+}
+
+/* Re-assert neutral icon tiles in screens explicitly called out in the video. */
+html.vy861-flat-black :is(#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+  .vx621-feature-icon,
+  .vy675-row-icon,
+  .vx622-settings-icon,
+  .android-sheet-item-icon
+){
+  background:var(--vy867-final-control)!important;
+  background-image:none!important;
+  border-color:var(--vy867-final-line-strong)!important;
+  color:#c9cdd2!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:390px){
+  html.vy861-flat-black #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
+  html.vy861-flat-black #androidMoreSheet.android-sheet-overlay>.android-sheet{
+    left:6px!important;
+    right:6px!important;
+    bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;
+    border-radius:22px!important;
+  }
 }

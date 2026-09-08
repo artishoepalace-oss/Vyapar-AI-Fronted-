@@ -32,7 +32,7 @@
   window.yearlyProfitForYear=(year)=>yearlyBreakdown(year).total;
   window.monthlyStatsForYear=(year)=>{const vals=monthlySeries().filter(([m])=>m.startsWith(String(year)+'-')).map(([,v])=>n(v));const total=vals.reduce((a,b)=>a+b,0);return {count:vals.length,avg:vals.length?total/vals.length:0,high:vals.length?Math.max(...vals):0,low:vals.length?Math.min(...vals):0,total};};
 
-  function footerMarkup(){return '<img class="vy660-footer-logo" src="footer-logo.png" alt="Vyapar AI"><span>© 2026 Vyapar AI. All Rights Reserved.</span><span class="app-legal-links"><a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a><a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a><a href="refund.html" target="_blank" rel="noopener noreferrer">Refund</a><a href="delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a></span><strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';}
+  function footerMarkup(){return '<img class="vy660-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI"><span>© 2026 Vyapar AI. All Rights Reserved.</span><span class="app-legal-links"><a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a><a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a><a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a><a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a></span><strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';}
   function placeFooter(){
     document.querySelectorAll('.android-sheet-legal').forEach(x=>x.remove());
     const settings=document.getElementById('screen-settings');

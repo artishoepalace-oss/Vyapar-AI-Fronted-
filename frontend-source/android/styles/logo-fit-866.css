@@ -18,11 +18,7 @@ html.vy861-flat-black .top .brand .logo{
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;
   transform:none!important;
 }
-html.vy861-flat-black.theme-light .top .brand .logo{
-  background:#fff!important;
-  border-color:rgba(0,0,0,.14)!important;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.025)!important;
-}
+
 @media(max-width:360px){
   html.vy861-flat-black .top .brand .logo{
     width:42px!important;
@@ -49,18 +45,18 @@ html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-st
 }
 html.vy861-flat-black .top .brand .logo{background:#fff!important;border-color:rgba(169,44,78,.36)!important;box-shadow:none!important;filter:none!important;object-fit:contain!important}
 html.vy861-flat-black :is(.android-loader-logo img,#vy855BootGuard img,#vy647StartupSplash img,.vy647-splash-core img,.vy647-lock-card>img,.vy659-footer-logo,.vy6601-footer-logo,.legal-footer-logo,#appLegalFooter img){background:#fff!important;box-shadow:none!important;filter:none!important;object-fit:contain!important}
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.home-section,#homeQuickActionsMount,.android-quick-actions,.home-metrics,.home-section-heading,.home-metric-head){background:#000!important;background-image:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-action,.home-metrics>.stat){background:#0f1012!important;background-image:none!important;border-color:rgba(255,255,255,.13)!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) #vyaparOtpGate,html.vy861-flat-black:not(.theme-light) #vyaparOtpGate .auth-page,html.vy861-flat-black:not(.theme-light) #vyaparOtpGate .auth-card{background:#090909!important;background-image:none!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) #vyaparOtpGate :is(.auth-section,.auth-form,.auth-form>div,.auth-label-row,.auth-brand-row,.password-setup-copy){background:transparent!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black #screen-home :is(.home-section,#homeQuickActionsMount,.android-quick-actions,.home-metrics,.home-section-heading,.home-metric-head){background:#000!important;background-image:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.vy861-flat-black #screen-home :is(.android-quick-action,.home-metrics>.stat){background:#0f1012!important;background-image:none!important;border-color:rgba(255,255,255,.13)!important;box-shadow:none!important}
+html.vy861-flat-black #vyaparOtpGate,html.vy861-flat-black #vyaparOtpGate .auth-page,html.vy861-flat-black #vyaparOtpGate .auth-card{background:#090909!important;background-image:none!important;box-shadow:none!important}
+html.vy861-flat-black #vyaparOtpGate :is(.auth-section,.auth-form,.auth-form>div,.auth-label-row,.auth-brand-row,.password-setup-copy){background:transparent!important;background-image:none!important;box-shadow:none!important}
 html.vy861-flat-black :is(.home-goal-track span,.bar,.shop-mini-track i){background:var(--vy-brand)!important;background-image:none!important;box-shadow:none!important}
 html.vy861-flat-black .shop-score-ring{background:conic-gradient(var(--vy-brand) calc(var(--score)*1%),rgba(255,255,255,.09) 0)!important}
 html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.vx621-action.blue,.glass-dialog-btn:not(.secondary):not(.danger),.shop-progress-btn):not(.danger):not([data-danger="true"]){background:var(--vy-brand)!important;background-image:none!important;border-color:var(--vy-brand-strong)!important;color:#fff!important;box-shadow:none!important}
 html.vy861-flat-black :is(input,select,textarea):focus{border-color:var(--vy-brand)!important;box-shadow:0 0 0 3px rgba(141,23,56,.22)!important}
 html.vy861-flat-black #screen-home :is(.home-text-button,.home-metric-icon,.android-quick-action-icon,.home-next-icon),html.vy861-flat-black #androidMoreSheet :is(.android-sheet-item-arrow,.android-sheet-item-icon),html.vy861-flat-black #screen-settings :is(.vy675-row-chevron,.vy675-row-icon){color:var(--vy-brand-strong)!important}
-html.vy861-flat-black:not(.theme-light) #nav.nav button{color:#a4a8ad!important}
-html.vy861-flat-black:not(.theme-light) #nav.nav button.active{background:#241016!important;color:#fff!important;border-color:#5f1a2b!important;box-shadow:inset 0 0 0 1px rgba(169,44,78,.10)!important}
-html.vy861-flat-black:not(.theme-light) #nav.nav button.active .android-nav-icon{color:var(--vy-brand-strong)!important}
+html.vy861-flat-black #nav.nav button{color:#a4a8ad!important}
+html.vy861-flat-black #nav.nav button.active{background:#241016!important;color:#fff!important;border-color:#5f1a2b!important;box-shadow:inset 0 0 0 1px rgba(169,44,78,.10)!important}
+html.vy861-flat-black #nav.nav button.active .android-nav-icon{color:var(--vy-brand-strong)!important}
 html.vy861-flat-black #screen-settings[data-vy675-page="update"] :is(#fs607Settings button,#fs607Settings .btn,.btn.primary,button.primary){background:var(--vy-brand)!important;background-image:none!important;border:1px solid var(--vy-brand-strong)!important;color:#fff!important;box-shadow:none!important}
-html.vy861-flat-black.theme-light #screen-home :is(.home-section,#homeQuickActionsMount,.android-quick-actions,.home-metrics,.home-section-heading,.home-metric-head){background:transparent!important;background-image:none!important;box-shadow:none!important}
-html.vy861-flat-black.theme-light #vyaparOtpGate,html.vy861-flat-black.theme-light #vyaparOtpGate .auth-page,html.vy861-flat-black.theme-light #vyaparOtpGate .auth-card{box-shadow:none!important}
+
+

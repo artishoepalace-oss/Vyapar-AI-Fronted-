@@ -177,7 +177,7 @@
   function enhanceFooter(root=document){
     root.querySelectorAll('#appLegalFooter,.android-sheet-legal').forEach(footer=>{
       if(!footer.querySelector('.vy658-footer-logo')){
-        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
+        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
       }
       [...footer.querySelectorAll('a')].forEach(a=>{ if(/delete account/i.test(a.textContent||'')) a.remove(); });
     });

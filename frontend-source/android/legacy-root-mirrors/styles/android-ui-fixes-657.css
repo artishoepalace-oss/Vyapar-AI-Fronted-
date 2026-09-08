@@ -1,40 +1,9 @@
-/* Vyapar AI 6.5.7 — Android screenshot fixes only. Web bundle is intentionally untouched. */
 
-/* Aaj ki Jeet / Shop Progress must truly adapt to the light theme. */
-html.android-ui.theme-light #shopGrowthSummary.shop-growth-card,
-html.native-android.theme-light #shopGrowthSummary.shop-growth-card{
-  background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(240,247,253,.94))!important;
-  border-color:rgba(76,111,145,.20)!important;
-  color:#10273b!important;
-  box-shadow:0 18px 46px rgba(52,78,104,.14),inset 0 1px 0 rgba(255,255,255,.92)!important;
-}
-html.android-ui.theme-light #shopGrowthSummary h3,
-html.android-ui.theme-light #shopGrowthSummary b,
-html.native-android.theme-light #shopGrowthSummary h3,
-html.native-android.theme-light #shopGrowthSummary b{color:#10273b!important}
-html.android-ui.theme-light #shopGrowthSummary p,
-html.android-ui.theme-light #shopGrowthSummary small,
-html.android-ui.theme-light #shopGrowthSummary .shop-reward-stat>span,
-html.android-ui.theme-light #shopGrowthSummary .shop-reward-stat>b em,
-html.android-ui.theme-light #shopGrowthSummary .shop-growth-foot small,
-html.native-android.theme-light #shopGrowthSummary p,
-html.native-android.theme-light #shopGrowthSummary small,
-html.native-android.theme-light #shopGrowthSummary .shop-reward-stat>span,
-html.native-android.theme-light #shopGrowthSummary .shop-reward-stat>b em,
-html.native-android.theme-light #shopGrowthSummary .shop-growth-foot small{color:#60758a!important}
-html.android-ui.theme-light #shopGrowthSummary .shop-streak,
-html.native-android.theme-light #shopGrowthSummary .shop-streak{
-  background:linear-gradient(150deg,rgba(221,237,255,.94),rgba(244,249,255,.96))!important;
-  border-color:rgba(55,118,190,.22)!important;
-}
-html.android-ui.theme-light #shopGrowthSummary .shop-reward-stat,
-html.native-android.theme-light #shopGrowthSummary .shop-reward-stat{
-  background:rgba(255,255,255,.82)!important;
-  border-color:rgba(76,111,145,.18)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)!important;
-}
-html.android-ui.theme-light #shopGrowthSummary .shop-mini-track,
-html.native-android.theme-light #shopGrowthSummary .shop-mini-track{background:#e5eef7!important}
+
+
+
+
+
 
 /* More sheet legal block: copyright, links, then centered Gupta Legacy on its own row. */
 html.android-ui .android-sheet-legal,
@@ -80,8 +49,7 @@ html.native-android .vx643-password-help{
   font-size:10.5px!important;
   line-height:1.4!important;
 }
-html.android-ui.theme-light .vx643-password-help,
-html.native-android.theme-light .vx643-password-help{color:#62788c!important}
+
 
 /* Android-only smooth light ↔ dark transition. Modern WebView uses View Transitions. */
 @keyframes vx657ThemeOld{from{opacity:1;filter:brightness(1)}to{opacity:.08;filter:brightness(.96)}}

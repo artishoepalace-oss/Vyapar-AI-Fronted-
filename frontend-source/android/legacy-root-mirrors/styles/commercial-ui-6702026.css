@@ -30,7 +30,7 @@ html.commercial-ui-v1 {
   color-scheme: light;
 }
 
-html.commercial-ui-v1:not(.theme-light) {
+html.commercial-ui-v1 {
   --cu-bg: #0B1220;
   --cu-surface: #121B2A;
   --cu-surface-soft: #182334;

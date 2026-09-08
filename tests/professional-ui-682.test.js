@@ -12,11 +12,10 @@ assert(webIndex.includes('vy-professional-ui'),'professional root class must rem
 assert(androidIndex.includes('vy-professional-ui'),'Android professional root class must remain');
 assert(webIndex.includes('vy861-flat-black'),'web must apply flat black before first paint');
 assert(androidIndex.includes('vy861-flat-black'),'Android must apply flat black before first paint');
-assert(androidIndex.includes('vyapar-ui.css?v=20260906-flatblack861'),'Android UI bundle must be cache-busted');
+assert(androidIndex.includes('vyapar-ui.css?v=20260907-dark869'),'Android UI bundle must be cache-busted');
 assert(bundle.includes('STYLE SOURCE: professional-ui-682.css'),'previous professional layout rules must remain in bundle');
 assert(bundle.includes('STYLE SOURCE: flat-black-ios-861.css'),'final flat presentation must be last authority');
 assert(bundle.indexOf('STYLE SOURCE: professional-ui-682.css') < bundle.indexOf('STYLE SOURCE: flat-black-ios-861.css'));
 assert(finalCss.includes('--vy861-bg:#000000'),'true black design token must exist');
-assert(finalCss.includes('html.vy861-flat-black.theme-light'),'light palette must be explicit');
 assert(finalCss.includes('@media(prefers-reduced-motion:reduce)'),'reduced motion support must remain');
-console.log('✓ Professional layout preserved under 8.6.1 flat-black presentation');
+console.log('✓ Professional layout preserved under 8.6.9 dark-only presentation');

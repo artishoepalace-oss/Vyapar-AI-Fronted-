@@ -482,43 +482,12 @@ html.production-ui-p1 body.vyapar-keyboard-open .nav {
   transform: translate(-50%, 16px) !important;
 }
 
-/* Light mode retains the same hierarchy and contrast. */
-html.production-ui-p1.theme-light {
-  --p1-bg: #edf3f8;
-  --p1-bg-deep: #e5edf5;
-  --p1-surface: rgba(255, 255, 255, .88);
-  --p1-surface-raised: rgba(255, 255, 255, .96);
-  --p1-surface-soft: rgba(21, 54, 87, .045);
-  --p1-border: rgba(52, 83, 112, .15);
-  --p1-border-strong: rgba(45, 103, 163, .26);
-  --p1-text: #102338;
-  --p1-muted: #62758a;
-  color-scheme: light;
-}
-html.production-ui-p1.theme-light body {
-  background: linear-gradient(180deg, #edf4fa, #e4edf5) !important;
-  color: var(--p1-text) !important;
-}
-html.production-ui-p1.theme-light .top,
-html.production-ui-p1.theme-light .card,
-html.production-ui-p1.theme-light .stat,
-html.production-ui-p1.theme-light .settings-section,
-html.production-ui-p1.theme-light .production-account-card,
-html.production-ui-p1.theme-light .vx621-group,
-html.production-ui-p1.theme-light .shop-growth-card {
-  background: rgba(255, 255, 255, .88) !important;
-  color: var(--p1-text) !important;
-}
-html.production-ui-p1.theme-light input,
-html.production-ui-p1.theme-light select,
-html.production-ui-p1.theme-light textarea,
-html.production-ui-p1.theme-light .p1-modebar {
-  background: rgba(245, 249, 253, .94) !important;
-  color: var(--p1-text) !important;
-}
-html.production-ui-p1.theme-light .android-sheet { background: #f4f8fc !important; }
-html.production-ui-p1.theme-light.android-ui .nav,
-html.production-ui-p1.theme-light.native-android .nav { background: rgba(248, 252, 255, .96) !important; }
+
+
+
+
+
+
 
 @media (max-width: 430px) {
   html.production-ui-p1 .app { padding-inline: 9px !important; }

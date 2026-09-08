@@ -1,7 +1,7 @@
 /* Vyapar AI 6.6.0.1.1 — Stage 2 audit UI repairs + OTP hotfix */
 :root{--vy6601-nav-safe:104px}
 html.android-ui{color-scheme:dark}
-html.android-ui.theme-light{color-scheme:light}
+
 html.android-ui .app{padding-bottom:calc(var(--vy6601-nav-safe) + env(safe-area-inset-bottom))!important}
 html.android-ui main,.android-ui .screen{scroll-padding-bottom:calc(var(--vy6601-nav-safe) + env(safe-area-inset-bottom))!important}
 html.android-ui .screen:not(.hide){padding-bottom:calc(26px + env(safe-area-inset-bottom))!important}
@@ -15,10 +15,10 @@ html.native-android #screen-calculator .calc-keypad{grid-template-columns:repeat
 html.native-android #screen-calculator .calc-key{min-height:44px!important;height:44px!important}
 html.native-android #screen-calculator .calc-key.equal{grid-column:auto!important}
 @media(max-height:700px){html.native-android #screen-calculator .calc-key{min-height:39px!important;height:39px!important;font-size:17px!important}html.native-android #screen-calculator .calc-display-wrap{position:relative!important;top:auto!important}html.native-android #screen-calculator .calc-memory-row .btn{min-height:31px!important;padding:5px 6px!important}}
-html.theme-light #screen-calculator .calc-key{color:#16283a!important;background:#f4f8fc!important;border-color:rgba(49,78,108,.22)!important}
-html.theme-light #screen-calculator .calc-key.operator{color:#0a4f9d!important;background:#e4effc!important}
-html.theme-light #screen-calculator .calc-key.equal{color:#fff!important;background:#2169c7!important}
-html.theme-light #screen-calculator .calc-display{color:#0f2235!important}
+
+
+
+
 
 .vy6601-year-filter{display:grid;gap:6px;margin:12px 0 10px;max-width:380px}
 .vy6601-year-filter label{order:0;font-size:12px;font-weight:800;color:var(--android-muted,var(--muted))}
@@ -37,7 +37,7 @@ html.theme-light #screen-calculator .calc-display{color:#0f2235!important}
 .vx621-feature-card .vx621-tier:not(.locked){display:none!important}
 .vx621-feature-card .vx621-tier.locked{font-size:8px!important;padding:2px 5px!important}
 .p620-report-card{background:linear-gradient(180deg,rgba(25,55,82,.92),rgba(15,38,59,.96))!important;border-color:rgba(116,157,191,.23)!important;color:var(--android-text,var(--text))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 24px rgba(0,0,0,.10)!important}
-html.theme-light .p620-report-card{background:rgba(255,255,255,.88)!important;color:#17283a!important;border-color:rgba(49,78,108,.16)!important}
+
 
 html.android-ui .shop-progress-overlay{align-items:flex-end!important;padding-top:18vh!important;background:rgba(1,8,16,.66)!important}
 html.android-ui .shop-progress-sheet{max-height:78dvh!important;border-color:rgba(133,177,213,.32)!important;box-shadow:0 -20px 58px rgba(0,0,0,.38)!important}
@@ -58,8 +58,8 @@ html.android-ui .shop-sheet-score{background:rgba(255,255,255,.045)!important;bo
 .vy6601-select-options::-webkit-scrollbar{display:none}
 .vy6601-select-options button{min-height:48px;padding:10px 12px;border:0;border-bottom:1px solid rgba(133,177,213,.13);background:transparent;color:#eaf2f9;text-align:left;font:inherit}
 .vy6601-select-options button.selected{background:rgba(79,143,255,.15);color:#fff;font-weight:850}.vy6601-select-options button:disabled{opacity:.4}
-html.theme-light .vy6601-select-sheet{background:#eef4fa;color:#17283a}.theme-light .vy6601-select-head button{background:#dce7f2;color:#17283a}.theme-light .vy6601-select-options button{color:#17283a;border-color:rgba(49,78,108,.12)}
+
 body.vy6601-select-open{overflow:hidden!important}
 
-html.android-ui:not(.theme-light) .card .card,html.android-ui:not(.theme-light) .vx621-feature-card{background:rgba(18,43,65,.78)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important}
-html.android-ui:not(.theme-light) .notice{background:rgba(12,31,48,.74)!important}
+html.android-ui .card .card,html.android-ui .vx621-feature-card{background:rgba(18,43,65,.78)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important}
+html.android-ui .notice{background:rgba(12,31,48,.74)!important}

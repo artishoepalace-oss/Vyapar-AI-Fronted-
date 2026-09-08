@@ -61,13 +61,19 @@
 
   /* Do not mutate layout continuously. Toggle one cheap class at gesture start/end. */
   var scrollTimer=0;
+  var scrollFrame=0;
   var scrolling=false;
-  function beginScroll(){
+  function markScrolling(){
+    scrollFrame=0;
     if(!scrolling){ scrolling=true; root.classList.add('perf-scrolling'); }
+  }
+  function beginScroll(){
+    if(!scrolling && !scrollFrame) scrollFrame=requestAnimationFrame(markScrolling);
     if(scrollTimer) clearTimeout(scrollTimer);
     scrollTimer=setTimeout(endScroll,140);
   }
   function endScroll(){
+    if(scrollFrame){ cancelAnimationFrame(scrollFrame); scrollFrame=0; }
     if(scrollTimer){ clearTimeout(scrollTimer); scrollTimer=0; }
     if(scrolling){ scrolling=false; root.classList.remove('perf-scrolling'); }
   }
@@ -79,6 +85,8 @@
     scrollTimer=setTimeout(endScroll,90);
   },{passive:true});
   document.addEventListener('touchcancel',endScroll,{passive:true});
+  document.addEventListener('visibilitychange',function(){ if(document.hidden) endScroll(); },{passive:true});
+  window.addEventListener('pagehide',endScroll,{passive:true});
 
   /* Delay decoding of large, non-critical local artwork. The app logo remains eager. */
   function tuneImages(){
@@ -93,9 +101,38 @@
       }
     }
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tuneImages);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tuneImages,{once:true});
   else tuneImages();
-  window.addEventListener('load',function(){ setTimeout(tuneImages,0); });
+
+  /* Razorpay downloads in parallel so it cannot hold the login/startup path.
+     If a user reaches Plans unusually quickly, wait for that same script rather
+     than showing a false "missing" error while it is still downloading. */
+  window.vyaparWaitForRazorpay=function(timeoutMs){
+    if(typeof window.Razorpay==='function') return Promise.resolve(window.Razorpay);
+    var script=document.querySelector('script[src*="checkout.razorpay.com/v1/checkout.js"]');
+    if(!script) return Promise.reject(new Error('Razorpay checkout script is unavailable'));
+    return new Promise(function(resolve,reject){
+      var settled=false;
+      var timer=setTimeout(function(){ finish(new Error('Razorpay checkout timed out')); },Math.max(1000,n(timeoutMs,12000)));
+      function cleanup(){
+        clearTimeout(timer);
+        script.removeEventListener('load',loaded);
+        script.removeEventListener('error',failed);
+      }
+      function finish(error){
+        if(settled) return;
+        settled=true;
+        cleanup();
+        if(!error && typeof window.Razorpay==='function') resolve(window.Razorpay);
+        else reject(error || new Error('Razorpay checkout did not initialize'));
+      }
+      function loaded(){ finish(null); }
+      function failed(){ finish(new Error('Razorpay checkout could not be loaded')); }
+      script.addEventListener('load',loaded,{once:true});
+      script.addEventListener('error',failed,{once:true});
+      if(typeof window.Razorpay==='function') finish(null);
+    });
+  };
 
   /* Exposed only for diagnostics/settings UI; no polling. */
   window.VyaparPerformanceProfile={api:api,tier:tier,lowRam:lowRam,cores:cores,memoryMb:memoryMb,deviceMemory:deviceMemory};

@@ -666,27 +666,11 @@
   display: none !important;
 }
 
-html.theme-light #screen-settings.vy675-settings-ready {
-  --vy675-bg: var(--cu-bg, #f5f7fa);
-  --vy675-surface: #fff;
-  --vy675-surface-soft: #f1f4f8;
-  --vy675-border: rgba(44, 66, 90, .13);
-  --vy675-text: #172231;
-  --vy675-muted: #68788a;
-  --vy675-blue: #2864dc;
-  --vy675-blue-soft: #edf3ff;
-}
 
-html.theme-light #screen-settings .vy675-settings-list {
-  box-shadow: 0 8px 22px rgba(32, 55, 82, .055);
-}
 
-html.theme-light #screen-settings .vy675-settings-search input,
-html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
-html.theme-light #screen-settings .vy675-page-body select,
-html.theme-light #screen-settings .vy675-page-body textarea {
-  color-scheme: light;
-}
+
+
+
 
 @media (max-width: 520px) {
   #screen-settings .vy675-settings-intro {

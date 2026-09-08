@@ -141,23 +141,16 @@ html.web-ui .android-sheet-legal{
 html.web-ui .android-sheet-legal a{color:#9db0c4!important;text-decoration:none!important;margin:0 5px!important}
 html.web-ui body.android-sheet-open{overflow:hidden!important}
 
-html.web-ui.theme-light .android-sheet-overlay{background:rgba(48,66,85,.30)!important}
-html.web-ui.theme-light .android-sheet{
-  background:linear-gradient(160deg,rgba(255,255,255,.99),rgba(240,247,253,.98))!important;
-  color:#142235!important;
-  border-color:rgba(72,104,139,.18)!important;
-  box-shadow:0 30px 80px rgba(47,67,91,.20),inset 0 1px 0 #fff!important;
-}
-html.web-ui.theme-light .android-sheet-titlebar h3,
-html.web-ui.theme-light .android-sheet-item-copy{color:#142235!important}
-html.web-ui.theme-light .android-sheet-titlebar p,
-html.web-ui.theme-light .android-sheet-item-copy small{color:#647a90!important}
-html.web-ui.theme-light .android-sheet-close{background:#edf4fa!important;color:#27435e!important;border-color:rgba(72,104,139,.15)!important}
-html.web-ui.theme-light .android-sheet-item{background:linear-gradient(160deg,#fff,#f2f7fb)!important;color:#142235!important;border-color:rgba(72,104,139,.15)!important}
-html.web-ui.theme-light .android-sheet-item-icon{background:#e7f2fb!important;color:#158cac!important}
-html.web-ui.theme-light .android-sheet-item-arrow{color:#7890a6!important}
-html.web-ui.theme-light .android-sheet-legal{color:#73889c!important;border-color:rgba(72,104,139,.12)!important}
-html.web-ui.theme-light .android-sheet-legal a{color:#557086!important}
+
+
+
+
+
+
+
+
+
+
 
 @media(max-width:700px){
   html.web-ui .android-sheet-overlay{

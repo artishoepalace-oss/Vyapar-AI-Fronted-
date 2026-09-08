@@ -1,5 +1,5 @@
 /* Vyapar AI 6.6.0 — one consistent dark-blue Liquid Glass palette. */
-html.android-ui:not(.theme-light){
+html.android-ui{
   --android-bg:#071522;
   --android-bg-deep:#06111d;
   --android-surface:rgba(15,38,59,.96);
@@ -14,58 +14,58 @@ html.android-ui:not(.theme-light){
   --android-accent:#4f8fff;
   --android-accent-soft:rgba(79,143,255,.13);
 }
-html.android-ui:not(.theme-light) body{
+html.android-ui body{
   background:linear-gradient(180deg,#061320 0%,#071522 52%,#06111d 100%)!important;
 }
-html.android-ui:not(.theme-light) body::before,
-html.android-ui:not(.theme-light) body::after{opacity:.18!important;}
-html.android-ui:not(.theme-light) .top{
+html.android-ui body::before,
+html.android-ui body::after{opacity:.18!important;}
+html.android-ui .top{
   background:linear-gradient(180deg,rgba(25,61,89,.98),rgba(20,51,77,.98))!important;
   border-bottom:1px solid rgba(116,157,191,.20)!important;
   box-shadow:0 8px 26px rgba(0,0,0,.14)!important;
 }
-html.android-ui:not(.theme-light) .card,
-html.android-ui:not(.theme-light) .stat,
-html.android-ui:not(.theme-light) [class*="home-"][class*="card"],
-html.android-ui:not(.theme-light) [class*="business-"][class*="card"],
-html.android-ui:not(.theme-light) [class*="insight-"][class*="card"],
-html.android-ui:not(.theme-light) .ux608-business-summary,
-html.android-ui:not(.theme-light) .android-quick-action,
-html.android-ui:not(.theme-light) .android-sheet-item{
+html.android-ui .card,
+html.android-ui .stat,
+html.android-ui [class*="home-"][class*="card"],
+html.android-ui [class*="business-"][class*="card"],
+html.android-ui [class*="insight-"][class*="card"],
+html.android-ui .ux608-business-summary,
+html.android-ui .android-quick-action,
+html.android-ui .android-sheet-item{
   background:linear-gradient(180deg,rgba(25,55,82,.94),rgba(15,38,59,.96))!important;
   border-color:rgba(116,157,191,.23)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 12px 30px rgba(0,0,0,.11)!important;
 }
-html.android-ui:not(.theme-light) .nav{
+html.android-ui .nav{
   background:linear-gradient(180deg,rgba(24,58,87,.98),rgba(17,44,68,.99))!important;
   border-color:rgba(125,166,199,.25)!important;
   box-shadow:0 16px 40px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.06)!important;
 }
-html.android-ui:not(.theme-light) .android-sheet{
+html.android-ui .android-sheet{
   background:linear-gradient(180deg,#1a344e 0%,#102a42 100%)!important;
   border-color:rgba(125,166,199,.25)!important;
 }
-html.android-ui:not(.theme-light) input,
-html.android-ui:not(.theme-light) select,
-html.android-ui:not(.theme-light) textarea{
+html.android-ui input,
+html.android-ui select,
+html.android-ui textarea{
   background:rgba(18,42,63,.93)!important;
   border-color:rgba(125,166,199,.24)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
 }
-html.android-ui:not(.theme-light) .notice,
-html.android-ui:not(.theme-light) .code-output,
-html.android-ui:not(.theme-light) .pnl-legend-item,
-html.android-ui:not(.theme-light) .month-compare-card{
+html.android-ui .notice,
+html.android-ui .code-output,
+html.android-ui .pnl-legend-item,
+html.android-ui .month-compare-card{
   background:rgba(18,43,65,.88)!important;
   border-color:rgba(116,157,191,.20)!important;
 }
-html.android-ui:not(.theme-light) .btn:not(.danger):not(.gold),
-html.android-ui:not(.theme-light) .android-sheet-close{
+html.android-ui .btn:not(.danger):not(.gold),
+html.android-ui .android-sheet-close{
   background:linear-gradient(180deg,rgba(33,70,103,.92),rgba(22,51,77,.94))!important;
   border-color:rgba(116,157,191,.24)!important;
 }
-html.android-ui:not(.theme-light) .btn.primary,
-html.android-ui:not(.theme-light) .nav button.active{
+html.android-ui .btn.primary,
+html.android-ui .nav button.active{
   background:linear-gradient(180deg,rgba(54,111,191,.96),rgba(39,86,157,.98))!important;
   color:#f7fbff!important;
   border-color:rgba(103,158,235,.62)!important;

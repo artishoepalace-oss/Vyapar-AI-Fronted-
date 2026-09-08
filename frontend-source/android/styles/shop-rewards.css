@@ -59,21 +59,12 @@ html.android-ui .shop-sheet-note{display:flex;flex-direction:column;gap:3px;marg
 html.android-ui .shop-sheet-note b{font-size:11px}
 html.android-ui .shop-sheet-note span{color:#95a7b9;font-size:9.5px;line-height:1.4}
 html.android-ui body.shop-progress-open{overflow:hidden}
-html.theme-light.android-ui .shop-growth-card .shop-reward-stat{background:rgba(255,255,255,.52)}
-html.theme-light.android-ui .shop-progress-overlay{background:rgba(31,45,61,.35)}
-html.theme-light.android-ui .shop-progress-sheet{background:#eef4fa;color:#182536;border-color:rgba(62,91,124,.25)}
-html.theme-light.android-ui .shop-score-ring:after{background:#eef4fa}
-html.theme-light.android-ui .shop-sheet-head p,
-html.theme-light.android-ui .shop-sheet-score>div>small,
-html.theme-light.android-ui .shop-sheet-title span,
-html.theme-light.android-ui .shop-milestone small,
-html.theme-light.android-ui .shop-next-target p,
-html.theme-light.android-ui .shop-month-grid span,
-html.theme-light.android-ui .shop-sheet-note span{color:#647487}
-html.theme-light.android-ui .shop-sheet-score,
-html.theme-light.android-ui .shop-milestone,
-html.theme-light.android-ui .shop-next-target,
-html.theme-light.android-ui .shop-month-grid>div{background:rgba(255,255,255,.58);border-color:rgba(70,99,132,.17)}
+
+
+
+
+
+
 @media(max-width:420px){
   html.android-ui .shop-growth-card{padding:15px}
   html.android-ui .shop-growth-head{gap:10px}

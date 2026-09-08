@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const web = path.join(root, 'web');
 const android = path.join(root, 'android-app/app/src/main/assets');
 const androidSource = path.join(root, 'frontend-source/android');
-const expectedVersion = '8.6.1.2026';
+const expectedVersion = '8.6.9.2026';
 
 function read(base, name) {
   return fs.readFileSync(path.join(base, name), 'utf8');
@@ -42,7 +42,6 @@ for (const base of [web]) {
   assert(script.includes('handleNativeBackPress'), 'Android back navigation must be handled');
   assert(script.includes('© 2026 Vyapar AI. All Rights Reserved.'), 'copyright footer must be present');
   assert(style.includes('white-space: normal'), 'row descriptions must remain readable instead of being clipped');
-  assert(style.includes('html.theme-light'), 'light mode styling must be present');
   assert(style.includes('.danger'), 'destructive actions must keep explicit styling');
   assert(script.includes('stack.hidden = true'), 'legacy Settings repository must be hidden at the DOM level');
 
@@ -53,7 +52,6 @@ for (const base of [web]) {
   assert(finalStyle.includes('width: 108px !important'), 'WebView loading logo must match the native 108dp logo scale');
   const flatStyle = read(base, 'assets/styles/flat-black-ios-861.css');
   assert(flatStyle.includes('--vy861-bg:#000000'), 'dark mode needs a true-black surface');
-  assert(flatStyle.includes('html.vy861-flat-black.theme-light'), 'light mode needs an explicit white/system-gray palette');
   assert(flatStyle.includes('UNIVERSAL POPUP / SHEET SYSTEM'), 'popup styling must be universal');
   assert(finalStyle.includes('.nav button.active[data-android-tab]'), 'all primary nav destinations need the unified active style');
   assert(finalStyle.includes('production-actions {'), 'Account actions must use the compact layout');
@@ -66,15 +64,14 @@ const androidScript = read(androidSource, 'scripts/settings-center-675.js');
 const androidStyle = read(androidSource, 'styles/settings-center-675.css');
 const androidScriptBundle = read(android, 'assets/scripts/vyapar-app.js');
 const androidStyleBundle = read(android, 'assets/styles/vyapar-ui.css');
-assert(androidIndex.includes('vyapar-app.js?v=20260906-flatblack861'), 'Android combined script must be loaded');
-assert(androidIndex.includes('vyapar-ui.css?v=20260906-flatblack861'), 'Android combined stylesheet must be loaded');
+assert(androidIndex.includes('vyapar-app.js?v=20260907-dark869'), 'Android combined script must be loaded');
+assert(androidIndex.includes('vyapar-ui.css?v=20260907-dark869'), 'Android combined stylesheet must be loaded');
 assert(androidScriptBundle.includes('SCRIPT SOURCE: settings-center-675.js'), 'Settings logic must be included in the Android bundle');
 assert(androidStyleBundle.includes('STYLE SOURCE: settings-center-675.css'), 'Settings styles must be included in the Android bundle');
 assert(androidIndex.includes(`content="${expectedVersion}"`), 'Android UI version metadata must match the release');
 for (const label of ['Account & plan','Business profile','Business controls','Privacy & security','Appearance & performance','Navigation','Backup & restore','App updates','Help & legal']) {
   assert(androidScript.includes(label), `missing Android Settings destination: ${label}`);
 }
-assert(androidStyle.includes('html.theme-light'), 'Android light mode Settings styling must be present');
 
 assert(read(web, 'assets/scripts/settings-center-675.js').includes('Search settings'), 'Web Settings logic must remain available');
 assert(read(androidSource, 'scripts/settings-center-675.js').includes('observer?.observe(scr'), 'Android Settings observer must stay scoped to the Settings screen');
@@ -91,10 +88,10 @@ const mainActivity = read(path.join(root, 'android-app/app/src/main/java/com/vya
 assert.strictEqual(rootVersion.versionName, expectedVersion, 'root release version must match');
 assert.strictEqual(webVersion.versionName, expectedVersion, 'web release version must match');
 assert(gradle.includes(`versionName "${expectedVersion}"`), 'Android release version must match');
-assert(gradle.includes('versionCode 8612026'), 'Android release code must match');
+assert(gradle.includes('versionCode 8692026'), 'Android release code must match');
 assert(mainActivity.includes('Color.BLACK'), 'first WebView frame must match the black launch surface');
-assert(fs.existsSync(path.join(root, 'RELEASE_8.6.1.2026.md')), 'v8.6.1 release file must exist');
-assert(!fs.existsSync(path.join(root, 'VALIDATION_8.6.1.2026.md')), 'validation file should only exist after an explicit validation pass');
+assert(fs.existsSync(path.join(root, 'RELEASE_8.6.9.2026.md')), 'v8.6.9.2026 release file must exist');
+assert(!fs.existsSync(path.join(root, 'VALIDATION_8.6.9.2026.md')), 'validation file should only exist after an explicit validation pass');
 assert(!fs.existsSync(path.join(web, 'startup-mark.svg')), 'deprecated web startup asset must remain removed');
 assert(!fs.existsSync(path.join(android, 'startup-mark.svg')), 'deprecated Android startup asset must remain removed');
 

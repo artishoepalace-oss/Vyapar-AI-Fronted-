@@ -1,7 +1,7 @@
 /* Vyapar AI 8.6.7 — final video-driven Android UI repair.
    Exact selectors + no version change. This file must load LAST. */
 
-html.vy861-flat-black:not(.theme-light){
+html.vy861-flat-black{
   --vy867-final-bg:#000000;
   --vy867-final-surface:#0f1012;
   --vy867-final-surface-2:#17181a;
@@ -13,7 +13,7 @@ html.vy861-flat-black:not(.theme-light){
 }
 
 /* HOME — the two grid wrappers are layout only. Never paint the spaces between cards. */
-html.vy861-flat-black:not(.theme-light) #screen-home :is(
+html.vy861-flat-black #screen-home :is(
   .home-section,
   #homeQuickActionsMount,
   .android-quick-actions,
@@ -27,13 +27,13 @@ html.vy861-flat-black:not(.theme-light) #screen-home :is(
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home :is(
+html.vy861-flat-black #screen-home :is(
   .home-section,
   #homeQuickActionsMount,
   .android-quick-actions,
   .home-metrics
 )::before,
-html.vy861-flat-black:not(.theme-light) #screen-home :is(
+html.vy861-flat-black #screen-home :is(
   .home-section,
   #homeQuickActionsMount,
   .android-quick-actions,
@@ -44,17 +44,17 @@ html.vy861-flat-black:not(.theme-light) #screen-home :is(
   background:none!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home #homeQuickActionsMount,
-html.vy861-flat-black:not(.theme-light) #screen-home .android-quick-actions,
-html.vy861-flat-black:not(.theme-light) #screen-home .home-metrics{
+html.vy861-flat-black #screen-home #homeQuickActionsMount,
+html.vy861-flat-black #screen-home .android-quick-actions,
+html.vy861-flat-black #screen-home .home-metrics{
   padding:0!important;
   overflow:visible!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home .android-quick-actions,
-html.vy861-flat-black:not(.theme-light) #screen-home .home-metrics{
+html.vy861-flat-black #screen-home .android-quick-actions,
+html.vy861-flat-black #screen-home .home-metrics{
   gap:10px!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-action,.home-metrics>.stat){
+html.vy861-flat-black #screen-home :is(.android-quick-action,.home-metrics>.stat){
   position:relative!important;
   z-index:1!important;
   margin:0!important;
@@ -65,7 +65,7 @@ html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-action,.
   border-radius:18px!important;
   overflow:hidden!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home .home-metric-head{
+html.vy861-flat-black #screen-home .home-metric-head{
   padding:0!important;
   background:transparent!important;
   background-image:none!important;
@@ -74,8 +74,8 @@ html.vy861-flat-black:not(.theme-light) #screen-home .home-metric-head{
 }
 
 /* BUSINESS — replace every residual colored feature tile with graphite. */
-html.vy861-flat-black:not(.theme-light) #screen-business .vx621-feature-icon,
-html.vy861-flat-black:not(.theme-light) #screen-business .vy867-mono-customers{
+html.vy861-flat-black #screen-business .vx621-feature-icon,
+html.vy861-flat-black #screen-business .vy867-mono-customers{
   background:var(--vy867-final-control)!important;
   background-image:none!important;
   border:1px solid var(--vy867-final-line-strong)!important;
@@ -93,13 +93,13 @@ html.vy861-flat-black #screen-business .vy867-mono-customers svg{
 }
 
 /* BOTTOM NAV — neutral grey only; no blue tint in icons or labels. */
-html.vy861-flat-black:not(.theme-light) #nav.nav{
+html.vy861-flat-black #nav.nav{
   background:rgba(12,13,15,.98)!important;
   background-image:none!important;
   border-color:#34373c!important;
   box-shadow:0 10px 28px rgba(0,0,0,.48)!important;
 }
-html.vy861-flat-black:not(.theme-light) #nav.nav button{
+html.vy861-flat-black #nav.nav button{
   background:transparent!important;
   background-image:none!important;
   color:#a7abb0!important;
@@ -108,14 +108,14 @@ html.vy861-flat-black:not(.theme-light) #nav.nav button{
   text-shadow:none!important;
   filter:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #nav.nav button :is(.android-nav-icon,.android-nav-label,svg,svg *){
+html.vy861-flat-black #nav.nav button :is(.android-nav-icon,.android-nav-label,svg,svg *){
   color:inherit!important;
   filter:grayscale(1) saturate(0)!important;
 }
-html.vy861-flat-black:not(.theme-light) #nav.nav button svg *{
+html.vy861-flat-black #nav.nav button svg *{
   stroke:currentColor!important;
 }
-html.vy861-flat-black:not(.theme-light) #nav.nav button.active{
+html.vy861-flat-black #nav.nav button.active{
   background:#26282c!important;
   background-image:none!important;
   color:#ffffff!important;
@@ -165,7 +165,7 @@ html.vy861-flat-black #androidMoreSheet .android-sheet-grid{
   border:0!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #androidMoreSheet .android-sheet-item{
+html.vy861-flat-black #androidMoreSheet .android-sheet-item{
   background:var(--vy867-final-surface-2)!important;
   background-image:none!important;
   border:1px solid #30343a!important;
@@ -173,21 +173,21 @@ html.vy861-flat-black:not(.theme-light) #androidMoreSheet .android-sheet-item{
 }
 
 /* APP UPDATES — Check for Update must match the black/grey system, never blue. */
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn,.btn.primary,button.primary),
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="update"] :is(.btn.primary,button.primary){
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn,.btn.primary,button.primary),
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] :is(.btn.primary,button.primary){
   background:var(--vy867-final-control)!important;
   background-image:none!important;
   border:1px solid #3b3f45!important;
   color:#ffffff!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn):active{
+html.vy861-flat-black #screen-settings[data-vy675-page="update"] #fs607Settings :is(button,.btn):active{
   background:#2c2f34!important;
   border-color:#50545a!important;
 }
 
 /* Re-assert neutral icon tiles in screens explicitly called out in the video. */
-html.vy861-flat-black:not(.theme-light) :is(#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+html.vy861-flat-black :is(#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
   .vx621-feature-icon,
   .vy675-row-icon,
   .vx622-settings-icon,
@@ -201,7 +201,7 @@ html.vy861-flat-black:not(.theme-light) :is(#screen-business,#screen-sales,#scre
 }
 
 @media(max-width:390px){
-  html.vy861-flat-black:not(.theme-light) #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
+  html.vy861-flat-black #screen-home :is(.android-quick-actions,.home-metrics){gap:8px!important}
   html.vy861-flat-black #androidMoreSheet.android-sheet-overlay>.android-sheet{
     left:6px!important;
     right:6px!important;

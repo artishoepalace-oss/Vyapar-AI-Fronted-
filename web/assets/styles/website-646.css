@@ -404,10 +404,7 @@ html.web-ui #screen-subscription .subscription-recommended{top:12px!important;ri
   html.web-ui .table{min-width:640px!important}
 }
 
-html.web-ui.theme-light body{background:#f1f6fb!important}
-html.web-ui.theme-light .top,
-html.web-ui.theme-light .nav{background:rgba(249,252,255,.88)!important}
-html.web-ui.theme-light #screen-home .home-overview,
-html.web-ui.theme-light #screen-home .home-next{background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(235,244,252,.94))!important;color:#102033!important}
-html.web-ui.theme-light #screen-home .home-overview-copy p,
-html.web-ui.theme-light #screen-home .home-next-copy p{color:#536b81!important}
+
+
+
+

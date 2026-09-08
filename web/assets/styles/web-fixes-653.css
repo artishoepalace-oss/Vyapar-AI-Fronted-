@@ -40,11 +40,8 @@ html.web-ui.theme-transitioning select,
 html.web-ui.theme-transitioning button{transition:background-color .30s ease,background .30s ease,color .24s ease,border-color .28s ease,box-shadow .30s ease!important}
 html.web-ui .theme-ripple{animation-duration:.28s!important}
 
-/* Web light-mode consistency for imported Android-origin modules. */
-html.web-ui.theme-light .shop-growth-card,
-html.web-ui.theme-light .shop-progress-sheet{color:#17263a!important}
-html.web-ui.theme-light .shop-growth-card p,
-html.web-ui.theme-light .shop-growth-card small{color:#64798e!important}
+
+
 
 /* Prevent long tables or action popovers from widening the mobile web viewport. */
 html.mobile-web .screen,html.mobile-web .card,html.mobile-web .vx621-table-wrap,html.mobile-web .scroll{min-width:0!important;max-width:100%!important}

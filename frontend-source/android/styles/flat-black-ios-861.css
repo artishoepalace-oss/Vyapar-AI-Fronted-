@@ -23,20 +23,7 @@ html.vy861-flat-black{
   color-scheme:dark;
   background:#000!important;
 }
-html.vy861-flat-black.theme-light{
-  --vy861-bg:#f5f5f7;
-  --vy861-bg-soft:#f2f2f7;
-  --vy861-surface:#ffffff;
-  --vy861-surface-2:#f7f7fa;
-  --vy861-surface-3:#efeff4;
-  --vy861-text:#111113;
-  --vy861-muted:#6e6e73;
-  --vy861-line:#d9d9de;
-  --vy861-line-strong:#c7c7cc;
-  --vy861-shadow:0 12px 30px rgba(0,0,0,.08);
-  color-scheme:light;
-  background:#f5f5f7!important;
-}
+
 
 /* Canonical app tokens: force old blue/liquid variables onto flat surfaces. */
 html.vy861-flat-black,
@@ -63,10 +50,7 @@ html.vy861-flat-black body{
   --android-border:var(--vy861-line)!important;
   --android-accent:var(--vy861-accent)!important;
 }
-html.vy861-flat-black.theme-light,
-html.vy861-flat-black.theme-light body{
-  --nav-bg:rgba(250,250,252,.86)!important;
-}
+
 
 html.vy861-flat-black body{
   margin:0!important;
@@ -100,11 +84,7 @@ html.vy861-flat-black .top{
   backdrop-filter:blur(34px) saturate(1.35)!important;
   -webkit-backdrop-filter:blur(34px) saturate(1.35)!important;
 }
-html.vy861-flat-black.theme-light .top{
-  border-color:rgba(0,0,0,.08)!important;
-  background:rgba(250,250,252,.84)!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.08)!important;
-}
+
 html.vy861-flat-black .brand{gap:10px!important;min-width:0!important}
 html.vy861-flat-black .logo{
   width:44px!important;height:44px!important;padding:3px!important;
@@ -126,7 +106,7 @@ html.vy861-flat-black #themeToggle{
   color:transparent!important;font-size:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
 html.vy861-flat-black #themeToggle::before{content:'☾'!important;color:var(--vy861-text)!important;font-size:18px!important;line-height:1!important}
-html.vy861-flat-black.theme-light #themeToggle::before{content:'☀'!important}
+
 html.vy861-flat-black #themeToggle::after{display:none!important}
 
 html.vy861-flat-black .nav{
@@ -139,9 +119,7 @@ html.vy861-flat-black .nav{
   box-shadow:0 -10px 34px rgba(0,0,0,.34)!important;
   backdrop-filter:blur(36px) saturate(1.38)!important;-webkit-backdrop-filter:blur(36px) saturate(1.38)!important;
 }
-html.vy861-flat-black.theme-light .nav{
-  border-color:rgba(0,0,0,.08)!important;background:rgba(250,250,252,.88)!important;box-shadow:0 -8px 28px rgba(0,0,0,.08)!important;
-}
+
 html.vy861-flat-black .android-nav-glass-indicator{display:none!important}
 html.vy861-flat-black .nav button{
   min-width:0!important;min-height:54px!important;padding:7px 3px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;
@@ -229,12 +207,7 @@ html.vy861-flat-black :is(
   background:rgba(0,0,0,.62)!important;background-image:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-html.vy861-flat-black.theme-light :is(
-  .glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,
-  .production-overlay,.android-permission-overlay,.android-sheet-overlay,
-  #vyaparDeleteConfirm,#vyaparAccountDeleteConfirm,.account-delete-overlay,
-  .upgrade-plan-popup,.upgrade-plan-reference-popup
-){background:rgba(0,0,0,.28)!important}
+
 
 html.vy861-flat-black :is(
   .glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
@@ -249,11 +222,7 @@ html.vy861-flat-black :is(
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
   animation:vy861SheetIn .20s cubic-bezier(.22,.78,.2,1)!important;
 }
-html.vy861-flat-black.theme-light :is(
-  .glass-dialog-card,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
-  .production-modal,.android-permission-card,.android-sheet,.account-delete-card,
-  .upgrade-plan-reference-card
-){box-shadow:0 22px 60px rgba(0,0,0,.16)!important}
+
 @keyframes vy861SheetIn{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 html.vy861-flat-black :is(.android-sheet-handle,.shop-sheet-handle){width:42px!important;height:5px!important;margin:0 auto 14px!important;border-radius:999px!important;background:var(--vy861-line-strong)!important}
@@ -330,8 +299,7 @@ html.vy861-flat-black #vyaparOtpGate .auth-loading-overlay{background:var(--vy86
 html.vy861-flat-black #vyaparOtpGate .auth-loading-card{background:var(--vy861-surface)!important;border:1px solid var(--vy861-line)!important;color:var(--vy861-text)!important;box-shadow:none!important}
 html.vy861-flat-black.vy861-auth-handoff,
 html.vy861-flat-black.vy861-auth-handoff body{background:#000!important}
-html.vy861-flat-black.theme-light.vy861-auth-handoff,
-html.vy861-flat-black.theme-light.vy861-auth-handoff body{background:#f5f5f7!important}
+
 
 /* Startup/loader follows theme and never paints the previous navy. */
 html.vy861-flat-black #vy855BootGuard,
@@ -351,7 +319,7 @@ html.vy861-flat-black :is(
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   html.vy861-flat-black .top{background:#090909!important}
   html.vy861-flat-black .nav{background:#070707!important}
-  html.vy861-flat-black.theme-light .top,html.vy861-flat-black.theme-light .nav{background:#fafafc!important}
+  
 }
 
 @media(max-width:800px){

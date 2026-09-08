@@ -1,7 +1,7 @@
 /* Vyapar AI — production dark-mode polish layer.
    Dark theme only; light theme is untouched. */
 
-html.vy861-flat-black:not(.theme-light){
+html.vy861-flat-black{
   --dm-bg:#000000;
   --dm-bg-soft:#070809;
   --dm-surface:#0d0f12;
@@ -62,41 +62,41 @@ html.vy861-flat-black:not(.theme-light){
   color-scheme:dark!important;
   background:#000!important;
 }
-html.vy861-flat-black:not(.theme-light),html.vy861-flat-black:not(.theme-light) body{background:#000!important;background-image:none!important;color:var(--dm-text)!important}
-html.vy861-flat-black:not(.theme-light) body::before,html.vy861-flat-black:not(.theme-light) body::after{display:none!important;content:none!important}
-html.vy861-flat-black:not(.theme-light) ::selection{background:rgba(10,132,255,.34);color:#fff}
+html.vy861-flat-black,html.vy861-flat-black body{background:#000!important;background-image:none!important;color:var(--dm-text)!important}
+html.vy861-flat-black body::before,html.vy861-flat-black body::after{display:none!important;content:none!important}
+html.vy861-flat-black ::selection{background:rgba(10,132,255,.34);color:#fff}
 html.vy861-flat-black :is(.vy852-theme-bloom,.vy853-theme-reveal,.vy854-theme-wipe,.vy855-theme-curtain,.theme-ripple,.vx657-theme-crossfade,.vy856-liquid-lens,.vy856-liquid-orb,.android-nav-glass-indicator){display:none!important;content:none!important;animation:none!important}
-html.vy861-flat-black:not(.theme-light) .top{border:1px solid var(--dm-line)!important;background:rgba(9,10,12,.90)!important;background-image:none!important;box-shadow:0 10px 28px rgba(0,0,0,.38),inset 0 -1px 0 rgba(255,255,255,.025)!important;backdrop-filter:blur(22px) saturate(115%)!important;-webkit-backdrop-filter:blur(22px) saturate(115%)!important}
-html.vy861-flat-black:not(.theme-light) .top h1{color:var(--dm-text-strong)!important;font-weight:800!important}
-html.vy861-flat-black:not(.theme-light) .top .tag{color:var(--dm-muted)!important}
-html.vy861-flat-black:not(.theme-light) #planBadge,html.vy861-flat-black:not(.theme-light) #themeToggle{border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) :is(.card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-account-card,.production-card,.vx621-group,.vx621-kpi,.vx621-hero,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.code-output,.code-note,.code-preview,[class*="-panel"],[class*="-section-card"]){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:var(--dm-shadow-soft)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-html.vy861-flat-black:not(.theme-light) :is(h1,h2,h3,h4,h5,h6,strong,b,.title,.heading){color:var(--dm-text-strong)!important}
-html.vy861-flat-black:not(.theme-light) :is(p,small,.muted,.subtle,.helper,.hint,.description,.settings-field-note){color:var(--dm-muted)!important}
-html.vy861-flat-black:not(.theme-light) :is(input,select,textarea){border:1px solid var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;caret-color:var(--dm-blue)!important;box-shadow:none!important;color-scheme:dark!important}
-html.vy861-flat-black:not(.theme-light) :is(input,select,textarea):focus{border-color:var(--dm-blue)!important;box-shadow:0 0 0 3px rgba(10,132,255,.18)!important;outline:none!important}
-html.vy861-flat-black:not(.theme-light) :is(input,textarea)::placeholder{color:var(--dm-muted-2)!important;opacity:1!important}
-html.vy861-flat-black:not(.theme-light) :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch){border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch):active{transform:scale(.975)!important;background:var(--dm-surface-pressed)!important}
-html.vy861-flat-black:not(.theme-light) :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){border-color:var(--dm-blue)!important;background:var(--dm-blue)!important;color:#fff!important}
-html.vy861-flat-black:not(.theme-light) :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child){border-color:var(--dm-red)!important;background:var(--dm-red)!important;color:#fff!important}
-html.vy861-flat-black:not(.theme-light) :is(.btn.success,button.success,.success-action){border-color:var(--dm-green)!important;background:var(--dm-green)!important;color:#07120a!important}
-html.vy861-flat-black:not(.theme-light) :is(.btn.gold,.btn.warning,.button-warning){border-color:var(--dm-orange)!important;background:var(--dm-orange)!important;color:#111!important}
-html.vy861-flat-black:not(.theme-light) .nav{border-color:var(--dm-line)!important;background:rgba(8,9,11,.94)!important;background-image:none!important;box-shadow:0 -10px 30px rgba(0,0,0,.42)!important;backdrop-filter:blur(24px) saturate(112%)!important;-webkit-backdrop-filter:blur(24px) saturate(112%)!important}
-html.vy861-flat-black:not(.theme-light) .nav button{color:#858c96!important;background:transparent!important}
-html.vy861-flat-black:not(.theme-light) .nav button.active{color:#4aa3ff!important;background:rgba(10,132,255,.15)!important}
-html.vy861-flat-black:not(.theme-light) :is(table,.table){color:var(--dm-text)!important;background:transparent!important}
-html.vy861-flat-black:not(.theme-light) :is(table,.table) th{background:#111419!important;color:#c9cdd3!important;border-color:var(--dm-line)!important;font-weight:760!important}
-html.vy861-flat-black:not(.theme-light) :is(table,.table) td{border-color:var(--dm-line)!important;color:var(--dm-text)!important}
-html.vy861-flat-black:not(.theme-light) :is(.pill,.chip,.glass-chip,.small-badge,.badge){border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) #screen-settings.vy675-settings-ready{--vy675-bg:#000!important;--vy675-surface:var(--dm-surface)!important;--vy675-surface-soft:var(--dm-surface-raised)!important;--vy675-border:var(--dm-line)!important;--vy675-text:var(--dm-text)!important;--vy675-muted:var(--dm-muted)!important;--vy675-blue:var(--dm-blue)!important;--vy675-blue-soft:var(--dm-blue-soft)!important;background:#000!important}
-html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list,.production-account-card){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) #screen-settings .vy675-page-header{background:#000!important}
-html.vy861-flat-black:not(.theme-light) #screen-sales :is(#vy660ProfitCard,.vy660-live-box,[class*="profit"],[class*="sales-summary"]),html.vy861-flat-black:not(.theme-light) #screen-stock :is([class*="stock-card"],[class*="stock-summary"],[class*="inventory-card"]),html.vy861-flat-black:not(.theme-light) #screen-business :is([class*="business-card"],[class*="business-module"],[class*="kpi"]){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
-html.vy861-flat-black:not(.theme-light) :is(.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.upgrade-plan-reference-popup,#vyaparDeleteConfirm,#vyaparAccountDeleteConfirm){background:rgba(0,0,0,.72)!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-html.vy861-flat-black:not(.theme-light) :is(.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]){border:1px solid var(--dm-line-strong)!important;background:#131518!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:0 22px 60px rgba(0,0,0,.58)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-html.vy861-flat-black:not(.theme-light) :is(#vyaparOtpGate,.auth-gate,.login-page,.login-shell){background:#000!important;background-image:none!important;color:var(--dm-text)!important}
-html.vy861-flat-black:not(.theme-light) :is(#appLoader,#tabLoader){background:#000!important;color:var(--dm-text)!important}
-html.vy861-flat-black:not(.theme-light) :is(button,a,input,select,textarea):focus-visible{outline:2px solid rgba(74,163,255,.88)!important;outline-offset:2px!important}
-html.vy861-flat-black:not(.theme-light) a{color:#5eabff}
-@media(max-width:520px){html.vy861-flat-black:not(.theme-light) .app{padding-left:11px!important;padding-right:11px!important}html.vy861-flat-black:not(.theme-light) .top{margin-left:0!important;margin-right:0!important;border-radius:18px!important}html.vy861-flat-black:not(.theme-light) .card{border-radius:16px!important}html.vy861-flat-black:not(.theme-light) .nav{border-radius:20px 20px 0 0!important}}
+html.vy861-flat-black .top{border:1px solid var(--dm-line)!important;background:rgba(9,10,12,.90)!important;background-image:none!important;box-shadow:0 10px 28px rgba(0,0,0,.38),inset 0 -1px 0 rgba(255,255,255,.025)!important;backdrop-filter:blur(22px) saturate(115%)!important;-webkit-backdrop-filter:blur(22px) saturate(115%)!important}
+html.vy861-flat-black .top h1{color:var(--dm-text-strong)!important;font-weight:800!important}
+html.vy861-flat-black .top .tag{color:var(--dm-muted)!important}
+html.vy861-flat-black #planBadge,html.vy861-flat-black #themeToggle{border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;box-shadow:none!important}
+html.vy861-flat-black :is(.card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,.production-account-card,.production-card,.vx621-group,.vx621-kpi,.vx621-hero,.vx621-context,.vx621-recent,.home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.code-output,.code-note,.code-preview,[class*="-panel"],[class*="-section-card"]){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:var(--dm-shadow-soft)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.vy861-flat-black :is(h1,h2,h3,h4,h5,h6,strong,b,.title,.heading){color:var(--dm-text-strong)!important}
+html.vy861-flat-black :is(p,small,.muted,.subtle,.helper,.hint,.description,.settings-field-note){color:var(--dm-muted)!important}
+html.vy861-flat-black :is(input,select,textarea){border:1px solid var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;caret-color:var(--dm-blue)!important;box-shadow:none!important;color-scheme:dark!important}
+html.vy861-flat-black :is(input,select,textarea):focus{border-color:var(--dm-blue)!important;box-shadow:0 0 0 3px rgba(10,132,255,.18)!important;outline:none!important}
+html.vy861-flat-black :is(input,textarea)::placeholder{color:var(--dm-muted-2)!important;opacity:1!important}
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch){border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy675-switch):active{transform:scale(.975)!important;background:var(--dm-surface-pressed)!important}
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){border-color:var(--dm-blue)!important;background:var(--dm-blue)!important;color:#fff!important}
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child){border-color:var(--dm-red)!important;background:var(--dm-red)!important;color:#fff!important}
+html.vy861-flat-black :is(.btn.success,button.success,.success-action){border-color:var(--dm-green)!important;background:var(--dm-green)!important;color:#07120a!important}
+html.vy861-flat-black :is(.btn.gold,.btn.warning,.button-warning){border-color:var(--dm-orange)!important;background:var(--dm-orange)!important;color:#111!important}
+html.vy861-flat-black .nav{border-color:var(--dm-line)!important;background:rgba(8,9,11,.94)!important;background-image:none!important;box-shadow:0 -10px 30px rgba(0,0,0,.42)!important;backdrop-filter:blur(24px) saturate(112%)!important;-webkit-backdrop-filter:blur(24px) saturate(112%)!important}
+html.vy861-flat-black .nav button{color:#858c96!important;background:transparent!important}
+html.vy861-flat-black .nav button.active{color:#4aa3ff!important;background:rgba(10,132,255,.15)!important}
+html.vy861-flat-black :is(table,.table){color:var(--dm-text)!important;background:transparent!important}
+html.vy861-flat-black :is(table,.table) th{background:#111419!important;color:#c9cdd3!important;border-color:var(--dm-line)!important;font-weight:760!important}
+html.vy861-flat-black :is(table,.table) td{border-color:var(--dm-line)!important;color:var(--dm-text)!important}
+html.vy861-flat-black :is(.pill,.chip,.glass-chip,.small-badge,.badge){border-color:var(--dm-line)!important;background:var(--dm-surface-raised)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-settings.vy675-settings-ready{--vy675-bg:#000!important;--vy675-surface:var(--dm-surface)!important;--vy675-surface-soft:var(--dm-surface-raised)!important;--vy675-border:var(--dm-line)!important;--vy675-text:var(--dm-text)!important;--vy675-muted:var(--dm-muted)!important;--vy675-blue:var(--dm-blue)!important;--vy675-blue-soft:var(--dm-blue-soft)!important;background:#000!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list,.production-account-card){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;box-shadow:none!important}
+html.vy861-flat-black #screen-settings .vy675-page-header{background:#000!important}
+html.vy861-flat-black #screen-sales :is(#vy660ProfitCard,.vy660-live-box,[class*="profit"],[class*="sales-summary"]),html.vy861-flat-black #screen-stock :is([class*="stock-card"],[class*="stock-summary"],[class*="inventory-card"]),html.vy861-flat-black #screen-business :is([class*="business-card"],[class*="business-module"],[class*="kpi"]){border-color:var(--dm-line)!important;background:var(--dm-surface)!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:none!important}
+html.vy861-flat-black :is(.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay,.upgrade-plan-popup,.upgrade-plan-reference-popup,#vyaparDeleteConfirm,#vyaparAccountDeleteConfirm){background:rgba(0,0,0,.72)!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.vy861-flat-black :is(.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]){border:1px solid var(--dm-line-strong)!important;background:#131518!important;background-image:none!important;color:var(--dm-text)!important;box-shadow:0 22px 60px rgba(0,0,0,.58)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate,.login-page,.login-shell){background:#000!important;background-image:none!important;color:var(--dm-text)!important}
+html.vy861-flat-black :is(#appLoader,#tabLoader){background:#000!important;color:var(--dm-text)!important}
+html.vy861-flat-black :is(button,a,input,select,textarea):focus-visible{outline:2px solid rgba(74,163,255,.88)!important;outline-offset:2px!important}
+html.vy861-flat-black a{color:#5eabff}
+@media(max-width:520px){html.vy861-flat-black .app{padding-left:11px!important;padding-right:11px!important}html.vy861-flat-black .top{margin-left:0!important;margin-right:0!important;border-radius:18px!important}html.vy861-flat-black .card{border-radius:16px!important}html.vy861-flat-black .nav{border-radius:20px 20px 0 0!important}}

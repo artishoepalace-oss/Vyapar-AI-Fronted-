@@ -59,82 +59,33 @@ html.web-ui:not(.web-effects-lite) .card,html.web-ui:not(.web-effects-lite) .sta
 html.web-ui.web-effects-lite *,html.web-ui.web-effects-lite *::before,html.web-ui.web-effects-lite *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 html.web-ui.web-effects-lite .card,html.web-ui.web-effects-lite .nav,html.web-ui.web-effects-lite .top{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 
-/* LIGHT MODE ONLY — dark mode above remains unchanged. */
-html.web-ui.theme-light{
-  --web-accent:#0b9fbd;
-  --web-blue:#2b6fe8;
-  --web-surface:rgba(255,255,255,.88);
-  --web-line:rgba(79,111,145,.16);
-  --text:#142235!important;
-  --muted:#60748a!important;
-  --nav-bg:rgba(255,255,255,.78)!important;
-  --card:rgba(255,255,255,.88)!important;
-  --card2:rgba(246,250,255,.95)!important;
-  --input:rgba(255,255,255,.94)!important;
-}
-html.web-ui.theme-light body{
-  background:radial-gradient(42rem 28rem at 4% -8%,rgba(48,147,255,.12),transparent 64%),radial-gradient(32rem 24rem at 100% 3%,rgba(45,202,215,.10),transparent 70%),linear-gradient(180deg,#f8fbff 0%,#eef5fb 52%,#f7fbff 100%)!important;
-  color:#142235!important;
-}
-html.web-ui.theme-light body::before,html.web-ui.theme-light body::after{opacity:.34!important}
-html.web-ui.theme-light .top,
-html.web-ui.theme-light .nav,
-html.web-ui.theme-light .card,
-html.web-ui.theme-light .stat,
-html.web-ui.theme-light .p611-card,
-html.web-ui.theme-light .adv-card,
-html.web-ui.theme-light .vx621-stock-records,
-html.web-ui.theme-light .production-account-card,
-html.web-ui.theme-light .settings-stack>section,
-html.web-ui.theme-light .home-overview,
-html.web-ui.theme-light .home-next{
-  color:#142235!important;
-  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(244,249,255,.84))!important;
-  border-color:rgba(85,116,150,.16)!important;
-  box-shadow:0 12px 34px rgba(57,82,111,.08),inset 0 1px 0 rgba(255,255,255,.96)!important;
-}
-html.web-ui.theme-light #screen-business .vx621-section,
-html.web-ui.theme-light #screen-business .vx621-command-section,
-html.web-ui.theme-light #screen-business .business-section,
-html.web-ui.theme-light #screen-business .vx621-feature-card,
-html.web-ui.theme-light #screen-business .vx621-module-card,
-html.web-ui.theme-light #screen-business .business-tool-card,
-html.web-ui.theme-light #screen-stock .business-tool-card,
-html.web-ui.theme-light #screen-sales .business-tool-card{
-  color:#17263a!important;
-  background:linear-gradient(180deg,#ffffff,#f2f7fc)!important;
-  border-color:rgba(84,115,149,.16)!important;
-  box-shadow:0 10px 26px rgba(57,82,111,.07)!important;
-}
-html.web-ui.theme-light h1,html.web-ui.theme-light h2,html.web-ui.theme-light h3,html.web-ui.theme-light h4,html.web-ui.theme-light strong,html.web-ui.theme-light b{color:#142235!important}
-html.web-ui.theme-light p,html.web-ui.theme-light small,html.web-ui.theme-light .muted,html.web-ui.theme-light .tag{color:#65798d!important}
-html.web-ui.theme-light .nav button{color:#50677e!important;background:transparent!important}
-html.web-ui.theme-light .nav button.active{color:#126f99!important;background:linear-gradient(180deg,rgba(87,190,255,.18),rgba(80,151,242,.10))!important;border-color:rgba(80,151,242,.20)!important}
-html.web-ui.theme-light .nav button .android-nav-icon{color:#7790a7!important}
-html.web-ui.theme-light .nav button.active .android-nav-icon{color:#129cc2!important}
-html.web-ui.theme-light input,html.web-ui.theme-light select,html.web-ui.theme-light textarea{
-  color:#142235!important;background:#fff!important;border-color:rgba(87,117,151,.18)!important;box-shadow:inset 0 1px 2px rgba(40,63,90,.04)!important
-}
-html.web-ui.theme-light input::placeholder,html.web-ui.theme-light textarea::placeholder{color:#8da0b4!important}
-html.web-ui.theme-light .btn:not(.primary):not(.danger):not(.gold){color:#28425c!important;background:linear-gradient(180deg,#fff,#eef4fa)!important;border-color:rgba(80,111,145,.18)!important}
-html.web-ui.theme-light .btn.primary{color:#06212a!important}
-html.web-ui.theme-light .month-compare-card{background:linear-gradient(160deg,#fff,#f3f8fd)!important;border-color:rgba(74,110,147,.16)!important;box-shadow:0 10px 28px rgba(57,82,111,.08)!important}
-html.web-ui.theme-light .month-compare-head span{color:#087f9a!important;background:rgba(14,166,196,.09)!important;border-color:rgba(14,166,196,.18)!important}
-html.web-ui.theme-light .month-year-track{background:#e7eff7!important;border-color:#dfe8f1!important}
-html.web-ui.theme-light .web-bulk-scope .vx622-menu-panel,
-html.web-ui.theme-light .web-bulk-panel{background:rgba(255,255,255,.98)!important;border-color:rgba(76,105,136,.18)!important;box-shadow:0 18px 48px rgba(45,65,90,.16)!important}
-html.web-ui.theme-light #screen-subscription .subscription-plan-card{background:linear-gradient(180deg,#fff,#f3f7fb)!important;color:#152439!important}
-html.web-ui.theme-light #screen-subscription .vy649-business-card,
-html.web-ui.theme-light #screen-subscription .subscription-business-card{background:linear-gradient(145deg,#fff9e6,#f7e9b0)!important;border-color:rgba(185,137,26,.30)!important}
-html.web-ui.theme-light #screen-subscription .vy649-pro-card{background:linear-gradient(145deg,#ffffff,#edf2f8)!important;border-color:rgba(110,128,151,.24)!important}
-html.web-ui.theme-light .production-overlay,
-html.web-ui.theme-light .upgrade-plan-reference-popup{background:rgba(39,55,73,.32)!important}
-html.web-ui.theme-light .production-modal,
-html.web-ui.theme-light .upgrade-plan-card,
-html.web-ui.theme-light .subscription-dialog{background:rgba(255,255,255,.98)!important;color:#142235!important;border-color:rgba(78,107,139,.18)!important}
-html.web-ui.theme-light .home-metrics .stat{background:linear-gradient(180deg,#fff,#f2f7fc)!important}
-html.web-ui.theme-light .home-metric-icon,html.web-ui.theme-light .android-quick-action-icon{background:#eaf4fb!important;color:#1193b4!important}
-html.web-ui.theme-light .android-quick-action{background:linear-gradient(180deg,#fff,#f2f7fb)!important;color:#17263a!important;border-color:rgba(78,109,143,.16)!important}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media(max-width:700px){
  html.web-ui .month-compare-strip{grid-auto-columns:minmax(228px,82vw)!important;gap:10px!important}

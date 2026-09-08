@@ -2,7 +2,7 @@
    Loaded last. Light mode is intentionally untouched.
    Dark mode uses true black + neutral graphite surfaces; blue is an action/accent only. */
 
-html.vy861-flat-black:not(.theme-light){
+html.vy861-flat-black{
   --vy862-black:#000000;
   --vy862-surface:#0d0f11;
   --vy862-surface-2:#14171a;
@@ -19,11 +19,11 @@ html.vy861-flat-black:not(.theme-light){
   color-scheme:dark!important;
 }
 
-html.vy861-flat-black:not(.theme-light),
-html.vy861-flat-black:not(.theme-light) body,
-html.vy861-flat-black:not(.theme-light) .app,
-html.vy861-flat-black:not(.theme-light) main,
-html.vy861-flat-black:not(.theme-light) .screen{
+html.vy861-flat-black,
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{
   background:#000!important;
   background-image:none!important;
   color:var(--vy862-text)!important;
@@ -38,7 +38,7 @@ html.vy861-flat-black .screen{
 }
 
 /* Compact, native-feeling header. Screenshot build was too tall and card-like. */
-html.vy861-flat-black:not(.theme-light) .top{
+html.vy861-flat-black .top{
   min-height:58px!important;
   margin:0 0 12px!important;
   padding:8px 10px!important;
@@ -50,47 +50,47 @@ html.vy861-flat-black:not(.theme-light) .top{
   backdrop-filter:blur(24px) saturate(112%)!important;
   -webkit-backdrop-filter:blur(24px) saturate(112%)!important;
 }
-html.vy861-flat-black:not(.theme-light) .brand{gap:9px!important;min-width:0!important}
-html.vy861-flat-black:not(.theme-light) .brand .logo{
+html.vy861-flat-black .brand{gap:9px!important;min-width:0!important}
+html.vy861-flat-black .brand .logo{
   width:38px!important;min-width:38px!important;height:38px!important;
   padding:2px!important;border-radius:50%!important;
   border:1px solid rgba(255,255,255,.12)!important;
   background:#fff!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) .brand h1{
+html.vy861-flat-black .brand h1{
   font-size:19px!important;line-height:1.08!important;font-weight:800!important;
 }
-html.vy861-flat-black:not(.theme-light) .brand .tag{display:none!important}
-html.vy861-flat-black:not(.theme-light) .top-actions{gap:6px!important}
-html.vy861-flat-black:not(.theme-light) #planBadge{display:none!important}
-html.vy861-flat-black:not(.theme-light) #themeToggle{
+html.vy861-flat-black .brand .tag{display:none!important}
+html.vy861-flat-black .top-actions{gap:6px!important}
+html.vy861-flat-black #planBadge{display:none!important}
+html.vy861-flat-black #themeToggle{
   width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;
   border-radius:50%!important;border:1px solid var(--vy862-border)!important;
   background:var(--vy862-surface-2)!important;color:transparent!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #themeToggle::before{
+html.vy861-flat-black #themeToggle::before{
   content:'☾'!important;display:block!important;color:#f7f7f8!important;
   font-size:18px!important;line-height:1!important;
 }
-html.vy861-flat-black:not(.theme-light) #themeToggle::after{display:none!important;content:none!important}
+html.vy861-flat-black #themeToggle::after{display:none!important;content:none!important}
 
 /* The important screenshot repair: old business/home modules were still navy. */
-html.vy861-flat-black:not(.theme-light) #screen-home :is(
+html.vy861-flat-black #screen-home :is(
   .card,.stat,#shopGrowthSummary,.shop-growth-card,.shop-growth-stat,.shop-streak,
   .home-growth-card,.home-section-card,.home-summary-card,.home-hero-card,
   [class*="home-card"],[class*="summary-card"]
 ),
-html.vy861-flat-black:not(.theme-light) #screen-business :is(
+html.vy861-flat-black #screen-business :is(
   .card,.stat,.vx621-shell,.vx621-hero,.vx621-kpis,.vx621-kpi,.vx621-section,
   .vx621-command-section,.vx621-group,.vx621-context,.vx621-recent,
   .business-section,.business-module-card,.business-card,.business-workspace-card,
   [class*="business-card"],[class*="business-module"],[class*="command-card"],[class*="workspace-card"]
 ),
-html.vy861-flat-black:not(.theme-light) #screen-sales :is(
+html.vy861-flat-black #screen-sales :is(
   .card,.stat,#vy660ProfitCard,.vy660-live-box,.sales-card,[class*="sales-card"],[class*="profit-card"]
 ),
-html.vy861-flat-black:not(.theme-light) #screen-stock :is(
+html.vy861-flat-black #screen-stock :is(
   .card,.stat,.stock-card,[class*="stock-card"],[class*="inventory-card"],[class*="stock-summary"]
 ){
   background:var(--vy862-surface)!important;
@@ -103,67 +103,67 @@ html.vy861-flat-black:not(.theme-light) #screen-stock :is(
 }
 
 /* Nested metric cells get a slight elevation, not another blue panel. */
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.shop-growth-stat,.shop-streak,.stat),
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.vx621-kpi,.stat),
-html.vy861-flat-black:not(.theme-light) #screen-sales :is(.vy660-live-box,.stat),
-html.vy861-flat-black:not(.theme-light) #screen-stock .stat{
+html.vy861-flat-black #screen-home :is(.shop-growth-stat,.shop-streak,.stat),
+html.vy861-flat-black #screen-business :is(.vx621-kpi,.stat),
+html.vy861-flat-black #screen-sales :is(.vy660-live-box,.stat),
+html.vy861-flat-black #screen-stock .stat{
   background:var(--vy862-surface-2)!important;
   border-color:var(--vy862-border)!important;
 }
 
 /* Remove decorative blue washes/glows from module pseudo elements. */
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.card,.shop-growth-card,.home-growth-card)::before,
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.card,.shop-growth-card,.home-growth-card)::after,
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.card,.vx621-hero,.vx621-section,.vx621-group,.business-module-card)::before,
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.card,.vx621-hero,.vx621-section,.vx621-group,.business-module-card)::after{
+html.vy861-flat-black #screen-home :is(.card,.shop-growth-card,.home-growth-card)::before,
+html.vy861-flat-black #screen-home :is(.card,.shop-growth-card,.home-growth-card)::after,
+html.vy861-flat-black #screen-business :is(.card,.vx621-hero,.vx621-section,.vx621-group,.business-module-card)::before,
+html.vy861-flat-black #screen-business :is(.card,.vx621-hero,.vx621-section,.vx621-group,.business-module-card)::after{
   display:none!important;content:none!important;background:none!important;
 }
 
 /* Typography/contrast inside previously blue cards. */
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock) :is(h1,h2,h3,h4,b,strong){
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) :is(h1,h2,h3,h4,b,strong){
   color:#fff!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock) :is(p,small,.muted,.description,.helper){
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) :is(p,small,.muted,.description,.helper){
   color:var(--vy862-muted)!important;
 }
 
 /* Buttons: blue remains only for primary actions; secondary buttons are graphite. */
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock) button:not(.nav button):not(.primary):not(.danger):not(.success):not(.gold),
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock) .btn:not(.primary):not(.danger):not(.success):not(.gold){
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) button:not(.nav button):not(.primary):not(.danger):not(.success):not(.gold),
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) .btn:not(.primary):not(.danger):not(.success):not(.gold){
   background:var(--vy862-surface-2)!important;
   background-image:none!important;
   border-color:var(--vy862-border)!important;
   color:var(--vy862-text)!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.btn.primary,button.primary,.vx621-action.primary,.production-primary){
+html.vy861-flat-black :is(.btn.primary,button.primary,.vx621-action.primary,.production-primary){
   background:var(--vy862-blue)!important;background-image:none!important;
   border-color:var(--vy862-blue)!important;color:#fff!important;
   box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.btn,.vx621-action,button){
+html.vy861-flat-black #screen-business :is(.btn,.vx621-action,button){
   min-height:46px!important;border-radius:13px!important;
 }
 
 /* Business launcher/panel geometry: less nesting and less giant empty space. */
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.vx621-hero,.vx621-section,.vx621-command-section,.business-section,.vx621-group){
+html.vy861-flat-black #screen-business :is(.vx621-hero,.vx621-section,.vx621-command-section,.business-section,.vx621-group){
   border-radius:17px!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.vx621-kpis,.stats){gap:9px!important}
-html.vy861-flat-black:not(.theme-light) #screen-business .vx621-kpi{min-height:94px!important;padding:13px!important}
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.actions,.vx621-actions){gap:8px!important}
+html.vy861-flat-black #screen-business :is(.vx621-kpis,.stats){gap:9px!important}
+html.vy861-flat-black #screen-business .vx621-kpi{min-height:94px!important;padding:13px!important}
+html.vy861-flat-black #screen-business :is(.actions,.vx621-actions){gap:8px!important}
 
 /* Home progress card becomes calm OLED charcoal instead of blue-on-blue. */
-html.vy861-flat-black:not(.theme-light) #shopGrowthSummary{
+html.vy861-flat-black #shopGrowthSummary{
   border-radius:18px!important;background:var(--vy862-surface)!important;
 }
-html.vy861-flat-black:not(.theme-light) #shopGrowthSummary .home-section-kicker{color:#4aa3ff!important}
-html.vy861-flat-black:not(.theme-light) #shopGrowthSummary :is(.shop-growth-stat,.shop-streak){
+html.vy861-flat-black #shopGrowthSummary .home-section-kicker{color:#4aa3ff!important}
+html.vy861-flat-black #shopGrowthSummary :is(.shop-growth-stat,.shop-streak){
   background:var(--vy862-surface-2)!important;border-color:var(--vy862-border)!important;
 }
 
 /* Bottom nav: compact black dock, no rectangular outer ghost border, no content overlap. */
-html.vy861-flat-black:not(.theme-light) .nav{
+html.vy861-flat-black .nav{
   left:50%!important;right:auto!important;bottom:0!important;
   width:min(calc(100% - 18px),620px)!important;
   min-height:68px!important;height:auto!important;
@@ -177,23 +177,23 @@ html.vy861-flat-black:not(.theme-light) .nav{
   -webkit-backdrop-filter:blur(24px) saturate(110%)!important;
   overflow:hidden!important;
 }
-html.vy861-flat-black:not(.theme-light) .nav button[data-android-tab],
-html.vy861-flat-black:not(.theme-light) .nav button{
+html.vy861-flat-black .nav button[data-android-tab],
+html.vy861-flat-black .nav button{
   min-height:56px!important;height:56px!important;border:0!important;
   background:transparent!important;color:#8c939d!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) .nav button.active{
+html.vy861-flat-black .nav button.active{
   background:var(--vy862-blue-soft)!important;color:#55a8ff!important;
 }
-html.vy861-flat-black:not(.theme-light) .nav button.active .android-nav-icon{
+html.vy861-flat-black .nav button.active .android-nav-icon{
   background:transparent!important;color:inherit!important;
 }
 
 /* Settings are neutral; old app-lock visuals are removed without hiding other preferences. */
-html.vy861-flat-black:not(.theme-light) #screen-settings{
+html.vy861-flat-black #screen-settings{
   background:#000!important;color:var(--vy862-text)!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings :is(
+html.vy861-flat-black #screen-settings :is(
   .vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,
   .vy675-page-body>.settings-section,.vx622-settings-list,.production-account-card
 ){
@@ -206,7 +206,7 @@ html.vy861-flat-black #vyaparOtpGate .auth-method-tab.vx643-password-locked{
 }
 
 /* Universal popup language remains opaque graphite; no navy modal. */
-html.vy861-flat-black:not(.theme-light) :is(
+html.vy861-flat-black :is(
   .glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,
   .android-permission-card,.android-sheet,.account-delete-dialog,[role="dialog"]
 ){
@@ -216,16 +216,16 @@ html.vy861-flat-black:not(.theme-light) :is(
 }
 
 /* Dark auth page: black shell + graphite form only. */
-html.vy861-flat-black:not(.theme-light) :is(#vyaparOtpGate,.auth-gate,.login-page,.login-shell){
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate,.login-page,.login-shell){
   background:#000!important;background-image:none!important;color:var(--vy862-text)!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(#vyaparOtpGate,.auth-gate) :is(.auth-card,.login-card,[class*="auth-card"]){
+html.vy861-flat-black :is(#vyaparOtpGate,.auth-gate) :is(.auth-card,.login-card,[class*="auth-card"]){
   background:var(--vy862-surface)!important;background-image:none!important;
   border-color:var(--vy862-border)!important;box-shadow:none!important;
 }
 
 @media(max-width:520px){
   html.vy861-flat-black .app{padding-left:10px!important;padding-right:10px!important}
-  html.vy861-flat-black:not(.theme-light) .top{border-radius:15px!important}
-  html.vy861-flat-black:not(.theme-light) #screen-business :is(.vx621-hero,.vx621-section,.business-section,.vx621-group){border-radius:15px!important}
+  html.vy861-flat-black .top{border-radius:15px!important}
+  html.vy861-flat-black #screen-business :is(.vx621-hero,.vx621-section,.business-section,.vx621-group){border-radius:15px!important}
 }

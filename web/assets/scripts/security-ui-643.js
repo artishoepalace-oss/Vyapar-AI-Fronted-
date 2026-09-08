@@ -1,4 +1,4 @@
-/* Vyapar AI 6.5.2 — shared web + Android navbar tap-only + refresh-aware account password policy */
+/* Vyapar AI 6.5.7 — Android password verification + refresh-aware account password policy */
 (function(){
   'use strict';
 
@@ -55,6 +55,9 @@
         <p>This is the same password used by “Login with Password”. Your email stays the same.</p>\
         <label>Account email</label>\
         <div class="vx643-email">'+email.replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})+'</div>\
+        <label for="vx643CurrentPassword">Current password</label>\
+        <input id="vx643CurrentPassword" type="password" autocomplete="current-password" placeholder="Enter current password">\
+        <small class="vx643-password-help">Required to securely change your account password.</small>\
         <label for="vx643NewPassword">New password</label>\
         <input id="vx643NewPassword" type="password" autocomplete="new-password" placeholder="8–72 characters">\
         <label for="vx643ConfirmPassword">Confirm password</label>\
@@ -71,9 +74,11 @@
     overlay.addEventListener('click',function(e){if(e.target===overlay)close()});
     var save=overlay.querySelector('[data-save]');
     save.onclick=async function(){
+      var current=String(document.getElementById('vx643CurrentPassword')?.value||'');
       var pass=String(document.getElementById('vx643NewPassword')?.value||'');
       var confirm=String(document.getElementById('vx643ConfirmPassword')?.value||'');
       var err=document.getElementById('vx643ModalError');
+      if(!current){err.textContent='Enter your current password.';document.getElementById('vx643CurrentPassword')?.focus();return}
       if(pass.length<8||pass.length>72){err.textContent='Password must be 8–72 characters.';return}
       if(pass!==confirm){err.textContent='Passwords do not match.';return}
       err.textContent='';save.disabled=true;save.textContent='Updating…';
@@ -82,7 +87,7 @@
         var response=await authenticatedFetch(API_BASE+'/auth/password',{
           method:'PUT',
           headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()},
-          body:JSON.stringify({password:pass})
+          body:JSON.stringify({currentPassword:current,newPassword:pass,password:pass})
         });
         var data={};
         try{data=await response.json()}catch(_){data={}}
@@ -97,7 +102,7 @@
         save.disabled=false;save.textContent='Update password';
       }
     };
-    setTimeout(function(){document.getElementById('vx643NewPassword')?.focus()},30);
+    setTimeout(function(){document.getElementById('vx643CurrentPassword')?.focus()},30);
   }
 
   window.vx643ChangeAccountPassword=function(){modal(false)};

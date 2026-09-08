@@ -265,7 +265,7 @@
   const observer = new MutationObserver(function(mutations){
     if(mutations.some(function(mutation){ return mutation.addedNodes.length > 0; })) schedule();
   });
-  observer.observe(document.documentElement, {childList:true, subtree:true});
+  observer.observe(document.querySelector('main') || document.body, {childList:true, subtree:true});
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule, {once:true});
   else schedule();

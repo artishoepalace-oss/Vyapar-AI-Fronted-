@@ -171,12 +171,7 @@ html.native-android .cu-help-button {
   font-size: 13px !important;
   font-weight: 900 !important;
 }
-html.theme-light.commercial-ui-v1 .cu-help-button,
-html.theme-light.native-android .cu-help-button {
-  background: rgba(36, 87, 214, .10) !important;
-  color: #2457d6 !important;
-  border-color: rgba(36, 87, 214, .20) !important;
-}
+
 html.commercial-ui-v1 .cu-help-panel,
 html.native-android .cu-help-panel {
   position: fixed !important;
@@ -200,11 +195,7 @@ html.native-android .cu-help-panel {
   white-space: normal !important;
   word-break: break-word !important;
 }
-html.theme-light.commercial-ui-v1 .cu-help-panel,
-html.theme-light.native-android .cu-help-panel {
-  background: rgba(255, 255, 255, .98) !important;
-  color: #1f3248 !important;
-}
+
 html.commercial-ui-v1 .cu-help.is-open .cu-help-panel,
 html.native-android .cu-help.is-open .cu-help-panel {
   display: block !important;

@@ -375,16 +375,9 @@ html.workflow-ui-p2 .p2-live-region {
 
 @keyframes p2Spin { to { transform: rotate(360deg); } }
 
-html.workflow-ui-p2.theme-light {
-  --p2-field-bg: rgba(244, 249, 253, .92);
-}
 
-html.workflow-ui-p2.theme-light .p2-live-preview,
-html.workflow-ui-p2.theme-light .p2-advanced-fields,
-html.workflow-ui-p2.theme-light .p2-preview-metric,
-html.workflow-ui-p2.theme-light .p2-pos-step {
-  background: rgba(230, 239, 248, .62) !important;
-}
+
+
 
 @media (max-width: 560px) {
   html.workflow-ui-p2 .p2-live-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }

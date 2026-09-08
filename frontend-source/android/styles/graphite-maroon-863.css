@@ -2,7 +2,7 @@
    Screenshot-driven final layer: remove legacy blue surfaces, keep light mode intact,
    add a floating nav dock, plan-aware account styling, and deep-maroon destructive actions. */
 
-html.vy861-flat-black:not(.theme-light){
+html.vy861-flat-black{
   --v863-bg:#000000;
   --v863-surface:#101113;
   --v863-surface-2:#16181b;
@@ -55,25 +55,25 @@ html.vy861-flat-black:not(.theme-light){
 }
 
 /* Kill the old per-screen blue design tokens. */
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings,#screen-calculator,#screen-analytics,#screen-upload){
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings,#screen-calculator,#screen-analytics,#screen-upload){
   --vy-screen-rgb:150,156,163!important;
   --vy-screen-accent:#aeb4bb!important;
   --vy-screen-accent-soft:rgba(174,180,187,.10)!important;
   --vy-screen-accent-strong:#d7dbe0!important;
 }
 
-html.vy861-flat-black:not(.theme-light),
-html.vy861-flat-black:not(.theme-light) body,
-html.vy861-flat-black:not(.theme-light) .app,
-html.vy861-flat-black:not(.theme-light) main,
-html.vy861-flat-black:not(.theme-light) .screen{
+html.vy861-flat-black,
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{
   background:#000!important;
   background-image:none!important;
   color:var(--v863-text)!important;
 }
 
 /* Top bar: compact black chrome. Theme control is replaced by profile chip in JS. */
-html.vy861-flat-black:not(.theme-light) .top{
+html.vy861-flat-black .top{
   min-height:66px!important;
   padding:9px 11px!important;
   margin:0 0 14px!important;
@@ -85,36 +85,36 @@ html.vy861-flat-black:not(.theme-light) .top{
   backdrop-filter:blur(20px) saturate(105%)!important;
   -webkit-backdrop-filter:blur(20px) saturate(105%)!important;
 }
-html.vy861-flat-black:not(.theme-light) .top .logo{width:42px!important;height:42px!important}
-html.vy861-flat-black:not(.theme-light) .top h1{font-size:20px!important}
-html.vy861-flat-black:not(.theme-light) #themeToggle{display:none!important}
-html.vy861-flat-black:not(.theme-light) #planBadge{display:none!important}
-html.vy861-flat-black:not(.theme-light) .vy863-profile-chip{
+html.vy861-flat-black .top .logo{width:42px!important;height:42px!important}
+html.vy861-flat-black .top h1{font-size:20px!important}
+html.vy861-flat-black #themeToggle{display:none!important}
+html.vy861-flat-black #planBadge{display:none!important}
+html.vy861-flat-black .vy863-profile-chip{
   width:46px!important;height:46px!important;min-width:46px!important;flex:0 0 46px!important;
   padding:0!important;border-radius:50%!important;border:1px solid var(--v863-line-strong)!important;
   display:grid!important;place-items:center!important;position:relative!important;overflow:visible!important;
   background:var(--v863-surface-2)!important;color:var(--v863-text)!important;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)!important;
 }
-html.vy861-flat-black:not(.theme-light) .vy863-profile-chip .vy863-profile-avatar{
+html.vy861-flat-black .vy863-profile-chip .vy863-profile-avatar{
   width:36px;height:36px;border-radius:50%;display:grid;place-items:center;overflow:hidden;
   background:#2a2d31;color:#fff;font-weight:800;font-size:15px;letter-spacing:-.02em;
   border:1px solid rgba(255,255,255,.14);
 }
-html.vy861-flat-black:not(.theme-light) .vy863-profile-chip .vy863-profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
-html.vy861-flat-black:not(.theme-light) .vy863-profile-chip .vy863-plan-dot{
+html.vy861-flat-black .vy863-profile-chip .vy863-profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+html.vy861-flat-black .vy863-profile-chip .vy863-plan-dot{
   position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;
   border:2px solid #0c0d0f;background:#7f858d;
 }
-html.vy861-flat-black:not(.theme-light)[data-vy863-plan="business"] .vy863-profile-chip{border-color:rgba(216,173,85,.60)!important;box-shadow:0 0 0 1px rgba(216,173,85,.12),0 6px 18px rgba(0,0,0,.28)!important}
-html.vy861-flat-black:not(.theme-light)[data-vy863-plan="business"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#6f531f,#d8ad55 56%,#5f4519);border-color:rgba(241,202,114,.68)}
-html.vy861-flat-black:not(.theme-light)[data-vy863-plan="business"] .vy863-profile-chip .vy863-plan-dot{background:var(--v863-gold-2)}
-html.vy861-flat-black:not(.theme-light)[data-vy863-plan="pro"] .vy863-profile-chip{border-color:rgba(201,206,212,.60)!important}
-html.vy861-flat-black:not(.theme-light)[data-vy863-plan="pro"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#555a60,#c9ced4 56%,#53585e);color:#111;border-color:rgba(238,241,244,.68)}
-html.vy861-flat-black:not(.theme-light)[data-vy863-plan="pro"] .vy863-profile-chip .vy863-plan-dot{background:#e2e5e9}
+html.vy861-flat-black[data-vy863-plan="business"] .vy863-profile-chip{border-color:rgba(216,173,85,.60)!important;box-shadow:0 0 0 1px rgba(216,173,85,.12),0 6px 18px rgba(0,0,0,.28)!important}
+html.vy861-flat-black[data-vy863-plan="business"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#6f531f,#d8ad55 56%,#5f4519);border-color:rgba(241,202,114,.68)}
+html.vy861-flat-black[data-vy863-plan="business"] .vy863-profile-chip .vy863-plan-dot{background:var(--v863-gold-2)}
+html.vy861-flat-black[data-vy863-plan="pro"] .vy863-profile-chip{border-color:rgba(201,206,212,.60)!important}
+html.vy861-flat-black[data-vy863-plan="pro"] .vy863-profile-chip .vy863-profile-avatar{background:linear-gradient(145deg,#555a60,#c9ced4 56%,#53585e);color:#111;border-color:rgba(238,241,244,.68)}
+html.vy861-flat-black[data-vy863-plan="pro"] .vy863-profile-chip .vy863-plan-dot{background:#e2e5e9}
 
 /* Universal graphite surfaces across all primary workspaces. */
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
   .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
   .production-card,.production-account-card,.vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,.vx621-recent,
   .home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.notice,.code-output,.code-note,.code-preview,
@@ -129,7 +129,7 @@ html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#scree
 }
 
 /* Secondary/nested surfaces use a slightly lighter graphite, never navy. */
-html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings) :is(
   .production-account-grid>div,.shop-growth-stat,.shop-growth-goal,.home-kpi,.home-stat,
   .vx621-action-card,.vx621-tool,.vx621-action,.business-tool,.business-action,
   .p2-live-preview,.vy660-live-box,.settings-field,.settings-row,[class*="-metric"],[class*="-stat"]
@@ -142,124 +142,124 @@ html.vy861-flat-black:not(.theme-light) :is(#screen-home,#screen-business,#scree
 }
 
 /* Business blue panels seen in screenshots. */
-html.vy861-flat-black:not(.theme-light) #screen-business :is(
+html.vy861-flat-black #screen-business :is(
   .vx621-section,.vx621-command-section,.business-section,.business-module-card,.business-command-card,
   .business-workspace,.business-tool-card,.vx621-group,.vx621-context,.vx621-hero,[class*="business-"][class*="card"]
 ){
   background:var(--v863-surface)!important;background-image:none!important;border-color:var(--v863-line)!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-business :is(.vx621-icon,.business-icon,[class*="tool-icon"]){
+html.vy861-flat-black #screen-business :is(.vx621-icon,.business-icon,[class*="tool-icon"]){
   background:var(--v863-surface-3)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-silver)!important;
 }
 
 /* Home quick access / shop progress: remove the remaining blue tile. */
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card,[class*="quick-"][class*="card"],[class*="quick-"][class*="action"]){
+html.vy861-flat-black #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card,[class*="quick-"][class*="card"],[class*="quick-"][class*="action"]){
   background:var(--v863-surface-2)!important;background-image:none!important;border-color:var(--v863-line)!important;color:var(--v863-text)!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card):active{background:var(--v863-surface-4)!important}
-html.vy861-flat-black:not(.theme-light) #screen-home :is(.home-section-kicker,.settings-kicker,[class*="kicker"]){color:var(--v863-silver-2)!important}
+html.vy861-flat-black #screen-home :is(.home-quick-action,.home-action-card,.quick-action,.quick-card,.home-tool-card):active{background:var(--v863-surface-4)!important}
+html.vy861-flat-black #screen-home :is(.home-section-kicker,.settings-kicker,[class*="kicker"]){color:var(--v863-silver-2)!important}
 
 /* Sales/business mode bars: graphite capsule with white selected state. */
-html.vy861-flat-black:not(.theme-light) .p1-modebar{
+html.vy861-flat-black .p1-modebar{
   background:var(--v863-surface-2)!important;background-image:none!important;border:1px solid var(--v863-line)!important;
   box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-html.vy861-flat-black:not(.theme-light) .p1-modebar button{
+html.vy861-flat-black .p1-modebar button{
   background:var(--v863-surface)!important;background-image:none!important;border-color:var(--v863-line)!important;color:#c4c9cf!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) .p1-modebar button[aria-selected="true"],
-html.vy861-flat-black:not(.theme-light) .p1-modebar button.active{
+html.vy861-flat-black .p1-modebar button[aria-selected="true"],
+html.vy861-flat-black .p1-modebar button.active{
   background:var(--v863-surface-4)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;
 }
 
 /* Settings: search, icons, rows and forms are all neutral graphite. */
-html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list){
+html.vy861-flat-black #screen-settings :is(.vy675-settings-search,.vy675-settings-list,.vy675-navigation-card,.vy675-page-body>.card,.vy675-page-body>.settings-section,.vx622-settings-list){
   background:var(--v863-surface)!important;background-image:none!important;border-color:var(--v863-line)!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings .vy675-settings-search input{
+html.vy861-flat-black #screen-settings .vy675-settings-search input{
   background:transparent!important;border:0!important;box-shadow:none!important;color:var(--v863-text)!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-row-icon,.vx622-settings-icon){
+html.vy861-flat-black #screen-settings :is(.vy675-row-icon,.vx622-settings-icon){
   background:var(--v863-surface-3)!important;background-image:none!important;border-color:var(--v863-line)!important;color:var(--v863-silver)!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row){
   background:transparent!important;background-image:none!important;border-color:var(--v863-line)!important;color:var(--v863-text)!important;
 }
-html.vy861-flat-black:not(.theme-light) #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row):active{background:rgba(255,255,255,.045)!important}
-html.vy861-flat-black:not(.theme-light) #screen-settings .vy675-settings-eyebrow{color:var(--v863-silver-2)!important}
+html.vy861-flat-black #screen-settings :is(.vy675-settings-row,.vx622-settings-row,.vy675-option-row):active{background:rgba(255,255,255,.045)!important}
+html.vy861-flat-black #screen-settings .vy675-settings-eyebrow{color:var(--v863-silver-2)!important}
 
-html.vy861-flat-black:not(.theme-light) :is(input,select,textarea){
+html.vy861-flat-black :is(input,select,textarea){
   background:var(--v863-surface-2)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-text)!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(input,select,textarea):focus{
+html.vy861-flat-black :is(input,select,textarea):focus{
   border-color:#777e86!important;box-shadow:0 0 0 3px rgba(201,206,212,.11)!important;outline:none!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(input,textarea)::placeholder{color:var(--v863-muted-2)!important}
-html.vy861-flat-black:not(.theme-light) select option{background:#17191c!important;color:#fff!important}
+html.vy861-flat-black :is(input,textarea)::placeholder{color:var(--v863-muted-2)!important}
+html.vy861-flat-black select option{background:#17191c!important;color:#fff!important}
 
 /* Neutral action hierarchy. No blue fills in dark mode. */
-html.vy861-flat-black:not(.theme-light) :is(.btn,main button,.screen button):not(.nav button):not(.vy863-profile-chip):not(.danger):not([data-danger="true"]){
+html.vy861-flat-black :is(.btn,main button,.screen button):not(.nav button):not(.vy863-profile-chip):not(.danger):not([data-danger="true"]){
   background:var(--v863-surface-2)!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-text)!important;box-shadow:none!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary,.glass-dialog-btn:not(.secondary):not(.danger)){
   background:#2b2f34!important;background-image:none!important;border-color:#464b52!important;color:#fff!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary):active{background:#353a40!important}
-html.vy861-flat-black:not(.theme-light) #productionAccountCard button:not(.danger):not([data-danger="true"]){
+html.vy861-flat-black :is(.btn.primary,button.primary,.production-primary,.subscription-dialog-primary,.vx621-action.primary):active{background:#353a40!important}
+html.vy861-flat-black #productionAccountCard button:not(.danger):not([data-danger="true"]){
   background:#25292e!important;background-image:none!important;border-color:#444950!important;color:#fff!important;
 }
 
 /* Deep-maroon destructive system: calm, premium, unmistakably destructive. */
-html.vy861-flat-black:not(.theme-light) :is(
+html.vy861-flat-black :is(
   .btn.danger,button.danger,[data-danger="true"],.account-delete-actions button:last-child,
   #productionAccountCard .danger,.production-danger,.destructive,.delete-action,.cancel-subscription-action
 ){
   background:var(--v863-maroon)!important;background-image:none!important;border-color:var(--v863-maroon-line)!important;color:#fff!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 7px 18px rgba(74,9,27,.20)!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.btn.danger,button.danger,[data-danger="true"],.production-danger,.destructive,.delete-action):active{background:var(--v863-maroon-press)!important;transform:scale(.975)!important}
+html.vy861-flat-black :is(.btn.danger,button.danger,[data-danger="true"],.production-danger,.destructive,.delete-action):active{background:var(--v863-maroon-press)!important;transform:scale(.975)!important}
 
 /* Account card: graphite base + plan-aware metallic accents. */
-html.vy861-flat-black:not(.theme-light) #productionAccountCard,
-html.vy861-flat-black:not(.theme-light) #productionAccountCard .production-account-card{
+html.vy861-flat-black #productionAccountCard,
+html.vy861-flat-black #productionAccountCard .production-account-card{
   background:linear-gradient(180deg,#15171a,#101113)!important;
   border:1px solid var(--v863-line-strong)!important;
   box-shadow:0 12px 28px rgba(0,0,0,.30)!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard .production-account-grid>div{
+html.vy861-flat-black #productionAccountCard .production-account-grid>div{
   background:rgba(255,255,255,.025)!important;border-color:var(--v863-line)!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard .production-plan{
+html.vy861-flat-black #productionAccountCard .production-plan{
   background:#2a2d31!important;background-image:none!important;border:1px solid #474c52!important;color:#e6e9ed!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="business"]{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="business"]{
   border-color:rgba(216,173,85,.42)!important;
   box-shadow:0 12px 28px rgba(0,0,0,.30),inset 0 1px 0 rgba(241,202,114,.09)!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="business"] .production-avatar{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="business"] .production-avatar{
   background:linear-gradient(145deg,#6b501e,#d8ad55 55%,#5c4217)!important;color:#fff!important;border-color:rgba(241,202,114,.60)!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="business"] .production-plan{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="business"] .production-plan{
   background:#3a2d13!important;border-color:rgba(216,173,85,.58)!important;color:#f4d58d!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="pro"]{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="pro"]{
   border-color:rgba(201,206,212,.38)!important;
   box-shadow:0 12px 28px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.08)!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="pro"] .production-avatar{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="pro"] .production-avatar{
   background:linear-gradient(145deg,#555a60,#c9ced4 55%,#51565b)!important;color:#111!important;border-color:rgba(238,241,244,.58)!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="pro"] .production-plan{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="pro"] .production-plan{
   background:#2d3034!important;border-color:#666c73!important;color:#eef1f4!important;
 }
-html.vy861-flat-black:not(.theme-light) #productionAccountCard[data-vy863-plan="free"] .production-avatar{
+html.vy861-flat-black #productionAccountCard[data-vy863-plan="free"] .production-avatar{
   background:#31353a!important;color:#f4f5f6!important;border-color:#555b62!important;
 }
 
 /* Floating nav dock. */
-html.vy861-flat-black:not(.theme-light) .app{padding-bottom:126px!important}
-html.vy861-flat-black:not(.theme-light) .screen{padding-bottom:18px!important}
-html.vy861-flat-black:not(.theme-light) .nav{
+html.vy861-flat-black .app{padding-bottom:126px!important}
+html.vy861-flat-black .screen{padding-bottom:18px!important}
+html.vy861-flat-black .nav{
   left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;
   width:auto!important;max-width:none!important;margin:0!important;padding:7px!important;
   border:1px solid var(--v863-line-strong)!important;border-radius:26px!important;
@@ -267,27 +267,27 @@ html.vy861-flat-black:not(.theme-light) .nav{
   box-shadow:0 14px 38px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.035)!important;
   backdrop-filter:blur(22px) saturate(105%)!important;-webkit-backdrop-filter:blur(22px) saturate(105%)!important;
 }
-html.vy861-flat-black:not(.theme-light) .nav button{
+html.vy861-flat-black .nav button{
   min-height:58px!important;border-radius:18px!important;background:transparent!important;background-image:none!important;color:#8d949c!important;
 }
-html.vy861-flat-black:not(.theme-light) .nav button.active{
+html.vy861-flat-black .nav button.active{
   background:#22262b!important;background-image:none!important;color:#f4f6f8!important;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)!important;
 }
-html.vy861-flat-black:not(.theme-light) .nav button.active :is(svg,.android-nav-icon){color:#f4f6f8!important;stroke:currentColor!important}
-html.vy861-flat-black:not(.theme-light) .nav button:active{background:#2a2f35!important}
+html.vy861-flat-black .nav button.active :is(svg,.android-nav-icon){color:#f4f6f8!important;stroke:currentColor!important}
+html.vy861-flat-black .nav button:active{background:#2a2f35!important}
 
 /* Dialogs/sheets stay neutral graphite; destructive confirmation uses maroon action only. */
-html.vy861-flat-black:not(.theme-light) :is(.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]){
+html.vy861-flat-black :is(.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]){
   background:#15171a!important;background-image:none!important;border-color:var(--v863-line-strong)!important;color:var(--v863-text)!important;
 }
-html.vy861-flat-black:not(.theme-light) :is(.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay){background:rgba(0,0,0,.74)!important}
+html.vy861-flat-black :is(.glass-dialog-overlay,.subscription-overlay,.shop-progress-overlay,.vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,.account-delete-overlay){background:rgba(0,0,0,.74)!important}
 
 @media(max-width:520px){
-  html.vy861-flat-black:not(.theme-light) .app{padding-left:10px!important;padding-right:10px!important;padding-bottom:124px!important}
-  html.vy861-flat-black:not(.theme-light) .top{border-radius:18px!important}
-  html.vy861-flat-black:not(.theme-light) .nav{left:10px!important;right:10px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;border-radius:24px!important}
-  html.vy861-flat-black:not(.theme-light) .nav button{min-height:56px!important;border-radius:17px!important}
+  html.vy861-flat-black .app{padding-left:10px!important;padding-right:10px!important;padding-bottom:124px!important}
+  html.vy861-flat-black .top{border-radius:18px!important}
+  html.vy861-flat-black .nav{left:10px!important;right:10px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;border-radius:24px!important}
+  html.vy861-flat-black .nav button{min-height:56px!important;border-radius:17px!important}
 }
 
 /* Light mode intentionally remains under the existing verified light-theme rules. */

@@ -68,7 +68,7 @@ html.native-android .top {
   -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
 }
 
-html.native-android:not(.theme-light) .top {
+html.native-android .top {
   border-bottom-color: #263449 !important;
   background: rgba(11, 18, 32, .96) !important;
 }

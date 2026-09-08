@@ -24,17 +24,7 @@
   --vy-nav-safe: calc(92px + env(safe-area-inset-bottom));
 }
 
-html.theme-light {
-  --vy-bg-0: #eef6ff;
-  --vy-bg-1: #f9fbff;
-  --vy-surface: rgba(255, 255, 255, .94);
-  --vy-surface-strong: #ffffff;
-  --vy-surface-soft: rgba(245, 249, 255, .96);
-  --vy-text: #13243a;
-  --vy-muted: #61748a;
-  --vy-line: rgba(75, 103, 136, .15);
-  --vy-shadow: 0 12px 30px rgba(47, 78, 111, .10);
-}
+
 
 html,
 body {
@@ -44,7 +34,7 @@ body {
 }
 
 html { color-scheme: dark; }
-html.theme-light { color-scheme: light; }
+
 
 body {
   color: var(--vy-text) !important;
@@ -57,13 +47,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-html.theme-light body {
-  background:
-    radial-gradient(circle at 4% 0%, rgba(77, 156, 255, .16), transparent 27%),
-    radial-gradient(circle at 98% 9%, rgba(247, 119, 185, .10), transparent 22%),
-    radial-gradient(circle at 50% 82%, rgba(53, 210, 234, .09), transparent 27%),
-    linear-gradient(180deg, #f7fbff, #eef5fc 52%, #f8fbff) !important;
-}
+
 
 body::before,
 body::after { opacity: .38 !important; }
@@ -324,12 +308,7 @@ textarea {
   font-size: 14px !important;
 }
 
-html.theme-light input,
-html.theme-light select,
-html.theme-light textarea {
-  background: #f8fbff !important;
-  color: #14263b !important;
-}
+
 
 input::placeholder,
 textarea::placeholder { color: var(--vy-muted) !important; opacity: .82 !important; }
@@ -592,7 +571,7 @@ table th {
   -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
   touch-action: manipulation !important;
 }
-html.theme-light .nav { background: rgba(255, 255, 255, .95) !important; }
+
 
 .nav button,
 .nav .nav-item {
@@ -822,13 +801,7 @@ body {
     linear-gradient(180deg, #061426, #071a2c 52%, #061321) !important;
 }
 
-html.theme-light body {
-  background:
-    radial-gradient(circle at 4% 0%, rgba(50, 149, 255, .24), transparent 28%),
-    radial-gradient(circle at 98% 10%, rgba(255, 95, 178, .17), transparent 24%),
-    radial-gradient(circle at 50% 84%, rgba(18, 217, 238, .15), transparent 29%),
-    linear-gradient(180deg, #f8fbff, #eaf4ff 54%, #f7fbff) !important;
-}
+
 
 /* Each primary screen gets a recognisable, saturated color family. */
 #screen-home { --vy-screen-rgb: 50, 149, 255; --vy-screen-accent: #3295ff; }
@@ -1047,19 +1020,9 @@ html.theme-light body {
   box-shadow: 0 10px 24px rgba(232,61,89,.24) !important;
 }
 
-html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
-html.theme-light #screen-settings .vy675-page-body select,
-html.theme-light #screen-settings .vy675-page-body textarea {
-  background: linear-gradient(145deg,rgba(18,217,238,.10),rgba(50,149,255,.06)),#fff !important;
-}
-html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard {
-  background:
-    radial-gradient(18rem 12rem at 0 0,rgba(255,208,71,.20),transparent 62%),
-    radial-gradient(20rem 14rem at 100% 20%,rgba(50,149,255,.15),transparent 66%),
-    #fff !important;
-}
-html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid,
-html.theme-light #screen-settings[data-vy675-page="account"] .production-account-grid > div { border-color: rgba(44,66,90,.15) !important; }
+
+
+
 
 @media (max-width: 520px) {
   #screen-settings .vy675-page-header { grid-template-columns: 44px minmax(0,1fr) !important; gap: 11px !important; }
@@ -1085,7 +1048,7 @@ html.theme-light #screen-settings[data-vy675-page="account"] .production-account
   --vy-red: #e14d61;
 }
 
-html:not(.theme-light) {
+html {
   --vy-bg-0: #061326;
   --vy-bg-1: #081b31;
   --vy-surface: rgba(12, 31, 52, .92);
@@ -1097,27 +1060,15 @@ html:not(.theme-light) {
   --vy-shadow: 0 16px 38px rgba(0, 5, 14, .28);
 }
 
-html:not(.theme-light) body {
+html body {
   background:
     radial-gradient(36rem 25rem at 8% 0%, rgba(37, 112, 205, .22), transparent 68%),
     linear-gradient(180deg, #061326 0%, #081b31 52%, #061426 100%) !important;
 }
 
-html.theme-light {
-  --vy-bg-0: #ffffff;
-  --vy-bg-1: #f7faff;
-  --vy-surface: #ffffff;
-  --vy-surface-strong: #ffffff;
-  --vy-surface-soft: #f7faff;
-  --vy-text: #14263d;
-  --vy-muted: #63758a;
-  --vy-line: rgba(51, 95, 143, .15);
-  --vy-shadow: 0 12px 28px rgba(39, 74, 113, .09);
-}
 
-html.theme-light body {
-  background: linear-gradient(180deg, #ffffff 0%, #f7faff 54%, #ffffff 100%) !important;
-}
+
+
 
 #screen-home,
 #screen-business,
@@ -1152,24 +1103,7 @@ html.theme-light body {
   box-shadow: var(--vy-shadow) !important;
 }
 
-html.theme-light #screen-home .card,
-html.theme-light #screen-home .stat,
-html.theme-light #screen-business .card,
-html.theme-light #screen-business .vx621-feature-card,
-html.theme-light #screen-business .vx621-group,
-html.theme-light #screen-sales .card,
-html.theme-light #screen-sales .stat,
-html.theme-light #screen-stock .card,
-html.theme-light #screen-stock .stat,
-html.theme-light .business-module-card,
-html.theme-light .adv-module,
-html.theme-light .p611-card,
-html.theme-light .p620-report-card {
-  color: #14263d !important;
-  border-color: rgba(51, 95, 143, .15) !important;
-  background: #ffffff !important;
-  box-shadow: 0 12px 28px rgba(39,74,113,.09) !important;
-}
+
 
 #screen-home .home-metrics .stat:nth-child(n),
 .vx621-feature-card,
@@ -1190,16 +1124,9 @@ html.theme-light .p620-report-card {
   color: #5aa7ff !important;
 }
 
-html.theme-light #screen-home .android-quick-action:nth-child(n) {
-  background: #ffffff !important;
-}
 
-html.theme-light #screen-home .android-quick-action:nth-child(n) .android-quick-action-icon,
-html.theme-light .vx621-feature-icon,
-html.theme-light .adv-module b,
-html.theme-light .business-module-card h3 {
-  color: #236fc9 !important;
-}
+
+
 
 .nav {
   border-color: rgba(75, 147, 220, .30) !important;
@@ -1218,15 +1145,10 @@ html.theme-light .business-module-card h3 {
 .nav button.active[data-android-tab] .android-nav-icon,
 .nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
 
-html.theme-light .nav {
-  border-color: rgba(51,95,143,.16) !important;
-  background: rgba(255,255,255,.97) !important;
-  box-shadow: 0 14px 32px rgba(39,74,113,.13) !important;
-}
-html.theme-light .nav button[data-android-tab] .android-nav-icon { color: #5c7b9b !important; }
-html.theme-light .nav button[data-android-tab] .android-nav-label { color: #60758b !important; }
-html.theme-light .nav button.active[data-android-tab] .android-nav-icon,
-html.theme-light .nav button.active[data-android-tab] .android-nav-label { color: #ffffff !important; }
+
+
+
+
 
 .android-sheet-item[data-tab] {
   --vy-sheet-color: #5aa7ff;
@@ -1238,12 +1160,9 @@ html.theme-light .nav button.active[data-android-tab] .android-nav-label { color
   color: #5aa7ff !important;
   background: rgba(49,135,245,.12) !important;
 }
-html.theme-light .android-sheet {
-  background: #ffffff !important;
-  border-color: rgba(51,95,143,.16) !important;
-}
-html.theme-light .android-sheet-item[data-tab] { background: #ffffff !important; }
-html.theme-light .android-sheet-item[data-tab] .android-sheet-item-icon { color: #236fc9 !important; }
+
+
+
 
 #screen-settings .vy675-settings-row {
   --vy-row-accent: #3187f5 !important;
@@ -1254,7 +1173,7 @@ html.theme-light .android-sheet-item[data-tab] .android-sheet-item-icon { color:
   border-color: rgba(49,135,245,.18) !important;
   background: rgba(49,135,245,.11) !important;
 }
-html.theme-light #screen-settings .vy675-settings-row .vy675-row-icon { color: #236fc9 !important; }
+
 
 #screen-settings .vy675-page-back {
   border-color: rgba(49,135,245,.32) !important;
@@ -1274,17 +1193,13 @@ html.theme-light #screen-settings .vy675-settings-row .vy675-row-icon { color: #
   border-color: rgba(49,135,245,.24) !important;
   background: rgba(12,31,52,.82) !important;
 }
-html.theme-light #screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="file"]),
-html.theme-light #screen-settings .vy675-page-body select,
-html.theme-light #screen-settings .vy675-page-body textarea {
-  background: #ffffff !important;
-}
+
 
 #screen-settings[data-vy675-page="account"] #productionAccountCard {
   border-color: rgba(49,135,245,.30) !important;
   background: linear-gradient(145deg,rgba(49,135,245,.14),rgba(255,255,255,.025)),rgba(12,35,55,.94) !important;
 }
-html.theme-light #screen-settings[data-vy675-page="account"] #productionAccountCard { background: #ffffff !important; }
+
 
 #screen-settings[data-vy675-page="account"] .production-actions button:nth-child(n),
 #screen-settings[data-vy675-page="update"] #fs607Settings > button,
