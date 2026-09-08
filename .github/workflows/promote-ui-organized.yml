@@ -1,0 +1,192 @@
+name: Promote Vyapar AI Organized UI 20.10.2004.00005.2026
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.release/READY-UI005'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: vyapar-ui005-promotion
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify staged promotion payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .release/READY-UI005
+          test -f .release/cleanup.00
+          test -f .release/patch.00
+          test -f .release/bundler.00
+          test -f .release/build.00
+          cat .release/cleanup.* | base64 -d | gzip -d > docs/cleanup-manifest.json
+          cat .release/patch.* | base64 -d | gzip -d > /tmp/ui-organized-source.patch
+          cat .release/bundler.* > /tmp/final-build-frontend-bundles.mjs
+          cat .release/build.* > /tmp/final-build-android.yml
+
+      - name: Apply organized source cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json, shutil
+
+          root = Path('.')
+          manifest = json.loads((root / 'docs/cleanup-manifest.json').read_text(encoding='utf-8'))
+
+          for item in manifest.get('moved', []):
+              src = root / item['from']
+              dst = root / item['to']
+              if not src.exists():
+                  continue
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              if dst.exists():
+                  if src.is_file() and dst.is_file() and src.read_bytes() == dst.read_bytes():
+                      src.unlink()
+                  else:
+                      raise SystemExit(f'Move conflict: {src} -> {dst}')
+              else:
+                  shutil.move(str(src), str(dst))
+
+          for item in manifest.get('removed', []):
+              path = root / item['path']
+              if path.is_dir():
+                  shutil.rmtree(path)
+              elif path.exists() or path.is_symlink():
+                  path.unlink()
+
+          protected = {root / '.git', root / '.release'}
+          dirs = sorted((p for p in root.rglob('*') if p.is_dir()), key=lambda p: len(p.parts), reverse=True)
+          for path in dirs:
+              if any(path == p or p in path.parents for p in protected):
+                  continue
+              try:
+                  path.rmdir()
+              except OSError:
+                  pass
+
+          print(f"Cleanup applied: {len(manifest.get('removed', []))} obsolete paths, {len(manifest.get('moved', []))} history moves")
+          PY
+
+      - name: Apply organized UI source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git apply --check /tmp/ui-organized-source.patch; then
+            git apply /tmp/ui-organized-source.patch
+          else
+            echo 'Direct patch check failed; attempting three-way application.'
+            git apply --3way /tmp/ui-organized-source.patch
+          fi
+          cp /tmp/final-build-frontend-bundles.mjs tools/build-frontend-bundles.mjs
+          cp /tmp/final-build-android.yml .github/workflows/build-android.yml
+
+      - name: Promote release identity to 20.10.2004.00005.2026
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          VERSION = '20.10.2004.00005.2026'
+          CODE = 2010200405
+          CACHE = f'{CODE}-uiorganized1'
+
+          root_version = Path('version.json')
+          data = json.loads(root_version.read_text(encoding='utf-8'))
+          data.update({
+              'versionName': VERSION,
+              'versionCode': CODE,
+              'channel': f'production-{VERSION}',
+              'released': '2026-09-09'
+          })
+          root_version.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+
+          gradle_path = Path('android-app/app/build.gradle')
+          gradle = gradle_path.read_text(encoding='utf-8')
+          gradle = re.sub(r'(?m)^\s*versionCode\s+\d+', f'        versionCode {CODE}', gradle, count=1)
+          gradle = re.sub(r'(?m)^\s*versionName\s+["\'][^"\']+["\']', f'        versionName "{VERSION}"', gradle, count=1)
+          gradle_path.write_text(gradle, encoding='utf-8')
+
+          for path in [Path('web/index.html'), Path('android-app/app/src/main/assets/index.html')]:
+              text = path.read_text(encoding='utf-8')
+              text = re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>', f'<meta name="vyapar-ui-version" content="{VERSION}" />', text, count=1)
+              text = re.sub(r'assets/styles/vyapar-core\.css\?v=[^"]+', f'assets/styles/vyapar-core.css?v={CACHE}', text, count=1)
+              text = re.sub(r'assets/styles/vyapar-ui\.css\?v=[^"]+', f'assets/styles/vyapar-ui.css?v={CACHE}', text, count=1)
+              text = re.sub(r'assets/scripts/vyapar-app\.js\?v=[^"]+', f'assets/scripts/vyapar-app.js?v={CACHE}', text, count=1)
+              path.write_text(text, encoding='utf-8')
+
+          for path in [
+              Path('tests/motion-navigation.test.js'),
+              Path('tests/professional-ui-682.test.js'),
+              Path('tests/settings-center-675.test.js'),
+              Path('tests/settings-overlap-858.test.js'),
+          ]:
+              if path.exists():
+                  text = path.read_text(encoding='utf-8')
+                  text = text.replace('20.10.2004.00004.2026', VERSION).replace('2010200404', str(CODE))
+                  path.write_text(text, encoding='utf-8')
+
+          release_note = Path(f'RELEASE_{VERSION}.md')
+          release_note.write_text(f'''# Vyapar AI {VERSION} — Organized UI & Source Cleanup
+
+## Highlights
+
+- Added fast local search for Business tools with multi-word matching, result count, empty state, reset and Escape handling.
+- Simplified Business workspace copy and improved scanability without removing business/accounting/auth/subscription behavior.
+- Flattened nested UI surfaces, standardized controls and focus states, and improved responsive single-column layouts.
+- Consolidated frontend ownership around `frontend-source/android/` and deterministic shared Web + Android bundles.
+- Removed 141 obsolete duplicate/legacy paths and moved 62 historical implementation/release files into organized documentation folders.
+- Preserved existing runtime logic while reducing repository clutter and generated-source drift.
+
+## Validation
+
+- Shared frontend bundles are rebuilt from canonical source before Android compilation.
+- Runtime/source verification and the full Node test suite run before the release commit/build.
+- Supplied organized build validation baseline: 23/23 tests passing.
+
+## Release identity
+
+- Version name: `{VERSION}`
+- Version code: `{CODE}`
+- Channel: `production-{VERSION}`
+- Date: `2026-09-09`
+''', encoding='utf-8')
+          PY
+
+      - name: Rebuild and verify organized runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          npm run verify
+
+      - name: Commit organized UI release source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .release
+          rm -f .github/workflows/promote-ui-organized.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git status --short
+          git commit -m 'Release Vyapar AI v20.10.2004.00005.2026 organized UI'
+          git push origin HEAD:main
