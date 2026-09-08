@@ -12,8 +12,7 @@
     if(!tabs||!pass||!otp||tabs.dataset.swipeBound==='1') return !!tabs;
 
     tabs.dataset.swipeBound='1';
-    pass.textContent='Login with Password';
-    otp.textContent='Login with OTP';
+    // Auth owns stable, compact Password / Email OTP labels.
     function sync(){
       tabs.classList.toggle('otp-selected',otp.classList.contains('active'));
     }

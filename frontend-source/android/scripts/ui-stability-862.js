@@ -9,6 +9,7 @@
   function light(){return root.classList.contains('theme-light')||Boolean(document.body&&document.body.classList.contains('theme-light'))}
 
   function unlockPasswordTab(){
+    if(window.__vyaparAuth867Ready)return;
     const gate=document.getElementById('vyaparOtpGate');
     if(!gate)return;
     const pass=gate.querySelector('#tab-login-pass');
@@ -18,7 +19,7 @@
       pass.removeAttribute('disabled');
       pass.removeAttribute('aria-disabled');
       pass.classList.remove('vx643-password-locked');
-      pass.textContent='Login with Password';
+      if(pass.textContent!=='Password')pass.textContent='Password';
     }
     if(tabs)tabs.classList.remove('vx643-password-disabled');
   }
@@ -28,11 +29,11 @@
     if(section){
       section.querySelectorAll('.vx622-switch,.vx643-security-status').forEach(node=>node.remove());
       const title=section.querySelector('.vx622-lock-heading h2,.vx643-security-copy h2');
-      if(title)title.textContent='Account password';
+      if(title&&title.textContent!=='Account password')title.textContent='Account password';
       const copy=section.querySelector('.vx622-lock-heading p,.vx643-security-copy p');
-      if(copy)copy.textContent='Change your sign-in password. Email OTP remains available.';
+      if(copy&&copy.textContent!=='Change your sign-in password. Email OTP remains available.')copy.textContent='Change your sign-in password. Email OTP remains available.';
       const kicker=section.querySelector('.settings-kicker');
-      if(kicker)kicker.textContent='SIGN-IN';
+      if(kicker&&kicker.textContent!=='SIGN-IN')kicker.textContent='SIGN-IN';
       section.classList.add('vy862-security-simplified');
     }
 
@@ -42,7 +43,7 @@
       const title=row.querySelector('b,strong,.vy675-settings-title');
       const sub=row.querySelector('small,.vy675-settings-subtitle');
       if(title&&/privacy|security/i.test(title.textContent||''))title.textContent='Sign-in & privacy';
-      if(sub)sub.textContent='Account password, OTP and privacy options';
+      if(sub&&sub.textContent!=='Account password, OTP and privacy options')sub.textContent='Account password, OTP and privacy options';
     });
   }
 

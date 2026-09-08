@@ -19,7 +19,9 @@
       '.android-nav-glass-indicator,.vy852-theme-bloom,.vy853-theme-reveal,.vy854-theme-wipe,.vy855-theme-curtain,.theme-ripple,.vx657-theme-crossfade,.vy856-liquid-lens,.vy856-liquid-orb,[class*="liquid-lens"],[class*="glass-lens"],[class*="liquid-orb"]'
     ).forEach(node=>node.remove());
     if(document.body){
-      document.body.classList.remove('vy859-modal-open','more-sheet-open');
+      ['vy859-modal-open','more-sheet-open'].forEach(name=>{
+        if(document.body.classList.contains(name))document.body.classList.remove(name);
+      });
     }
   }
 
@@ -34,7 +36,7 @@
     if(button){
       button.setAttribute('aria-label',light?'Switch to dark mode':'Switch to light mode');
       button.setAttribute('title',light?'Dark mode':'Light mode');
-      button.textContent='Theme';
+      if(button.textContent!=='Theme')button.textContent='Theme';
     }
   }
 
@@ -103,7 +105,7 @@
   function syncModalState(){
     const overlays=visibleOverlays();
     if(document.body)document.body.classList.toggle('vy861-modal-open',overlays.length>0);
-    overlays.forEach(overlay=>overlay.classList.add('vy861-universal-popup'));
+    overlays.forEach(overlay=>{if(!overlay.classList.contains('vy861-universal-popup'))overlay.classList.add('vy861-universal-popup')});
     // Duplicate ids are a real source of double-action popups. Keep newest live instance.
     const seen=new Map();
     overlays.forEach(node=>{

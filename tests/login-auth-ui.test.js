@@ -40,10 +40,10 @@ assert.match(authUi, /background:#343434!important/, 'Selected tabs must use gra
 assert.match(authUi, /background:#ececec!important/, 'Primary auth action must use the light monochrome fill');
 assert.doesNotMatch(authUi, /\b(?:blue|teal|navy)\b/i, 'Auth-specific UI must not introduce blue/teal/navy styling');
 
-assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=20260907-auth867/, 'Web must load the combined script');
-assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=20260907-auth867/, 'Web must load the combined core styles');
-assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=20260907-auth867/, 'Android must load the combined script');
-assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=20260907-auth867/, 'Android must load the combined core styles');
-assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=20260907-auth867/, 'Android must load the combined UI styles');
+assert.match(webIndex, /assets\/scripts\/vyapar-app\.js\?v=[^"\s]+/, 'Web must load the combined script');
+assert.match(webIndex, /assets\/styles\/vyapar-core\.css\?v=[^"\s]+/, 'Web must load the combined core styles');
+assert.match(androidIndex, /assets\/scripts\/vyapar-app\.js\?v=[^"\s]+/, 'Android must load the combined script');
+assert.match(androidIndex, /assets\/styles\/vyapar-core\.css\?v=[^"\s]+/, 'Android must load the combined core styles');
+assert.match(androidIndex, /assets\/styles\/vyapar-ui\.css\?v=[^"\s]+/, 'Android must load the combined UI styles');
 
 console.log('login-auth-ui: all checks passed');

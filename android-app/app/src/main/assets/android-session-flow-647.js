@@ -8,8 +8,11 @@
   var POLICY_KEY='vyapar_ai_password_login_policy_v1';
   var UNLOCK_KEY='vyapar_ai_startup_unlocked_v1';
   var API_BASE='https://vypar-backend.onrender.com';
-  var MIN_SPLASH_MS=1050;
-  var startedAt=Date.now();
+  var root=document.documentElement;
+  var bootFinished=false;
+  var bootQueued=false;
+  var bootObserver=null;
+  window.__vyaparStartupCoordinator=true;
 
   function readJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback}catch(_){return fallback}}
   function account(){return readJson(ACCOUNT_KEY,{})}
@@ -22,16 +25,36 @@
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
 
   function ensureSplash(){
-    if(document.getElementById('vy647StartupSplash'))return;
-    var splash=document.createElement('div');
-    splash.id='vy647StartupSplash';
-    splash.innerHTML='<div class="vy647-splash-core"><img src="assets/images/logo.png" alt="Vyapar AI"><strong>Vyapar AI</strong><span>Loading secure session…</span><div class="vy647-splash-bar"><i></i></div></div>';
-    document.body.appendChild(splash);
+    var splash=document.getElementById('vy855BootGuard');
+    if(!splash){
+      splash=document.createElement('div');
+      splash.id='vy855BootGuard';
+      splash.innerHTML='<img src="assets/images/logo.png" alt="">';
+      document.body.prepend(splash);
+    }
+    splash.setAttribute('role','status');
+    splash.setAttribute('aria-label','Opening Vyapar AI');
+    splash.removeAttribute('aria-hidden');
+    root.classList.add('vy855-booting');
   }
 
-  function hideLegacyLoader(){var old=document.getElementById('appLoader');if(old)old.style.visibility='hidden'}
-  function removeSplash(){var splash=document.getElementById('vy647StartupSplash');if(!splash)return;splash.classList.add('out');setTimeout(function(){splash.remove()},220)}
-  function waitMinimum(fn){var delay=Math.max(0,MIN_SPLASH_MS-(Date.now()-startedAt));setTimeout(fn,delay)}
+  function hideLegacyLoader(){
+    // One surface from initial HTML through auth resolution; no second splash.
+    ['appLoader','vy647StartupSplash'].forEach(function(id){
+      var old=document.getElementById(id);if(old)old.remove();
+    });
+  }
+  function removeSplash(){
+    var splash=document.getElementById('vy855BootGuard');
+    hideLegacyLoader();
+    root.classList.remove('vy855-booting');
+    if(splash)splash.remove();
+    try{
+      if(window.AndroidApp&&typeof window.AndroidApp.onStartupFrameReady==='function'){
+        window.AndroidApp.onStartupFrameReady();
+      }
+    }catch(_){}
+  }
 
   async function jsonResponse(response){
     var text=await response.text(),data={};
@@ -84,15 +107,22 @@
   }
 
   function routeAfterSplash(){
-    if(!token()){removeSplash();return}
-    var timeout=Date.now()+9000;
-    (function poll(){
-      var authGate=document.getElementById('vyaparOtpGate');
-      if(!token()){removeSplash();return}
-      if(!authGate){showPasswordGate();return}
-      if(Date.now()>timeout){removeSplash();return}
-      setTimeout(poll,80);
-    })();
+    if(bootFinished||bootQueued||document.readyState==='loading')return;
+    var status=root.getAttribute('data-vyapar-session');
+    if(!status||status==='restoring')return;
+    var authGate=document.getElementById('vyaparOtpGate');
+    var screen=document.querySelector('.screen:not(.hide)');
+    if(status==='login'&&!authGate)return;
+    if(status!=='login'&&(!screen||!screen.children.length))return;
+    bootQueued=true;
+    // Allow the destination and all synchronous layout helpers to paint before
+    // removing the opaque guard. Never cross-fade a login form into Home.
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      bootFinished=true;
+      if(bootObserver)bootObserver.disconnect();
+      if(status!=='login')showPasswordGate();
+      else removeSplash();
+    })});
   }
 
   function resolvePlan(){
@@ -111,7 +141,12 @@
   var refreshQueued=false;
   function refresh(){if(refreshQueued)return;refreshQueued=true;requestAnimationFrame(function(){refreshQueued=false;decoratePlanIdentity()})}
 
-  ensureSplash();hideLegacyLoader();waitMinimum(routeAfterSplash);
+  ensureSplash();hideLegacyLoader();
+  bootObserver=new MutationObserver(routeAfterSplash);
+  bootObserver.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['data-vyapar-session']});
+  window.addEventListener('vyapar:session-ready',routeAfterSplash);
+  document.addEventListener('DOMContentLoaded',routeAfterSplash,{once:true});
+  routeAfterSplash();
   new MutationObserver(function(){hideLegacyLoader();refresh()}).observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener('DOMContentLoaded',function(){hideLegacyLoader();refresh()},{once:true});
   window.addEventListener('load',function(){hideLegacyLoader();refresh()},{once:true});

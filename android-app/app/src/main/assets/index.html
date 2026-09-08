@@ -13,20 +13,23 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin />
   <style>
-    html, body { margin: 0; min-height: 100%; background: #000000; }
-    html.theme-light, html.theme-light body { background: #f5f5f7; }
-    #vy855BootGuard{
-      position:fixed;inset:0;z-index:2147483600;display:grid;place-items:center;
-      background:#000000;opacity:1;visibility:visible;pointer-events:auto;transition:opacity .10s linear;
+    /* Startup has one owner and one opaque, stationary logo surface. */
+    html,body{margin:0;min-height:100%;background:#000000}
+    html.vy861-flat-black body #vy855BootGuard{
+      position:fixed!important;inset:0!important;z-index:2147483647!important;
+      display:flex!important;align-items:center!important;justify-content:center!important;
+      background:#000000!important;opacity:1!important;visibility:visible!important;
+      pointer-events:auto!important;transition:none!important;animation:none!important;
     }
-    html.theme-light #vy855BootGuard{background:#f5f5f7;}
-    #vy855BootGuard.is-ready{opacity:0;pointer-events:none;}
-    #vy855BootGuard img{
-      width:82px;height:82px;border-radius:22px;object-fit:contain;background:transparent;box-shadow:none;
+    html.vy861-flat-black body #vy855BootGuard img{
+      width:112px!important;height:112px!important;max-width:112px!important;
+      object-fit:contain!important;border-radius:24px!important;
+      background:transparent!important;box-shadow:none!important;filter:none!important;
+      opacity:1!important;transform:none!important;animation:none!important;
     }
-    html.vy855-booting #appLoader,html.vy855-booting #vy647StartupSplash{
-      opacity:0!important;visibility:hidden!important;pointer-events:none!important;
-    }
+    html.vy855-booting body>.app,html.vy855-booting #nav,
+    html.vy855-booting #vyaparOtpGate{visibility:hidden!important;pointer-events:none!important}
+    html #appLoader,html #vy647StartupSplash{display:none!important}
   </style>
   <script>
     try {
@@ -101,13 +104,7 @@
   </div>
 
   <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="assets/scripts/vyapar-app.js?v=20260907-videofinal4"></script>
-  <script>
-    setTimeout(function(){
-      var guard=document.getElementById('vy855BootGuard');
-      if(guard){guard.classList.add('is-ready');setTimeout(function(){if(guard.parentNode)guard.parentNode.removeChild(guard);},120);}
-      document.documentElement.classList.remove('vy855-booting');
-    },650);
-  </script>
+  <script src="assets/scripts/vyapar-app.js?v=20260908-startupfix"></script>
+
 </body>
 </html>

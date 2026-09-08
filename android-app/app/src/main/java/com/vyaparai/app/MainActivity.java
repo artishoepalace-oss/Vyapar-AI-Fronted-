@@ -24,6 +24,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.webkit.WebResourceError;
 
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
@@ -73,6 +78,8 @@ public class MainActivity extends Activity {
     private static final String PREF_LAST_AUTO_BACKUP = "last_auto_backup";
 
     private WebView webView;
+    private FrameLayout startupCover;
+    private boolean startupCoverDismissQueued;
     private ValueCallback<Uri[]> filePathCallback;
     private String pendingName;
     private String pendingMime;
@@ -109,7 +116,24 @@ protected void onCreate(Bundle savedInstanceState) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_BOUND, true);
         }
-        setContentView(webView);
+        // Keep the native logo visible while the first HTML frame is prepared.
+        // The WebView remains attached and visible underneath for rasterization.
+        FrameLayout content = new FrameLayout(this);
+        content.setBackgroundColor(android.graphics.Color.BLACK);
+        content.addView(webView, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        startupCover = new FrameLayout(this);
+        startupCover.setBackgroundColor(android.graphics.Color.BLACK);
+        startupCover.setClickable(true);
+        startupCover.setContentDescription("Opening Vyapar AI");
+        ImageView startupLogo = new ImageView(this);
+        startupLogo.setImageResource(R.drawable.startup_logo);
+        startupLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        int logoSize = Math.round(112 * getResources().getDisplayMetrics().density);
+        startupCover.addView(startupLogo, new FrameLayout.LayoutParams(logoSize, logoSize, Gravity.CENTER));
+        content.addView(startupCover, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        setContentView(content);
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -179,6 +203,12 @@ protected void onCreate(Bundle savedInstanceState) {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                if (request.isForMainFrame()) dismissStartupCover();
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return openExternalIfNeeded(request.getUrl().toString());
             }
@@ -191,6 +221,11 @@ protected void onCreate(Bundle savedInstanceState) {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                // A script/resource failure must not strand the native cover.
+                // Normal startup is released by onStartupFrameReady below.
+                view.evaluateJavascript(
+                        "!!(window.__vyaparStartupCoordinator && document.documentElement.getAttribute('data-vyapar-session'))",
+                        value -> { if (!"true".equals(value)) dismissStartupCover(); });
                 view.postOnAnimation(() -> {
                     view.evaluateJavascript("window.onNativeAppReady && window.onNativeAppReady();", null);
                 });
@@ -219,7 +254,27 @@ protected void onCreate(Bundle savedInstanceState) {
         super.onPause();
     }
 
+    private void dismissStartupCover() {
+        if (startupCover == null || startupCoverDismissQueued || webView == null) return;
+        startupCoverDismissQueued = true;
+        // API 23+, matching minSdk: release only when the DOM is ready to draw.
+        webView.postVisualStateCallback(1L, new WebView.VisualStateCallback() {
+            @Override
+            public void onComplete(long requestId) {
+                if (startupCover == null) return;
+                ViewGroup parent = (ViewGroup) startupCover.getParent();
+                if (parent != null) parent.removeView(startupCover);
+                startupCover = null;
+            }
+        });
+    }
+
     public class AndroidApp {
+        @JavascriptInterface
+        public void onStartupFrameReady() {
+            runOnUiThread(() -> dismissStartupCover());
+        }
+
         @JavascriptInterface
         public String getVersionName() {
             try {

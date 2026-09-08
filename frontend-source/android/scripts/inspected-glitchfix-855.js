@@ -127,52 +127,6 @@
     window.setTab=wrapped;
   }
 
-  /* Continuous first paint: keep the WebView on a theme-matched surface until
-     either the auth gate or a populated app screen has actually laid out. */
-  function isPainted(node){
-    if(!node)return false;
-    const style=getComputedStyle(node);
-    if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)===0)return false;
-    const rect=node.getBoundingClientRect();
-    return rect.width>40&&rect.height>60;
-  }
-
-  function realUiVisible(){
-    const auth=document.getElementById('vyaparOtpGate');
-    if(isPainted(auth))return true;
-    const password=document.getElementById('vy647PasswordGate');
-    if(isPainted(password))return true;
-    const visible=Array.from(document.querySelectorAll('.screen')).find(screen=>!screen.classList.contains('hide')&&screen.children.length>0);
-    return isPainted(visible);
-  }
-
-  let bootDone=false;
-  function finishBoot(force){
-    if(bootDone)return;
-    const guard=document.getElementById('vy855BootGuard');
-    if(!guard){root.classList.remove('vy855-booting');bootDone=true;return}
-    if(!force&&!realUiVisible())return;
-    bootDone=true;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      guard.classList.add('is-ready');
-      root.classList.remove('vy855-booting');
-      setTimeout(()=>guard.remove(),140);
-    }));
-  }
-
-  let bootObserver=null;
-  function initBootGuard(){
-    finishBoot(false);
-    if(bootDone)return;
-    bootObserver=new MutationObserver(()=>finishBoot(false));
-    bootObserver.observe(document.body||document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-    setTimeout(()=>{
-      if(bootObserver)bootObserver.disconnect();
-      finishBoot(true);
-    },2400);
-  }
-
+  // android-session-flow-647 owns startup until authentication resolves.
   removeThemeArtifacts();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBootGuard,{once:true});
-  else initBootGuard();
 })();

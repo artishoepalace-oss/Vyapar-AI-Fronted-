@@ -10,8 +10,11 @@
   var POLICY_KEY='vyapar_ai_password_login_policy_v1';
   var UNLOCK_KEY='vyapar_ai_startup_unlocked_v1';
   var API_BASE='https://vypar-backend.onrender.com';
-  var MIN_SPLASH_MS=1050;
-  var startedAt=Date.now();
+  var root=document.documentElement;
+  var bootFinished=false;
+  var bootQueued=false;
+  var bootObserver=null;
+  window.__vyaparStartupCoordinator=true;
 
   function readJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback}catch(_){return fallback}}
   function account(){return readJson(ACCOUNT_KEY,{})}
@@ -24,16 +27,36 @@
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
 
   function ensureSplash(){
-    if(document.getElementById('vy647StartupSplash'))return;
-    var splash=document.createElement('div');
-    splash.id='vy647StartupSplash';
-    splash.innerHTML='<div class="vy647-splash-core"><img src="assets/images/logo.png" alt="Vyapar AI"><strong>Vyapar AI</strong><span>Loading secure session…</span><div class="vy647-splash-bar"><i></i></div></div>';
-    document.body.appendChild(splash);
+    var splash=document.getElementById('vy855BootGuard');
+    if(!splash){
+      splash=document.createElement('div');
+      splash.id='vy855BootGuard';
+      splash.innerHTML='<img src="assets/images/logo.png" alt="">';
+      document.body.prepend(splash);
+    }
+    splash.setAttribute('role','status');
+    splash.setAttribute('aria-label','Opening Vyapar AI');
+    splash.removeAttribute('aria-hidden');
+    root.classList.add('vy855-booting');
   }
 
-  function hideLegacyLoader(){var old=document.getElementById('appLoader');if(old)old.style.visibility='hidden'}
-  function removeSplash(){var splash=document.getElementById('vy647StartupSplash');if(!splash)return;splash.classList.add('out');setTimeout(function(){splash.remove()},220)}
-  function waitMinimum(fn){var delay=Math.max(0,MIN_SPLASH_MS-(Date.now()-startedAt));setTimeout(fn,delay)}
+  function hideLegacyLoader(){
+    // One surface from initial HTML through auth resolution; no second splash.
+    ['appLoader','vy647StartupSplash'].forEach(function(id){
+      var old=document.getElementById(id);if(old)old.remove();
+    });
+  }
+  function removeSplash(){
+    var splash=document.getElementById('vy855BootGuard');
+    hideLegacyLoader();
+    root.classList.remove('vy855-booting');
+    if(splash)splash.remove();
+    try{
+      if(window.AndroidApp&&typeof window.AndroidApp.onStartupFrameReady==='function'){
+        window.AndroidApp.onStartupFrameReady();
+      }
+    }catch(_){}
+  }
 
   async function jsonResponse(response){
     var text=await response.text(),data={};
@@ -86,15 +109,22 @@
   }
 
   function routeAfterSplash(){
-    if(!token()){removeSplash();return}
-    var timeout=Date.now()+9000;
-    (function poll(){
-      var authGate=document.getElementById('vyaparOtpGate');
-      if(!token()){removeSplash();return}
-      if(!authGate){showPasswordGate();return}
-      if(Date.now()>timeout){removeSplash();return}
-      setTimeout(poll,80);
-    })();
+    if(bootFinished||bootQueued||document.readyState==='loading')return;
+    var status=root.getAttribute('data-vyapar-session');
+    if(!status||status==='restoring')return;
+    var authGate=document.getElementById('vyaparOtpGate');
+    var screen=document.querySelector('.screen:not(.hide)');
+    if(status==='login'&&!authGate)return;
+    if(status!=='login'&&(!screen||!screen.children.length))return;
+    bootQueued=true;
+    // Allow the destination and all synchronous layout helpers to paint before
+    // removing the opaque guard. Never cross-fade a login form into Home.
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      bootFinished=true;
+      if(bootObserver)bootObserver.disconnect();
+      if(status!=='login')showPasswordGate();
+      else removeSplash();
+    })});
   }
 
   function resolvePlan(){
@@ -113,7 +143,12 @@
   var refreshQueued=false;
   function refresh(){if(refreshQueued)return;refreshQueued=true;requestAnimationFrame(function(){refreshQueued=false;decoratePlanIdentity()})}
 
-  ensureSplash();hideLegacyLoader();waitMinimum(routeAfterSplash);
+  ensureSplash();hideLegacyLoader();
+  bootObserver=new MutationObserver(routeAfterSplash);
+  bootObserver.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['data-vyapar-session']});
+  window.addEventListener('vyapar:session-ready',routeAfterSplash);
+  document.addEventListener('DOMContentLoaded',routeAfterSplash,{once:true});
+  routeAfterSplash();
   new MutationObserver(function(){hideLegacyLoader();refresh()}).observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener('DOMContentLoaded',function(){hideLegacyLoader();refresh()},{once:true});
   window.addEventListener('load',function(){hideLegacyLoader();refresh()},{once:true});
@@ -136,6 +171,7 @@
 
   const gate=document.createElement("div");
   gate.id="vyaparOtpGate";
+  if(localStorage.getItem(TOKEN_KEY))gate.style.setProperty('visibility','hidden','important');
   gate.innerHTML=`
     <div class="auth-page">
       <main class="auth-card" aria-labelledby="page-title">
@@ -273,16 +309,17 @@
     if(!response.ok||data.success===false){const error=new Error(data.message||"Request failed");error.status=response.status;throw error}
     return data;
   }
-  async function refreshAccessToken(){
+  async function refreshAccessToken(signal,isActive=()=>true){
     if(refreshPromise)return refreshPromise;
     refreshPromise=(async()=>{
       const refresh=String(localStorage.getItem(REFRESH_TOKEN_KEY)||"").trim(),access=currentAccessToken();
       if(!refresh&&!access)return "";
       try{
         const headers={"Content-Type":"application/json","Accept":"application/json"};if(access)headers.Authorization="Bearer "+access;
-        const response=await fetch(API_BASE+"/auth/refresh",{method:"POST",headers,body:JSON.stringify(refresh?{refreshToken:refresh}:{})});
+        const response=await fetch(API_BASE+"/auth/refresh",{method:"POST",headers,body:JSON.stringify(refresh?{refreshToken:refresh}:{}),signal});
         if(!response.ok)return "";
         const data=await response.json().catch(()=>({}));if(data.success===false)return "";
+        if(!isActive()||signal?.aborted)return "";
         const next=storeSessionTokens(data);if(!next)return "";
         const user=data.user||data?.data?.user||null,subscription=data.subscription||data?.data?.subscription||null;
         if(user||subscription){let cached={};try{cached=JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"{}")||{}}catch(_){}localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:user||cached.user||null,subscription:subscription||cached.subscription||null}))}
@@ -391,9 +428,67 @@
   };
 
   function hasCachedLocalAccess(){try{if(JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"null")?.user)return true}catch(_){}try{const state=JSON.parse(localStorage.getItem("vyapar_ai_prod_v1")||"{}");return Boolean(state.sales?.length||state.stocks?.length||state.monthly?.length||state.daily?.length)}catch(_){return false}}
+  function finishSessionRestore(status){
+    if(status==='login')gate.style.removeProperty('visibility');
+    else gate.remove();
+    document.documentElement.setAttribute('data-vyapar-session',status);
+    window.dispatchEvent(new CustomEvent('vyapar:session-ready',{detail:{status}}));
+  }
+
   async function restoreSession(){
-    const token=currentAccessToken();if(!token)return;els.subtitle.textContent="Checking your saved session…";
-    try{const data=await readResponse(await authFetch(API_BASE+"/auth/me",{headers:{Authorization:"Bearer "+token}}));localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:data.user,subscription:data.subscription}));gate.remove()}catch(error){const rejected=error&&(error.status===401||error.status===403);if(rejected){clearSessionTokens();localStorage.removeItem(ACCOUNT_KEY);showLogin();showMessage("Your session expired. Sign in again.");return}if(hasCachedLocalAccess()){console.warn("Session check unavailable; opening cached local app.",error);gate.remove();return}showLogin();showMessage("Server is temporarily unavailable. Check your internet connection and try again.")}
+    const token=currentAccessToken();
+    if(!token){finishSessionRestore('login');return}
+    document.documentElement.setAttribute('data-vyapar-session','restoring');
+    let active=true,timer=null,rejectedStatus=0;
+    const controller=typeof AbortController==='function'?new AbortController():null;
+    const signal=controller?controller.signal:undefined;
+    const stillActive=()=>active;
+    try{
+      const request=(async()=>{
+        let response=await fetch(API_BASE+"/auth/me",{headers:{Authorization:"Bearer "+token},signal});
+        if(!active)throw new Error('Session check ended');
+        if(response.status===401){
+          rejectedStatus=401;
+          const next=await refreshAccessToken(signal,stillActive);
+          if(!active)throw new Error('Session check ended');
+          if(next)response=await fetch(API_BASE+"/auth/me",{headers:{Authorization:"Bearer "+next},signal});
+        }
+        if(response.status===401||response.status===403)rejectedStatus=response.status;
+        // A successful refresh must also pass /me before clearing rejection.
+        const data=await readResponse(response);
+        rejectedStatus=0;
+        return data;
+      })();
+      const deadline=new Promise((_,reject)=>{
+        timer=setTimeout(()=>{
+          active=false;
+          const error=new Error('Session check timed out');
+          if(rejectedStatus)error.status=rejectedStatus;
+          reject(error);
+          if(controller)controller.abort();
+        },6000);
+      });
+      const data=await Promise.race([request,deadline]);
+      active=false;
+      localStorage.setItem(ACCOUNT_KEY,JSON.stringify({user:data.user,subscription:data.subscription}));
+      finishSessionRestore('authenticated');
+    }catch(error){
+      active=false;
+      const rejected=error&&(error.status===401||error.status===403);
+      if(rejected){
+        clearSessionTokens();localStorage.removeItem(ACCOUNT_KEY);showLogin();
+        showMessage("Your session expired. Sign in again.");finishSessionRestore('login');
+      }else if(hasCachedLocalAccess()){
+        // Preserve the existing offline/local-data fallback, never grant a new
+        // subscription or bypass a server rejection from the current check.
+        finishSessionRestore('cached');
+      }else{
+        showLogin();showMessage("Server is temporarily unavailable. Check your internet connection and try again.");
+        finishSessionRestore('login');
+      }
+    }finally{
+      clearTimeout(timer);
+    }
   }
 
   switchLoginMode("otp");showLogin();restoreSession();
@@ -415,8 +510,7 @@
     if(!tabs||!pass||!otp||tabs.dataset.swipeBound==='1') return !!tabs;
 
     tabs.dataset.swipeBound='1';
-    pass.textContent='Login with Password';
-    otp.textContent='Login with OTP';
+    // Auth owns stable, compact Password / Email OTP labels.
     function sync(){
       tabs.classList.toggle('otp-selected',otp.classList.contains('active'));
     }
@@ -11474,6 +11568,9 @@ window.VyaparUI622={version:VERSION,refresh:init};
     return String((pass&&pass.value)||(otp&&otp.value)||accountEmail()||'').trim().toLowerCase();
   }
   function refreshAuthPolicy(){
+    // The current auth module owns its tabs; legacy policy must not disable
+    // Password or force OTP while the user is signing in.
+    if(window.__vyaparAuth867Ready)return true;
     var gate=document.getElementById('vyaparOtpGate');
     if(!gate)return false;
     var passTab=gate.querySelector('#tab-login-pass');
@@ -14215,54 +14312,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     window.setTab=wrapped;
   }
 
-  /* Continuous first paint: keep the WebView on a theme-matched surface until
-     either the auth gate or a populated app screen has actually laid out. */
-  function isPainted(node){
-    if(!node)return false;
-    const style=getComputedStyle(node);
-    if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)===0)return false;
-    const rect=node.getBoundingClientRect();
-    return rect.width>40&&rect.height>60;
-  }
-
-  function realUiVisible(){
-    const auth=document.getElementById('vyaparOtpGate');
-    if(isPainted(auth))return true;
-    const password=document.getElementById('vy647PasswordGate');
-    if(isPainted(password))return true;
-    const visible=Array.from(document.querySelectorAll('.screen')).find(screen=>!screen.classList.contains('hide')&&screen.children.length>0);
-    return isPainted(visible);
-  }
-
-  let bootDone=false;
-  function finishBoot(force){
-    if(bootDone)return;
-    const guard=document.getElementById('vy855BootGuard');
-    if(!guard){root.classList.remove('vy855-booting');bootDone=true;return}
-    if(!force&&!realUiVisible())return;
-    bootDone=true;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      guard.classList.add('is-ready');
-      root.classList.remove('vy855-booting');
-      setTimeout(()=>guard.remove(),140);
-    }));
-  }
-
-  let bootObserver=null;
-  function initBootGuard(){
-    finishBoot(false);
-    if(bootDone)return;
-    bootObserver=new MutationObserver(()=>finishBoot(false));
-    bootObserver.observe(document.body||document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-    setTimeout(()=>{
-      if(bootObserver)bootObserver.disconnect();
-      finishBoot(true);
-    },2400);
-  }
-
+  // android-session-flow-647 owns startup until authentication resolves.
   removeThemeArtifacts();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBootGuard,{once:true});
-  else initBootGuard();
 })();
 
 /* ===== SCRIPT SOURCE: flat-black-ios-861.js ===== */
@@ -14288,7 +14339,9 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       '.android-nav-glass-indicator,.vy852-theme-bloom,.vy853-theme-reveal,.vy854-theme-wipe,.vy855-theme-curtain,.theme-ripple,.vx657-theme-crossfade,.vy856-liquid-lens,.vy856-liquid-orb,[class*="liquid-lens"],[class*="glass-lens"],[class*="liquid-orb"]'
     ).forEach(node=>node.remove());
     if(document.body){
-      document.body.classList.remove('vy859-modal-open','more-sheet-open');
+      ['vy859-modal-open','more-sheet-open'].forEach(name=>{
+        if(document.body.classList.contains(name))document.body.classList.remove(name);
+      });
     }
   }
 
@@ -14303,7 +14356,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     if(button){
       button.setAttribute('aria-label',light?'Switch to dark mode':'Switch to light mode');
       button.setAttribute('title',light?'Dark mode':'Light mode');
-      button.textContent='Theme';
+      if(button.textContent!=='Theme')button.textContent='Theme';
     }
   }
 
@@ -14372,7 +14425,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function syncModalState(){
     const overlays=visibleOverlays();
     if(document.body)document.body.classList.toggle('vy861-modal-open',overlays.length>0);
-    overlays.forEach(overlay=>overlay.classList.add('vy861-universal-popup'));
+    overlays.forEach(overlay=>{if(!overlay.classList.contains('vy861-universal-popup'))overlay.classList.add('vy861-universal-popup')});
     // Duplicate ids are a real source of double-action popups. Keep newest live instance.
     const seen=new Map();
     overlays.forEach(node=>{
@@ -14479,6 +14532,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function light(){return root.classList.contains('theme-light')||Boolean(document.body&&document.body.classList.contains('theme-light'))}
 
   function unlockPasswordTab(){
+    if(window.__vyaparAuth867Ready)return;
     const gate=document.getElementById('vyaparOtpGate');
     if(!gate)return;
     const pass=gate.querySelector('#tab-login-pass');
@@ -14488,7 +14542,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       pass.removeAttribute('disabled');
       pass.removeAttribute('aria-disabled');
       pass.classList.remove('vx643-password-locked');
-      pass.textContent='Login with Password';
+      if(pass.textContent!=='Password')pass.textContent='Password';
     }
     if(tabs)tabs.classList.remove('vx643-password-disabled');
   }
@@ -14498,11 +14552,11 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     if(section){
       section.querySelectorAll('.vx622-switch,.vx643-security-status').forEach(node=>node.remove());
       const title=section.querySelector('.vx622-lock-heading h2,.vx643-security-copy h2');
-      if(title)title.textContent='Account password';
+      if(title&&title.textContent!=='Account password')title.textContent='Account password';
       const copy=section.querySelector('.vx622-lock-heading p,.vx643-security-copy p');
-      if(copy)copy.textContent='Change your sign-in password. Email OTP remains available.';
+      if(copy&&copy.textContent!=='Change your sign-in password. Email OTP remains available.')copy.textContent='Change your sign-in password. Email OTP remains available.';
       const kicker=section.querySelector('.settings-kicker');
-      if(kicker)kicker.textContent='SIGN-IN';
+      if(kicker&&kicker.textContent!=='SIGN-IN')kicker.textContent='SIGN-IN';
       section.classList.add('vy862-security-simplified');
     }
 
@@ -14512,7 +14566,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       const title=row.querySelector('b,strong,.vy675-settings-title');
       const sub=row.querySelector('small,.vy675-settings-subtitle');
       if(title&&/privacy|security/i.test(title.textContent||''))title.textContent='Sign-in & privacy';
-      if(sub)sub.textContent='Account password, OTP and privacy options';
+      if(sub&&sub.textContent!=='Account password, OTP and privacy options')sub.textContent='Account password, OTP and privacy options';
     });
   }
 

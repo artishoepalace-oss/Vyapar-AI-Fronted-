@@ -169,6 +169,9 @@
     return String((pass&&pass.value)||(otp&&otp.value)||accountEmail()||'').trim().toLowerCase();
   }
   function refreshAuthPolicy(){
+    // The current auth module owns its tabs; legacy policy must not disable
+    // Password or force OTP while the user is signing in.
+    if(window.__vyaparAuth867Ready)return true;
     var gate=document.getElementById('vyaparOtpGate');
     if(!gate)return false;
     var passTab=gate.querySelector('#tab-login-pass');
