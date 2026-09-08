@@ -73,7 +73,7 @@ test('Popup close remains single-owner and resolver executes once',()=>{
 test('Release identity and bundled motion order are synchronized',()=>{
  assert.equal(JSON.parse(fs.readFileSync(path.join(root,'version.json'))).versionName,'20.10.2004.00004.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
-  const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes('vyapar-ui.css?v=2010200404-framecontinuity1'));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
+  const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes('vyapar-ui.css?v=2010200404-uiorganized1'));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));
   const scripts=fs.readFileSync(path.join(root,base,'assets/scripts/vyapar-app.js'),'utf8');assert(scripts.indexOf('SCRIPT SOURCE: motion-20102004.js')<scripts.indexOf('SCRIPT SOURCE: auth.js'));
  }
