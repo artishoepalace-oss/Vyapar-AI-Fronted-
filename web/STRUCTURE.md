@@ -9,13 +9,13 @@ This folder is organized for easier reading/editing **without changing applicati
 - `assets/scripts/vyapar-app.js` — combined local JavaScript in the original execution order.
 - `pages/legal/` — Privacy, Terms, Refund and Delete Account pages.
 - `pages/invoice/` — public invoice page.
-- `version.json` — frontend version metadata.
+- Project-root `version.json` — release identity.
 
 ## Runtime bundles
 
 `index.html` loads exactly two local stylesheets and one local JavaScript bundle. Each bundle has readable `SOURCE` section markers and retains the original source order. Razorpay remains an external vendor script, downloads asynchronously, and is readiness-guarded before checkout.
 
-Run `node tools/build-frontend-bundles.mjs` from the project root after editing a source module. Generated files are written only to the packaged `assets/styles/` and `assets/scripts/` runtime directories.
+Run `node tools/build-frontend-bundles.mjs` from the project root after editing a source module. The builder writes both web and Android `assets/styles/` and `assets/scripts/` directories in one command. Run `npm run verify` from the project root before delivery.
 
 ## Source modules
 

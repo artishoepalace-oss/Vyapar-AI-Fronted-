@@ -5,7 +5,11 @@ import { fileURLToPath } from 'node:url';
 const toolsDir = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.resolve(toolsDir, '..');
 const sourceDir = path.join(projectDir, 'frontend-source', 'android');
-const runtimeDir = path.join(projectDir, 'android-app', 'app', 'src', 'main', 'assets', 'assets');
+const runtimeDirs = [
+  path.join(projectDir, 'android-app', 'app', 'src', 'main', 'assets', 'assets'),
+  path.join(projectDir, 'web', 'assets')
+];
+const checkOnly = process.argv.includes('--check');
 
 const coreStyles = [
   'app.css',
@@ -61,6 +65,7 @@ const scripts = [
   'auth.js',
   'platform-android.js',
   'performance-android7-16.js',
+  'business-tool-search.js',
   'app.js',
   'security-ui-643.js',
   'plan-badge-menu-645.js',
@@ -99,12 +104,20 @@ function combine(subdirectory, filenames, sectionLabel) {
 }
 
 function writeBundle(subdirectory, outputName, filenames, sectionLabel) {
-  const outputDirectory = path.join(runtimeDir, subdirectory);
-  fs.mkdirSync(outputDirectory, { recursive: true });
   const contents = combine(subdirectory, filenames, sectionLabel);
-  const outputPath = path.join(outputDirectory, outputName);
-  fs.writeFileSync(outputPath, contents, 'utf8');
-  console.log(`${path.relative(projectDir, outputPath)}: ${filenames.length} ordered sources, ${Buffer.byteLength(contents)} bytes`);
+  for (const runtimeDir of runtimeDirs) {
+    const outputDirectory = path.join(runtimeDir, subdirectory);
+    const outputPath = path.join(outputDirectory, outputName);
+    if (checkOnly) {
+      if (!fs.existsSync(outputPath) || fs.readFileSync(outputPath, 'utf8') !== contents) {
+        throw new Error(`Stale bundle: ${path.relative(projectDir, outputPath)}. Run npm run build.`);
+      }
+    } else {
+      fs.mkdirSync(outputDirectory, { recursive: true });
+      fs.writeFileSync(outputPath, contents, 'utf8');
+    }
+    console.log(`${checkOnly ? 'Verified' : 'Built'} ${path.relative(projectDir, outputPath)}: ${filenames.length} sources`);
+  }
 }
 
 writeBundle('styles', 'vyapar-core.css', coreStyles, 'STYLE SOURCE');

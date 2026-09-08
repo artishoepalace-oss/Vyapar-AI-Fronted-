@@ -1063,6 +1063,66 @@
   window.VyaparPerformanceProfile={api:api,tier:tier,lowRam:lowRam,cores:cores,memoryMb:memoryMb,deviceMemory:deviceMemory};
 })();
 
+/* ===== SCRIPT SOURCE: business-tool-search.js ===== */
+
+/* Business tools: filter existing cards without rebuilding forms or changing plan gates. */
+(function () {
+  'use strict';
+
+  function normalize(value) {
+    return String(value || '').toLowerCase().replace(/&/g, ' and ').replace(/\s+/g, ' ').trim();
+  }
+
+  function bind(root) {
+    const input = root.querySelector('#businessToolSearch');
+    const clear = root.querySelector('#businessToolSearchClear');
+    const status = root.querySelector('#businessToolSearchStatus');
+    const results = root.querySelector('#businessToolResults');
+    if (!input || !clear || !status || !results || input.dataset.bound) return;
+    input.dataset.bound = 'true';
+
+    function filter() {
+      const terms = normalize(input.value).split(' ').filter(Boolean);
+      let count = 0;
+      results.querySelectorAll('.vx621-group').forEach(function (group) {
+        let visible = 0;
+        const heading = group.querySelector('h2');
+        group.querySelectorAll('.vx621-feature-card').forEach(function (card) {
+          const text = normalize((heading ? heading.textContent : '') + ' ' + card.textContent);
+          const matches = terms.every(function (term) { return text.includes(term); });
+          card.hidden = !matches;
+          if (matches) visible++;
+        });
+        group.hidden = visible === 0;
+        count += visible;
+      });
+      clear.hidden = !input.value;
+      status.textContent = !terms.length ? '' : count
+        ? count + (count === 1 ? ' tool found' : ' tools found')
+        : 'No tools found. Try sale, purchase, customer or tax.';
+    }
+
+    function reset() {
+      input.value = '';
+      filter();
+      input.focus();
+    }
+
+    input.addEventListener('input', filter);
+    input.addEventListener('search', filter);
+    input.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && input.value) {
+        event.preventDefault();
+        event.stopPropagation();
+        reset();
+      }
+    });
+    clear.addEventListener('click', reset);
+  }
+
+  window.VyaparBusinessTools = { bind: bind };
+})();
+
 /* ===== SCRIPT SOURCE: app.js ===== */
 
 /* Vyapar AI 6.3.4 consolidated runtime. Order preserves the previous script loading. */
@@ -5716,7 +5776,7 @@ function renderBusiness(){
   const t=businessTotals();
   el.innerHTML=`
     <div class="card">
-      <div class="calculator-head"><div><span class="pill">Business Suite</span><h2>Business Command Center</h2><p class="muted">Billing, customers, udhaar, purchases, expenses, payments and business KPIs.</p></div></div>
+      <div class="calculator-head"><div><span class="pill">Business Suite</span><h2>Your business</h2><p class="muted">Billing, customers, udhaar, purchases, expenses, payments and business KPIs.</p></div></div>
       <div class="stats">
         <div class="stat"><span>Sales</span><b>${money(t.sales)}</b></div><div class="stat"><span>Gross Profit</span><b>${money(t.gross)}</b></div><div class="stat"><span>Expenses</span><b>${money(t.expenses)}</b></div><div class="stat"><span>Net Profit</span><b>${money(t.net)}</b></div><div class="stat"><span>Customer Due</span><b>${money(t.outstanding)}</b></div>
       </div>
@@ -11038,7 +11098,7 @@ function recentTransactions(){
 }
 function recentActivityHtml(){
   const rows=recentTransactions();
-  return `<div class="vx621-recent-head"><div><h2>Recent Business Activity</h2><p>Transactions are never hard-deleted; Cancel uses the accounting reversal engine.</p></div><div class="vx621-bulk-actions"><button class="btn mini" onclick="vx621SelectAllRecent(true)">Select All</button><button class="btn mini" onclick="vx621SelectAllRecent(false)">Clear</button><button class="btn mini danger" onclick="vx621CancelRecentSelected()">Cancel Selected</button></div></div><div class="vx621-table-wrap"><table class="table vx621-table"><thead><tr><th class="vx621-check-col"><input type="checkbox" onchange="vx621SelectAllRecent(this.checked)"></th><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows.map(t=>`<tr><td><input class="vx621-recent-check" type="checkbox" value="${E(t.id)}" ${t.status==='cancelled'?'disabled':''}></td><td>${E(t.date)}</td><td>${E(t.type)}</td><td>${E(t.number)}</td><td>${E(t.partyName||'')}</td><td>${M(t.total)}</td><td>${E(t.status||'active')}</td><td>${t.status==='cancelled'?'<span class="vx621-muted">Cancelled</span>':`<button class="btn mini danger" onclick="p611Cancel('${E(t.id)}')">Cancel</button>`}</td></tr>`).join('')||'<tr><td colspan="8" class="muted">No business transactions yet.</td></tr>'}</tbody></table></div>`;
+  return `<div class="vx621-recent-head"><div><h2>Recent Business Activity</h2><p>Your latest transactions. Cancelling a transaction reverses its stock and balance changes.</p></div><div class="vx621-bulk-actions"><button class="btn mini" onclick="vx621SelectAllRecent(true)">Select All</button><button class="btn mini" onclick="vx621SelectAllRecent(false)">Clear</button><button class="btn mini danger" onclick="vx621CancelRecentSelected()">Cancel Selected</button></div></div><div class="vx621-table-wrap"><table class="table vx621-table"><thead><tr><th class="vx621-check-col"><input type="checkbox" onchange="vx621SelectAllRecent(this.checked)"></th><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows.map(t=>`<tr><td><input class="vx621-recent-check" type="checkbox" value="${E(t.id)}" ${t.status==='cancelled'?'disabled':''}></td><td>${E(t.date)}</td><td>${E(t.type)}</td><td>${E(t.number)}</td><td>${E(t.partyName||'')}</td><td>${M(t.total)}</td><td>${E(t.status||'active')}</td><td>${t.status==='cancelled'?'<span class="vx621-muted">Cancelled</span>':`<button class="btn mini danger" onclick="p611Cancel('${E(t.id)}')">Cancel</button>`}</td></tr>`).join('')||'<tr><td colspan="8" class="muted">No business transactions yet.</td></tr>'}</tbody></table></div>`;
 }
 window.vx621SelectAllRecent=function(checked){ document.querySelectorAll('.vx621-recent-check:not(:disabled)').forEach(x=>x.checked=!!checked); };
 window.vx621CancelRecentSelected=async function(){
@@ -11065,16 +11125,16 @@ function renderBusinessHome(){
   const cards=[];
 
   const daily=[
-    featureCard('Transactions','One authoritative engine for sales, purchases, returns, payments and business documents.',button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')+button('Purchase',"vx621OpenPlatform('business','transactions','business','PURCHASE')",'business'),'⇄'),
+    featureCard('Transactions','Record sales, purchases, returns and payments.',button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')+button('Purchase',"vx621OpenPlatform('business','transactions','business','PURCHASE')",'business'),'⇄'),
     featureCard('Customers & Udhaar','Customer balances, receipts, statements and reminders.',button('Customers',"vx621OpenAdvanced('business','customers','business')",'business','primary')+button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business'),'👥'),
     featureCard('Suppliers & Purchases','Supplier records, purchases, payable flows and purchase returns.',button('Suppliers',"vx621OpenAdvanced('business','suppliers','business')",'business')+button('Purchase Return',"vx621OpenPlatform('business','transactions','business','PURCHASE_RETURN')",'business'),'▣'),
     featureCard('Cash & Bank','Cash, bank, UPI, custom accounts, payment-in/out and reconciled balances.',button('Open Cash & Bank',"vx621OpenDomain('finance','business')",'business','primary')+button('Cheques & Loans',"vx621OpenPlatform('business','finance620','business')",'business'),'₹')
   ];
   const accounting=[
-    featureCard('Central Ledgers','Customer, supplier and accounting debit/credit movements from the canonical engine.',button('Open Ledgers',"vx621OpenPlatform('business','ledger','business')",'business','primary'),'≡'),
+    featureCard('Central Ledgers','View customer, supplier and account balances.',button('Open Ledgers',"vx621OpenPlatform('business','ledger','business')",'business','primary'),'≡'),
     featureCard('58 Reports','Day Book, P&L, Balance Sheet, bill/party profit, stock, party and GST reports.',button('Open Reports',"vx621OpenDomain('reports','business')",'business','primary'),'▥'),
     featureCard('Advanced GST & Tax','State of Supply, CESS, RCM, E-Way fields, TDS/TCS and Composition configuration.',button('Advanced GST',"vx621OpenDomain('gst','business')",'business','primary'),'GST'),
-    featureCard('Business Expenses','Operating expenses continue to feed profit calculations; this is kept as a distinct non-duplicate entry.',button('Expense Entry',"businessShowModule('expenses')",'business','primary'),'−')
+    featureCard('Business Expenses','Record shop expenses and track their effect on profit.',button('Expense Entry',"businessShowModule('expenses')",'business','primary'),'−')
   ];
   const docs=[
     featureCard('Invoice & Thermal','A4/A5 invoice themes, custom fields, terms, signature, 58/80mm and ESC/POS.',button('Invoice & Print',"vx621OpenPlatform('business','print620','business')",'business','primary'),'▤'),
@@ -11101,19 +11161,30 @@ function renderBusinessHome(){
   ];
 
   el.innerHTML=`<div class="vx621-business-shell">
-    <section class="vx621-hero card"><div><span class="pill">Business Workspace</span><h1>Business Command Center</h1><p>Advanced tools replace overlapping basic entry points. Features are grouped by what you are trying to do, while the 6.2.0 accounting engine stays authoritative.</p></div><div class="vx621-hero-actions">${button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')}${button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business')}</div></section>
+    <section class="vx621-hero card"><div><span class="pill">Business Workspace</span><h1>Your business</h1><p>Manage sales, payments and stock from one place.</p></div><div class="vx621-hero-actions">${button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')}${button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business')}</div></section>
     <section class="vx621-kpis"><div class="vx621-kpi"><span>Revenue</span><b>${M(revenue)}</b></div><div class="vx621-kpi"><span>Net Profit</span><b>${M(net)}</b></div><div class="vx621-kpi"><span>Expenses</span><b>${M(expenses)}</b></div><div class="vx621-kpi"><span>Assets</span><b>${M(assets)}</b></div><div class="vx621-kpi"><span>Customer Due</span><b>${M(lt.outstanding)}</b></div></section>
+    <div class="business-tool-search" role="search" aria-label="Find business tools">
+      <label for="businessToolSearch">Find a tool</label>
+      <div class="business-tool-search-field">
+        <input id="businessToolSearch" type="search" placeholder="Try purchase, customer, GST…" autocomplete="off" aria-controls="businessToolResults" />
+        <button id="businessToolSearchClear" type="button" hidden aria-label="Clear tool search">Clear</button>
+      </div>
+      <p id="businessToolSearchStatus" role="status" aria-live="polite" aria-atomic="true"></p>
+    </div>
+    <div id="businessToolResults">
     ${group('Daily Business','Transactions, parties and money movement.',daily)}
-    ${group('Accounting & Compliance','One advanced version per domain; older overlapping entry screens are hidden from the main flow.',accounting)}
+    ${group('Accounting & Compliance','Track profit, balances, expenses and taxes.',accounting)}
     ${group('Documents & Communication','Invoices, orders, messaging and currency tools.',docs)}
-    ${group('Stock-related Tools','These are visible here for discovery but open in the Stock workspace so Business stays clean.',stockCards)}
-    ${group('Sales-related Tools','Sales-specific tools are surfaced on the Sales page as well.',salesCards)}
+    ${group('Stock-related Tools','Manage products, stock levels and transfers.',stockCards)}
+    ${group('Sales-related Tools','Create bills, process returns and manage orders.',salesCards)}
     ${group('Company, Security & Settings','Administration and data-control tools.',admin)}
+    </div>
     <section class="card vx621-recent">${recentActivityHtml()}</section>
-    <section id="vx621-business-host" data-vx621-host="business" class="card vx621-platform-host"><div class="vx621-empty"><b>Choose a feature above.</b><span>The selected advanced tool opens here without a duplicate Accounting Platform launcher.</span></div></section>
+    <section id="vx621-business-host" data-vx621-host="business" class="card vx621-platform-host"><div class="vx621-empty"><b>Choose a feature above.</b><span>Your selected tool will open here.</span></div></section>
   </div>`;
   activateHost('business');
   observeHost(findHost('business'));
+  if (window.VyaparBusinessTools) window.VyaparBusinessTools.bind(el);
 }
 window.renderBusiness=renderBusinessHome;
 
@@ -11140,7 +11211,7 @@ function appendSalesTools(){
   const el=document.getElementById('screen-sales'); if(!el || el.querySelector('.vx621-sales-tools')) return;
   const block=document.createElement('section');
   block.className='card vx621-sales-tools';
-  block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Sales Tools</span><h2>Advanced Sales & Billing</h2><p>Manual item/daily profit entries remain unchanged above. Business invoices and returns use the accounting transaction engine below.</p></div></div><div class="vx621-feature-grid compact">
+  block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Sales Tools</span><h2>Advanced Sales & Billing</h2><p>Create bills, handle returns and print invoices.</p></div></div><div class="vx621-feature-grid compact">
     ${featureCard('Sale / Sale Return','Create accounting sale or return with stock, ledger, GST and balance effects.',button('New Sale',"vx621OpenPlatform('sales','transactions','business','SALE')",'business','primary')+button('Sale Return',"vx621OpenPlatform('sales','transactions','business','SALE_RETURN')",'business'),'⇄')}
     ${featureCard('Invoice & Thermal','A4/A5 invoice configuration and thermal/ESC-POS output.',button('Invoice & Print',"vx621OpenPlatform('sales','print620','pro')",'pro','primary'),'▤')}
     ${featureCard('Quotation & Orders','Estimate/quotation, Proforma, Sale Order and Delivery Challan.',button('Open Documents',"vx621OpenPlatform('sales','documents620','pro')",'pro','primary'),'⇢')}
@@ -11185,7 +11256,7 @@ window.vx621BulkLegacy=async function(bucket,mode){
 function appendStockTools(){
   const el=document.getElementById('screen-stock'); if(!el || el.querySelector('.vx621-stock-tools')) return;
   const block=document.createElement('section'); block.className='card vx621-stock-tools';
-  block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Stock Tools</span><h2>Inventory Workspace</h2><p>Stock-related advanced features are kept here instead of crowding the Business page.</p></div></div><div class="vx621-feature-grid compact">
+  block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Stock Tools</span><h2>Inventory Workspace</h2><p>Manage your catalog, godowns and stock transfers.</p></div></div><div class="vx621-feature-grid compact">
     ${featureCard('Product Catalog & Barcode','Product, SKU/article, size/color, barcode, bulk import, reorder and dead-stock helpers.',button('Catalog & Barcode',"vx621OpenAdvanced('stock','inventory','business')",'business','primary'),'▦')}
     ${featureCard('Godowns & Transfers','Godown-wise stock, stock ledger, valuation and transfer workflow.',button('Godowns',"vx621OpenPlatform('stock','inventory','business')",'business','primary'),'⌂')}
     ${featureCard('Advanced Inventory','Units, wholesale, party-wise rates, BOM/manufacturing and loyalty.',button('Advanced Inventory',"vx621OpenPlatform('stock','inventory620','business')",'business','primary'),'⚙')}
@@ -11424,7 +11495,7 @@ function simplifyBusinessPage(){
     if(title==='Company, Security & Settings') group.remove();
   });
   const hero=screen.querySelector('.vx621-hero p');
-  if(hero) hero.textContent='Sales, accounts, billing, stock and daily business tools in one organised workspace.';
+  if(hero) hero.textContent='Manage sales, payments and stock from one place.';
 }
 if(typeof oldRenderBusiness==='function'){
   window.renderBusiness=function(){
@@ -15145,8 +15216,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
   function applyPlan(){
     const p=plan();
-    root.dataset.vy864Plan=p;
-    document.querySelectorAll('#productionAccountCard,.settings-account-section,#productionAccountCardHost').forEach(n=>n.dataset.vy864Plan=p);
+    if(root.dataset.vy864Plan!==p)root.dataset.vy864Plan=p;
+    document.querySelectorAll('#productionAccountCard,.settings-account-section,#productionAccountCardHost').forEach(n=>{if(n.dataset.vy864Plan!==p)n.dataset.vy864Plan=p;});
   }
 
   function normalizeLogos(scope){
@@ -15177,7 +15248,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function normalizeDangerLabels(){
     document.querySelectorAll('button,.btn').forEach(btn=>{
       const text=String(btn.textContent||'').trim().toLowerCase();
-      if(/delete account|cancel at cycle end|manage cancellation|delete selected|delete record/.test(text))btn.classList.add('danger');
+      if(/delete account|cancel at cycle end|manage cancellation|delete selected|delete record/.test(text) && !btn.classList.contains('danger'))btn.classList.add('danger');
     });
   }
 
@@ -15192,8 +15263,9 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function updateProfileChip(){
     const chip=document.getElementById('vy863ProfileChip');
     if(!chip)return;
-    chip.dataset.vy864Plan=plan();
-    chip.setAttribute('aria-label','Open profile and plan');
+    const currentPlan=plan();
+    if(chip.dataset.vy864Plan!==currentPlan)chip.dataset.vy864Plan=currentPlan;
+    if(chip.getAttribute('aria-label')!=='Open profile and plan')chip.setAttribute('aria-label','Open profile and plan');
   }
 
   function normalize(){

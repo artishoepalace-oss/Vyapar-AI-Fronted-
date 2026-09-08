@@ -1,0 +1,962 @@
+{
+  "removed": [
+    {
+      "path": "web/app.js",
+      "bytes": 544492,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "web/profit-footer-659.js",
+      "bytes": 11337,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "web/audit-fixes-658.js",
+      "bytes": 10601,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "web/audit-stage2-6601.js",
+      "bytes": 15166,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "web/performance-android7-16.js",
+      "bytes": 5896,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "web/complete-ui-680.js",
+      "bytes": 4526,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "web/assets/styles/auth-layout-fix-867.css",
+      "bytes": 16643,
+      "reason": "Unloaded alias already present in generated bundle and canonical source."
+    },
+    {
+      "path": "web/assets/styles/surface-hierarchy-20102004.css",
+      "bytes": 6000,
+      "reason": "Unloaded alias already present in generated bundle and canonical source."
+    },
+    {
+      "path": "web/assets/styles/motion-20102004.css",
+      "bytes": 9069,
+      "reason": "Unloaded alias already present in generated bundle and canonical source."
+    },
+    {
+      "path": "web/assets/styles/popup-nav-clearance-867.css",
+      "bytes": 9129,
+      "reason": "Unloaded alias already present in generated bundle and canonical source."
+    },
+    {
+      "path": "web/assets/styles/surface-cleanup-867.css",
+      "bytes": 5404,
+      "reason": "Unloaded alias already present in generated bundle and canonical source."
+    },
+    {
+      "path": "web/assets/scripts/motion-20102004.js",
+      "bytes": 20589,
+      "reason": "Unloaded alias already present in generated bundle and canonical source."
+    },
+    {
+      "path": "android-app/app/src/main/assets/commercial-ui-6702026.css",
+      "bytes": 19628,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/platform-android.css",
+      "bytes": 8604,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/menu-popover-644.css",
+      "bytes": 1992,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/android-ui-fixes-657.css",
+      "bytes": 3926,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/production-ui-670p1.css",
+      "bytes": 21067,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/performance-android7-16.css",
+      "bytes": 8572,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/profit-footer-659.css",
+      "bytes": 2293,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/audit-stage2-6601.css",
+      "bytes": 5929,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/complete-ui-680.css",
+      "bytes": 42276,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/security-ui-643.css",
+      "bytes": 6495,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/android-ui-fixes-651.css",
+      "bytes": 5489,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/shop-rewards.css",
+      "bytes": 7563,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/workflow-ui-670p2.css",
+      "bytes": 9599,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/audit-fixes-658.css",
+      "bytes": 2364,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/plan-badge-menu-645.css",
+      "bytes": 8478,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/latest-polish-675.css",
+      "bytes": 4548,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/native-shell-hotfix-6712026.css",
+      "bytes": 3945,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/professional-ui-682.css",
+      "bytes": 18775,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/settings-center-675.css",
+      "bytes": 17943,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/legal.css",
+      "bytes": 3198,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/scroll-position-673.css",
+      "bytes": 312,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/ui-hotfix-671.css",
+      "bytes": 7721,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/app.css",
+      "bytes": 222496,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/sales-theme-660.css",
+      "bytes": 5196,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/android-session-flow-647.css",
+      "bytes": 3563,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/settings-center-675.js",
+      "bytes": 19129,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/platform-android.js",
+      "bytes": 1216,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/scroll-position-673.js",
+      "bytes": 4442,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/sales-theme-660.js",
+      "bytes": 12892,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/android-session-flow-647.js",
+      "bytes": 8330,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/workflow-ui-670p2.js",
+      "bytes": 35443,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/native-shell-hotfix-6712026.js",
+      "bytes": 3216,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/ui-hotfix-671.js",
+      "bytes": 893,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/plan-badge-menu-645.js",
+      "bytes": 3997,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/production-ui-670p1.js",
+      "bytes": 11379,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/commercial-ui-6702026.js",
+      "bytes": 4035,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/auth.js",
+      "bytes": 30263,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/security-ui-643.js",
+      "bytes": 10817,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/shop-rewards.js",
+      "bytes": 15495,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/app.js",
+      "bytes": 544492,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/profit-footer-659.js",
+      "bytes": 11337,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/audit-fixes-658.js",
+      "bytes": 10601,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/audit-stage2-6601.js",
+      "bytes": 15166,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/performance-android7-16.js",
+      "bytes": 5896,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "android-app/app/src/main/assets/complete-ui-680.js",
+      "bytes": 4526,
+      "reason": "Unreferenced standalone runtime copy; app loads generated bundles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/settings-center-675.js",
+      "bytes": 19129,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/platform-android.js",
+      "bytes": 1216,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/scroll-position-673.js",
+      "bytes": 4442,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/sales-theme-660.js",
+      "bytes": 12892,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/android-session-flow-647.js",
+      "bytes": 8330,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/workflow-ui-670p2.js",
+      "bytes": 35443,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/native-shell-hotfix-6712026.js",
+      "bytes": 3216,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/ui-hotfix-671.js",
+      "bytes": 893,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/plan-badge-menu-645.js",
+      "bytes": 3997,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/production-ui-670p1.js",
+      "bytes": 11379,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/commercial-ui-6702026.js",
+      "bytes": 4035,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/auth.js",
+      "bytes": 30263,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/security-ui-643.js",
+      "bytes": 10817,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/shop-rewards.js",
+      "bytes": 15495,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/app.js",
+      "bytes": 544492,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/profit-footer-659.js",
+      "bytes": 11337,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/audit-fixes-658.js",
+      "bytes": 10601,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/audit-stage2-6601.js",
+      "bytes": 15166,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/performance-android7-16.js",
+      "bytes": 5896,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/scripts/complete-ui-680.js",
+      "bytes": 4526,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/commercial-ui-6702026.css",
+      "bytes": 19628,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/platform-android.css",
+      "bytes": 8604,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/menu-popover-644.css",
+      "bytes": 1992,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/android-ui-fixes-657.css",
+      "bytes": 3926,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/production-ui-670p1.css",
+      "bytes": 21067,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/performance-android7-16.css",
+      "bytes": 8572,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/profit-footer-659.css",
+      "bytes": 2293,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/audit-stage2-6601.css",
+      "bytes": 5929,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/complete-ui-680.css",
+      "bytes": 42276,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/security-ui-643.css",
+      "bytes": 6495,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/android-ui-fixes-651.css",
+      "bytes": 5489,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/shop-rewards.css",
+      "bytes": 7563,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/workflow-ui-670p2.css",
+      "bytes": 9599,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/audit-fixes-658.css",
+      "bytes": 2364,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/plan-badge-menu-645.css",
+      "bytes": 8478,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/latest-polish-675.css",
+      "bytes": 4548,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/native-shell-hotfix-6712026.css",
+      "bytes": 3945,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/professional-ui-682.css",
+      "bytes": 18775,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/settings-center-675.css",
+      "bytes": 17943,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/legal.css",
+      "bytes": 3198,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/scroll-position-673.css",
+      "bytes": 312,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/ui-hotfix-671.css",
+      "bytes": 7721,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/app.css",
+      "bytes": 222496,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/sales-theme-660.css",
+      "bytes": 5196,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "frontend-source/android/legacy-root-mirrors/styles/android-session-flow-647.css",
+      "bytes": 3563,
+      "reason": "Unused legacy source mirror; build reads canonical scripts/styles."
+    },
+    {
+      "path": "web/android-session-flow-647.css",
+      "bytes": 3563,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/android-session-flow-647.js",
+      "bytes": 8330,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/android-ui-fixes-651.css",
+      "bytes": 5489,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/android-ui-fixes-657.css",
+      "bytes": 3926,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/app.css",
+      "bytes": 222496,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/audit-fixes-658.css",
+      "bytes": 2364,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/audit-stage2-6601.css",
+      "bytes": 5929,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/auth.js",
+      "bytes": 30263,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/commercial-ui-6702026.css",
+      "bytes": 19628,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/commercial-ui-6702026.js",
+      "bytes": 4035,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/complete-ui-680.css",
+      "bytes": 42276,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/latest-polish-675.css",
+      "bytes": 4548,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/legal.css",
+      "bytes": 3198,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/menu-popover-644.css",
+      "bytes": 1992,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/native-shell-hotfix-6712026.css",
+      "bytes": 3945,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/native-shell-hotfix-6712026.js",
+      "bytes": 3216,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/performance-android7-16.css",
+      "bytes": 8572,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/plan-badge-menu-645.css",
+      "bytes": 8478,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/plan-badge-menu-645.js",
+      "bytes": 3997,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/platform-android.css",
+      "bytes": 8604,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/platform-android.js",
+      "bytes": 1216,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/production-ui-670p1.css",
+      "bytes": 21067,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/production-ui-670p1.js",
+      "bytes": 11379,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/professional-ui-682.css",
+      "bytes": 18775,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/profit-footer-659.css",
+      "bytes": 2293,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/sales-theme-660.css",
+      "bytes": 5196,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/sales-theme-660.js",
+      "bytes": 12892,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/scroll-position-673.css",
+      "bytes": 312,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/scroll-position-673.js",
+      "bytes": 4442,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/security-ui-643.css",
+      "bytes": 6495,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/security-ui-643.js",
+      "bytes": 10817,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/settings-center-675.css",
+      "bytes": 17943,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/settings-center-675.js",
+      "bytes": 19129,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/shop-rewards.css",
+      "bytes": 7563,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/shop-rewards.js",
+      "bytes": 15495,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/ui-hotfix-671.css",
+      "bytes": 7721,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/ui-hotfix-671.js",
+      "bytes": 893,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/workflow-ui-670p2.css",
+      "bytes": 9599,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    },
+    {
+      "path": "web/workflow-ui-670p2.js",
+      "bytes": 35443,
+      "reason": "Unreferenced standalone runtime copy; canonical source and generated bundle retained."
+    }
+  ],
+  "moved": [
+    {
+      "from": "PHASE_2_CORE_WORKFLOWS_6.7.0.md",
+      "to": "docs/history/PHASE_2_CORE_WORKFLOWS_6.7.0.md"
+    },
+    {
+      "from": "RELEASE_8.5.7.2026.md",
+      "to": "docs/releases/RELEASE_8.5.7.2026.md"
+    },
+    {
+      "from": "RELEASE_8.5.8.2026.md",
+      "to": "docs/releases/RELEASE_8.5.8.2026.md"
+    },
+    {
+      "from": "RELEASE_6.8.3.2026.md",
+      "to": "docs/releases/RELEASE_6.8.3.2026.md"
+    },
+    {
+      "from": "GOOGLE_DRIVE_SETUP.md",
+      "to": "docs/history/GOOGLE_DRIVE_SETUP.md"
+    },
+    {
+      "from": "RELEASE_6.8.1.2026.md",
+      "to": "docs/releases/RELEASE_6.8.1.2026.md"
+    },
+    {
+      "from": "RELEASE_6.7.3.2026.md",
+      "to": "docs/releases/RELEASE_6.7.3.2026.md"
+    },
+    {
+      "from": "PHASE_3_1_DUPLICATE_UI_HOTFIX_6.7.0.md",
+      "to": "docs/history/PHASE_3_1_DUPLICATE_UI_HOTFIX_6.7.0.md"
+    },
+    {
+      "from": "RELEASE_8.6.2.2026.md",
+      "to": "docs/releases/RELEASE_8.6.2.2026.md"
+    },
+    {
+      "from": "VALIDATION_6.8.2.2026.md",
+      "to": "docs/history/VALIDATION_6.8.2.2026.md"
+    },
+    {
+      "from": "RELEASE_6.7.4.2026.md",
+      "to": "docs/releases/RELEASE_6.7.4.2026.md"
+    },
+    {
+      "from": "ANDROID_UI_6.5.2.md",
+      "to": "docs/history/ANDROID_UI_6.5.2.md"
+    },
+    {
+      "from": "RELEASE_8.5.1.2026.md",
+      "to": "docs/releases/RELEASE_8.5.1.2026.md"
+    },
+    {
+      "from": "RELEASE_20.10.2004.00003.2026.md",
+      "to": "docs/releases/RELEASE_20.10.2004.00003.2026.md"
+    },
+    {
+      "from": "RELEASE_6.7.1.2026.md",
+      "to": "docs/releases/RELEASE_6.7.1.2026.md"
+    },
+    {
+      "from": "VERIFY_8.5.4.2026.md",
+      "to": "docs/history/VERIFY_8.5.4.2026.md"
+    },
+    {
+      "from": "FRAME_CONTINUITY_FIX_2010200404.md",
+      "to": "docs/history/FRAME_CONTINUITY_FIX_2010200404.md"
+    },
+    {
+      "from": "PERFORMANCE_ANDROID_7_16.md",
+      "to": "docs/history/PERFORMANCE_ANDROID_7_16.md"
+    },
+    {
+      "from": "VALIDATION_6.8.0.2026.md",
+      "to": "docs/history/VALIDATION_6.8.0.2026.md"
+    },
+    {
+      "from": "RELEASE_6.7.6.2026.md",
+      "to": "docs/releases/RELEASE_6.7.6.2026.md"
+    },
+    {
+      "from": "PLAY_STORE_SECURITY.md",
+      "to": "docs/history/PLAY_STORE_SECURITY.md"
+    },
+    {
+      "from": "RELEASE_8.6.9.2026.md",
+      "to": "docs/releases/RELEASE_8.6.9.2026.md"
+    },
+    {
+      "from": "UI_GRAPHICS_POLISH_6.8.2.md",
+      "to": "docs/history/UI_GRAPHICS_POLISH_6.8.2.md"
+    },
+    {
+      "from": "STAGE2_AUDIT_6.6.0.1.md",
+      "to": "docs/history/STAGE2_AUDIT_6.6.0.1.md"
+    },
+    {
+      "from": "RELEASE_8.5.2.2026.md",
+      "to": "docs/releases/RELEASE_8.5.2.2026.md"
+    },
+    {
+      "from": "RELEASE_8.5.6.2026.md",
+      "to": "docs/releases/RELEASE_8.5.6.2026.md"
+    },
+    {
+      "from": "RELEASE_8.5.4.2026.md",
+      "to": "docs/releases/RELEASE_8.5.4.2026.md"
+    },
+    {
+      "from": "VALIDATION_6.8.1.2026.md",
+      "to": "docs/history/VALIDATION_6.8.1.2026.md"
+    },
+    {
+      "from": "MOTION_FIXES_2010200401.md",
+      "to": "docs/history/MOTION_FIXES_2010200401.md"
+    },
+    {
+      "from": "ANDROID_UI_6.5.1.md",
+      "to": "docs/history/ANDROID_UI_6.5.1.md"
+    },
+    {
+      "from": "RELEASE_8.0.0.2026.md",
+      "to": "docs/releases/RELEASE_8.0.0.2026.md"
+    },
+    {
+      "from": "RELEASE_8.6.4.2026.md",
+      "to": "docs/releases/RELEASE_8.6.4.2026.md"
+    },
+    {
+      "from": "RELEASE_8.6.5.2026.md",
+      "to": "docs/releases/RELEASE_8.6.5.2026.md"
+    },
+    {
+      "from": "FEATURES_70.md",
+      "to": "docs/history/FEATURES_70.md"
+    },
+    {
+      "from": "PROFIT_FOOTER_6.5.9.md",
+      "to": "docs/history/PROFIT_FOOTER_6.5.9.md"
+    },
+    {
+      "from": "RELEASE_6.8.0.2026.md",
+      "to": "docs/releases/RELEASE_6.8.0.2026.md"
+    },
+    {
+      "from": "RELEASE_8.6.3.2026.md",
+      "to": "docs/releases/RELEASE_8.6.3.2026.md"
+    },
+    {
+      "from": "ANDROID_UI_6.5.7.md",
+      "to": "docs/history/ANDROID_UI_6.5.7.md"
+    },
+    {
+      "from": "RELEASE_8.6.8.2026.md",
+      "to": "docs/releases/RELEASE_8.6.8.2026.md"
+    },
+    {
+      "from": "AUDIT_FIXES_6.5.8.md",
+      "to": "docs/history/AUDIT_FIXES_6.5.8.md"
+    },
+    {
+      "from": "SCROLL_POSITION_ANDROID_7_16.md",
+      "to": "docs/history/SCROLL_POSITION_ANDROID_7_16.md"
+    },
+    {
+      "from": "STARTUP_VIDEO_FIX_2026-09-08.md",
+      "to": "docs/history/STARTUP_VIDEO_FIX_2026-09-08.md"
+    },
+    {
+      "from": "RELEASE_8.6.7.2026.md",
+      "to": "docs/releases/RELEASE_8.6.7.2026.md"
+    },
+    {
+      "from": "STARTUP_LOADING_ANDROID_7_16.md",
+      "to": "docs/history/STARTUP_LOADING_ANDROID_7_16.md"
+    },
+    {
+      "from": "RELEASE_6.8.2.2026.md",
+      "to": "docs/releases/RELEASE_6.8.2.2026.md"
+    },
+    {
+      "from": "RELEASE_8.5.0.2026.md",
+      "to": "docs/releases/RELEASE_8.5.0.2026.md"
+    },
+    {
+      "from": "RELEASE_8.5.9.2026.md",
+      "to": "docs/releases/RELEASE_8.5.9.2026.md"
+    },
+    {
+      "from": "RELEASE_8.6.6.2026.md",
+      "to": "docs/releases/RELEASE_8.6.6.2026.md"
+    },
+    {
+      "from": "COMPLETE_BUILD_README.md",
+      "to": "docs/history/COMPLETE_BUILD_README.md"
+    },
+    {
+      "from": "PLATFORM_ADAPTIVE_6.3.7.md",
+      "to": "docs/history/PLATFORM_ADAPTIVE_6.3.7.md"
+    },
+    {
+      "from": "RELEASE_20.10.2004.00001.2026.md",
+      "to": "docs/releases/RELEASE_20.10.2004.00001.2026.md"
+    },
+    {
+      "from": "PHASE_1_PRODUCTION_UI_6.7.0.md",
+      "to": "docs/history/PHASE_1_PRODUCTION_UI_6.7.0.md"
+    },
+    {
+      "from": "RELEASE_8.5.3.2026.md",
+      "to": "docs/releases/RELEASE_8.5.3.2026.md"
+    },
+    {
+      "from": "SALES_THEME_6.6.0.md",
+      "to": "docs/history/SALES_THEME_6.6.0.md"
+    },
+    {
+      "from": "RELEASE_6.7.5.2026.md",
+      "to": "docs/releases/RELEASE_6.7.5.2026.md"
+    },
+    {
+      "from": "PHASE_3_FINANCE_DATA_INTEGRITY_6.7.0.md",
+      "to": "docs/history/PHASE_3_FINANCE_DATA_INTEGRITY_6.7.0.md"
+    },
+    {
+      "from": "RELEASE_8.6.0.2026.md",
+      "to": "docs/releases/RELEASE_8.6.0.2026.md"
+    },
+    {
+      "from": "RELEASE_20.10.2004.00002.2026.md",
+      "to": "docs/releases/RELEASE_20.10.2004.00002.2026.md"
+    },
+    {
+      "from": "RELEASE_8.6.1.2026.md",
+      "to": "docs/releases/RELEASE_8.6.1.2026.md"
+    },
+    {
+      "from": "RELEASE_8.5.5.2026.md",
+      "to": "docs/releases/RELEASE_8.5.5.2026.md"
+    },
+    {
+      "from": ".github/workflows/import-source.yml",
+      "to": "docs/history/workflows/import-source.yml",
+      "reason": "Obsolete 6.7.1 promotion workflow depends on absent .release inputs; retained as historical reference."
+    },
+    {
+      "from": "README.md",
+      "to": "docs/history/README-legacy.md",
+      "reason": "Original feature documentation retained; current root guide replaces outdated version instructions."
+    }
+  ],
+  "removedBytes": 3653445
+}

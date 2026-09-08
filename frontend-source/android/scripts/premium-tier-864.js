@@ -36,8 +36,8 @@
   }
   function applyPlan(){
     const p=plan();
-    root.dataset.vy864Plan=p;
-    document.querySelectorAll('#productionAccountCard,.settings-account-section,#productionAccountCardHost').forEach(n=>n.dataset.vy864Plan=p);
+    if(root.dataset.vy864Plan!==p)root.dataset.vy864Plan=p;
+    document.querySelectorAll('#productionAccountCard,.settings-account-section,#productionAccountCardHost').forEach(n=>{if(n.dataset.vy864Plan!==p)n.dataset.vy864Plan=p;});
   }
 
   function normalizeLogos(scope){
@@ -68,7 +68,7 @@
   function normalizeDangerLabels(){
     document.querySelectorAll('button,.btn').forEach(btn=>{
       const text=String(btn.textContent||'').trim().toLowerCase();
-      if(/delete account|cancel at cycle end|manage cancellation|delete selected|delete record/.test(text))btn.classList.add('danger');
+      if(/delete account|cancel at cycle end|manage cancellation|delete selected|delete record/.test(text) && !btn.classList.contains('danger'))btn.classList.add('danger');
     });
   }
 
@@ -83,8 +83,9 @@
   function updateProfileChip(){
     const chip=document.getElementById('vy863ProfileChip');
     if(!chip)return;
-    chip.dataset.vy864Plan=plan();
-    chip.setAttribute('aria-label','Open profile and plan');
+    const currentPlan=plan();
+    if(chip.dataset.vy864Plan!==currentPlan)chip.dataset.vy864Plan=currentPlan;
+    if(chip.getAttribute('aria-label')!=='Open profile and plan')chip.setAttribute('aria-label','Open profile and plan');
   }
 
   function normalize(){

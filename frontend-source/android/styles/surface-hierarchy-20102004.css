@@ -161,3 +161,71 @@ html.vy861-flat-black.theme-light #nav.nav,
 html.vy861-flat-black.theme-light .nav {
   background:rgba(250,250,251,.97)!important;
 }
+
+/* Usability: readable hierarchy, flat tool rows, accessible controls. */
+html.vy861-flat-black {
+  --workspace-text: #f1f2f4;
+  --workspace-muted: #a9adb5;
+  --workspace-focus: #c3cbd8;
+}
+html.vy861-flat-black.theme-light {
+  --workspace-text: #20232a;
+  --workspace-muted: #555c68;
+  --workspace-focus: #38485d;
+}
+html.vy861-flat-black .screen { color: var(--workspace-text); }
+html.vy861-flat-black .vx621-business-shell { gap: 16px !important; }
+html.vy861-flat-black .vx621-hero h1 { font-size: clamp(22px, 5vw, 28px) !important; line-height: 1.2 !important; letter-spacing: -.5px; }
+html.vy861-flat-black .vx621-group-head h2 { font-size: 17px !important; line-height: 1.35; }
+html.vy861-flat-black .vx621-feature-copy h3 { font-size: 15px !important; line-height: 1.4; margin: 0 0 4px !important; }
+html.vy861-flat-black .vx621-feature-copy p,
+html.vy861-flat-black .vx621-group-head p,
+html.vy861-flat-black .vx621-hero p {
+  color: var(--workspace-muted) !important; font-size: 13px !important; line-height: 1.55 !important;
+}
+html.vy861-flat-black #screen-business .vx621-group {
+  background: transparent !important; padding: 4px 0 !important; border: 0 !important;
+}
+html.vy861-flat-black #screen-business .vx621-feature-grid { gap: 8px !important; }
+html.vy861-flat-black #screen-business .vx621-feature-card {
+  background: var(--vy20-surface) !important; border: 0 !important; border-radius: 16px !important;
+  box-shadow: none !important; padding: 14px !important; gap: 12px !important;
+}
+html.vy861-flat-black .vx621-feature-copy { min-width: 0; }
+html.vy861-flat-black .vx621-card-actions { gap: 8px !important; margin-top: 10px !important; }
+html.vy861-flat-black .screen .btn,
+html.vy861-flat-black .vx621-action,
+html.vy861-flat-black .vy675-settings-row { min-height: 44px !important; }
+html.vy861-flat-black .screen input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]),
+html.vy861-flat-black .screen select { min-height: 44px; font-size: 16px; }
+html.vy861-flat-black .vx621-action { border-radius: 11px !important; }
+html.vy861-flat-black .vx621-action:focus,
+html.vy861-flat-black .screen button:focus,
+html.vy861-flat-black .screen input:focus,
+html.vy861-flat-black .screen select:focus,
+html.vy861-flat-black .screen textarea:focus {
+  outline: 2px solid var(--workspace-focus) !important; outline-offset: 3px !important;
+}
+html.vy861-flat-black .business-tool-search { margin: 6px 0 16px; }
+html.vy861-flat-black .business-tool-search label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--workspace-muted); }
+html.vy861-flat-black .business-tool-search-field {
+  display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 14px;
+  background: var(--vy20-surface-raised); border-radius: 14px;
+}
+html.vy861-flat-black .business-tool-search input {
+  flex: 1; width: 100%; min-width: 0; padding: 8px 0 !important; background: transparent !important;
+  border: 0 !important; box-shadow: none !important; color: var(--workspace-text) !important;
+}
+html.vy861-flat-black .business-tool-search input::placeholder { color: var(--workspace-muted); opacity: 1; }
+html.vy861-flat-black .business-tool-search button { min-width: 48px; min-height: 44px; background: transparent; color: var(--workspace-text); border: 0; border-radius: 10px; }
+html.vy861-flat-black #businessToolSearchStatus { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: var(--workspace-muted); }
+html.vy861-flat-black #businessToolSearchStatus:empty { display: none; }
+html.vy861-flat-black #businessToolResults [hidden],
+html.vy861-flat-black .business-tool-search [hidden] { display: none !important; }
+html.vy861-flat-black #businessToolResults > .vx621-group + .vx621-group { margin-top: 20px !important; }
+@media (max-width: 540px) {
+  html.vy861-flat-black #screen-business .vx621-feature-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  html.vy861-flat-black .vx621-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  html.vy861-flat-black .vx621-kpi b { font-size: 20px !important; overflow-wrap: anywhere; }
+  html.vy861-flat-black .vx621-kpi:last-child { grid-column: 1 / -1; }
+}
