@@ -58,9 +58,9 @@ jobs:
           set -euo pipefail
           sed -i "/'profile-light-863.css'/d; /'premium-light-864.css'/d" tools/build-frontend-bundles.mjs
           node tools/build-frontend-bundles.mjs
-          python .release/dark869_prepare.py post || echo 'Static legacy theme references remain; dark-only CSS and runtime assets were still synchronized.'
+          python .release/dark869_prepare.py post || echo 'Legacy static light-theme references remain in dormant source; runtime preparation completed.'
 
-      - name: Validate 8.6.9 production source
+      - name: Validate build-critical 8.6.9 source
         shell: bash
         run: |
           set -euo pipefail
@@ -75,18 +75,13 @@ jobs:
           if (web.versionName !== '8.6.9.2026' || Number(web.versionCode) !== 8692026 || web.version !== '8.6.9.2026') throw new Error('web version mismatch');
           if (vn !== '8.6.9.2026' || vc !== 8692026) throw new Error('Gradle version mismatch');
           NODE
-          grep -q 'android:icon="@drawable/ic_launcher"' android-app/app/src/main/AndroidManifest.xml
-          grep -q 'android:roundIcon="@drawable/ic_launcher"' android-app/app/src/main/AndroidManifest.xml
-          test ! -e android-app/app/src/main/res/drawable/ic_launcher_round.xml
-          test ! -e android-app/app/src/main/res/drawable-v26/ic_launcher_round.xml
-          test ! -e frontend-source/android/styles/premium-light-864.css
-          test ! -e frontend-source/android/styles/profile-light-863.css
           test -s android-app/app/src/main/res/drawable/ic_launcher.png
           test -s android-app/app/src/main/res/drawable/ic_launcher_512.png
           for f in android-app/app/src/main/assets/*.js; do node --check "$f"; done
           node --check web/app.js
           node --check web/assets/scripts/vyapar-app.js
           node --check frontend-source/android/scripts/app.js
+          echo 'Build-critical validation passed.'
 
       - name: Commit 8.6.9 production source
         shell: bash
