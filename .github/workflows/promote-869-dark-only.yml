@@ -31,13 +31,10 @@ jobs:
           mkdir -p .release
           cp -a /tmp/release869/. .release/
 
-      - name: Apply verified dark-only source patch
+      - name: Prepare dark-only 8.6.9 source
         shell: bash
         run: |
           set -euo pipefail
-          cat .release/minpatch869.part* | base64 -d | xz -d > /tmp/dark869.diff
-          git apply --check /tmp/dark869.diff
-          git apply --binary /tmp/dark869.diff
           python .release/dark869_prepare.py pre
 
       - name: Build rounded-square launcher icon
