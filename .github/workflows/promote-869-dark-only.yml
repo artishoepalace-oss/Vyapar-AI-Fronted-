@@ -1,17 +1,18 @@
-name: Prepare Vyapar AI 8.6.9 Intermediate
+name: Promote Vyapar AI 8.6.9.2026 Dark Only
 
 on:
   push:
     branches: [main]
     paths:
-      - '.release/READY-869DIAG'
+      - '.release/READY-8692026'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  actions: write
 
 jobs:
-  prepare-intermediate:
+  promote-dark-only:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current main
@@ -19,38 +20,91 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Restore clean 8.6.7 source baseline
+      - name: Restore verified 8.6.8 production baseline
         shell: bash
         run: |
           set -euo pipefail
-          test -f .release/READY-869DIAG
+          test -f .release/READY-8692026
           cp -a .release /tmp/release869
           git rm -rf .
-          git archive 01b072d7cb4b476410f928add945916de48792a1 | tar -x
+          git archive e8c247cdb5e7cb763fbca095659007438020669b | tar -x
           mkdir -p .release
           cp -a /tmp/release869/. .release/
 
-      - name: Apply staged 8.6.9 source patch
+      - name: Apply verified dark-only source patch
         shell: bash
         run: |
           set -euo pipefail
-          cat .release/minpatch869.part* | base64 -d | xz -d > /tmp/minpatch869.diff
-          git apply --check /tmp/minpatch869.diff
-          git apply --binary /tmp/minpatch869.diff
+          base64 -d .release/dark869.xz.b64 | xz -d > /tmp/dark869.diff
+          git apply --check /tmp/dark869.diff
+          git apply --binary /tmp/dark869.diff
+          python .release/dark869_prepare.py pre
 
-      - name: Rebuild Android frontend bundles
-        run: node tools/build-frontend-bundles.mjs
+      - name: Build rounded-square launcher icon
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y imagemagick
+          fi
+          convert web/assets/images/logo.png -alpha on -fuzz 10% -transparent white -resize 360x360 /tmp/vyapar-mark.png
+          convert -size 512x512 xc:none -fill white -draw 'roundrectangle 8,8 504,504 96,96' /tmp/vyapar-bg.png
+          convert /tmp/vyapar-bg.png /tmp/vyapar-mark.png -gravity center -compose over -composite android-app/app/src/main/res/drawable/ic_launcher_512.png
+          convert android-app/app/src/main/res/drawable/ic_launcher_512.png -resize 256x256 android-app/app/src/main/res/drawable/ic_launcher.png
+          cp android-app/app/src/main/res/drawable/ic_launcher.png branding/ic_launcher.png
+          cp android-app/app/src/main/res/drawable/ic_launcher_512.png branding/ic_launcher_512.png
 
-      - name: Pack intermediate source
+      - name: Rebuild and synchronize dark-only runtime bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tools/build-frontend-bundles.mjs
+          python .release/dark869_prepare.py post
+
+      - name: Validate 8.6.9 production source
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const root = JSON.parse(fs.readFileSync('version.json','utf8'));
+          const web = JSON.parse(fs.readFileSync('web/version.json','utf8'));
+          const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
+          const vn = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
+          const vc = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
+          if (root.versionName !== '8.6.9.2026' || Number(root.versionCode) !== 8692026) throw new Error('root version mismatch');
+          if (web.versionName !== '8.6.9.2026' || Number(web.versionCode) !== 8692026 || web.version !== '8.6.9.2026') throw new Error('web version mismatch');
+          if (vn !== '8.6.9.2026' || vc !== 8692026) throw new Error('Gradle version mismatch');
+          NODE
+          grep -q 'android:icon="@drawable/ic_launcher"' android-app/app/src/main/AndroidManifest.xml
+          grep -q 'android:roundIcon="@drawable/ic_launcher"' android-app/app/src/main/AndroidManifest.xml
+          test ! -e android-app/app/src/main/res/drawable/ic_launcher_round.xml
+          test ! -e android-app/app/src/main/res/drawable-v26/ic_launcher_round.xml
+          test ! -e frontend-source/android/styles/premium-light-864.css
+          test ! -e frontend-source/android/styles/profile-light-863.css
+          test -s android-app/app/src/main/res/drawable/ic_launcher.png
+          test -s android-app/app/src/main/res/drawable/ic_launcher_512.png
+          for f in android-app/app/src/main/assets/*.js; do node --check "$f"; done
+          node --check web/app.js
+          node --check web/assets/scripts/vyapar-app.js
+          node --check frontend-source/android/scripts/app.js
+          node --test tests/professional-ui-682.test.js
+
+      - name: Commit 8.6.9 production source
         shell: bash
         run: |
           set -euo pipefail
           rm -rf .release
-          tar --exclude=.git -czf /tmp/vyapar-869-intermediate.tar.gz .
+          rm -f .github/workflows/promote-869-dark-only.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Release Vyapar AI 8.6.9.2026 dark-only UI and rounded-square launcher'
+          git push origin HEAD:main
 
-      - name: Upload intermediate source
-        uses: actions/upload-artifact@v4
-        with:
-          name: vyapar-869-intermediate
-          path: /tmp/vyapar-869-intermediate.tar.gz
-          retention-days: 1
+      - name: Start Android APK build and GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: gh workflow run build-android.yml --ref main
