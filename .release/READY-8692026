@@ -1,2 +1,2 @@
 ready 8.6.9.2026 dark-only verified promotion
-retry after complete minpatch payload fix 2026-09-08T10:43+05:30
+retry deterministic preparation without corrupt archive 2026-09-08T10:45+05:30
