@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" class="vy-professional-ui vy861-flat-black vy855-inspected-fix vy855-booting">
+<html lang="en" class="workspace-v7 vy-professional-ui vy861-flat-black vy855-inspected-fix vy855-booting">
 <head>
   <meta charset="UTF-8" />
-  <meta name="vyapar-ui-version" content="20.10.2004.00006.2026" />
+  <meta name="vyapar-ui-version" content="20.10.2004.00007.2026" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="icon" href="assets/images/logo.png" type="image/png">
   <title>Vyapar AI</title>
@@ -36,18 +36,12 @@
     try {
       document.documentElement.classList.add("android-ui", "native-android", "vy861-flat-black", "vy855-inspected-fix", "vy855-booting");
       document.documentElement.style.background = "#000000";
-      const saved = JSON.parse(localStorage.getItem("vyapar_ai_prod_v1") || "{}");
-      if (saved && saved.settings && saved.settings.theme === "light") {
-        document.documentElement.classList.add("theme-light");
-        document.documentElement.style.colorScheme = "light";
-        document.documentElement.style.background = "#f5f5f7";
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute("content", "#f5f5f7");
-      }
+      document.documentElement.classList.remove("theme-light");
+      document.documentElement.style.colorScheme = "dark";
     } catch (error) {}
   </script>
-  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=2010200406-compactpdf1" />
-  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=2010200406-compactpdf1" />
+  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=2010200407-workspace1" />
+  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=2010200407-workspace1" />
 </head>
 <body>
   <div id="vy855BootGuard" aria-hidden="true"><span class="vy-boot-logo-frame"><img src="assets/images/logo.png" alt="" /></span></div>
@@ -102,7 +96,7 @@
   </div>
 
   <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="assets/scripts/vyapar-app.js?v=2010200406-compactpdf1"></script>
+  <script src="assets/scripts/vyapar-app.js?v=2010200407-workspace1"></script>
 
 </body>
 </html>

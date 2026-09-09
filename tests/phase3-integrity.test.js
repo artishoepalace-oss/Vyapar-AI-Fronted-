@@ -124,6 +124,7 @@ function loadCore(appPath){
   };
 
   vm.createContext(context);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'frontend-source/android/scripts/file-io.js'), 'utf8'), context);
   const expose = `
 render=function(){};
 window.__phase3Core={
@@ -613,7 +614,7 @@ function testStaticParity(){
     assert.match(source, /function postForRebuild/);
     assert.match(source, /restored\.subscription=\{\.\.\.state\.subscription\}/);
     assert.match(source, /restored\.plan=state\.plan/);
-    assert.match(source, /obj\.v!==1/);
+    assert.match(source, /io\.decrypt\(parsed, password\)/);
   });
 }
 

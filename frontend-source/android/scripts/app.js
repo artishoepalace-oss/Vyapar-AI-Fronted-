@@ -316,7 +316,6 @@ function normalizeRecords(list){
   const usedIds = new Set();
 
   return list
-    .slice(0, 50000)
     .filter(record =>
       record &&
       typeof record === 'object' &&
@@ -457,9 +456,7 @@ function normalizeState(raw){
       ...settings,
 
       theme:
-        settings.theme === 'light'
-          ? 'light'
-          : 'dark',
+        'dark',
 
       performance:
         ['auto', 'smooth', 'lite']
@@ -529,26 +526,16 @@ function loadState(){
   }
 }
 
+function persistBusinessState(value){
+  if(window.VyaparStorage) return window.VyaparStorage.save(value);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(value)); return Promise.resolve(); }
+  catch(error) { return Promise.reject(error); }
+}
 function save(){
-  try{
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(state)
-    );
-
-  }catch(error){
-    console.error(
-      'Local data save failed:',
-      error
-    );
-
-    alert(
-      'Data could not be saved. Browser storage may be full. Download a backup and try again.'
-    );
-
-    return false;
-  }
-
+  if(window.VyaparInsights) window.VyaparInsights.invalidate();
+  persistBusinessState(state).catch(error => {
+    if(!window.VyaparStorage) alert('Data was not saved: ' + error.message);
+  });
   render();
   return true;
 }
@@ -668,7 +655,7 @@ function setPerformanceMode(mode){
 }
 
 function activeTheme(){
-  return state.settings && state.settings.theme === 'light' ? 'light' : 'dark';
+  return 'dark';
 }
 
 function applyTheme(){
@@ -694,7 +681,7 @@ function applyTheme(){
 
 function persistThemeWithoutRender(){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    persistBusinessState(state).catch(() => {});
   }catch(error){
     console.warn('Theme preference could not be saved:', error);
   }
@@ -703,7 +690,7 @@ function persistThemeWithoutRender(){
 function runThemeTransition(nextTheme, x, y){
   const html = document.documentElement;
   const body = document.body;
-  const targetTheme = nextTheme === 'light' ? 'light' : 'dark';
+  const targetTheme = 'dark';
   const androidMode = html.classList.contains('android-ui') || html.classList.contains('native-android');
   const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -922,6 +909,7 @@ function setTab(tab, withLoader = false){
   });
 
   if(tab === 'analytics'){
+    if(window.VyaparInsights) window.VyaparInsights.render(true);
     setTimeout(drawAnalyticsCharts, 0);
   }
   if(motion) motion.afterPage(navigation, screen);
@@ -1187,6 +1175,8 @@ function handleNativeBackPress(){
 window.handleNativeBackPress=handleNativeBackPress;
 
 function render(){
+  window.__vyaparDataRevision = (window.__vyaparDataRevision || 0) + 1;
+  if(window.VyaparRecords) window.VyaparRecords.invalidate();
   forceReadableFont();
   applyTheme();
   applyGlassControl();
@@ -1303,72 +1293,9 @@ function renderHome(){
 }
 
 function renderUpload(){
-  const el = document.getElementById('screen-upload');
-  if(!el) return;
-
-  const backend = cleanText(state?.profile?.backendUrl || API_BASE_URL, 500);
-  el.innerHTML = `
-    <div class="card">
-      <h2>AI / File Import</h2>
-      <p class="muted">
-        Import JSON, CSV or TXT business data, or scan a footwear box/carton label through the secure backend.
-      </p>
-
-      <label>Upload Type</label>
-      <select id="uploadType">
-        <option value="auto">Auto Detect</option>
-        <option value="profit">Profit</option>
-        <option value="stock">Stock</option>
-        <option value="sale">Sale</option>
-      </select>
-
-      <label style="margin-top:14px;display:block">Upload JSON / CSV / TXT</label>
-      <input id="uploadFile" type="file" accept=".json,.csv,.txt,application/json,text/csv,text/plain">
-
-      <div class="actions">
-        <button class="btn primary" onclick="analyzeFile()">Analyze and Import</button>
-        <button class="btn" onclick="downloadSampleJson()">Sample JSON</button>
-        <button class="btn" onclick="downloadSampleCsv()">Sample CSV</button>
-      </div>
-      <div id="uploadStatus" class="notice" style="margin-top:12px">
-        Choose a file, select its type, then select Analyze and Import.
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h2>AI Box / Carton Scanner</h2>
-      <p class="muted">Take or choose a clear label photo. The API key stays on the backend; it is never stored in the APK.</p>
-      <input id="scanMode" type="hidden" value="box">
-      <div class="actions" role="group" aria-label="Scan mode">
-        <button class="btn primary" type="button" onclick="setScanMode('box');this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('primary'));this.classList.add('primary')">Box</button>
-        <button class="btn" type="button" onclick="setScanMode('carton');this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('primary'));this.classList.add('primary')">Carton</button>
-        <button class="btn" type="button" onclick="setScanMode('manual');this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('primary'));this.classList.add('primary')">Manual Qty</button>
-      </div>
-      <label style="margin-top:12px;display:block">Label photo</label>
-      <input id="boxLabelFile" type="file" accept="image/jpeg,image/png,image/webp,image/*" capture="environment">
-      <div id="scanQtyBox" style="margin-top:12px">
-        <label>Quantity / pairs</label>
-        <input id="scanQty" type="number" min="1" max="10000" inputmode="numeric" value="1">
-      </div>
-      <div class="actions">
-        <button class="btn primary" type="button" onclick="scanBoxLabel()">Scan Label</button>
-      </div>
-      <div id="boxScanStatus" class="notice" style="margin-top:12px">
-        Scanner ready. Choose a clear label photo to continue.
-      </div>
-      <div id="stockPreviewArea" style="margin-top:12px"></div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h2>Upload Format Help</h2>
-      <div class="notice success">
-        Profit fields: year, month, profit<br>
-        Stock fields: product/item/name, qty, lowStock<br>
-        Sale fields: date, product, purchasePrice, sellingPrice, qty
-      </div>
-    </div>
-  `;
+  if(window.VyaparUpload) window.VyaparUpload.render();
 }
+
 function nextAction(t){
   if(t.profit < yearlyGoal() * 0.4){
     return 'Record sales and profit regularly and identify fast-moving stock.';
@@ -1453,7 +1380,7 @@ async function scanBoxLabel(){
   if(status){
     status.style.display = 'block';
     status.className = 'notice';
-    status.textContent = 'Button clicked. Checking photo...';
+    status.textContent = 'Checking your photo…';
   } else {
     console.warn('Scan status UI is unavailable.');
     return;
@@ -1774,71 +1701,9 @@ function clearStockPreview(){
 }
 
 async function analyzeFile(){
-  const input = document.getElementById('uploadFile');
-  const typeInput = document.getElementById('uploadType');
-  const box = document.getElementById('uploadStatus');
-
-  const file = input && input.files && input.files[0];
-  const uploadType = typeInput ? typeInput.value : 'auto';
-
-  if(!box){
-    console.warn('Upload status UI is unavailable.');
-    return;
-  }
-
-  box.style.display = 'block';
-
-  if(!file){
-    box.textContent = 'Choose a JSON, CSV, or TXT file first.';
-    box.className = 'notice bad';
-    return;
-  }
-
-  const fileName = String(file.name || '').toLowerCase();
-
-  try{
-    box.textContent = 'Reading file...';
-    box.className = 'notice';
-
-    if(fileName.endsWith('.json')){
-      const text = (await file.text()).replace(/^\uFEFF/, '').trim();
-      const data = JSON.parse(text);
-
-      const result = importDataByType(data, uploadType, 'json-import');
-
-      statusResult(result, uploadType === 'auto' ? 'JSON Auto' : 'JSON ' + uploadType.toUpperCase());
-      return;
-    }
-
-    if(fileName.endsWith('.csv') || fileName.endsWith('.txt')){
-      const text = (await file.text()).replace(/^\uFEFF/, '').trim();
-
-      let result;
-
-      if(uploadType === 'auto'){
-        result = importCsvOrText(text, {
-          source: fileName.endsWith('.csv') ? 'csv-import' : 'txt-import'
-        });
-      } else {
-        result = importCsvTextByType(
-          text,
-          uploadType,
-          fileName.endsWith('.csv') ? 'csv-import' : 'txt-import'
-        );
-      }
-
-      statusResult(result, uploadType === 'auto' ? 'CSV/TXT Auto' : 'CSV/TXT ' + uploadType.toUpperCase());
-      return;
-    }
-
-    box.textContent = 'Only JSON, CSV, TXT supported.';
-    box.className = 'notice bad';
-
-  } catch(error) {
-    box.textContent = 'Import failed: ' + error.message;
-    box.className = 'notice bad';
-  }
+  return window.VyaparUpload.review();
 }
+
 function importDataByType(data, uploadType, source){
   if(uploadType === 'auto'){
     return importExtracted(data, {
@@ -2013,7 +1878,7 @@ function statusResult(r, type){
     <b>${r.skipped}</b> skipped.
   `;
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  persistBusinessState(state).catch(() => {});
 
   renderHome();
   renderSales();
@@ -2831,6 +2696,7 @@ function renderSales(){
 
     <div class="card" style="margin-top:14px">
       <h2>Daily Records</h2>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('daily') : ''}
 
       <div class="scroll">
         <table class="table">
@@ -2845,7 +2711,7 @@ function renderSales(){
 
           <tbody>
             ${
-              (state.daily || []).slice().reverse().map(x => `
+              (window.VyaparRecords ? window.VyaparRecords.get('daily').rows : (state.daily || []).slice().reverse()).map(x => `
                 <tr>
                   <td>${esc(x.date)}</td>
                   <td>${money(x.sale)}</td>
@@ -2866,6 +2732,7 @@ function renderSales(){
 
     <div class="card" style="margin-top:14px">
       <h2>Sales Records</h2>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('sales') : ''}
 
       <div class="scroll">
         <table class="table">
@@ -2883,7 +2750,7 @@ function renderSales(){
 
           <tbody>
             ${
-              state.sales.slice().reverse().map(x => `
+              (window.VyaparRecords ? window.VyaparRecords.get('sales').rows : state.sales.slice().reverse()).map(x => `
                 <tr>
                   <td>${esc(x.date)}</td>
                   <td>${esc(x.product)}</td>
@@ -2907,6 +2774,7 @@ function renderSales(){
 
     <div id="monthly-profit-records" class="card" style="margin-top:14px">
       <h2>Monthly Profit Records</h2>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('monthly') : ''}
 
       <div class="scroll">
         <table class="table">
@@ -2921,8 +2789,7 @@ function renderSales(){
 
           <tbody>
             ${
-              state.monthly.slice()
-                .sort((a, b) => String(b.month).localeCompare(String(a.month)))
+              (window.VyaparRecords ? window.VyaparRecords.get('monthly').rows : state.monthly.slice().sort((a,b)=>String(b.month).localeCompare(String(a.month))))
                 .map(x => `
                   <tr>
                     <td>${monthLabel(x.month)}</td>
@@ -3347,9 +3214,10 @@ function renderStock(){
 
     <div class="card" style="margin-top:14px">
       <h3>Stock Alerts</h3>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('stocks') : ''}
 
       ${
-        state.stocks.map(s => `
+        (window.VyaparRecords ? window.VyaparRecords.get('stocks').rows : state.stocks).map(s => `
           <p class="pill">
             ${esc(s.item || s.product || 'Item')}: ${num(s.qty)} left
             ${num(s.qty) <= num(s.min || s.lowStock || 5) ? '<b class="danger-text"> Reorder</b>' : ''}
@@ -3550,109 +3418,7 @@ function renderMonthYearComparison(years){
 }
 
 function renderAnalytics(){
-  const el = document.getElementById('screen-analytics');
-  if(!el) return;
-
-  const currentYear = currentYearValue();
-  const previousYear = String(Number(currentYear) - 1);
-  const years = availableYears();
-  if(!years.includes(currentYear)) years.push(currentYear);
-  years.sort();
-
-  const currentProfit = yearlyProfitForYear(currentYear);
-  const previousProfit = yearlyProfitForYear(previousYear);
-  const currentStats = monthlyStatsForYear(currentYear);
-  const investment = num(state.profile.totalInvestment);
-  const goal = yearlyGoal();
-  const goalProgress = Math.max(0, Math.min(100, currentProfit / goal * 100));
-  const yoy = previousProfit !== 0 ? ((currentProfit - previousProfit) / Math.abs(previousProfit)) * 100 : null;
-  const valuationMultiple = 2;
-  const value = Math.max(currentProfit * valuationMultiple, 0);
-  const roi = investment > 0 ? (currentProfit / investment) * 100 : 0;
-  const paybackMonths = investment > 0 && currentStats.avg > 0 ? investment / currentStats.avg : 0;
-  const pnlParts = profitLossDistribution(currentYear);
-  const expenses = pnlParts.filter(item => item.label !== 'Product Sales').reduce((sum,item) => sum + item.value, 0);
-  const income = yearlySalesForYear(currentYear);
-
-  el.innerHTML = `
-    <section class="card insight-hero-card">
-      <div class="insight-hero-copy">
-        <span class="home-section-kicker">${esc(currentYear)} INSIGHTS</span>
-        <h2>Yearly Profit Dashboard</h2>
-        <p class="muted">Current year stays separate from older years. Compare annual profit and then swipe January-to-January through December-to-December.</p>
-      </div>
-      <div class="insight-goal-ring" style="--goal-progress:${goalProgress.toFixed(1)}">
-        <div><b>${Math.round(goalProgress)}%</b><span>yearly goal</span></div>
-      </div>
-    </section>
-
-    <div class="stats insight-year-stats">
-      <div class="stat"><span>${esc(currentYear)} Yearly Profit</span><b>${money(currentProfit)}</b></div>
-      <div class="stat"><span>${esc(previousYear)} Profit</span><b>${money(previousProfit)}</b></div>
-      <div class="stat"><span>YoY Change</span><b>${yoy === null ? '-' : pct(yoy)}</b></div>
-      <div class="stat"><span>Yearly Goal</span><b>${money(goal)}</b></div>
-      <div class="stat"><span>Monthly Average</span><b>${money(currentStats.avg)}</b></div>
-      <div class="stat"><span>Highest Month</span><b>${money(currentStats.high)}</b></div>
-      <div class="stat"><span>ROI</span><b>${investment > 0 ? pct(roi) : '-'}</b></div>
-      <div class="stat"><span>Payback</span><b>${paybackMonths > 0 ? paybackMonths.toFixed(1) + ' months' : '-'}</b></div>
-    </div>
-
-    <div class="insight-summary-grid">
-      <div class="card chart-wrap insight-pnl-card">
-        <div class="chart-head"><div><span class="home-section-kicker">VISUAL BREAKDOWN</span><h2>Profit and Loss Distribution</h2></div><span class="pill">${esc(currentYear)}</span></div>
-        <div class="pnl-visual-grid">
-          <canvas id="pnlDistributionCanvas" aria-label="Profit and loss distribution chart"></canvas>
-          <div class="pnl-legend">
-            ${pnlParts.length ? pnlParts.map(item => `<div class="pnl-legend-item"><i style="background:${item.color}"></i><span>${esc(item.label)}</span><b>${money(item.value)}</b></div>`).join('') : '<div class="notice">Add sales or expense data to build the distribution.</div>'}
-          </div>
-        </div>
-      </div>
-
-      <div class="card insight-finance-card">
-        <span class="home-section-kicker">YEAR SUMMARY</span>
-        <h2>Profit & Loss</h2>
-        <div class="insight-finance-numbers">
-          <div><strong>${money(currentProfit)}</strong><span>Net income</span></div>
-          <div><strong>${money(expenses)}</strong><span>Tracked costs & expenses</span></div>
-          <div><strong>${money(income)}</strong><span>Recorded income</span></div>
-        </div>
-        <div class="insight-mini-goal"><span style="width:${goalProgress.toFixed(1)}%"></span></div>
-        <small class="muted">${pct(goalProgress)} of yearly profit goal completed.</small>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h2>Total Investment</h2>
-      <p class="muted">Stock, furniture, renovation, computer and setup cost total.</p>
-      <label>Total Investment Amount</label>
-      <input type="number" value="${investment}" placeholder="Example: 500000" onchange="state.profile.totalInvestment=num(this.value);save()">
-    </div>
-
-    <div class="card chart-wrap" style="margin-top:14px">
-      <div class="chart-head"><div><h2>Year Wise Profit Graph</h2><p class="muted">Each year is shown separately — older years are never added into the current-year card.</p></div></div>
-      <canvas id="yearlyProfitCanvas"></canvas>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <div class="chart-head"><div><h2>Monthly Comparison · Year on Year</h2><p class="muted">Swipe horizontally: January compares every year with January, then February with February, through December.</p></div><span class="pill">JAN → DEC</span></div>
-      ${renderMonthYearComparison(availableYears())}
-    </div>
-
-    ${availableYears().length
-      ? availableYears().map(y => `
-        <div class="card chart-wrap" style="margin-top:14px">
-          <h2>${y} Monthly Profit Graph</h2>
-          <canvas id="monthlyProfitCanvas-${y}"></canvas>
-        </div>
-      `).join('')
-      : `<div class="notice bad" style="margin-top:14px">No analytics data available yet.</div>`
-    }
-
-    <div class="card" style="margin-top:14px">
-      <h2>10 Year Plan</h2>
-      <ol>${plan10({ profit: currentProfit }).map(x => `<li>${x}</li>`).join('')}</ol>
-    </div>
-  `;
+  if(window.VyaparInsights) window.VyaparInsights.render();
 }
 
 function drawProfitChart(){
@@ -3660,9 +3426,7 @@ function drawProfitChart(){
 }
 
 function drawAnalyticsCharts(){
-  drawYearlyProfitChart();
-  drawProfitLossDistributionChart();
-  availableYears().forEach(y => drawMonthlyYearChart(y));
+  // The bounded SVG chart scales with its card; no resize/redraw loop is needed.
 }
 
 function chartTheme(){
@@ -3684,7 +3448,7 @@ function setupCanvas(c, height){
   const lite = isLiteMode();
   const dpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
 
-  const w = Math.max(c.offsetWidth || 320, 320);
+  const w = Math.max(c.offsetWidth || 280, 1);
   const h = height || (window.innerWidth < 800 ? 260 : 300);
 
   c.width = Math.floor(w * dpr);
@@ -4488,21 +4252,6 @@ function renderSettings(){
       <div class="card settings-section">
         <div class="settings-section-heading">
           <div>
-            <span class="settings-kicker">APPEARANCE</span>
-            <h2>Appearance</h2>
-            <p class="muted">Choose the visual mode for the Liquid Glass interface.</p>
-          </div>
-          <div class="settings-section-icon">◐</div>
-        </div>
-        <div class="segmented-settings">
-          <button class="btn ${activeTheme() === 'light' ? 'primary' : ''}" onclick="setTheme('light')">Light</button>
-          <button class="btn ${activeTheme() === 'dark' ? 'primary' : ''}" onclick="setTheme('dark')">Dark</button>
-        </div>
-      </div>
-
-      <div class="card settings-section">
-        <div class="settings-section-heading">
-          <div>
             <span class="settings-kicker">PERFORMANCE</span>
             <h2>Motion & performance</h2>
             <p class="muted">Adjust animation intensity for your device.</p>
@@ -4533,7 +4282,7 @@ function renderSettings(){
         </div>
 
         <label class="settings-file-label">Restore a device backup</label>
-        <input class="settings-file-input" type="file" accept=".json,application/json" onchange="restoreBackup(this.files[0])">
+        <input class="settings-file-input" type="file" accept=".json,application/json" onchange="restoreBackup(this.files[0]).finally(()=>{this.value=''})">
 
         <div id="settingsStatus" class="notice" style="margin-top:10px">Automatic local saving is active.</div>
       </div>
@@ -4581,51 +4330,49 @@ function downloadBackup(){
   );
 }
 
-async function restoreBackup(file){
-  if(!file){
-    return;
-  }
-
-  const maxBackupSize =
-    10 * 1024 * 1024;
-
-  if(file.size > maxBackupSize){
-    alert(
-      'Backup file is too large. The maximum size is 10 MB.'
-    );
-
-    return;
-  }
-
-  try{
-    const parsed =
-      JSON.parse(
-        await file.text()
-      );
-
-    const restored =
-      normalizeState(parsed);
-
-    /*
-      A business-data backup must never replace
-      the authenticated account or paid plan.
-    */
-    restored.subscription = {
-      ...state.subscription
-    };
-
-    restored.plan =
-      state.plan;
-
+async function replaceBusinessData(restored){
+  restored.subscription={...state.subscription};
+  restored.plan=state.plan;
+  const apply = () => {
     state = restored;
-    save();
-    showGlassToast('Backup restored successfully.');
+    if(window.VyaparInsights) window.VyaparInsights.invalidate();
+    if(window.VyaparUpload) window.VyaparUpload.clearPreview();
+    render();
+  };
+  if(window.VyaparStorage) await window.VyaparStorage.replace(restored, apply);
+  else { await persistBusinessState(restored); apply(); }
+}
 
+async function restoreBackup(file, encryptedOnly = false){
+  if(!file) return false;
+  let busy = false;
+  try{
+    const io = window.VyaparFiles;
+    if(!io) throw new Error('Restart the app and try again.');
+    let parsed = io.parse(await io.readText(file));
+    const encrypted = io.isEncrypted(parsed);
+    if(encryptedOnly && !encrypted) throw new Error('Choose a password-protected backup.');
+    if(encrypted){
+      const password = prompt('Backup password');
+      if(!password) return false;
+      parsed = await io.decrypt(parsed, password);
+    }
+    const restored = normalizeState(io.backupData(parsed));
+    restored.subscription={...state.subscription};
+    restored.plan=state.plan;
+    const count = Object.values(restored).reduce((sum, rows) => sum + (Array.isArray(rows) ? rows.length : 0), 0);
+    const options = {title:'Restore backup?',message:'Replace current business data with '+count.toLocaleString('en-IN')+' saved records? Download a backup first if needed.',confirm:true,kind:'danger',okText:'Restore',cancelText:'Cancel'};
+    const accepted = window.VyaparWorkspace ? await showGlassDialog(options) : confirm(options.message);
+    if(!accepted) return false;
+    if(window.VyaparWorkspace){ window.VyaparWorkspace.setBusy(true, 'Restoring your backup…'); busy = true; }
+    await replaceBusinessData(restored);
+    showGlassToast('Backup restored.');
+    return true;
   }catch(error){
-    alert(
-      'Backup restore failed: ' +
-      error.message
-    );
+    alert((encryptedOnly ? 'Encrypted restore failed: ' : 'Backup restore failed: ') + error.message);
+    return false;
+  }finally{
+    if(busy) window.VyaparWorkspace.setBusy(false);
   }
 }
 
@@ -4736,7 +4483,7 @@ render();
   async function advCacheSave(){ const db=await openAdvDB(); if(!db)return; try{ const tx=db.transaction('cache','readwrite'); tx.objectStore('cache').put({state:JSON.stringify(state),at:Date.now()},'state'); }catch(e){} }
   async function advCacheLoad(){ const db=await openAdvDB(); if(!db)return null; return new Promise(resolve=>{try{const r=db.transaction('cache').objectStore('cache').get('state');r.onsuccess=()=>resolve(r.result?safeJson(r.result.state):null);r.onerror=()=>resolve(null)}catch(e){resolve(null)}}); }
   const _save=window.save;
-  window.save=function(){ const result=_save(); advCacheSave(); return result; };
+  window.save=function(){ const result=_save(); if(!window.VyaparStorage) advCacheSave(); return result; };
 
   // 63: virtualization helpers / lazy calculation
   window.advDebounce=function(fn,wait=180){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>fn.apply(this,a),wait)}};
@@ -4753,7 +4500,7 @@ render();
     advEnsure(); const rows=[]; const map=new Map();
     (state.purchases||[]).forEach(p=>{const key=p.productId||String(p.product||'').toLowerCase(); rows.push({id:uid(),date:p.date||today(),type:'PURCHASE',product:p.product,qty:num(p.qty),amount:num(p.amount),source:p.id}); map.set(key,(map.get(key)||0)+num(p.qty));});
     (state.invoices||[]).forEach(i=>(i.items||[]).forEach(it=>{const key=it.productId||String(it.product||'').toLowerCase(); rows.push({id:uid(),date:i.date||today(),type:'SALE',product:it.product,qty:-num(it.qty),amount:num(it.price)*num(it.qty),source:i.id}); map.set(key,(map.get(key)||0)-num(it.qty));}));
-    state.stockLedger=rows.slice(-50000); advSave('Rebuild stock ledger','Derived from purchases and invoices'); return map;
+    state.stockLedger=rows; advSave('Rebuild stock ledger','Derived from purchases and invoices'); return map;
   }
   window.advReconcile=function(){ recomputeLedger(); advToast('Stock ledger reconciled.'); advRenderModule('inventory'); };
 
@@ -4793,7 +4540,7 @@ render();
         let added=0, skipped=0;
         const skuSet=new Set(products().map(p=>String(p.sku||'').toLowerCase()).filter(Boolean));
         const barcodeSet=new Set(products().map(p=>String(p.barcode||'').trim()).filter(Boolean));
-        rows.slice(0,50000).forEach(c=>{
+        rows.forEach(c=>{
           const o={}; headers.forEach((h,i)=>o[h]=c[i]??'');
           const name=cleanText(o.name||o.product,200); if(!name){skipped++;return;}
           const sku=cleanText(o.sku,100)||('SKU-'+Date.now()+'-'+added);
@@ -4965,12 +4712,23 @@ render();
   window.advSession=function(action){AE();if(action==='start'){const name=prompt('Staff/user name','Owner');state.sessions.push({id:uid(),user:name,at:new Date().toISOString(),status:'active'});save();}else{state.sessions=state.sessions.map(s=>({...s,status:'closed'}));save();advToast('Sessions closed.');}};
   window.advResolveCloud=function(){AE();const local=Date.now(),server=state.cloudSync?.lastSync?new Date(state.cloudSync.lastSync).getTime():0;state.cloudSync.resolution=local>=server?'local-wins':'server-wins';save();advToast('Conflict policy set to '+state.cloudSync.resolution+'.');};
   window.advVaultEnable=async function(){AE();const pass=prompt('Local vault password');if(!pass)return;state.localVault={enabled:true,hash:btoa(pass),enabledAt:new Date().toISOString()};save();advToast('Local vault metadata enabled.');};
-  window.advRollbackImport=function(){const last=state.imports?.[state.imports.length-1];if(!last){alert('No import snapshot.');return;}if(last.before)state=normalizeState(last.before);save();advToast('Last import rolled back.');};
+  window.advRollbackImport=async function(){
+    const last=state.imports?.[state.imports.length-1];
+    if(!last || !last.before){alert('No import snapshot.');return;}
+    if(!await showGlassDialog({title:'Undo last import?',message:'Restore the records saved before that import?',confirm:true,okText:'Undo import',cancelText:'Cancel'}))return;
+    try{
+      const restored = last.scope==='products'
+        ? {...state,products:normalizeRecords(last.before.products),imports:state.imports.slice(0,-1)}
+        : normalizeState(window.VyaparFiles.backupData(last.before));
+      await replaceBusinessData(restored);
+      advToast('Last import rolled back.');
+    }catch(error){alert('Import rollback failed: '+error.message);}
+  };
   window.advWorkerExport=function(){const data=(state.products||[]);const workerCode=`onmessage=e=>{const d=e.data,rows=[['Product','Qty','Sale'],...d.map(p=>[p.name,p.qty,p.sellingPrice])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\n');postMessage(csv)}`;const blob=new Blob([workerCode],{type:'application/javascript'});const w=new Worker(URL.createObjectURL(blob));w.onmessage=e=>{downloadBlob(new Blob([e.data],{type:'text/csv'}),'products-worker.csv');w.terminate();};w.postMessage(data);};
   window.advUPI=function(){const vpa=prompt('UPI ID','merchant@upi'),amount=prompt('Amount','0');if(!vpa)return;const url='upi://pay?pa='+encodeURIComponent(vpa)+'&pn='+encodeURIComponent(state.profile.businessName)+'&am='+encodeURIComponent(amount||'0')+'&cu=INR';location.href=url;};
   window.advPaymentConfirmation=function(){const ref=prompt('Payment reference/UTR');if(!ref)return;state.notifications=(state.notifications||[]);state.notifications.unshift({id:uid(),at:new Date().toISOString(),type:'payment',message:'Payment reference logged: '+ref});save();advToast('Payment reference saved.');};
   window.advLaunchOCR=function(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>advOCRUpload(i);i.click();};
-  window.advAddProductImportSnapshot=function(){state.imports.push({id:uid(),at:new Date().toISOString(),before:JSON.parse(JSON.stringify(state)),source:'manual'});state.imports=state.imports.slice(-10);};
+  window.advAddProductImportSnapshot=function(){state.imports.push({id:uid(),at:new Date().toISOString(),scope:'products',before:{products:JSON.parse(JSON.stringify(state.products||[]))},source:'manual'});state.imports=state.imports.slice(-10);};
   window.addEventListener('error',e=>{try{AE();state.errorLog.unshift({id:uid(),at:new Date().toISOString(),type:'error',message:String(e.message||e.error||e)});state.errorLog=state.errorLog.slice(0,200);localStorage.setItem('vyapar_ai_error_log_v1',JSON.stringify(state.errorLog));}catch(_){}},{passive:true});
   window.addEventListener('unhandledrejection',e=>{try{AE();state.errorLog.unshift({id:uid(),at:new Date().toISOString(),type:'unhandledrejection',message:String(e.reason||e)});state.errorLog=state.errorLog.slice(0,200);localStorage.setItem('vyapar_ai_error_log_v1',JSON.stringify(state.errorLog));}catch(_){}},{passive:true});
   AE();
@@ -5000,36 +4758,15 @@ render();
     window.advImportCSV=function(input){
       try{
         state.imports=state.imports||[];
-        state.imports.push({id:uid(),at:new Date().toISOString(),before:JSON.parse(JSON.stringify(state)),source:input?.files?.[0]?.name||'csv'});
+        state.imports.push({id:uid(),at:new Date().toISOString(),scope:'products',before:{products:JSON.parse(JSON.stringify(state.products||[]))},source:input?.files?.[0]?.name||'csv'});
         state.imports=state.imports.slice(-10);
         _csvImport(input);
       }catch(e){alert('Import failed safely: '+e.message);}
     };
   }
   window.advRestoreSecure=async function(input){
-    const file=input?.files?.[0];
-    if(!file)return;
-    if(file.size>10*1024*1024){alert('Encrypted backup is too large. The maximum size is 10 MB.');return;}
-    const pass=prompt('Backup password');
-    if(!pass)return;
-    try{
-      const obj=JSON.parse(await file.text());
-      const validByteArray=(value,length)=>Array.isArray(value)&&(!length||value.length===length)&&value.every(x=>Number.isInteger(x)&&x>=0&&x<=255);
-      if(!obj||obj.v!==1||!validByteArray(obj.s,16)||!validByteArray(obj.i,12)||!validByteArray(obj.d)||!obj.d.length||obj.d.length>5*1024*1024)throw new Error('Invalid encrypted backup envelope');
-      const enc=new TextEncoder(),dec=new TextDecoder();
-      const salt=new Uint8Array(obj.s),iv=new Uint8Array(obj.i),data=new Uint8Array(obj.d);
-      const km=await crypto.subtle.importKey('raw',enc.encode(pass),'PBKDF2',false,['deriveKey']);
-      const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
-      const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data);
-      const restored=normalizeState(JSON.parse(dec.decode(plain)));
-      restored.subscription={...state.subscription};
-      restored.plan=state.plan;
-      state=restored;
-      save();
-      advToast('Encrypted backup restored.');
-    }catch(e){
-      alert('Encrypted restore failed. Wrong password or corrupted backup.');
-    }
+    try { return await restoreBackup(input?.files?.[0], true); }
+    finally { if(input) input.value=''; }
   };
   const _oldSec=window.advSecureBackup;
 })();
@@ -5366,10 +5103,7 @@ render();
       state.plan =
         plan;
 
-      localStorage.setItem(
-        "vyapar_ai_prod_v1",
-        JSON.stringify(state)
-      );
+      persistBusinessState(state).catch(() => {});
 
       const badge =
         document.getElementById(
@@ -5471,6 +5205,7 @@ render();
   }
 
   async function initialCloudDecision(){
+    if(window.VyaparStorage) await window.VyaparStorage.ready;
     if(!authToken()){
       return;
     }
@@ -5499,30 +5234,8 @@ render();
         !localHasData &&
         cloudHasData
       ){
-        const restored =
-          typeof normalizeState ===
-          "function"
-            ? normalizeState(
-                cloud.state
-              )
-            : cloud.state;
-
-        state =
-          restored;
-
-        applyAccountToApp();
-
-        localStorage.setItem(
-          "vyapar_ai_prod_v1",
-          JSON.stringify(state)
-        );
-
-        if(
-          typeof render ===
-          "function"
-        ){
-          render();
-        }
+        const restored = normalizeState(window.VyaparFiles.backupData(cloud.state));
+        await replaceBusinessData(restored);
 
       }else if(
         localHasData &&
@@ -5544,6 +5257,7 @@ render();
   async function pushCloudState(
     showMessage
   ){
+    if(window.VyaparStorage) await window.VyaparStorage.ready;
     if(
       !authToken() ||
       syncBusy
@@ -5631,6 +5345,7 @@ render();
   }
 
   async function pullCloudState(){
+    if(window.VyaparStorage) await window.VyaparStorage.ready;
     if(!authToken()){
       forceOtpLogin();
       return;
@@ -5668,27 +5383,8 @@ render();
         }
       }
 
-      state =
-        typeof normalizeState ===
-        "function"
-          ? normalizeState(
-              data.state
-            )
-          : data.state;
-
-      applyAccountToApp();
-
-      localStorage.setItem(
-        "vyapar_ai_prod_v1",
-        JSON.stringify(state)
-      );
-
-      if(
-        typeof render ===
-        "function"
-      ){
-        render();
-      }
+      const restored = normalizeState(window.VyaparFiles.backupData(data.state));
+      await replaceBusinessData(restored);
 
       premiumToast(
         "Cloud data restored",
@@ -10017,22 +9713,22 @@ function renderBusinessHome(){
   const cards=[];
 
   const daily=[
-    featureCard('Transactions','Record sales, purchases, returns and payments.',button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')+button('Purchase',"vx621OpenPlatform('business','transactions','business','PURCHASE')",'business'),'⇄'),
-    featureCard('Customers & Udhaar','Customer balances, receipts, statements and reminders.',button('Customers',"vx621OpenAdvanced('business','customers','business')",'business','primary')+button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business'),'👥'),
-    featureCard('Suppliers & Purchases','Supplier records, purchases, payable flows and purchase returns.',button('Suppliers',"vx621OpenAdvanced('business','suppliers','business')",'business')+button('Purchase Return',"vx621OpenPlatform('business','transactions','business','PURCHASE_RETURN')",'business'),'▣'),
-    featureCard('Cash & Bank','Cash, bank, UPI, custom accounts, payment-in/out and reconciled balances.',button('Open Cash & Bank',"vx621OpenDomain('finance','business')",'business','primary')+button('Cheques & Loans',"vx621OpenPlatform('business','finance620','business')",'business'),'₹')
+    featureCard('Transactions','Sales, purchases and returns.',button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')+button('Purchase',"vx621OpenPlatform('business','transactions','business','PURCHASE')",'business'),'⇄'),
+    featureCard('Customers & Udhaar','Balances, receipts and reminders.',button('Customers',"vx621OpenAdvanced('business','customers','business')",'business','primary')+button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business'),'👥'),
+    featureCard('Suppliers & Purchases','Suppliers, dues and returns.',button('Suppliers',"vx621OpenAdvanced('business','suppliers','business')",'business')+button('Purchase Return',"vx621OpenPlatform('business','transactions','business','PURCHASE_RETURN')",'business'),'▣'),
+    featureCard('Cash & Bank','Cash, bank and UPI payments.',button('Open Cash & Bank',"vx621OpenDomain('finance','business')",'business','primary')+button('Cheques & Loans',"vx621OpenPlatform('business','finance620','business')",'business'),'₹')
   ];
   const accounting=[
     featureCard('Central Ledgers','View customer, supplier and account balances.',button('Open Ledgers',"vx621OpenPlatform('business','ledger','business')",'business','primary'),'≡'),
-    featureCard('58 Reports','Day Book, P&L, Balance Sheet, bill/party profit, stock, party and GST reports.',button('Open Reports',"vx621OpenDomain('reports','business')",'business','primary'),'▥'),
-    featureCard('Advanced GST & Tax','State of Supply, CESS, RCM, E-Way fields, TDS/TCS and Composition configuration.',button('Advanced GST',"vx621OpenDomain('gst','business')",'business','primary'),'GST'),
+    featureCard('58 Reports','Profit, balance sheet and GST reports.',button('Open Reports',"vx621OpenDomain('reports','business')",'business','primary'),'▥'),
+    featureCard('Advanced GST & Tax','GST, e-way bills and tax settings.',button('Advanced GST',"vx621OpenDomain('gst','business')",'business','primary'),'GST'),
     featureCard('Business Expenses','Record shop expenses and track their effect on profit.',button('Expense Entry',"businessShowModule('expenses')",'business','primary'),'−')
   ];
   const docs=[
-    featureCard('Invoice & Thermal','A4/A5 invoice themes, custom fields, terms, signature, 58/80mm and ESC/POS.',button('Invoice & Print',"vx621OpenPlatform('business','print620','business')",'business','primary'),'▤'),
-    featureCard('Orders & Lifecycle','Estimate, Proforma, Sale Order, Purchase Order and Delivery Challan conversion.',button('Orders & Documents',"vx621OpenPlatform('business','documents620','business')",'business','primary'),'↗'),
-    featureCard('Messaging & Reminders','Transaction templates, provider messaging, payment reminders and service reminders.',button('Messaging',"vx621OpenPlatform('business','messages620','business')",'business','primary'),'✉'),
-    featureCard('Multi-Currency','Saved exchange rates and base-currency normalized transaction posting.',button('Currencies',"vx621OpenPlatform('business','currency620','business')",'business'),'¤')
+    featureCard('Invoice & Thermal','PDF invoices and thermal printing.',button('Invoice & Print',"vx621OpenPlatform('business','print620','business')",'business','primary'),'▤'),
+    featureCard('Orders & Lifecycle','Quotes, orders and delivery notes.',button('Orders & Documents',"vx621OpenPlatform('business','documents620','business')",'business','primary'),'↗'),
+    featureCard('Messaging & Reminders','Invoice messages and reminders.',button('Messaging',"vx621OpenPlatform('business','messages620','business')",'business','primary'),'✉'),
+    featureCard('Multi-Currency','Currencies and exchange rates.',button('Currencies',"vx621OpenPlatform('business','currency620','business')",'business'),'¤')
   ];
   const stockCards=[
     featureCard('Product Catalog & Barcode','Product identity, SKU/article, size/color, barcode and bulk import live in Stock.',button('Open in Stock',"vx621GoStock('catalog')",'business','primary'),'▦'),
@@ -10072,7 +9768,7 @@ function renderBusinessHome(){
     ${group('Company, Security & Settings','Administration and data-control tools.',admin)}
     </div>
     <section class="card vx621-recent">${recentActivityHtml()}</section>
-    <section id="vx621-business-host" data-vx621-host="business" class="card vx621-platform-host"><div class="vx621-empty"><b>Choose a feature above.</b><span>Your selected tool will open here.</span></div></section>
+    <section id="vx621-business-host" data-vx621-host="business" hidden class="card vx621-platform-host"><div class="vx621-empty"><b>Choose a feature above.</b><span>Your selected tool will open here.</span></div></section>
   </div>`;
   activateHost('business');
   observeHost(findHost('business'));
@@ -10105,10 +9801,10 @@ function appendSalesTools(){
   const block=document.createElement('section');
   block.className='card vx621-sales-tools';
   block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Sales Tools</span><h2>Advanced Sales & Billing</h2><p>Create bills, handle returns and print invoices.</p></div></div><div class="vx621-feature-grid compact">
-    ${featureCard('Sale / Sale Return','Create accounting sale or return with stock, ledger, GST and balance effects.',button('New Sale',"vx621OpenPlatform('sales','transactions','business','SALE')",'business','primary')+button('Sale Return',"vx621OpenPlatform('sales','transactions','business','SALE_RETURN')",'business'),'⇄')}
-    ${featureCard('Invoice & Thermal','A4/A5 invoice configuration and thermal/ESC-POS output.',button('Invoice & Print',"vx621OpenPlatform('sales','print620','pro')",'pro','primary'),'▤')}
-    ${featureCard('Quotation & Orders','Estimate/quotation, Proforma, Sale Order and Delivery Challan.',button('Open Documents',"vx621OpenPlatform('sales','documents620','pro')",'pro','primary'),'⇢')}
-    ${featureCard('Customer Messaging','Invoice/share messaging and payment/service reminders.',button('Messaging',"vx621OpenPlatform('sales','messages620','business')",'business','primary'),'✉')}
+    ${featureCard('Sale / Sale Return','Create a sale or record a return.',button('New Sale',"vx621OpenPlatform('sales','transactions','business','SALE')",'business','primary')+button('Sale Return',"vx621OpenPlatform('sales','transactions','business','SALE_RETURN')",'business'),'⇄')}
+    ${featureCard('Invoice & Thermal','Download PDF or print an invoice.',button('Invoice & Print',"vx621OpenPlatform('sales','print620','pro')",'pro','primary'),'▤')}
+    ${featureCard('Quotation & Orders','Quotes, orders and delivery notes.',button('Open Documents',"vx621OpenPlatform('sales','documents620','pro')",'pro','primary'),'⇢')}
+    ${featureCard('Customer Messaging','Share invoices and send reminders.',button('Messaging',"vx621OpenPlatform('sales','messages620','business')",'business','primary'),'✉')}
   </div><div id="vx621-sales-host" data-vx621-host="sales" class="vx621-platform-host"><div class="vx621-empty"><b>Choose an advanced sales tool.</b><span>It opens here; you do not need to enter the Business page.</span></div></div>`;
   const firstGrid=el.querySelector('.grid');
   if(firstGrid) firstGrid.insertAdjacentElement('afterend',block); else el.prepend(block);
@@ -10151,9 +9847,9 @@ function appendStockTools(){
   const block=document.createElement('section'); block.className='card vx621-stock-tools';
   block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Stock Tools</span><h2>Inventory Workspace</h2><p>Manage your catalog, godowns and stock transfers.</p></div></div><div class="vx621-feature-grid compact">
     ${featureCard('Product Catalog & Barcode','Product, SKU/article, size/color, barcode, bulk import, reorder and dead-stock helpers.',button('Catalog & Barcode',"vx621OpenAdvanced('stock','inventory','business')",'business','primary'),'▦')}
-    ${featureCard('Godowns & Transfers','Godown-wise stock, stock ledger, valuation and transfer workflow.',button('Godowns',"vx621OpenPlatform('stock','inventory','business')",'business','primary'),'⌂')}
-    ${featureCard('Advanced Inventory','Units, wholesale, party-wise rates, BOM/manufacturing and loyalty.',button('Advanced Inventory',"vx621OpenPlatform('stock','inventory620','business')",'business','primary'),'⚙')}
-    ${featureCard('Stock Reports','Stock summaries, movements, valuation, low stock and broader 58-report catalog.',button('Stock Reports',"vx621OpenPlatform('stock','reports620','business')",'business','primary'),'▥')}
+    ${featureCard('Godowns & Transfers','Stock locations and transfers.',button('Godowns',"vx621OpenPlatform('stock','inventory','business')",'business','primary'),'⌂')}
+    ${featureCard('Advanced Inventory','Units, wholesale rates and stock tools.',button('Advanced Inventory',"vx621OpenPlatform('stock','inventory620','business')",'business','primary'),'⚙')}
+    ${featureCard('Stock Reports','Stock levels, value and movement.',button('Stock Reports',"vx621OpenPlatform('stock','reports620','business')",'business','primary'),'▥')}
   </div><div id="vx621-stock-host" data-vx621-host="stock" class="vx621-platform-host"><div class="vx621-empty"><b>Choose a stock tool.</b><span>Advanced inventory modules open here.</span></div></div>`;
   el.appendChild(block);
   renderStockRecords(el);

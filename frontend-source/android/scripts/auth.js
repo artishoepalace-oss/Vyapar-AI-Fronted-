@@ -274,7 +274,7 @@
     try{const data=await readResponse(await fetch(API_BASE+"/auth/google",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idToken:result.idToken})}));needsPasswordSetup(data)?showPasswordSetup(data,"google",false):completeLogin(data,"google")}catch(error){resetGoogleLabels();showMessage(error.message||"Google login is unavailable")}
   };
 
-  function hasCachedLocalAccess(){try{if(JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"null")?.user)return true}catch(_){}try{const state=JSON.parse(localStorage.getItem("vyapar_ai_prod_v1")||"{}");return Boolean(state.sales?.length||state.stocks?.length||state.monthly?.length||state.daily?.length)}catch(_){return false}}
+  function hasCachedLocalAccess(){try{if(JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"null")?.user)return true}catch(_){}try{const state=JSON.parse(localStorage.getItem("vyapar_ai_prod_v1")||"{}");return Boolean(state.__indexedDB||state.sales?.length||state.stocks?.length||state.monthly?.length||state.daily?.length)}catch(_){return false}}
   function finishSessionRestore(status){
     if(status==='login')gate.style.removeProperty('visibility');
     else gate.remove();

@@ -34,7 +34,7 @@
       if(copy&&copy.textContent!=='Change your sign-in password. Email OTP remains available.')copy.textContent='Change your sign-in password. Email OTP remains available.';
       const kicker=section.querySelector('.settings-kicker');
       if(kicker&&kicker.textContent!=='SIGN-IN')kicker.textContent='SIGN-IN';
-      section.classList.add('vy862-security-simplified');
+      if(!section.classList.contains('vy862-security-simplified'))section.classList.add('vy862-security-simplified');
     }
 
     document.querySelectorAll('#screen-settings .vy675-settings-row,#screen-settings [data-vy675-setting]').forEach(row=>{

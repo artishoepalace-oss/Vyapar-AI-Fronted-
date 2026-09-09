@@ -56,10 +56,17 @@ const uiStyles = [
   'popup-nav-clearance-867.css',
   'video-final-867.css',
   'surface-hierarchy-20102004.css',
-  'motion-20102004.css'
+  'motion-20102004.css',
+  'workspace-v7.css'
 ];
 
 const scripts = [
+  'data-store.js',
+  'file-io.js',
+  'profit-history.js',
+  'insights-workspace.js',
+  'upload-workspace.js',
+  'record-pages.js',
   'android-session-flow-647.js',
   'motion-20102004.js',
   'auth.js',
@@ -86,7 +93,8 @@ const scripts = [
   'ui-stability-862.js',
   'graphite-maroon-863.js',
   'premium-tier-864.js',
-  'video-final-867.js'
+  'video-final-867.js',
+  'workspace-startup.js'
 ];
 
 function readSource(subdirectory, filename) {

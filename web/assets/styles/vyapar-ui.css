@@ -9328,6 +9328,83 @@ html.vy861-flat-black #vyaparOtpGate .auth-logo { transform:translateY(-12%) !im
 html.vy861-flat-black body #vy855BootGuard img { transform:translateY(-12%) !important; }
 html.vy861-flat-black .vy-boot-logo-frame { display:block; width:112px; height:112px; border-radius:24px; overflow:hidden; background:#fff; }
 
+/* 00007: one workspace rhythm, including Android WebViews without :is/:has. */
+html.workspace-v7 { --workspace-gap:12px; --workspace-nav-height:64px; color-scheme:dark; }
+html.workspace-v7 body { overflow-x:hidden; }
+html.workspace-v7 .app { padding-top:0!important; }
+html.vy861-flat-black.workspace-v7 .app > .top {
+  position:sticky!important; top:8px!important; left:auto!important; right:auto!important;
+  width:calc(100% - 24px)!important; max-width:960px!important; height:56px!important; min-height:56px!important;
+  margin:8px auto 14px!important; padding:6px 10px!important; box-sizing:border-box!important;
+  border:0!important; border-radius:28px!important; transform:none!important; z-index:100!important;
+  background:#111214!important; box-shadow:none!important; overflow:visible!important;
+}
+html.vy861-flat-black.workspace-v7 .top .brand { min-width:0!important; gap:9px!important; }
+html.vy861-flat-black.workspace-v7 .top .brand h1 { font-size:17px!important; line-height:1.2!important; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+html.vy861-flat-black.workspace-v7 .top .brand .tag { display:none!important; }
+html.vy861-flat-black.workspace-v7 .top .brand .vy-logo-frame,
+html.vy861-flat-black.workspace-v7 .top .brand .vy-logo-frame .logo { width:38px!important; height:38px!important; min-width:38px!important; max-width:38px!important; flex-basis:38px!important; }
+html.vy861-flat-black.workspace-v7 .top .top-actions { margin-left:auto!important; flex-shrink:0!important; }
+html.vy861-flat-black.workspace-v7 .top #vy863ProfileChip { width:40px!important; height:40px!important; min-width:40px!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav {
+  position:fixed!important; left:50%!important; right:auto!important; transform:translateX(-50%)!important;
+  bottom:8px!important; bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+  width:calc(100% - 24px)!important; max-width:620px!important; height:64px!important; min-height:64px!important;
+  padding:4px!important; margin:0!important; border:0!important; border-radius:34px!important;
+  display:grid!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; gap:2px!important;
+  box-sizing:border-box!important; overflow:hidden!important; background:#151618!important;
+}
+html.vy861-flat-black.workspace-v7 #nav.nav button {
+  min-width:0!important; width:100%!important; height:56px!important; min-height:56px!important; margin:0!important;
+  padding:5px 1px!important; border:0!important; border-radius:28px!important; gap:3px!important;
+  display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important;
+  font-size:11px!important; line-height:1.15!important; font-weight:600!important;
+}
+html.vy861-flat-black.workspace-v7 #nav.nav button .android-nav-icon,
+html.vy861-flat-black.workspace-v7 #nav.nav button svg { width:23px!important; height:23px!important; min-height:23px!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav button .android-nav-label { font-size:11px!important; line-height:1.15!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav button.active { color:#fff!important; background:#2a2c30!important; }
+html.workspace-v7 main { padding-bottom:92px!important; padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important; }
+html.workspace-v7 .screen { min-width:0!important; padding-bottom:0!important; }
+html.vy861-flat-black.workspace-v7 #androidMoreSheet.android-sheet-overlay > .android-sheet { bottom:calc(80px + env(safe-area-inset-bottom,0px))!important; left:12px!important; right:12px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business .vx621-feature-grid,
+html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-grid,
+html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-grid { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:10px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business #businessToolResults .vx621-feature-card,
+html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-card,
+html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-card { display:flex!important; flex-direction:column!important; gap:8px!important; min-width:0!important; padding:13px!important; margin:0!important; border:0!important; border-radius:20px!important; background:#101114!important; box-shadow:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-copy { display:flex!important; flex-direction:column!important; flex:1!important; min-width:0!important; gap:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-icon { width:28px!important; height:28px!important; min-width:28px!important; border:0!important; border-radius:9px!important; margin:0!important; font-size:16px!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-icon svg { width:18px!important; height:18px!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-copy h3 { font-size:14px!important; font-weight:650!important; line-height:1.3!important; margin:0 0 5px!important; overflow-wrap:break-word; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-copy p { font-size:12px!important; line-height:1.4!important; color:#a7abb3!important; margin:0 0 12px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business .vx621-card-actions,
+html.vy861-flat-black.workspace-v7 #screen-sales .vx621-card-actions,
+html.vy861-flat-black.workspace-v7 #screen-stock .vx621-card-actions { display:grid!important; grid-template-columns:minmax(0,1fr)!important; gap:6px!important; margin-top:auto!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-action { min-height:44px!important; width:100%!important; padding:9px!important; box-sizing:border-box!important; font-size:12px!important; line-height:1.3!important; border:0!important; border-radius:12px!important; background:#202226!important; box-shadow:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-action .vx621-tier:not(.locked) { display:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-context { padding:0!important; background:transparent!important; border:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-context-head > div > .pill { display:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-context-head h2,
+html.vy861-flat-black.workspace-v7 .screen .vx621-group-head h2 { font-size:17px!important; margin:0 0 5px!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-group { padding:0!important; background:transparent!important; margin:14px 0 0!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-group-head p,
+html.vy861-flat-black.workspace-v7 .screen .vx621-context-head p { font-size:13px!important; line-height:1.4!important; margin:0 0 12px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business #businessToolResults .vx621-feature-card[hidden],
+html.vy861-flat-black.workspace-v7 .screen .vx621-platform-host[hidden],
+html.vy861-flat-black.workspace-v7 #screen-business .p1-mode-section[hidden] { display:none!important; }
+html.workspace-v7 .screen .vy660-note,html.workspace-v7 .screen .vy6601-fin-note { display:none!important; }
+html.vy861-flat-black.workspace-v7 #screen-settings .vy675-settings-search { display:flex!important; width:100%!important; margin:12px 0 18px!important; min-height:48px!important; padding:0 12px!important; border:0!important; background:#1b1d21!important; border-radius:16px!important; box-sizing:border-box!important; }
+html.vy861-flat-black.workspace-v7 #screen-settings .vy675-settings-search input { min-width:0!important; width:100%!important; height:48px!important; padding:8px!important; font-size:15px!important; background:transparent!important; border:0!important; }
+html.vy861-flat-black.workspace-v7 #screen-settings .vy675-settings-search button { width:40px!important; height:44px!important; min-width:40px!important; }
+html.workspace-v7 #screen-settings .vy675-settings-search button[hidden],html.workspace-v7 #screen-settings .vy675-settings-row[hidden],html.workspace-v7 #screen-settings [data-vy675-group][hidden],html.workspace-v7 #screen-settings .vy675-search-empty[hidden] { display:none!important; }
+html.workspace-v7 .vy675-search-status:empty { display:none; }
+html.workspace-v7 .vy675-search-status { font-size:12px; color:#a7abb3; }
+html.vy861-flat-black.workspace-v7 .screen button:focus,html.vy861-flat-black.workspace-v7 .screen .vx621-action:focus { outline:none!important; }
+html.vy861-flat-black.workspace-v7 .screen button:focus-visible,html.vy861-flat-black.workspace-v7 .screen .vx621-action:focus-visible { outline:2px solid #b6c7dc!important; outline-offset:2px!important; }
+@media(min-width:780px) { html.vy861-flat-black.workspace-v7 #screen-business .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-grid { grid-template-columns:repeat(4,minmax(0,1fr))!important; } }
+@media(max-width:340px) { html.vy861-flat-black.workspace-v7 #screen-business .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-grid { grid-template-columns:minmax(0,1fr)!important; } }
+
 /* ===== STYLE SOURCE: motion-20102004.css ===== */
 
 /* Vyapar AI 20.10.2004.00002 — final Telegram-fast motion authority.
@@ -9458,3 +9535,110 @@ html.vy-motion-ready body .screen.vy-page-incoming{
   backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
 }
 html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important}
+
+/* ===== STYLE SOURCE: workspace-v7.css ===== */
+
+/* Shared spacing and controls for Insights, Import and large record lists. */
+html.workspace-v7 { color-scheme:dark; }
+html.vy861-flat-black.workspace-v7 .app { width:100%!important; max-width:960px!important; padding:0!important; margin:0 auto!important; box-sizing:border-box!important; }
+html.vy861-flat-black.workspace-v7 .app > main { padding:0 12px 88px!important; padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important; margin:0!important; width:100%!important; box-sizing:border-box!important; }
+html.workspace-v7 .sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace { max-width:920px; margin:0 auto; display:grid!important; gap:14px!important; min-width:0; }
+html.vy861-flat-black.workspace-v7 .screen .workspace-heading { display:flex!important; align-items:center!important; justify-content:space-between!important; gap:12px!important; min-width:0; margin:0!important; }
+html.workspace-v7 .workspace-heading > div { min-width:0; }
+html.workspace-v7 .workspace-heading h1 { margin:4px 0 0!important; font-size:22px!important; font-weight:700!important; line-height:1.2!important; }
+html.workspace-v7 .workspace-eyebrow { font-size:10px!important; letter-spacing:.1em; color:#9ea4ae!important; font-weight:650; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace h2,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace h2 { font-size:17px!important; line-height:1.35!important; margin:0 0 5px!important; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace h3,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace h3 { font-size:14px!important; line-height:1.3!important; margin:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace .muted,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .muted { font-size:13px!important; line-height:1.5!important; color:#a8adb6!important; margin:6px 0 12px!important; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace .card,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .card { margin:0!important; padding:17px!important; border:0!important; border-radius:22px!important; background:#111215!important; box-shadow:none!important; min-width:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .year-field { display:flex!important; flex-direction:column!important; gap:3px!important; flex:0 0 96px!important; margin:0!important; font-size:11px!important; color:#adb2bb!important; }
+html.vy861-flat-black.workspace-v7 .screen .year-field select { height:44px!important; min-height:44px!important; margin:0!important; padding:8px 10px!important; min-width:0!important; font-size:15px!important; font-weight:650; border:0!important; border-radius:14px!important; background:#23252a!important; }
+html.vy861-flat-black.workspace-v7 .screen .workspace-tabs { display:flex!important; gap:4px!important; padding:4px!important; border:0!important; border-radius:18px!important; background:#16181b!important; margin:0!important; overflow:hidden; min-width:0; }
+html.vy861-flat-black.workspace-v7 .screen .workspace-tabs button { display:flex!important; justify-content:center; align-items:center; min-width:0!important; flex:1!important; padding:9px 5px!important; min-height:44px!important; border:0!important; border-radius:14px!important; background:transparent!important; color:#aeb3bc!important; font-size:12px!important; font-weight:650!important; line-height:1.2!important; box-shadow:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .workspace-tabs button[aria-selected="true"],
+html.vy861-flat-black.workspace-v7 .screen .workspace-tabs button[aria-pressed="true"] { background:#303238!important; color:#fff!important; }
+html.vy861-flat-black.workspace-v7 .screen .insight-balance > span { color:#aeb3bc!important; font-size:13px!important; }
+html.vy861-flat-black.workspace-v7 .screen .insight-balance > strong { display:block; margin:7px 0!important; font-size:clamp(26px,7vw,38px)!important; line-height:1.15!important; font-weight:700; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+html.vy861-flat-black.workspace-v7 .screen .insight-mini-stats { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding-top:14px; margin-top:12px; border-top:1px solid #292c32!important; background:transparent!important; }
+html.vy861-flat-black.workspace-v7 .screen .insight-mini-stats > div { display:flex; flex-direction:column; gap:5px; min-width:0; }
+html.vy861-flat-black.workspace-v7 .screen .insight-mini-stats span { font-size:11px; color:#aeb3bc; }
+html.vy861-flat-black.workspace-v7 .screen .insight-mini-stats b { font-size:17px!important; overflow-wrap:anywhere; }
+html.workspace-v7 .is-loss { color:#f0a4a7!important; }
+html.workspace-v7 .insight-chart { display:block; width:100%; height:auto; max-height:300px; margin:10px 0 0; overflow:visible; }
+html.workspace-v7 .chart-grid { fill:none; stroke:#292d34; stroke-width:.7; }
+html.workspace-v7 .chart-zero { fill:none; stroke:#818995; stroke-width:1; }
+html.workspace-v7 .chart-axis { fill:#9ba3ae; font-size:9px; font-family:system-ui,sans-serif; }
+html.workspace-v7 .chart-profit { fill:#78bba5; }
+html.workspace-v7 .chart-loss { fill:#da8e97; }
+html.workspace-v7 .chart-compare { fill:#98a9c4; }
+html.workspace-v7 .chart-legend { display:flex; gap:16px; font-size:12px; margin-top:14px; }
+html.workspace-v7 .chart-legend span:nth-child(1) { color:#78bba5; }
+html.workspace-v7 .chart-legend span:nth-child(2) { color:#98a9c4; }
+html.workspace-v7 .chart-legend span:nth-child(3) { color:#da8e97; }
+html.workspace-v7 .insight-empty { font-size:13px; line-height:1.5; color:#b7bdc6; text-align:center; padding:4px 12px; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace details,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace details { margin:12px 0 0!important; border:0!important; border-top:1px solid #292c32!important; border-radius:0!important; padding:0!important; background:transparent!important; }
+html.workspace-v7 .insights-workspace summary,html.workspace-v7 .upload-workspace summary { cursor:pointer; padding:14px 0; min-height:44px; box-sizing:border-box; font-size:13px; font-weight:600; }
+html.workspace-v7 .insight-table { overflow-x:auto; max-width:100%; -webkit-overflow-scrolling:touch; }
+html.vy861-flat-black.workspace-v7 .screen .insight-table table { border-collapse:collapse; width:100%; font-size:12px; background:transparent!important; }
+html.vy861-flat-black.workspace-v7 .screen .insight-table :is(th,td) { padding:12px 8px!important; background:transparent!important; border:0!important; border-bottom:1px solid #272a30!important; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+html.workspace-v7 .insight-table tr > :first-child { text-align:left; }
+html.vy861-flat-black.workspace-v7 .screen .insight-panel progress { width:100%; height:6px; display:block; margin:14px 0 9px; border:0; border-radius:4px; background:#2a2f35; accent-color:#89bfab; overflow:hidden; }
+html.workspace-v7 .insight-panel progress::-webkit-progress-bar { background:#2a2f35; }
+html.workspace-v7 .insight-panel progress::-webkit-progress-value { background:#89bfab; }
+html.vy861-flat-black.workspace-v7 .screen .insight-history > button { display:flex!important; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:68px; padding:12px 0!important; border:0!important; border-bottom:1px solid #292c32!important; border-radius:0!important; background:transparent!important; text-align:left; }
+html.workspace-v7 .insight-history button span:first-child { display:flex; flex-direction:column; gap:4px; }
+html.workspace-v7 .insight-history small { color:#a8adb6; font-size:11px; }
+html.workspace-v7 .insight-history strong { font-size:16px; overflow-wrap:anywhere; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace .btn,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .btn,
+html.vy861-flat-black.workspace-v7 .screen .record-controls .btn { border:0!important; min-height:44px!important; border-radius:13px!important; padding:10px 13px!important; font-size:12px!important; line-height:1.3!important; font-weight:650!important; background:#282b31!important; box-shadow:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .btn.primary,
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace .btn.primary { background:#e5e8ed!important; color:#17191d!important; }
+html.workspace-v7 button:disabled { opacity:.4; cursor:default; }
+html.vy861-flat-black.workspace-v7 .screen .workspace-pager { display:flex!important; justify-content:space-between; align-items:center; gap:8px; margin:12px 0 0!important; flex-wrap:wrap; }
+html.workspace-v7 .workspace-pager > span { font-size:11px; color:#a8adb6; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace input,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace :is(input:not([type="file"]),select),
+html.vy861-flat-black.workspace-v7 .screen .record-controls :is(input,select) { height:48px!important; min-height:48px!important; min-width:0; box-sizing:border-box; border:0!important; border-radius:13px!important; background:#202329!important; font-size:15px!important; padding:12px!important; margin:5px 0 12px!important; }
+html.vy861-flat-black.workspace-v7 .screen .insights-workspace label,
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace label { font-size:12px; color:#b8bec7; line-height:1.4; }
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace [hidden] { display:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .file-drop { display:flex!important; position:relative; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-height:150px; margin:16px 0; padding:20px 14px!important; box-sizing:border-box; border:1px dashed #4a505b!important; border-radius:18px!important; background:#191c21!important; text-align:center; overflow:hidden; cursor:pointer; }
+html.vy861-flat-black.workspace-v7 .screen .file-drop input[type="file"] { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; opacity:0!important; margin:0!important; padding:0!important; z-index:1; cursor:pointer; }
+html.workspace-v7 .file-drop strong { font-size:14px; font-weight:650; color:#e7eaf0; max-width:100%; overflow-wrap:anywhere; }
+html.workspace-v7 .file-drop span { font-size:12px; color:#9ca5b2; }
+html.workspace-v7 .file-drop .file-drop-icon { display:grid; place-items:center; width:36px; height:36px; border-radius:12px; background:#2b313a; color:#e7eaf0; font-size:24px; }
+html.workspace-v7 #scanPhotoPreview { display:block; max-width:100%; width:auto; height:150px; object-fit:contain; border-radius:9px; margin-top:8px; }
+html.workspace-v7 .upload-main-action { display:block!important; width:100%!important; margin:10px 0!important; }
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .notice { padding:10px 0!important; background:transparent!important; border:0!important; font-size:12px!important; line-height:1.5!important; color:#b5bdc9!important; }
+html.vy861-flat-black.workspace-v7 .screen .upload-workspace .notice.bad { color:#f0a4a7!important; }
+html.workspace-v7 .import-preview { border-top:1px solid #2c3038; padding-top:15px; margin-top:8px; }
+html.workspace-v7 .import-preview .workspace-heading > span { font-size:11px; color:#a8adb6; }
+html.workspace-v7 .import-preview ul { padding:0; margin:8px 0; list-style:none; }
+html.workspace-v7 .import-preview li { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 10px; padding:10px 0; border-bottom:1px solid #282d35; font-size:12px; }
+html.workspace-v7 .import-preview li strong { overflow-wrap:anywhere; }
+html.workspace-v7 .import-preview li small { grid-column:1 / -1; color:#a8adb6; }
+html.workspace-v7 .record-controls { padding:2px 0 14px; }
+html.workspace-v7 .record-search { display:block; }
+html.workspace-v7 .record-search input { width:100%; }
+html.workspace-v7 .workspace-blocker { position:fixed!important; inset:0!important; display:flex!important; align-items:center!important; justify-content:center!important; padding:24px; background:rgba(0,0,0,.82)!important; z-index:2147483646!important; }
+html.workspace-v7 .workspace-blocker > div { box-sizing:border-box; background:#202329; color:#f1f3f7; padding:24px; border-radius:24px; max-width:360px; width:100%; text-align:center; font-size:14px; line-height:1.5; }
+html.workspace-v7 .workspace-spinner { display:inline-block; width:22px; height:22px; border:2px solid #626b79; border-top-color:#e5e8ed; border-radius:50%; animation:workspace-spin 1s linear infinite; }
+@keyframes workspace-spin { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { html.workspace-v7 .workspace-spinner { animation:none; } }
+html.workspace-v7 #workspaceStorageError { position:fixed; z-index:2147483645; left:12px; right:12px; bottom:84px; background:#39272c; color:#ffe7e8; padding:12px; border:1px solid #855d66; border-radius:18px; font-size:12px; }
+html.workspace-v7 #workspaceStorageError p { margin:0 0 8px; }
+html.workspace-v7 #workspaceStorageError .btn { padding:10px; margin-right:8px; min-height:44px; }
+html.vy861-flat-black.workspace-v7.keyboard-navigation :focus { outline:2px solid #b6c7dc!important; outline-offset:2px!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav button.active .android-nav-icon { color:#fff!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav { height:58px!important; min-height:58px!important; height:clamp(56px,16vw,64px)!important; min-height:clamp(56px,16vw,64px)!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav button { height:100%!important; min-height:48px!important; }
+html.vy861-flat-black.workspace-v7 .screen .file-drop:focus-within { outline:2px solid #b6c7dc; outline-offset:2px; }
+@media(min-width:800px) { html.workspace-v7 .insight-chart { max-height:330px; } }

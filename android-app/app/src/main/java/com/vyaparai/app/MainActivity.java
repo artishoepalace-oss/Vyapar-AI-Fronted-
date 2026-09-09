@@ -205,7 +205,7 @@ protected void onCreate(Bundle savedInstanceState) {
                     intent.setType("*/*");
                     intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
                             "application/pdf", "image/jpeg", "image/png", "image/webp", "text/plain", "text/csv",
-                            "application/json", "application/vnd.ms-excel",
+                            "application/json", "application/octet-stream", "application/vnd.ms-excel",
                             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             "application/vnd.ms-excel.sheet.macroEnabled.12"
                     });

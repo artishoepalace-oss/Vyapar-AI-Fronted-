@@ -17,14 +17,8 @@
     const root = document.documentElement;
     root.classList.add(ROOT_CLASS);
 
-    // Default to the cleaner light system only when the user has never
-    // explicitly chosen a theme. Existing light/dark preferences are kept.
-    if (!readSavedTheme() && !root.classList.contains("theme-light")) {
-      root.classList.add("theme-light");
-      root.style.colorScheme = "light";
-      const themeMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeMeta) themeMeta.setAttribute("content", "#F8F9FA");
-    }
+    root.classList.remove('theme-light');
+    root.style.colorScheme = 'dark';
   }
 
   function cleanStaticChrome() {

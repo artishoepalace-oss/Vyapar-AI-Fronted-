@@ -36,6 +36,7 @@
     if (event.key === 'Tab') document.documentElement.classList.add('keyboard-navigation');
   }, true);
   document.addEventListener('pointerdown', () => document.documentElement.classList.remove('keyboard-navigation'), {passive:true});
+  // Do not let background handlers save or edit while the import transaction is staged.
   document.addEventListener('click', event => { if (busy && !event.target.closest('#workspaceBusy')) { event.preventDefault(); event.stopImmediatePropagation(); } }, true);
   const renderSettings = root.renderSettings;
   root.renderSettings = function () { const result = renderSettings.apply(this, arguments); storageStatus(); return result; };

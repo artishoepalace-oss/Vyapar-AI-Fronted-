@@ -11,7 +11,7 @@
   OLD_CLASSES.forEach(name=>root.classList.remove(name));
 
   function isLight(){
-    return root.classList.contains('theme-light') || Boolean(document.body&&document.body.classList.contains('theme-light'));
+    return false;
   }
 
   function cleanupOptics(){
@@ -41,14 +41,15 @@
   }
 
   function persistTheme(target){
-    const light=target==='light';
+    target='dark';
+    const light=false;
     root.classList.toggle('theme-light',light);
     if(document.body)document.body.classList.toggle('theme-light',light);
     try{
       if(window.state){
         window.state.settings=window.state.settings&&typeof window.state.settings==='object'?window.state.settings:{};
         window.state.settings.theme=target;
-        localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+        if(window.VyaparStorage)window.VyaparStorage.save(window.state).catch(()=>{});else localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
       }else{
         const saved=JSON.parse(localStorage.getItem('vyapar_ai_prod_v1')||'{}');
         saved.settings=saved.settings&&typeof saved.settings==='object'?saved.settings:{};

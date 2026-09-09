@@ -108,6 +108,7 @@
 
   function routeAfterSplash(){
     if(bootFinished||bootQueued||document.readyState==='loading')return;
+    if(window.VyaparStorage && !window.VyaparStorage.bootReady)return;
     var status=root.getAttribute('data-vyapar-session');
     if(!status||status==='restoring')return;
     var authGate=document.getElementById('vyaparOtpGate');
@@ -145,6 +146,7 @@
   bootObserver=new MutationObserver(routeAfterSplash);
   bootObserver.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['data-vyapar-session']});
   window.addEventListener('vyapar:session-ready',routeAfterSplash);
+  window.addEventListener('vyapar:storage-ready',routeAfterSplash);
   document.addEventListener('DOMContentLoaded',routeAfterSplash,{once:true});
   routeAfterSplash();
   new MutationObserver(function(){hideLegacyLoader();refresh()}).observe(document.documentElement,{childList:true,subtree:true});

@@ -34,7 +34,7 @@
       group: 'App preferences',
       items: [
         { id: 'security', icon: 'lock', title: 'Privacy & security', subtitle: 'Password login and app protection', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
-        { id: 'appearance', icon: 'appearance', title: 'Appearance & performance', subtitle: 'Theme, motion and device speed', keywords: 'light dark auto smooth lite animation', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
+        { id: 'appearance', icon: 'appearance', title: 'Motion & performance', subtitle: 'Animations and device speed', keywords: 'dark auto smooth lite animation lag fast', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
         { id: 'navigation', icon: 'navigation', title: 'Navigation', subtitle: 'Scrolling and page behaviour', keywords: 'auto scroll top remember page position', match: card => card.id === 'vy675NavigationSettings' },
         { id: 'data', icon: 'backup', title: 'Backup & restore', subtitle: 'Device backup and Google Drive', keywords: 'download upload json cloud disconnect', match: card => card.classList.contains('data-safety-section') || /backup & data safety|data safety/i.test(card.textContent || '') }
       ]
@@ -65,10 +65,7 @@
     return null;
   }
 
-  function themeName() {
-    try { if (typeof activeTheme === 'function') return activeTheme() === 'light' ? 'Light' : 'Dark'; } catch (_) {}
-    return document.documentElement.classList.contains('theme-light') ? 'Light' : 'Dark';
-  }
+  function themeName() { return 'Dark'; }
 
   function currentPlan() {
     const node = document.querySelector('#productionAccountCard .production-plan, #planBadge');
@@ -132,10 +129,10 @@
         </header>
         <label class="vy675-settings-search">
           <span>${ICONS.search}</span>
-          <input type="search" autocomplete="off" placeholder="Search settings" aria-label="Search settings">
+          <input id="settingsSearch" type="search" autocomplete="off" placeholder="Search settings, backup, password…" aria-label="Search settings" aria-controls="settingsSearchResults">
           <button type="button" aria-label="Clear search" hidden>×</button>
         </label>
-        <div class="vy675-settings-groups">
+        <div class="vy675-settings-groups" id="settingsSearchResults">
           ${SECTIONS.map(section => `
             <section class="vy675-settings-group" data-vy675-group>
               <h3>${section.group}</h3>
@@ -144,6 +141,7 @@
               </div>
             </section>`).join('')}
         </div>
+        <p class="vy675-search-status" role="status" aria-live="polite"></p>
         <div class="vy675-search-empty" hidden>
           <span>${ICONS.search}</span>
           <b>No setting found</b>
@@ -190,6 +188,8 @@
     const input = shell.querySelector('.vy675-settings-search input');
     const clear = shell.querySelector('.vy675-settings-search button');
     input?.addEventListener('input', () => filterRows(input.value));
+    input?.addEventListener('search', () => filterRows(input.value));
+    input?.addEventListener('keydown', event => { if(event.key==='Escape' && input.value){event.preventDefault();event.stopPropagation();input.value='';filterRows('');} });
     clear?.addEventListener('click', () => {
       input.value = '';
       filterRows('');
@@ -201,12 +201,14 @@
   function filterRows(value) {
     const shell = screen()?.querySelector(':scope > .vy675-settings-shell');
     if (!shell) return;
-    const query = String(value || '').trim().toLowerCase();
+    const query = String(value || '').trim().toLowerCase().replace(/\s+/g,' ');
+    const terms=query.split(' ').filter(Boolean);
     const clear = shell.querySelector('.vy675-settings-search button');
     if (clear) clear.hidden = !query;
     let visibleCount = 0;
     shell.querySelectorAll('.vy675-settings-row').forEach(row => {
-      const matches = !query || String(row.dataset.vy675Search || row.textContent || '').toLowerCase().includes(query);
+      const text=String(row.dataset.vy675Search || row.textContent || '').toLowerCase();
+      const matches=terms.every(term=>text.includes(term));
       row.hidden = !matches;
       if (matches) visibleCount += 1;
     });
@@ -215,6 +217,8 @@
     });
     const empty = shell.querySelector('.vy675-search-empty');
     if (empty) empty.hidden = visibleCount !== 0;
+    const status=shell.querySelector('.vy675-search-status');
+    if(status)status.textContent=query?visibleCount+' settings found':'';
   }
 
   function ensureRepository(scr) {
@@ -301,6 +305,7 @@
     shell.querySelector('.vy675-settings-home').hidden = false;
     shell.querySelector('.vy675-settings-page').hidden = true;
     updateStatuses();
+    filterRows(shell.querySelector('.vy675-settings-search input')?.value || '');
     if (scrollTop && window.vyaparMotion) {
       window.vyaparMotion.scrollTo(homeScrollPosition);
       window.vyaparMotion.enter(shell.querySelector('.vy675-settings-home'), -1);

@@ -267,3 +267,80 @@ html.vy861-flat-black #vyaparOtpGate .auth-logo-box { background:#fff !important
 html.vy861-flat-black #vyaparOtpGate .auth-logo { transform:translateY(-12%) !important; padding:0 !important; background:transparent !important; }
 html.vy861-flat-black body #vy855BootGuard img { transform:translateY(-12%) !important; }
 html.vy861-flat-black .vy-boot-logo-frame { display:block; width:112px; height:112px; border-radius:24px; overflow:hidden; background:#fff; }
+
+/* 00007: one workspace rhythm, including Android WebViews without :is/:has. */
+html.workspace-v7 { --workspace-gap:12px; --workspace-nav-height:64px; color-scheme:dark; }
+html.workspace-v7 body { overflow-x:hidden; }
+html.workspace-v7 .app { padding-top:0!important; }
+html.vy861-flat-black.workspace-v7 .app > .top {
+  position:sticky!important; top:8px!important; left:auto!important; right:auto!important;
+  width:calc(100% - 24px)!important; max-width:960px!important; height:56px!important; min-height:56px!important;
+  margin:8px auto 14px!important; padding:6px 10px!important; box-sizing:border-box!important;
+  border:0!important; border-radius:28px!important; transform:none!important; z-index:100!important;
+  background:#111214!important; box-shadow:none!important; overflow:visible!important;
+}
+html.vy861-flat-black.workspace-v7 .top .brand { min-width:0!important; gap:9px!important; }
+html.vy861-flat-black.workspace-v7 .top .brand h1 { font-size:17px!important; line-height:1.2!important; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+html.vy861-flat-black.workspace-v7 .top .brand .tag { display:none!important; }
+html.vy861-flat-black.workspace-v7 .top .brand .vy-logo-frame,
+html.vy861-flat-black.workspace-v7 .top .brand .vy-logo-frame .logo { width:38px!important; height:38px!important; min-width:38px!important; max-width:38px!important; flex-basis:38px!important; }
+html.vy861-flat-black.workspace-v7 .top .top-actions { margin-left:auto!important; flex-shrink:0!important; }
+html.vy861-flat-black.workspace-v7 .top #vy863ProfileChip { width:40px!important; height:40px!important; min-width:40px!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav {
+  position:fixed!important; left:50%!important; right:auto!important; transform:translateX(-50%)!important;
+  bottom:8px!important; bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+  width:calc(100% - 24px)!important; max-width:620px!important; height:64px!important; min-height:64px!important;
+  padding:4px!important; margin:0!important; border:0!important; border-radius:34px!important;
+  display:grid!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; gap:2px!important;
+  box-sizing:border-box!important; overflow:hidden!important; background:#151618!important;
+}
+html.vy861-flat-black.workspace-v7 #nav.nav button {
+  min-width:0!important; width:100%!important; height:56px!important; min-height:56px!important; margin:0!important;
+  padding:5px 1px!important; border:0!important; border-radius:28px!important; gap:3px!important;
+  display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important;
+  font-size:11px!important; line-height:1.15!important; font-weight:600!important;
+}
+html.vy861-flat-black.workspace-v7 #nav.nav button .android-nav-icon,
+html.vy861-flat-black.workspace-v7 #nav.nav button svg { width:23px!important; height:23px!important; min-height:23px!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav button .android-nav-label { font-size:11px!important; line-height:1.15!important; }
+html.vy861-flat-black.workspace-v7 #nav.nav button.active { color:#fff!important; background:#2a2c30!important; }
+html.workspace-v7 main { padding-bottom:92px!important; padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important; }
+html.workspace-v7 .screen { min-width:0!important; padding-bottom:0!important; }
+html.vy861-flat-black.workspace-v7 #androidMoreSheet.android-sheet-overlay > .android-sheet { bottom:calc(80px + env(safe-area-inset-bottom,0px))!important; left:12px!important; right:12px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business .vx621-feature-grid,
+html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-grid,
+html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-grid { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:10px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business #businessToolResults .vx621-feature-card,
+html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-card,
+html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-card { display:flex!important; flex-direction:column!important; gap:8px!important; min-width:0!important; padding:13px!important; margin:0!important; border:0!important; border-radius:20px!important; background:#101114!important; box-shadow:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-copy { display:flex!important; flex-direction:column!important; flex:1!important; min-width:0!important; gap:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-icon { width:28px!important; height:28px!important; min-width:28px!important; border:0!important; border-radius:9px!important; margin:0!important; font-size:16px!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-icon svg { width:18px!important; height:18px!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-copy h3 { font-size:14px!important; font-weight:650!important; line-height:1.3!important; margin:0 0 5px!important; overflow-wrap:break-word; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-feature-copy p { font-size:12px!important; line-height:1.4!important; color:#a7abb3!important; margin:0 0 12px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business .vx621-card-actions,
+html.vy861-flat-black.workspace-v7 #screen-sales .vx621-card-actions,
+html.vy861-flat-black.workspace-v7 #screen-stock .vx621-card-actions { display:grid!important; grid-template-columns:minmax(0,1fr)!important; gap:6px!important; margin-top:auto!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-action { min-height:44px!important; width:100%!important; padding:9px!important; box-sizing:border-box!important; font-size:12px!important; line-height:1.3!important; border:0!important; border-radius:12px!important; background:#202226!important; box-shadow:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-action .vx621-tier:not(.locked) { display:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-context { padding:0!important; background:transparent!important; border:0!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-context-head > div > .pill { display:none!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-context-head h2,
+html.vy861-flat-black.workspace-v7 .screen .vx621-group-head h2 { font-size:17px!important; margin:0 0 5px!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-group { padding:0!important; background:transparent!important; margin:14px 0 0!important; }
+html.vy861-flat-black.workspace-v7 .screen .vx621-group-head p,
+html.vy861-flat-black.workspace-v7 .screen .vx621-context-head p { font-size:13px!important; line-height:1.4!important; margin:0 0 12px!important; }
+html.vy861-flat-black.workspace-v7 #screen-business #businessToolResults .vx621-feature-card[hidden],
+html.vy861-flat-black.workspace-v7 .screen .vx621-platform-host[hidden],
+html.vy861-flat-black.workspace-v7 #screen-business .p1-mode-section[hidden] { display:none!important; }
+html.workspace-v7 .screen .vy660-note,html.workspace-v7 .screen .vy6601-fin-note { display:none!important; }
+html.vy861-flat-black.workspace-v7 #screen-settings .vy675-settings-search { display:flex!important; width:100%!important; margin:12px 0 18px!important; min-height:48px!important; padding:0 12px!important; border:0!important; background:#1b1d21!important; border-radius:16px!important; box-sizing:border-box!important; }
+html.vy861-flat-black.workspace-v7 #screen-settings .vy675-settings-search input { min-width:0!important; width:100%!important; height:48px!important; padding:8px!important; font-size:15px!important; background:transparent!important; border:0!important; }
+html.vy861-flat-black.workspace-v7 #screen-settings .vy675-settings-search button { width:40px!important; height:44px!important; min-width:40px!important; }
+html.workspace-v7 #screen-settings .vy675-settings-search button[hidden],html.workspace-v7 #screen-settings .vy675-settings-row[hidden],html.workspace-v7 #screen-settings [data-vy675-group][hidden],html.workspace-v7 #screen-settings .vy675-search-empty[hidden] { display:none!important; }
+html.workspace-v7 .vy675-search-status:empty { display:none; }
+html.workspace-v7 .vy675-search-status { font-size:12px; color:#a7abb3; }
+html.vy861-flat-black.workspace-v7 .screen button:focus,html.vy861-flat-black.workspace-v7 .screen .vx621-action:focus { outline:none!important; }
+html.vy861-flat-black.workspace-v7 .screen button:focus-visible,html.vy861-flat-black.workspace-v7 .screen .vx621-action:focus-visible { outline:2px solid #b6c7dc!important; outline-offset:2px!important; }
+@media(min-width:780px) { html.vy861-flat-black.workspace-v7 #screen-business .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-grid { grid-template-columns:repeat(4,minmax(0,1fr))!important; } }
+@media(max-width:340px) { html.vy861-flat-black.workspace-v7 #screen-business .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-sales .vx621-feature-grid,html.vy861-flat-black.workspace-v7 #screen-stock .vx621-feature-grid { grid-template-columns:minmax(0,1fr)!important; } }

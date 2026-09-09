@@ -1,3 +1,615 @@
+/* ===== SCRIPT SOURCE: data-store.js ===== */
+
+/* Durable local state. Records are chunked; a snapshot becomes visible only
+ * when the transaction containing both records and its manifest completes. */
+(function (root) {
+  'use strict';
+  const KEY = 'vyapar_ai_prod_v1', MARKER = 'vyapar_storage_backend_v1';
+  const CHUNK = 1000;
+  let db = null, head = null, attached = false, bootReady = false;
+  let queue = Promise.resolve(), revision = 0, replacing = false;
+  let status = { mode: 'loading', savedAt: '', error: '', records: 0 };
+  let resolveReady;
+  const ready = new Promise(resolve => { resolveReady = resolve; });
+  function emit() {
+    if (root.dispatchEvent && typeof CustomEvent === 'function')
+      root.dispatchEvent(new CustomEvent('vyapar:storage-status', { detail: { ...status } }));
+  }
+  function fail(error) {
+    status.error = error.message || 'Device storage is unavailable.';
+    emit();
+  }
+  function open() {
+    return new Promise((resolve, reject) => {
+      if (!root.indexedDB) { resolve(null); return; }
+      let request, settled = false;
+      const timer = setTimeout(() => finish(new Error('Close other Vyapar tabs, then reopen the app.')), 8000);
+      function finish(error, value) {
+        if (settled) { if (value) value.close(); return; }
+        settled = true; clearTimeout(timer); error ? reject(error) : resolve(value);
+      }
+      try { request = root.indexedDB.open('vyapar_ai_data_v2', 1); }
+      catch (error) { finish(error); return; }
+      request.onupgradeneeded = () => {
+        const database = request.result;
+        if (!database.objectStoreNames.contains('meta')) database.createObjectStore('meta');
+        if (!database.objectStoreNames.contains('records')) database.createObjectStore('records');
+      };
+      request.onerror = () => finish(request.error || new Error('Cannot open device storage.'));
+      request.onsuccess = () => {
+        request.result.onversionchange = () => request.result.close();
+        finish(null, request.result);
+      };
+    });
+  }
+  function read(database) {
+    return new Promise((resolve, reject) => {
+      const tx = database.transaction(['meta', 'records'], 'readonly');
+      const request = tx.objectStore('meta').get('head');
+      let output = null, error = null;
+      request.onsuccess = () => {
+        head = request.result || null;
+        if (!head) return;
+        if (head.schema !== 1 || !head.arrays || !head.value) {
+          error = new Error('Saved data could not be verified. Your saved copy has been kept.'); tx.abort(); return;
+        }
+        output = { ...head.value };
+        Object.keys(head.arrays).forEach(key => {
+          const count = head.arrays[key];
+          output[key] = new Array(count);
+          for (let offset = 0; offset < count; offset += CHUNK) {
+            const r = tx.objectStore('records').get(head.slot + '/' + key + '/' + offset);
+            r.onsuccess = () => {
+              const rows = r.result;
+              if (!Array.isArray(rows) || rows.length !== Math.min(CHUNK, count - offset)) {
+                error = new Error('Saved records are incomplete. Your saved copy has been kept.'); tx.abort(); return;
+              }
+              for (let i = 0; i < rows.length; i++) output[key][offset + i] = rows[i];
+            };
+          }
+        });
+      };
+      tx.oncomplete = () => resolve(output);
+      tx.onabort = tx.onerror = () => reject(error || tx.error || new Error('Cannot read saved records.'));
+    });
+  }
+  function manifest(value, slot) {
+    const meta = { schema: 1, slot, savedAt: new Date().toISOString(), arrays: {}, value: {} };
+    Object.keys(value).forEach(key => {
+      if (Array.isArray(value[key])) meta.arrays[key] = value[key].length;
+      else meta.value[key] = value[key];
+    });
+    return meta;
+  }
+  function shell(value) {
+    // Legacy startup/auth helpers only need preferences and profile. Keep their
+    // small synchronous cache, never duplicate the record database in it.
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ __indexedDB: true, profile: value.profile, settings: value.settings }));
+      localStorage.setItem(MARKER, 'indexeddb');
+    } catch (_) { /* The committed database remains authoritative. */ }
+  }
+  function commit(value) {
+    if (!db) {
+      localStorage.setItem(KEY, JSON.stringify(value));
+      status = { mode: 'basic', savedAt: new Date().toISOString(), error: '', records: Object.values(value).reduce((n, v) => n + (Array.isArray(v) ? v.length : 0), 0) };
+      revision++; emit(); return Promise.resolve();
+    }
+    return new Promise((resolve, reject) => {
+      const slot = head ? 1 - head.slot : 0;
+      const meta = manifest(value, slot);
+      let tx;
+      try {
+        tx = db.transaction(['meta', 'records'], 'readwrite');
+        const records = tx.objectStore('records'), metadata = tx.objectStore('meta');
+        // A slot's previous manifest enumerates precisely which chunks to remove.
+        const stale = metadata.get('slot-' + slot);
+        stale.onsuccess = () => {
+          if (stale.result) Object.keys(stale.result.arrays).forEach(key => {
+            for (let i = 0; i < stale.result.arrays[key]; i += CHUNK)
+              if (i >= (meta.arrays[key] || 0)) records.delete(slot + '/' + key + '/' + i);
+          });
+        };
+        // Clone all chunks synchronously through put(), before another event can
+        // edit the live arrays. The stale callback only removes obsolete tails.
+        Object.keys(meta.arrays).forEach(key => {
+          for (let i = 0; i < meta.arrays[key]; i += CHUNK) records.put(value[key].slice(i, i + CHUNK), slot + '/' + key + '/' + i);
+        });
+        metadata.put(meta, 'slot-' + slot);
+        metadata.put(meta, 'head');
+        tx.oncomplete = () => {
+          head = meta; shell(value); revision++;
+          status = { mode: 'indexeddb', savedAt: meta.savedAt, error: '', records: Object.values(meta.arrays).reduce((a, b) => a + b, 0) };
+          emit(); resolve();
+        };
+        tx.onabort = tx.onerror = () => reject(tx.error || new Error('Data was not saved. Free device space, then retry or download a backup.'));
+      } catch (error) { if (tx) try { tx.abort(); } catch (_) {} reject(error); }
+    });
+  }
+  function enqueue(value) {
+    const job = queue.catch(() => {}).then(() => commit(value));
+    queue = job;
+    job.catch(fail);
+    return job;
+  }
+  async function attach(getState, restore) {
+    if (attached) return ready;
+    attached = true;
+    let required = false;
+    try { required = localStorage.getItem(MARKER) === 'indexeddb' || JSON.parse(localStorage.getItem(KEY) || '{}').__indexedDB === true; } catch (_) {}
+    try {
+      db = await open();
+      if (!db && required) throw new Error('Device storage is unavailable. Reopen the app to load your records.');
+      const saved = db ? await read(db) : null;
+      if (required && !saved) throw new Error('Saved data is unavailable. Restore a backup after reopening the app.');
+      if (saved) restore(saved);
+      // Commit migration before retiring the legacy full-state copy.
+      await enqueue(getState());
+      bootReady = true; resolveReady();
+      if (root.dispatchEvent && typeof CustomEvent === 'function') root.dispatchEvent(new CustomEvent('vyapar:storage-ready'));
+    } catch (error) {
+      fail(error);
+      // Never unlock an empty app over an inaccessible primary database.
+      if (required || head) {
+        if (root.VyaparWorkspace) root.VyaparWorkspace.storageBlocked(status.error);
+      } else {
+        // First migration failure leaves the legacy copy and in-memory data intact.
+        bootReady = true; resolveReady();
+        if (root.dispatchEvent && typeof CustomEvent === 'function') root.dispatchEvent(new CustomEvent('vyapar:storage-ready'));
+      }
+    }
+  }
+  root.VyaparStorage = {
+    attach, ready,
+    save: value => bootReady && !replacing ? enqueue(value) : ready,
+    async replace(value, apply) {
+      if (!bootReady) await ready;
+      if (replacing) throw new Error('Another restore is still running.');
+      replacing = true;
+      try { await enqueue(value); apply(); }
+      finally { replacing = false; }
+    },
+    flush: () => queue,
+    get bootReady() { return bootReady; },
+    get revision() { return revision; },
+    getStatus: () => ({ ...status }),
+    // Pure helper for deterministic chunk-boundary tests.
+    manifest
+  };
+})(window);
+
+/* ===== SCRIPT SOURCE: file-io.js ===== */
+
+/* One reader for Android document providers, plain and password backups. */
+(function (root) {
+  'use strict';
+  const MAX_BYTES = 64 * 1024 * 1024;
+  const arrays = ['sales', 'stocks', 'monthly', 'daily', 'products', 'transactions611', 'invoices', 'purchases', 'expenses', 'customers', 'suppliers', 'accounts611', 'ledgerEntries611', 'stockMoves611', 'parties611', 'products611', 'businesses611', 'warehouses611', 'stockLedger', 'cashbook', 'gstRecords', 'auditLog', 'staff', 'notifications', 'paymentReconciliations', 'priceHistory', 'reorderRules', 'purchaseReturns', 'salesReturns', 'barcodeCatalog', 'customerStatements', 'supplierStatements', 'productImports', 'fileImports', 'imports'];
+  function parse(text) {
+    return JSON.parse(String(text).replace(/^\uFEFF/, '').trim(), (key, value) => {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') throw new Error('Unsupported keys in this file.');
+      return value;
+    });
+  }
+  async function readText(file) {
+    if (!file) throw new Error('Choose a file first.');
+    if (file.size > MAX_BYTES) throw new Error('Choose a file smaller than 64 MB.');
+    let text;
+    if (typeof FileReader === 'function' && typeof FileReader.prototype.readAsArrayBuffer === 'function') {
+      text = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Cannot read this file. Save it to Downloads and select it again.'));
+        reader.onabort = () => reject(new Error('File reading was cancelled.'));
+        reader.onload = () => {
+          try {
+            const bytes = new Uint8Array(reader.result);
+            const encoding = bytes[0] === 255 && bytes[1] === 254 ? 'utf-16le' : bytes[0] === 254 && bytes[1] === 255 ? 'utf-16be' : 'utf-8';
+            resolve(new TextDecoder(encoding, { fatal: true }).decode(bytes));
+          } catch (_) { reject(new Error('File encoding is invalid. Export it as UTF-8 or UTF-16.')); }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    } else if (typeof file.text === 'function') text = await file.text();
+    else text = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Cannot read this file. Select a local copy from Downloads.'));
+      reader.readAsText(file, 'UTF-8');
+    });
+    text = String(text).replace(/^\uFEFF/, '').trim();
+    if (!text) throw new Error('This file is empty.');
+    return text;
+  }
+  function isEncrypted(value) { return Boolean(value && value.v === 1 && value.s && value.i && value.d); }
+  function backupData(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Select a Vyapar AI backup JSON file.');
+    let candidate = value;
+    if (value.format === 'vyapar-ai-backup') candidate = value.state;
+    else if (value.state && typeof value.state === 'object') candidate = value.state;
+    else if (value.data && !Array.isArray(value.data) && typeof value.data === 'object') candidate = value.data;
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate) ||
+        !arrays.some(key => Array.isArray(candidate[key])) ||
+        !(candidate.profile || candidate.settings || candidate.subscription || arrays.filter(key => Array.isArray(candidate[key])).length >= 3)) {
+      throw new Error('This is a data import, not a full Vyapar backup. Use AI Upload to import records.');
+    }
+    ['profile','settings','subscription'].forEach(key => {
+      if(candidate[key] !== undefined && (!candidate[key] || typeof candidate[key] !== 'object' || Array.isArray(candidate[key]))) throw new Error('Invalid backup ' + key + '.');
+    });
+    arrays.forEach(key => {
+      if (candidate[key] !== undefined && (!Array.isArray(candidate[key]) || candidate[key].some(row => !row || typeof row !== 'object' || Array.isArray(row))))
+        throw new Error('Invalid ' + key + ' records. The backup was not restored.');
+    });
+    return candidate;
+  }
+  async function decrypt(value, password) {
+    const bytes = (v, len) => Array.isArray(v) && (!len || v.length === len) && v.every(n => Number.isInteger(n) && n >= 0 && n <= 255);
+    if (!value || value.v !== 1 || !bytes(value.s, 16) || !bytes(value.i, 12) || !bytes(value.d) || value.d.length < 16 || value.d.length > MAX_BYTES)
+      throw new Error('Invalid encrypted backup.');
+    if (typeof crypto === 'undefined' || !crypto.subtle) throw new Error('Encrypted backup support is unavailable on this device.');
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: new Uint8Array(value.s), iterations: 150000, hash: 'SHA-256' }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    try { return parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(value.i) }, key, new Uint8Array(value.d)))); }
+    catch (_) { throw new Error('Wrong password or corrupted backup.'); }
+  }
+  root.VyaparFiles = { readText, parse, backupData, isEncrypted, decrypt, maxBytes: MAX_BYTES };
+})(window);
+
+/* ===== SCRIPT SOURCE: profit-history.js ===== */
+
+/* One pass per source, independent of how many historical years are stored.
+ * Same precedence as the accounting dashboard: posted sales > daily > items;
+ * latest manual monthly profit is additive. Expenses are deducted exactly once. */
+(function (root) {
+  'use strict';
+  const number = v => { const n = Number(String(v == null ? '' : v).replace(/[₹,\s]/g, '')); return Number.isFinite(n) ? n : 0; };
+  function date(value) {
+    const raw = String(value || ''), match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) {
+      const d = new Date(raw);
+      return Number.isNaN(d.getTime()) ? '' : d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    const y = +match[1], m = +match[2], d = +match[3];
+    const max = [31, y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+    return m >= 1 && m <= 12 && d >= 1 && d <= max ? raw.slice(0, 10) : '';
+  }
+  function empty(year) { return { year: String(year), revenue: 0, profit: 0, expenses: 0, net: 0, months: {} }; }
+  function build(state) {
+    const s = state || {}, years = {}, days = new Map(), manual = new Map();
+    const business = String(s.activeBusinessId || s.currentStoreId || 'MAIN');
+    const day = key => { if (!days.has(key)) days.set(key, {}); return days.get(key); };
+    const month = (key, activity = true) => {
+      const y = key.slice(0, 4), f = years[y] || (years[y] = empty(y));
+      const m = f.months[key] || (f.months[key] = { revenue: 0, profit: 0, expenses: 0, net: 0, activity: false });
+      if(activity) m.activity = true;
+      return m;
+    };
+    (s.sales || []).forEach(x => {
+      const d = date(x.date); if (!d) return;
+      const bucket = day(d), r = bucket.item || (bucket.item = { revenue: 0, profit: 0 });
+      const q = Math.max(0, number(x.qty));
+      r.revenue += Math.max(0, number(x.sellingPrice)) * q;
+      r.profit += (number(x.sellingPrice) - number(x.purchasePrice)) * q;
+    });
+    (s.daily || []).forEach(x => {
+      const d = date(x.date); if (d) day(d).daily = { revenue: Math.max(0, number(x.sale)), profit: number(x.profit) };
+    });
+    (s.transactions611 || []).forEach(t => {
+      const type = String(t.type).toUpperCase();
+      if (String(t.businessId || 'MAIN') !== business || t.status === 'cancelled' || !['SALE', 'SALE_RETURN'].includes(type)) return;
+      const d = date(t.date); if (!d) return;
+      let revenue = 0, cost = 0;
+      (t.items || []).forEach(i => {
+        const qty = Math.max(0, number(i.qty || i.quantity));
+        revenue += qty * Math.max(0, number(i.rate || i.price)) * (1 - Math.max(0, number(i.discount)) / 100);
+        cost += qty * Math.max(0, number(i.purchaseRate || i.purchasePrice));
+      });
+      if (!(t.items || []).length) revenue = Math.max(0, number(t.baseAmount || t.total) - number(t.tax) - number(t.cess));
+      const bucket = day(d), r = bucket.accounting || (bucket.accounting = { revenue: 0, profit: 0 }), sign = type === 'SALE_RETURN' ? -1 : 1;
+      r.revenue += sign * revenue; r.profit += sign * (revenue - cost);
+    });
+    days.forEach((bucket, key) => {
+      const v = bucket.accounting || bucket.daily || bucket.item, m = month(key.slice(0, 7));
+      m.revenue += v.revenue; m.profit += v.profit;
+    });
+    (s.monthly || []).forEach(x => {
+      const key = String(x.month || '').slice(0, 7);
+      if (/^\d{4}-(0[1-9]|1[0-2])$/.test(key)) manual.set(key, number(x.profit));
+    });
+    manual.forEach((value, key) => { month(key).profit += value; });
+    (s.expenses || []).forEach(x => { const d = date(x.date); if (d) month(d.slice(0, 7), false).expenses += number(x.amount); });
+    Object.values(years).forEach(f => {
+      Object.values(f.months).forEach(m => { m.net = m.profit - m.expenses; f.revenue += m.revenue; f.profit += m.profit; f.expenses += m.expenses; });
+      f.net = f.profit - f.expenses;
+    });
+    return years;
+  }
+  root.VyaparProfit = { build, empty };
+})(window);
+
+/* ===== SCRIPT SOURCE: insights-workspace.js ===== */
+
+/* Bounded dashboard: one selected year, two chart series at most, eight history
+ * rows per page. Full history stays in storage and is available for export. */
+(function (root) {
+  'use strict';
+  let selected = String(new Date().getFullYear()), comparison = String(+selected - 1), view = 'overview', page = 0;
+  let snapshot = {}, dirty = true;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const escape = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const amount = v => '₹' + Number(v || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const compact = v => Math.abs(v) >= 10000000 ? (v / 10000000).toFixed(1) + 'Cr' : Math.abs(v) >= 100000 ? (v / 100000).toFixed(1) + 'L' : Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : String(Math.round(v));
+  const year = y => snapshot[y] || root.VyaparProfit.empty(y);
+  const values = y => months.map((_, i) => (year(y).months[y + '-' + String(i + 1).padStart(2, '0')] || {}).net || 0);
+  function chart(first, second, labels = months) {
+    const all = second ? first.concat(second) : first;
+    const min = Math.min(0, ...all), max = Math.max(0, ...all), range = max - min || 1;
+    const y = n => 18 + (max - n) / range * 146, zero = y(0), step = 304 / Math.max(1, first.length);
+    let svg = '<svg class="insight-chart" viewBox="0 0 360 200" role="img" aria-label="Monthly net profit chart. Exact values in the monthly details table.">';
+    [max, (max + min) / 2, min].forEach(n => { svg += '<path class="chart-grid" d="M43 ' + y(n) + 'H352"/><text class="chart-axis" x="37" y="' + (y(n) + 3) + '" text-anchor="end">' + compact(n) + '</text>'; });
+    svg += '<path class="chart-zero" d="M43 ' + zero + 'H352"/>';
+    first.forEach((n, i) => {
+      const x = 48 + i * step;
+      [n].concat(second ? [second[i]] : []).forEach((v, j) => {
+        const width = second ? 9 : 15, bx = x + j * 11;
+        if (v) svg += '<rect class="' + (v < 0 ? 'chart-loss' : j ? 'chart-compare' : 'chart-profit') + '" x="' + bx + '" y="' + Math.min(zero, y(v)) + '" width="' + width + '" height="' + Math.max(1, Math.abs(y(v) - zero)) + '" rx="2"><title>' + labels[i] + ': ' + amount(v) + '</title></rect>';
+      });
+      svg += '<text class="chart-axis" x="' + (x + 8) + '" y="184" text-anchor="middle">' + labels[i] + '</text>';
+    });
+    return svg + '</svg>';
+  }
+  function options(active) {
+    return [...new Set(Object.keys(snapshot).concat(selected, comparison, String(new Date().getFullYear())))].sort().reverse().map(y => '<option value="' + y + '"' + (y === active ? ' selected' : '') + '>' + y + '</option>').join('');
+  }
+  function table(compare) {
+    return '<div class="insight-table"><table><thead><tr><th>Month</th>' + (compare ? '<th>' + selected + '</th><th>' + comparison + '</th><th>Change</th>' : '<th>Revenue</th><th>Expenses</th><th>Net profit</th>') + '</tr></thead><tbody>' + months.map((m, i) => {
+      const f = year(selected).months[selected + '-' + String(i + 1).padStart(2, '0')] || {};
+      const a = values(selected)[i], b = values(comparison)[i];
+      return '<tr><th>' + m + '</th>' + (compare ? '<td>' + amount(a) + '</td><td>' + amount(b) + '</td><td>' + amount(a - b) + '</td>' : '<td>' + amount(f.revenue) + '</td><td>' + amount(f.expenses) + '</td><td>' + amount(f.net) + '</td>') + '</tr>';
+    }).join('') + '</tbody></table></div>';
+  }
+  function render(force) {
+    const el = document.getElementById('screen-analytics'); if (!el) return;
+    if (!force && el.classList.contains('hide')) { dirty = true; return; }
+    if (dirty) { snapshot = root.VyaparProfit.build(root.state); dirty = false; }
+    const f = year(selected), prior = year(String(+selected - 1));
+    const years = Object.keys(snapshot).sort().reverse(), profile = (root.state || {}).profile || {};
+    const goal = Math.max(1, Number(profile.yearlyGoal) || 240000), progress = Math.max(0, Math.min(100, f.net / goal * 100));
+    const invested = Math.max(0, Number(profile.totalInvestment) || 0);
+    const change = prior.net ? ((f.net - prior.net) / Math.abs(prior.net) * 100).toFixed(1) + '% vs ' + (+selected - 1) : 'No previous-year comparison';
+    const tabs = '<div class="workspace-tabs" role="tablist" aria-label="Profit views">' + [['overview','Overview'],['compare','Compare'],['history','History'],['plan','Plan']].map(([id,label]) => '<button type="button" role="tab" aria-selected="' + (view === id) + '" onclick="VyaparInsights.selectView(\'' + id + '\')">' + label + '</button>').join('') + '</div>';
+    let content = '';
+    if (view === 'overview' || view === 'compare') {
+      const compare = view === 'compare';
+      content = '<section class="card insight-panel"><div class="workspace-heading"><div><h2>Monthly net profit</h2><p class="muted">' + (compare ? 'Compare the same months across two years.' : 'Profit after recorded business expenses.') + '</p></div>' + (compare ? '<label class="year-field"><span>Compare with</span><select aria-label="Comparison year" onchange="VyaparInsights.selectComparison(this.value)">' + options(comparison) + '</select></label>' : '') + '</div>' + (compare ? '<div class="chart-legend"><span>● ' + selected + '</span><span>● ' + comparison + '</span><span>● Loss</span></div>' : '') + chart(values(selected), compare ? values(comparison) : null) + (!Object.keys(f.months).length ? '<p class="insight-empty">No records for ' + selected + '. Choose another year or add a sale.</p>' : '') + '<details><summary>Monthly details</summary>' + table(compare) + '</details></section>';
+      if (!compare) content += '<section class="card insight-panel"><div class="workspace-heading"><h2>Yearly goal</h2><strong>' + Math.round(progress) + '%</strong></div><progress max="100" value="' + progress + '" aria-label="Yearly goal progress"></progress><p class="muted">' + amount(f.net) + ' of ' + amount(goal) + '</p><button type="button" class="btn" onclick="VyaparInsights.selectView(\'plan\')">Edit goal & investment</button></section>';
+    } else if (view === 'history') {
+      page = Math.max(0, Math.min(page, Math.ceil(years.length / 8) - 1));
+      content = '<section class="card insight-panel"><div class="workspace-heading"><div><h2>All years</h2><p class="muted">' + years.length + ' years saved</p></div><button type="button" class="btn" onclick="VyaparInsights.exportHistory()">Export CSV</button></div><div class="insight-history">' + years.slice(page * 8, page * 8 + 8).map(y => '<button type="button" onclick="VyaparInsights.selectYear(\'' + y + '\');VyaparInsights.selectView(\'overview\')"><span><b>' + y + '</b><small>Revenue ' + amount(year(y).revenue) + '</small></span><strong class="' + (year(y).net < 0 ? 'is-loss' : '') + '">' + amount(year(y).net) + ' <span aria-hidden="true">›</span></strong></button>').join('') + (!years.length ? '<p class="insight-empty">Your recorded years will appear here.</p>' : '') + '</div><div class="workspace-pager"><button class="btn" ' + (page === 0 ? 'disabled' : '') + ' onclick="VyaparInsights.turnPage(-1)">Previous</button><span>' + (page + 1) + ' / ' + Math.max(1, Math.ceil(years.length / 8)) + '</span><button class="btn" ' + ((page + 1) * 8 >= years.length ? 'disabled' : '') + ' onclick="VyaparInsights.turnPage(1)">Next</button></div></section>';
+    } else {
+      const growth = Number.isFinite(+profile.planningGrowth) ? Math.max(0, Math.min(100, +profile.planningGrowth)) : 18;
+      const projected = Array.from({length:10}, (_, i) => '<tr><th>' + (+selected + i) + '</th><td>' + amount(goal * Math.pow(1 + growth / 100, i)) + '</td></tr>').join('');
+      content = '<section class="card insight-panel"><h2>Goal & investment</h2><label for="insightGoal">Annual net profit goal</label><input id="insightGoal" type="number" min="1" inputmode="decimal" value="' + goal + '"><label for="insightInvestment">Total investment</label><input id="insightInvestment" type="number" min="0" inputmode="decimal" value="' + invested + '"><label for="insightGrowth">Planned annual growth (%)</label><input id="insightGrowth" type="number" min="0" max="100" inputmode="decimal" value="' + growth + '"><button type="button" class="btn primary" onclick="VyaparInsights.savePlan()">Save plan</button><p class="muted">' + (invested ? selected + ' return on investment: ' + (f.net / invested * 100).toFixed(1) + '%' : 'Add your investment to see return on investment.') + '</p><details><summary>10-year targets</summary><p class="muted">Planning estimates using your chosen growth rate.</p><div class="insight-table"><table><thead><tr><th>Year</th><th>Profit target</th></tr></thead><tbody>' + projected + '</tbody></table></div></details></section>';
+    }
+    if(view === 'overview') {
+      const recorded = Object.values(f.months).filter(m => m.activity).map(m => m.profit), average = recorded.length ? f.profit / recorded.length : 0;
+      const metrics = [['Gross profit', amount(f.profit)],['Monthly average · gross', amount(average)],['Highest month · gross', amount(recorded.length ? Math.max(...recorded) : 0)],['Lowest month · gross', amount(recorded.length ? Math.min(...recorded) : 0)],['Return on investment · net', invested ? (f.net / invested * 100).toFixed(1) + '%' : 'Add investment'],['Estimated payback · gross', invested && average > 0 ? (invested / average).toFixed(1) + ' months' : '—'],['Indicative value · 2× annual gross profit', amount(Math.max(0,f.profit * 2))]];
+      content += '<section class="card insight-panel"><details><summary>Performance details</summary><div class="insight-table"><table><tbody>' + metrics.map(([label,value])=>'<tr><th>'+label+'</th><td>'+value+'</td></tr>').join('') + '</tbody></table></div><p class="muted">Payback and indicative value are planning estimates.</p></details></section>';
+    }
+    if(view === 'history' && years.length) {
+      const visible = years.slice(page * 8, page * 8 + 8).reverse();
+      content += '<section class="card insight-panel"><h2>Annual net profit</h2>' + chart(visible.map(y => year(y).net), null, visible).replace('Monthly net profit chart. Exact values in the monthly details table.', 'Annual net profit chart. Exact values in the year list above.') + '</section>';
+    }
+    el.innerHTML = '<div class="insights-workspace"><div class="workspace-heading"><div><span class="workspace-eyebrow">BUSINESS INSIGHTS</span><h1>Profit dashboard</h1></div><label class="year-field"><span>Year</span><select aria-label="Profit year" onchange="VyaparInsights.selectYear(this.value)">' + options(selected) + '</select></label></div><section class="card insight-balance"><span>' + selected + ' net profit</span><strong class="' + (f.net < 0 ? 'is-loss' : '') + '">' + amount(f.net) + '</strong><p class="muted">' + escape(change) + '</p><div class="insight-mini-stats"><div><span>Revenue</span><b>' + amount(f.revenue) + '</b></div><div><span>Expenses</span><b>' + amount(f.expenses) + '</b></div></div></section>' + tabs + content + '</div>';
+  }
+  root.VyaparInsights = {
+    render, chart,
+    invalidate() { dirty = true; },
+    selectView(value) { if (['overview','compare','history','plan'].includes(value)) { view = value; render(true); } },
+    selectYear(value) { if (/^\d{4}$/.test(value)) { selected = value; render(true); } },
+    selectComparison(value) { if (/^\d{4}$/.test(value)) { comparison = value; render(true); } },
+    turnPage(delta) { page += delta; render(true); },
+    savePlan() {
+      const goal = +document.getElementById('insightGoal').value, investment = +document.getElementById('insightInvestment').value, growth = +document.getElementById('insightGrowth').value;
+      if (!Number.isFinite(goal) || goal <= 0 || !Number.isFinite(investment) || investment < 0 || !Number.isFinite(growth) || growth < 0 || growth > 100) { alert('Enter a positive goal, a valid investment and growth from 0 to 100%.'); return; }
+      Object.assign(root.state.profile, { yearlyGoal: goal, totalInvestment: investment, planningGrowth: growth });
+      root.save();
+    },
+    exportHistory() {
+      const rows = ['year,month,revenue,gross_profit,expenses,net_profit'];
+      Object.keys(snapshot).sort().forEach(y => Object.keys(snapshot[y].months).sort().forEach(m => { const f = snapshot[y].months[m]; rows.push([y,m,f.revenue,f.profit,f.expenses,f.net].join(',')); }));
+      root.downloadBlob(new Blob(['\uFEFF' + rows.join('\r\n')], {type:'text/csv;charset=utf-8'}), 'vyapar-profit-history.csv');
+    }
+  };
+})(window);
+
+/* ===== SCRIPT SOURCE: upload-workspace.js ===== */
+
+/* Choose → preview → import. Parsing never mutates the live business data. */
+(function (root) {
+  'use strict';
+  let draft = null, reading = false, generation = 0, photoUrl = '';
+  const escape = value => String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const size = bytes => bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  function status(text, bad) {
+    const el = document.getElementById('uploadStatus');
+    if (el) { el.textContent = text; el.className = 'notice' + (bad ? ' bad' : ''); }
+  }
+  function render() {
+    const el = document.getElementById('screen-upload'); if (!el || el.querySelector('.upload-workspace')) return;
+    el.innerHTML = `<div class="upload-workspace">
+      <div class="workspace-heading"><div><span class="workspace-eyebrow">ADD YOUR DATA</span><h1>Import & scan</h1><p class="muted">Bring records in. Review before saving.</p></div></div>
+      <div class="workspace-tabs" role="tablist" aria-label="Upload method">
+        <button type="button" role="tab" aria-selected="true" aria-controls="recordImportPanel" onclick="VyaparUpload.tab('import',this)">Import records</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="labelScanPanel" onclick="VyaparUpload.tab('scan',this)">Scan label</button>
+      </div>
+      <section id="recordImportPanel" class="card upload-panel" role="tabpanel">
+        <h2>Choose a file</h2><p class="muted">JSON, CSV or TXT · up to 64 MB</p>
+        <label class="file-drop"><input id="uploadFile" type="file" accept=".json,.csv,.txt,application/json,text/csv,text/plain" onchange="VyaparUpload.fileSelected(this)"><span class="file-drop-icon" aria-hidden="true">↥</span><strong id="uploadFileName">Tap to choose a file</strong><span id="uploadFileSize">From your device or Downloads</span></label>
+        <label for="uploadType">Record type</label><select id="uploadType" onchange="VyaparUpload.clearPreview()"><option value="auto">Detect automatically</option><option value="profit">Monthly profit</option><option value="stock">Stock</option><option value="sale">Sales</option></select>
+        <button id="uploadReview" type="button" class="btn primary upload-main-action" onclick="analyzeFile()">Review file</button>
+        <div id="uploadStatus" class="notice" role="status" aria-live="polite">Choose a file to see a preview.</div><div id="uploadPreview"></div>
+        <details class="upload-help"><summary>Sample files & accepted fields</summary><p class="muted">Profit: year, month, profit<br>Stock: product, qty<br>Sales: date, product, purchasePrice, sellingPrice, qty</p><div class="actions"><button type="button" class="btn" onclick="downloadSampleJson()">Sample JSON</button><button type="button" class="btn" onclick="downloadSampleCsv()">Sample CSV</button></div><p class="muted">A full backup opens the restore flow.</p></details>
+      </section>
+      <section id="labelScanPanel" class="card upload-panel" role="tabpanel" hidden>
+        <h2>Scan a product label</h2><p class="muted">Choose a clear photo, then review the detected stock.</p>
+        <input id="scanMode" type="hidden" value="box"><div class="workspace-tabs" role="group" aria-label="Label type"><button type="button" aria-pressed="true" onclick="VyaparUpload.scanMode('box',this)">Box</button><button type="button" aria-pressed="false" onclick="VyaparUpload.scanMode('carton',this)">Carton</button><button type="button" aria-pressed="false" onclick="VyaparUpload.scanMode('manual',this)">Manual qty</button></div>
+        <label class="file-drop photo-drop"><input id="boxLabelFile" type="file" accept="image/*" capture="environment" onchange="VyaparUpload.photoSelected(this)"><span class="file-drop-icon" aria-hidden="true">▧</span><strong id="scanFileName">Take or choose a photo</strong><span>Keep the full label in the frame</span><img id="scanPhotoPreview" alt="Selected product label" hidden></label>
+        <div id="scanQtyBox"><label for="scanQty">Quantity / pairs</label><input id="scanQty" type="number" min="1" max="10000" inputmode="numeric" value="1"></div>
+        <button type="button" class="btn primary upload-main-action" onclick="scanBoxLabel()">Scan label</button><div id="boxScanStatus" class="notice" role="status" aria-live="polite">Your photo preview will appear above.</div><div id="stockPreviewArea"></div>
+      </section></div>`;
+  }
+  function clearPreview() {
+    draft = null; generation++;
+    const el = document.getElementById('uploadPreview'); if (el) el.innerHTML = '';
+  }
+  function fileSelected(input) {
+    clearPreview(); const file = input.files && input.files[0];
+    document.getElementById('uploadFileName').textContent = file ? file.name : 'Tap to choose a file';
+    document.getElementById('uploadFileSize').textContent = file ? size(file.size) : 'From your device or Downloads';
+    status(file ? 'File selected. Tap Review file to continue.' : 'Choose a file to see a preview.');
+  }
+  function rowsFrom(data) {
+    if (Array.isArray(data)) return data;
+    if (!data || typeof data !== 'object') return [];
+    const rows = root.normalizeRows(data).slice();
+    if (Array.isArray(data.sales)) data.sales.forEach(row => rows.push({...row, type:'sale'}));
+    const stocks = data.stock || data.stocks;
+    if (Array.isArray(stocks)) stocks.forEach(row => rows.push({...row, type:'stock'}));
+    return rows;
+  }
+  async function review() {
+    if (reading) return;
+    const input = document.getElementById('uploadFile'), file = input && input.files && input.files[0];
+    if (!file) { status('Choose a JSON, CSV or TXT file first.', true); return; }
+    clearPreview(); const token = generation; reading = true;
+    const button = document.getElementById('uploadReview'); button.disabled = true;
+    status('Reading your file…');
+    try {
+      const text = await root.VyaparFiles.readText(file);
+      let rows, data = null, backup = false;
+      if (/^[\[{]/.test(text)) {
+        data = root.VyaparFiles.parse(text);
+        try { root.VyaparFiles.backupData(data); backup = true; } catch (_) {}
+        backup = backup || root.VyaparFiles.isEncrypted(data);
+        if (!backup) rows = rowsFrom(data);
+      } else {
+        rows = root.csvTextToObjects(text);
+        if (!rows.length && /\.txt$/i.test(file.name || '')) {
+          rows = text.split(/\r?\n/).map(line => {
+            const m = line.match(/(\d{4}).{0,12}(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*.{0,30}?(-?[\d,]+(?:\.\d+)?)/i);
+            return m ? {year:m[1],month:m[2],profit:m[3]} : null;
+          }).filter(Boolean);
+        }
+      }
+      if (generation !== token) return;
+      if (backup) {
+        draft = { file, backup: true };
+        status('Full backup detected. Restoring will replace your current business records.');
+        document.getElementById('uploadPreview').innerHTML = '<button type="button" class="btn primary upload-main-action" onclick="VyaparUpload.confirmImport()">Restore this backup</button>';
+        return;
+      }
+      rows = (rows || []).filter(row => row && typeof row === 'object' && !Array.isArray(row));
+      if (!rows.length) throw new Error('No records found. Check the sample format below.');
+      let fingerprint = null;
+      if (typeof crypto !== 'undefined' && crypto.subtle) {
+        const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)));
+        fingerprint = Array.from(hash, b => b.toString(16).padStart(2, '0')).join('');
+      }
+      if (generation !== token) return;
+      const type = document.getElementById('uploadType').value;
+      draft = { rows, file, type, fingerprint };
+      const repeated = fingerprint && (Array.isArray(root.state.fileImports) ? root.state.fileImports : []).some(x => x.hash === fingerprint && x.type === type);
+      status(rows.length.toLocaleString('en-IN') + ' rows ready to review.' + (repeated ? ' This file was imported before.' : ''));
+      const preview = rows.slice(0, 4).map(row => '<li><strong>' + escape(row.product || row.name || row.item || [row.year, row.month].filter(Boolean).join(' · ') || 'Record') + '</strong><span>' + escape(row.date || row.month || row.type || type) + '</span><small>' + escape(row.profit !== undefined ? 'Profit ' + row.profit : row.qty !== undefined ? 'Qty ' + row.qty : '') + '</small></li>').join('');
+      document.getElementById('uploadPreview').innerHTML = '<div class="import-preview"><div class="workspace-heading"><h3>Preview</h3><span>First ' + Math.min(4, rows.length) + ' rows</span></div><ul>' + preview + '</ul><p class="muted">Valid rows will be added. Matching manual profit months will be updated.</p><button type="button" class="btn primary upload-main-action" onclick="VyaparUpload.confirmImport()">Import ' + rows.length.toLocaleString('en-IN') + ' rows</button><button type="button" class="btn upload-main-action" onclick="VyaparUpload.clearPreview()">Cancel</button></div>';
+    } catch (error) { status(error.message, true); }
+    finally { reading = false; button.disabled = false; }
+  }
+  async function confirmImport() {
+    if (!draft || reading) return;
+    const next = draft;
+    if (next.backup) {
+      reading = true;
+      try { if (await root.restoreBackup(next.file)) { clearPreview(); status('Backup restored. Your records are ready.'); } }
+      finally { reading = false; } return;
+    }
+    if (next.fingerprint && (Array.isArray(root.state.fileImports) ? root.state.fileImports : []).some(x => x.hash === next.fingerprint && x.type === next.type)) {
+      const accepted = await root.showGlassDialog({ title:'Import again?', message:'This file was already imported. Importing again can create duplicate sales or stock.', confirm:true, okText:'Import again', cancelText:'Cancel' });
+      if (!accepted) return;
+    }
+    reading = true;
+    try {
+      root.VyaparWorkspace.setBusy(true, 'Importing records…');
+      const original = root.state;
+      const staged = { ...original, sales: original.sales.slice(), stocks: original.stocks.slice(), monthly: original.monthly.map(row => ({...row})) };
+      const counts = { profit:0, updated:0, sales:0, stock:0, skipped:0 };
+      for (let i = 0; i < next.rows.length; i += 500) {
+        // Existing validated import routines work against a staged state only.
+        // Restore the live reference before yielding to Android's event loop.
+        try {
+          root.state = staged;
+          const result = root.importDataByType(next.rows.slice(i, i + 500), next.type, 'file-import');
+          Object.keys(counts).forEach(key => { counts[key] += result[key] || 0; });
+        } finally { root.state = original; }
+        root.VyaparWorkspace.busyMessage('Importing ' + Math.min(i + 500, next.rows.length).toLocaleString('en-IN') + ' / ' + next.rows.length.toLocaleString('en-IN') + ' rows…');
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+      const changed = counts.profit + counts.updated + counts.sales + counts.stock;
+      if (!changed) throw new Error('No valid records found. Check the record type and sample fields.');
+      staged.fileImports = (Array.isArray(original.fileImports) ? original.fileImports : []).slice(-99).concat({ hash:next.fingerprint, type:next.type, name:next.file.name, at:new Date().toISOString(), counts });
+      await root.VyaparStorage.replace(staged, () => { root.state = staged; root.VyaparInsights.invalidate(); root.render(); });
+      clearPreview();
+      status(changed.toLocaleString('en-IN') + ' records saved · ' + counts.sales + ' sales · ' + counts.stock + ' stock · ' + (counts.profit + counts.updated) + ' profit · ' + counts.skipped + ' skipped');
+      const input = document.getElementById('uploadFile'); if (input) { input.value = ''; document.getElementById('uploadFileName').textContent = 'Tap to choose another file'; document.getElementById('uploadFileSize').textContent = 'Import saved'; }
+    } catch (error) { status('Import was not saved: ' + error.message, true); }
+    finally { reading = false; root.VyaparWorkspace.setBusy(false); }
+  }
+  root.VyaparUpload = {
+    render, review, clearPreview, fileSelected, confirmImport, rowsFrom,
+    tab(value, button) {
+      document.getElementById('recordImportPanel').hidden = value !== 'import';
+      document.getElementById('labelScanPanel').hidden = value !== 'scan';
+      button.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(b === button)));
+    },
+    scanMode(value, button) {
+      root.setScanMode(value);
+      button.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+    },
+    photoSelected(input) {
+      const file = input.files && input.files[0], image = document.getElementById('scanPhotoPreview');
+      if (photoUrl) { URL.revokeObjectURL(photoUrl); photoUrl = ''; }
+      image.hidden = !file;
+      document.getElementById('scanFileName').textContent = file ? file.name : 'Take or choose a photo';
+      if (file) { photoUrl = URL.createObjectURL(file); image.src = photoUrl; }
+    }
+  };
+})(window);
+
+/* ===== SCRIPT SOURCE: record-pages.js ===== */
+
+/* Bound DOM work without truncating saved data. Search runs over the full list. */
+(function(root){
+  'use strict';
+  const size=40, pages={}, queries={}, selectedYears={}, cache={}; let timer;
+  const escape=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function get(kind){
+    if(cache[kind])return cache[kind];
+    const source=root.state[kind]||[], q=String(queries[kind]||'').trim().toLowerCase(), year=selectedYears[kind]||'';
+    let all=source;
+    if(q||year)all=source.filter(row=>(!year||String(row.month||row.date||'').startsWith(year))&&(!q||[row.date,row.month,row.item,row.product,row.name,row.source].join(' ').toLowerCase().includes(q)));
+    if(kind==='monthly')all=all.slice().sort((a,b)=>String(b.month).localeCompare(String(a.month)));
+    const count=all.length, max=Math.max(0,Math.ceil(count/size)-1), page=pages[kind]=Math.max(0,Math.min(pages[kind]||0,max));
+    const rows=kind==='daily'||kind==='sales'?all.slice(Math.max(0,count-(page+1)*size),count-page*size).reverse():all.slice(page*size,page*size+size);
+    return cache[kind]={rows,count,max,page};
+  }
+  function controls(kind){
+    const data=get(kind), years=[...new Set((root.state[kind]||[]).map(x=>String(x.month||x.date||'').slice(0,4)).filter(x=>/^\d{4}$/.test(x)))].sort().reverse();
+    return '<div class="record-controls"><label class="record-search"><span class="sr-only">Search '+kind+'</span><input type="search" id="recordSearch-'+kind+'" placeholder="Search '+kind+'…" value="'+escape(queries[kind]||'')+'" oninput="VyaparRecords.search(\''+kind+'\',this.value)"></label>'+(kind==='monthly'?'<select aria-label="Record year" onchange="VyaparRecords.year(\''+kind+'\',this.value)"><option value="">All years</option>'+years.map(y=>'<option'+(selectedYears[kind]===y?' selected':'')+'>'+y+'</option>').join('')+'</select>':'')+'<div class="workspace-pager"><button type="button" class="btn" '+(!data.page?'disabled':'')+' onclick="VyaparRecords.page(\''+kind+'\',-1)">Previous</button><span>'+data.count.toLocaleString('en-IN')+' records · '+(data.page+1)+' / '+(data.max+1)+'</span><button type="button" class="btn" '+(data.page===data.max?'disabled':'')+' onclick="VyaparRecords.page(\''+kind+'\',1)">Next</button></div></div>';
+  }
+  function render(kind){delete cache[kind];kind==='stocks'?root.renderStock():root.renderSales();}
+  root.VyaparRecords={get,controls,invalidate(){Object.keys(cache).forEach(k=>delete cache[k]);},page(kind,delta){pages[kind]=(pages[kind]||0)+delta;render(kind);},year(kind,value){selectedYears[kind]=value;pages[kind]=0;render(kind);},search(kind,value){queries[kind]=value;pages[kind]=0;clearTimeout(timer);timer=setTimeout(()=>{render(kind);const input=document.getElementById('recordSearch-'+kind);if(input){input.focus();input.setSelectionRange(value.length,value.length);}},200);}};
+})(window);
+
 /* ===== SCRIPT SOURCE: android-session-flow-647.js ===== */
 
 /* Vyapar AI 6.4.7 — Android startup/session routing + account-password app lock. */
@@ -110,6 +722,7 @@
 
   function routeAfterSplash(){
     if(bootFinished||bootQueued||document.readyState==='loading')return;
+    if(window.VyaparStorage && !window.VyaparStorage.bootReady)return;
     var status=root.getAttribute('data-vyapar-session');
     if(!status||status==='restoring')return;
     var authGate=document.getElementById('vyaparOtpGate');
@@ -147,6 +760,7 @@
   bootObserver=new MutationObserver(routeAfterSplash);
   bootObserver.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['data-vyapar-session']});
   window.addEventListener('vyapar:session-ready',routeAfterSplash);
+  window.addEventListener('vyapar:storage-ready',routeAfterSplash);
   document.addEventListener('DOMContentLoaded',routeAfterSplash,{once:true});
   routeAfterSplash();
   new MutationObserver(function(){hideLegacyLoader();refresh()}).observe(document.documentElement,{childList:true,subtree:true});
@@ -819,7 +1433,7 @@
     try{const data=await readResponse(await fetch(API_BASE+"/auth/google",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idToken:result.idToken})}));needsPasswordSetup(data)?showPasswordSetup(data,"google",false):completeLogin(data,"google")}catch(error){resetGoogleLabels();showMessage(error.message||"Google login is unavailable")}
   };
 
-  function hasCachedLocalAccess(){try{if(JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"null")?.user)return true}catch(_){}try{const state=JSON.parse(localStorage.getItem("vyapar_ai_prod_v1")||"{}");return Boolean(state.sales?.length||state.stocks?.length||state.monthly?.length||state.daily?.length)}catch(_){return false}}
+  function hasCachedLocalAccess(){try{if(JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"null")?.user)return true}catch(_){}try{const state=JSON.parse(localStorage.getItem("vyapar_ai_prod_v1")||"{}");return Boolean(state.__indexedDB||state.sales?.length||state.stocks?.length||state.monthly?.length||state.daily?.length)}catch(_){return false}}
   function finishSessionRestore(status){
     if(status==='login')gate.style.removeProperty('visibility');
     else gate.remove();
@@ -1697,7 +2311,6 @@ function normalizeRecords(list){
   const usedIds = new Set();
 
   return list
-    .slice(0, 50000)
     .filter(record =>
       record &&
       typeof record === 'object' &&
@@ -1838,9 +2451,7 @@ function normalizeState(raw){
       ...settings,
 
       theme:
-        settings.theme === 'light'
-          ? 'light'
-          : 'dark',
+        'dark',
 
       performance:
         ['auto', 'smooth', 'lite']
@@ -1910,26 +2521,16 @@ function loadState(){
   }
 }
 
+function persistBusinessState(value){
+  if(window.VyaparStorage) return window.VyaparStorage.save(value);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(value)); return Promise.resolve(); }
+  catch(error) { return Promise.reject(error); }
+}
 function save(){
-  try{
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(state)
-    );
-
-  }catch(error){
-    console.error(
-      'Local data save failed:',
-      error
-    );
-
-    alert(
-      'Data could not be saved. Browser storage may be full. Download a backup and try again.'
-    );
-
-    return false;
-  }
-
+  if(window.VyaparInsights) window.VyaparInsights.invalidate();
+  persistBusinessState(state).catch(error => {
+    if(!window.VyaparStorage) alert('Data was not saved: ' + error.message);
+  });
   render();
   return true;
 }
@@ -2049,7 +2650,7 @@ function setPerformanceMode(mode){
 }
 
 function activeTheme(){
-  return state.settings && state.settings.theme === 'light' ? 'light' : 'dark';
+  return 'dark';
 }
 
 function applyTheme(){
@@ -2075,7 +2676,7 @@ function applyTheme(){
 
 function persistThemeWithoutRender(){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    persistBusinessState(state).catch(() => {});
   }catch(error){
     console.warn('Theme preference could not be saved:', error);
   }
@@ -2084,7 +2685,7 @@ function persistThemeWithoutRender(){
 function runThemeTransition(nextTheme, x, y){
   const html = document.documentElement;
   const body = document.body;
-  const targetTheme = nextTheme === 'light' ? 'light' : 'dark';
+  const targetTheme = 'dark';
   const androidMode = html.classList.contains('android-ui') || html.classList.contains('native-android');
   const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -2303,6 +2904,7 @@ function setTab(tab, withLoader = false){
   });
 
   if(tab === 'analytics'){
+    if(window.VyaparInsights) window.VyaparInsights.render(true);
     setTimeout(drawAnalyticsCharts, 0);
   }
   if(motion) motion.afterPage(navigation, screen);
@@ -2568,6 +3170,8 @@ function handleNativeBackPress(){
 window.handleNativeBackPress=handleNativeBackPress;
 
 function render(){
+  window.__vyaparDataRevision = (window.__vyaparDataRevision || 0) + 1;
+  if(window.VyaparRecords) window.VyaparRecords.invalidate();
   forceReadableFont();
   applyTheme();
   applyGlassControl();
@@ -2684,72 +3288,9 @@ function renderHome(){
 }
 
 function renderUpload(){
-  const el = document.getElementById('screen-upload');
-  if(!el) return;
-
-  const backend = cleanText(state?.profile?.backendUrl || API_BASE_URL, 500);
-  el.innerHTML = `
-    <div class="card">
-      <h2>AI / File Import</h2>
-      <p class="muted">
-        Import JSON, CSV or TXT business data, or scan a footwear box/carton label through the secure backend.
-      </p>
-
-      <label>Upload Type</label>
-      <select id="uploadType">
-        <option value="auto">Auto Detect</option>
-        <option value="profit">Profit</option>
-        <option value="stock">Stock</option>
-        <option value="sale">Sale</option>
-      </select>
-
-      <label style="margin-top:14px;display:block">Upload JSON / CSV / TXT</label>
-      <input id="uploadFile" type="file" accept=".json,.csv,.txt,application/json,text/csv,text/plain">
-
-      <div class="actions">
-        <button class="btn primary" onclick="analyzeFile()">Analyze and Import</button>
-        <button class="btn" onclick="downloadSampleJson()">Sample JSON</button>
-        <button class="btn" onclick="downloadSampleCsv()">Sample CSV</button>
-      </div>
-      <div id="uploadStatus" class="notice" style="margin-top:12px">
-        Choose a file, select its type, then select Analyze and Import.
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h2>AI Box / Carton Scanner</h2>
-      <p class="muted">Take or choose a clear label photo. The API key stays on the backend; it is never stored in the APK.</p>
-      <input id="scanMode" type="hidden" value="box">
-      <div class="actions" role="group" aria-label="Scan mode">
-        <button class="btn primary" type="button" onclick="setScanMode('box');this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('primary'));this.classList.add('primary')">Box</button>
-        <button class="btn" type="button" onclick="setScanMode('carton');this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('primary'));this.classList.add('primary')">Carton</button>
-        <button class="btn" type="button" onclick="setScanMode('manual');this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('primary'));this.classList.add('primary')">Manual Qty</button>
-      </div>
-      <label style="margin-top:12px;display:block">Label photo</label>
-      <input id="boxLabelFile" type="file" accept="image/jpeg,image/png,image/webp,image/*" capture="environment">
-      <div id="scanQtyBox" style="margin-top:12px">
-        <label>Quantity / pairs</label>
-        <input id="scanQty" type="number" min="1" max="10000" inputmode="numeric" value="1">
-      </div>
-      <div class="actions">
-        <button class="btn primary" type="button" onclick="scanBoxLabel()">Scan Label</button>
-      </div>
-      <div id="boxScanStatus" class="notice" style="margin-top:12px">
-        Scanner ready. Choose a clear label photo to continue.
-      </div>
-      <div id="stockPreviewArea" style="margin-top:12px"></div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h2>Upload Format Help</h2>
-      <div class="notice success">
-        Profit fields: year, month, profit<br>
-        Stock fields: product/item/name, qty, lowStock<br>
-        Sale fields: date, product, purchasePrice, sellingPrice, qty
-      </div>
-    </div>
-  `;
+  if(window.VyaparUpload) window.VyaparUpload.render();
 }
+
 function nextAction(t){
   if(t.profit < yearlyGoal() * 0.4){
     return 'Record sales and profit regularly and identify fast-moving stock.';
@@ -2834,7 +3375,7 @@ async function scanBoxLabel(){
   if(status){
     status.style.display = 'block';
     status.className = 'notice';
-    status.textContent = 'Button clicked. Checking photo...';
+    status.textContent = 'Checking your photo…';
   } else {
     console.warn('Scan status UI is unavailable.');
     return;
@@ -3155,71 +3696,9 @@ function clearStockPreview(){
 }
 
 async function analyzeFile(){
-  const input = document.getElementById('uploadFile');
-  const typeInput = document.getElementById('uploadType');
-  const box = document.getElementById('uploadStatus');
-
-  const file = input && input.files && input.files[0];
-  const uploadType = typeInput ? typeInput.value : 'auto';
-
-  if(!box){
-    console.warn('Upload status UI is unavailable.');
-    return;
-  }
-
-  box.style.display = 'block';
-
-  if(!file){
-    box.textContent = 'Choose a JSON, CSV, or TXT file first.';
-    box.className = 'notice bad';
-    return;
-  }
-
-  const fileName = String(file.name || '').toLowerCase();
-
-  try{
-    box.textContent = 'Reading file...';
-    box.className = 'notice';
-
-    if(fileName.endsWith('.json')){
-      const text = (await file.text()).replace(/^\uFEFF/, '').trim();
-      const data = JSON.parse(text);
-
-      const result = importDataByType(data, uploadType, 'json-import');
-
-      statusResult(result, uploadType === 'auto' ? 'JSON Auto' : 'JSON ' + uploadType.toUpperCase());
-      return;
-    }
-
-    if(fileName.endsWith('.csv') || fileName.endsWith('.txt')){
-      const text = (await file.text()).replace(/^\uFEFF/, '').trim();
-
-      let result;
-
-      if(uploadType === 'auto'){
-        result = importCsvOrText(text, {
-          source: fileName.endsWith('.csv') ? 'csv-import' : 'txt-import'
-        });
-      } else {
-        result = importCsvTextByType(
-          text,
-          uploadType,
-          fileName.endsWith('.csv') ? 'csv-import' : 'txt-import'
-        );
-      }
-
-      statusResult(result, uploadType === 'auto' ? 'CSV/TXT Auto' : 'CSV/TXT ' + uploadType.toUpperCase());
-      return;
-    }
-
-    box.textContent = 'Only JSON, CSV, TXT supported.';
-    box.className = 'notice bad';
-
-  } catch(error) {
-    box.textContent = 'Import failed: ' + error.message;
-    box.className = 'notice bad';
-  }
+  return window.VyaparUpload.review();
 }
+
 function importDataByType(data, uploadType, source){
   if(uploadType === 'auto'){
     return importExtracted(data, {
@@ -3394,7 +3873,7 @@ function statusResult(r, type){
     <b>${r.skipped}</b> skipped.
   `;
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  persistBusinessState(state).catch(() => {});
 
   renderHome();
   renderSales();
@@ -4212,6 +4691,7 @@ function renderSales(){
 
     <div class="card" style="margin-top:14px">
       <h2>Daily Records</h2>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('daily') : ''}
 
       <div class="scroll">
         <table class="table">
@@ -4226,7 +4706,7 @@ function renderSales(){
 
           <tbody>
             ${
-              (state.daily || []).slice().reverse().map(x => `
+              (window.VyaparRecords ? window.VyaparRecords.get('daily').rows : (state.daily || []).slice().reverse()).map(x => `
                 <tr>
                   <td>${esc(x.date)}</td>
                   <td>${money(x.sale)}</td>
@@ -4247,6 +4727,7 @@ function renderSales(){
 
     <div class="card" style="margin-top:14px">
       <h2>Sales Records</h2>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('sales') : ''}
 
       <div class="scroll">
         <table class="table">
@@ -4264,7 +4745,7 @@ function renderSales(){
 
           <tbody>
             ${
-              state.sales.slice().reverse().map(x => `
+              (window.VyaparRecords ? window.VyaparRecords.get('sales').rows : state.sales.slice().reverse()).map(x => `
                 <tr>
                   <td>${esc(x.date)}</td>
                   <td>${esc(x.product)}</td>
@@ -4288,6 +4769,7 @@ function renderSales(){
 
     <div id="monthly-profit-records" class="card" style="margin-top:14px">
       <h2>Monthly Profit Records</h2>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('monthly') : ''}
 
       <div class="scroll">
         <table class="table">
@@ -4302,8 +4784,7 @@ function renderSales(){
 
           <tbody>
             ${
-              state.monthly.slice()
-                .sort((a, b) => String(b.month).localeCompare(String(a.month)))
+              (window.VyaparRecords ? window.VyaparRecords.get('monthly').rows : state.monthly.slice().sort((a,b)=>String(b.month).localeCompare(String(a.month))))
                 .map(x => `
                   <tr>
                     <td>${monthLabel(x.month)}</td>
@@ -4728,9 +5209,10 @@ function renderStock(){
 
     <div class="card" style="margin-top:14px">
       <h3>Stock Alerts</h3>
+      ${window.VyaparRecords ? window.VyaparRecords.controls('stocks') : ''}
 
       ${
-        state.stocks.map(s => `
+        (window.VyaparRecords ? window.VyaparRecords.get('stocks').rows : state.stocks).map(s => `
           <p class="pill">
             ${esc(s.item || s.product || 'Item')}: ${num(s.qty)} left
             ${num(s.qty) <= num(s.min || s.lowStock || 5) ? '<b class="danger-text"> Reorder</b>' : ''}
@@ -4931,109 +5413,7 @@ function renderMonthYearComparison(years){
 }
 
 function renderAnalytics(){
-  const el = document.getElementById('screen-analytics');
-  if(!el) return;
-
-  const currentYear = currentYearValue();
-  const previousYear = String(Number(currentYear) - 1);
-  const years = availableYears();
-  if(!years.includes(currentYear)) years.push(currentYear);
-  years.sort();
-
-  const currentProfit = yearlyProfitForYear(currentYear);
-  const previousProfit = yearlyProfitForYear(previousYear);
-  const currentStats = monthlyStatsForYear(currentYear);
-  const investment = num(state.profile.totalInvestment);
-  const goal = yearlyGoal();
-  const goalProgress = Math.max(0, Math.min(100, currentProfit / goal * 100));
-  const yoy = previousProfit !== 0 ? ((currentProfit - previousProfit) / Math.abs(previousProfit)) * 100 : null;
-  const valuationMultiple = 2;
-  const value = Math.max(currentProfit * valuationMultiple, 0);
-  const roi = investment > 0 ? (currentProfit / investment) * 100 : 0;
-  const paybackMonths = investment > 0 && currentStats.avg > 0 ? investment / currentStats.avg : 0;
-  const pnlParts = profitLossDistribution(currentYear);
-  const expenses = pnlParts.filter(item => item.label !== 'Product Sales').reduce((sum,item) => sum + item.value, 0);
-  const income = yearlySalesForYear(currentYear);
-
-  el.innerHTML = `
-    <section class="card insight-hero-card">
-      <div class="insight-hero-copy">
-        <span class="home-section-kicker">${esc(currentYear)} INSIGHTS</span>
-        <h2>Yearly Profit Dashboard</h2>
-        <p class="muted">Current year stays separate from older years. Compare annual profit and then swipe January-to-January through December-to-December.</p>
-      </div>
-      <div class="insight-goal-ring" style="--goal-progress:${goalProgress.toFixed(1)}">
-        <div><b>${Math.round(goalProgress)}%</b><span>yearly goal</span></div>
-      </div>
-    </section>
-
-    <div class="stats insight-year-stats">
-      <div class="stat"><span>${esc(currentYear)} Yearly Profit</span><b>${money(currentProfit)}</b></div>
-      <div class="stat"><span>${esc(previousYear)} Profit</span><b>${money(previousProfit)}</b></div>
-      <div class="stat"><span>YoY Change</span><b>${yoy === null ? '-' : pct(yoy)}</b></div>
-      <div class="stat"><span>Yearly Goal</span><b>${money(goal)}</b></div>
-      <div class="stat"><span>Monthly Average</span><b>${money(currentStats.avg)}</b></div>
-      <div class="stat"><span>Highest Month</span><b>${money(currentStats.high)}</b></div>
-      <div class="stat"><span>ROI</span><b>${investment > 0 ? pct(roi) : '-'}</b></div>
-      <div class="stat"><span>Payback</span><b>${paybackMonths > 0 ? paybackMonths.toFixed(1) + ' months' : '-'}</b></div>
-    </div>
-
-    <div class="insight-summary-grid">
-      <div class="card chart-wrap insight-pnl-card">
-        <div class="chart-head"><div><span class="home-section-kicker">VISUAL BREAKDOWN</span><h2>Profit and Loss Distribution</h2></div><span class="pill">${esc(currentYear)}</span></div>
-        <div class="pnl-visual-grid">
-          <canvas id="pnlDistributionCanvas" aria-label="Profit and loss distribution chart"></canvas>
-          <div class="pnl-legend">
-            ${pnlParts.length ? pnlParts.map(item => `<div class="pnl-legend-item"><i style="background:${item.color}"></i><span>${esc(item.label)}</span><b>${money(item.value)}</b></div>`).join('') : '<div class="notice">Add sales or expense data to build the distribution.</div>'}
-          </div>
-        </div>
-      </div>
-
-      <div class="card insight-finance-card">
-        <span class="home-section-kicker">YEAR SUMMARY</span>
-        <h2>Profit & Loss</h2>
-        <div class="insight-finance-numbers">
-          <div><strong>${money(currentProfit)}</strong><span>Net income</span></div>
-          <div><strong>${money(expenses)}</strong><span>Tracked costs & expenses</span></div>
-          <div><strong>${money(income)}</strong><span>Recorded income</span></div>
-        </div>
-        <div class="insight-mini-goal"><span style="width:${goalProgress.toFixed(1)}%"></span></div>
-        <small class="muted">${pct(goalProgress)} of yearly profit goal completed.</small>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h2>Total Investment</h2>
-      <p class="muted">Stock, furniture, renovation, computer and setup cost total.</p>
-      <label>Total Investment Amount</label>
-      <input type="number" value="${investment}" placeholder="Example: 500000" onchange="state.profile.totalInvestment=num(this.value);save()">
-    </div>
-
-    <div class="card chart-wrap" style="margin-top:14px">
-      <div class="chart-head"><div><h2>Year Wise Profit Graph</h2><p class="muted">Each year is shown separately — older years are never added into the current-year card.</p></div></div>
-      <canvas id="yearlyProfitCanvas"></canvas>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <div class="chart-head"><div><h2>Monthly Comparison · Year on Year</h2><p class="muted">Swipe horizontally: January compares every year with January, then February with February, through December.</p></div><span class="pill">JAN → DEC</span></div>
-      ${renderMonthYearComparison(availableYears())}
-    </div>
-
-    ${availableYears().length
-      ? availableYears().map(y => `
-        <div class="card chart-wrap" style="margin-top:14px">
-          <h2>${y} Monthly Profit Graph</h2>
-          <canvas id="monthlyProfitCanvas-${y}"></canvas>
-        </div>
-      `).join('')
-      : `<div class="notice bad" style="margin-top:14px">No analytics data available yet.</div>`
-    }
-
-    <div class="card" style="margin-top:14px">
-      <h2>10 Year Plan</h2>
-      <ol>${plan10({ profit: currentProfit }).map(x => `<li>${x}</li>`).join('')}</ol>
-    </div>
-  `;
+  if(window.VyaparInsights) window.VyaparInsights.render();
 }
 
 function drawProfitChart(){
@@ -5041,9 +5421,7 @@ function drawProfitChart(){
 }
 
 function drawAnalyticsCharts(){
-  drawYearlyProfitChart();
-  drawProfitLossDistributionChart();
-  availableYears().forEach(y => drawMonthlyYearChart(y));
+  // The bounded SVG chart scales with its card; no resize/redraw loop is needed.
 }
 
 function chartTheme(){
@@ -5065,7 +5443,7 @@ function setupCanvas(c, height){
   const lite = isLiteMode();
   const dpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
 
-  const w = Math.max(c.offsetWidth || 320, 320);
+  const w = Math.max(c.offsetWidth || 280, 1);
   const h = height || (window.innerWidth < 800 ? 260 : 300);
 
   c.width = Math.floor(w * dpr);
@@ -5869,21 +6247,6 @@ function renderSettings(){
       <div class="card settings-section">
         <div class="settings-section-heading">
           <div>
-            <span class="settings-kicker">APPEARANCE</span>
-            <h2>Appearance</h2>
-            <p class="muted">Choose the visual mode for the Liquid Glass interface.</p>
-          </div>
-          <div class="settings-section-icon">◐</div>
-        </div>
-        <div class="segmented-settings">
-          <button class="btn ${activeTheme() === 'light' ? 'primary' : ''}" onclick="setTheme('light')">Light</button>
-          <button class="btn ${activeTheme() === 'dark' ? 'primary' : ''}" onclick="setTheme('dark')">Dark</button>
-        </div>
-      </div>
-
-      <div class="card settings-section">
-        <div class="settings-section-heading">
-          <div>
             <span class="settings-kicker">PERFORMANCE</span>
             <h2>Motion & performance</h2>
             <p class="muted">Adjust animation intensity for your device.</p>
@@ -5914,7 +6277,7 @@ function renderSettings(){
         </div>
 
         <label class="settings-file-label">Restore a device backup</label>
-        <input class="settings-file-input" type="file" accept=".json,application/json" onchange="restoreBackup(this.files[0])">
+        <input class="settings-file-input" type="file" accept=".json,application/json" onchange="restoreBackup(this.files[0]).finally(()=>{this.value=''})">
 
         <div id="settingsStatus" class="notice" style="margin-top:10px">Automatic local saving is active.</div>
       </div>
@@ -5962,51 +6325,49 @@ function downloadBackup(){
   );
 }
 
-async function restoreBackup(file){
-  if(!file){
-    return;
-  }
-
-  const maxBackupSize =
-    10 * 1024 * 1024;
-
-  if(file.size > maxBackupSize){
-    alert(
-      'Backup file is too large. The maximum size is 10 MB.'
-    );
-
-    return;
-  }
-
-  try{
-    const parsed =
-      JSON.parse(
-        await file.text()
-      );
-
-    const restored =
-      normalizeState(parsed);
-
-    /*
-      A business-data backup must never replace
-      the authenticated account or paid plan.
-    */
-    restored.subscription = {
-      ...state.subscription
-    };
-
-    restored.plan =
-      state.plan;
-
+async function replaceBusinessData(restored){
+  restored.subscription={...state.subscription};
+  restored.plan=state.plan;
+  const apply = () => {
     state = restored;
-    save();
-    showGlassToast('Backup restored successfully.');
+    if(window.VyaparInsights) window.VyaparInsights.invalidate();
+    if(window.VyaparUpload) window.VyaparUpload.clearPreview();
+    render();
+  };
+  if(window.VyaparStorage) await window.VyaparStorage.replace(restored, apply);
+  else { await persistBusinessState(restored); apply(); }
+}
 
+async function restoreBackup(file, encryptedOnly = false){
+  if(!file) return false;
+  let busy = false;
+  try{
+    const io = window.VyaparFiles;
+    if(!io) throw new Error('Restart the app and try again.');
+    let parsed = io.parse(await io.readText(file));
+    const encrypted = io.isEncrypted(parsed);
+    if(encryptedOnly && !encrypted) throw new Error('Choose a password-protected backup.');
+    if(encrypted){
+      const password = prompt('Backup password');
+      if(!password) return false;
+      parsed = await io.decrypt(parsed, password);
+    }
+    const restored = normalizeState(io.backupData(parsed));
+    restored.subscription={...state.subscription};
+    restored.plan=state.plan;
+    const count = Object.values(restored).reduce((sum, rows) => sum + (Array.isArray(rows) ? rows.length : 0), 0);
+    const options = {title:'Restore backup?',message:'Replace current business data with '+count.toLocaleString('en-IN')+' saved records? Download a backup first if needed.',confirm:true,kind:'danger',okText:'Restore',cancelText:'Cancel'};
+    const accepted = window.VyaparWorkspace ? await showGlassDialog(options) : confirm(options.message);
+    if(!accepted) return false;
+    if(window.VyaparWorkspace){ window.VyaparWorkspace.setBusy(true, 'Restoring your backup…'); busy = true; }
+    await replaceBusinessData(restored);
+    showGlassToast('Backup restored.');
+    return true;
   }catch(error){
-    alert(
-      'Backup restore failed: ' +
-      error.message
-    );
+    alert((encryptedOnly ? 'Encrypted restore failed: ' : 'Backup restore failed: ') + error.message);
+    return false;
+  }finally{
+    if(busy) window.VyaparWorkspace.setBusy(false);
   }
 }
 
@@ -6117,7 +6478,7 @@ render();
   async function advCacheSave(){ const db=await openAdvDB(); if(!db)return; try{ const tx=db.transaction('cache','readwrite'); tx.objectStore('cache').put({state:JSON.stringify(state),at:Date.now()},'state'); }catch(e){} }
   async function advCacheLoad(){ const db=await openAdvDB(); if(!db)return null; return new Promise(resolve=>{try{const r=db.transaction('cache').objectStore('cache').get('state');r.onsuccess=()=>resolve(r.result?safeJson(r.result.state):null);r.onerror=()=>resolve(null)}catch(e){resolve(null)}}); }
   const _save=window.save;
-  window.save=function(){ const result=_save(); advCacheSave(); return result; };
+  window.save=function(){ const result=_save(); if(!window.VyaparStorage) advCacheSave(); return result; };
 
   // 63: virtualization helpers / lazy calculation
   window.advDebounce=function(fn,wait=180){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>fn.apply(this,a),wait)}};
@@ -6134,7 +6495,7 @@ render();
     advEnsure(); const rows=[]; const map=new Map();
     (state.purchases||[]).forEach(p=>{const key=p.productId||String(p.product||'').toLowerCase(); rows.push({id:uid(),date:p.date||today(),type:'PURCHASE',product:p.product,qty:num(p.qty),amount:num(p.amount),source:p.id}); map.set(key,(map.get(key)||0)+num(p.qty));});
     (state.invoices||[]).forEach(i=>(i.items||[]).forEach(it=>{const key=it.productId||String(it.product||'').toLowerCase(); rows.push({id:uid(),date:i.date||today(),type:'SALE',product:it.product,qty:-num(it.qty),amount:num(it.price)*num(it.qty),source:i.id}); map.set(key,(map.get(key)||0)-num(it.qty));}));
-    state.stockLedger=rows.slice(-50000); advSave('Rebuild stock ledger','Derived from purchases and invoices'); return map;
+    state.stockLedger=rows; advSave('Rebuild stock ledger','Derived from purchases and invoices'); return map;
   }
   window.advReconcile=function(){ recomputeLedger(); advToast('Stock ledger reconciled.'); advRenderModule('inventory'); };
 
@@ -6174,7 +6535,7 @@ render();
         let added=0, skipped=0;
         const skuSet=new Set(products().map(p=>String(p.sku||'').toLowerCase()).filter(Boolean));
         const barcodeSet=new Set(products().map(p=>String(p.barcode||'').trim()).filter(Boolean));
-        rows.slice(0,50000).forEach(c=>{
+        rows.forEach(c=>{
           const o={}; headers.forEach((h,i)=>o[h]=c[i]??'');
           const name=cleanText(o.name||o.product,200); if(!name){skipped++;return;}
           const sku=cleanText(o.sku,100)||('SKU-'+Date.now()+'-'+added);
@@ -6346,12 +6707,23 @@ render();
   window.advSession=function(action){AE();if(action==='start'){const name=prompt('Staff/user name','Owner');state.sessions.push({id:uid(),user:name,at:new Date().toISOString(),status:'active'});save();}else{state.sessions=state.sessions.map(s=>({...s,status:'closed'}));save();advToast('Sessions closed.');}};
   window.advResolveCloud=function(){AE();const local=Date.now(),server=state.cloudSync?.lastSync?new Date(state.cloudSync.lastSync).getTime():0;state.cloudSync.resolution=local>=server?'local-wins':'server-wins';save();advToast('Conflict policy set to '+state.cloudSync.resolution+'.');};
   window.advVaultEnable=async function(){AE();const pass=prompt('Local vault password');if(!pass)return;state.localVault={enabled:true,hash:btoa(pass),enabledAt:new Date().toISOString()};save();advToast('Local vault metadata enabled.');};
-  window.advRollbackImport=function(){const last=state.imports?.[state.imports.length-1];if(!last){alert('No import snapshot.');return;}if(last.before)state=normalizeState(last.before);save();advToast('Last import rolled back.');};
+  window.advRollbackImport=async function(){
+    const last=state.imports?.[state.imports.length-1];
+    if(!last || !last.before){alert('No import snapshot.');return;}
+    if(!await showGlassDialog({title:'Undo last import?',message:'Restore the records saved before that import?',confirm:true,okText:'Undo import',cancelText:'Cancel'}))return;
+    try{
+      const restored = last.scope==='products'
+        ? {...state,products:normalizeRecords(last.before.products),imports:state.imports.slice(0,-1)}
+        : normalizeState(window.VyaparFiles.backupData(last.before));
+      await replaceBusinessData(restored);
+      advToast('Last import rolled back.');
+    }catch(error){alert('Import rollback failed: '+error.message);}
+  };
   window.advWorkerExport=function(){const data=(state.products||[]);const workerCode=`onmessage=e=>{const d=e.data,rows=[['Product','Qty','Sale'],...d.map(p=>[p.name,p.qty,p.sellingPrice])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\n');postMessage(csv)}`;const blob=new Blob([workerCode],{type:'application/javascript'});const w=new Worker(URL.createObjectURL(blob));w.onmessage=e=>{downloadBlob(new Blob([e.data],{type:'text/csv'}),'products-worker.csv');w.terminate();};w.postMessage(data);};
   window.advUPI=function(){const vpa=prompt('UPI ID','merchant@upi'),amount=prompt('Amount','0');if(!vpa)return;const url='upi://pay?pa='+encodeURIComponent(vpa)+'&pn='+encodeURIComponent(state.profile.businessName)+'&am='+encodeURIComponent(amount||'0')+'&cu=INR';location.href=url;};
   window.advPaymentConfirmation=function(){const ref=prompt('Payment reference/UTR');if(!ref)return;state.notifications=(state.notifications||[]);state.notifications.unshift({id:uid(),at:new Date().toISOString(),type:'payment',message:'Payment reference logged: '+ref});save();advToast('Payment reference saved.');};
   window.advLaunchOCR=function(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>advOCRUpload(i);i.click();};
-  window.advAddProductImportSnapshot=function(){state.imports.push({id:uid(),at:new Date().toISOString(),before:JSON.parse(JSON.stringify(state)),source:'manual'});state.imports=state.imports.slice(-10);};
+  window.advAddProductImportSnapshot=function(){state.imports.push({id:uid(),at:new Date().toISOString(),scope:'products',before:{products:JSON.parse(JSON.stringify(state.products||[]))},source:'manual'});state.imports=state.imports.slice(-10);};
   window.addEventListener('error',e=>{try{AE();state.errorLog.unshift({id:uid(),at:new Date().toISOString(),type:'error',message:String(e.message||e.error||e)});state.errorLog=state.errorLog.slice(0,200);localStorage.setItem('vyapar_ai_error_log_v1',JSON.stringify(state.errorLog));}catch(_){}},{passive:true});
   window.addEventListener('unhandledrejection',e=>{try{AE();state.errorLog.unshift({id:uid(),at:new Date().toISOString(),type:'unhandledrejection',message:String(e.reason||e)});state.errorLog=state.errorLog.slice(0,200);localStorage.setItem('vyapar_ai_error_log_v1',JSON.stringify(state.errorLog));}catch(_){}},{passive:true});
   AE();
@@ -6381,36 +6753,15 @@ render();
     window.advImportCSV=function(input){
       try{
         state.imports=state.imports||[];
-        state.imports.push({id:uid(),at:new Date().toISOString(),before:JSON.parse(JSON.stringify(state)),source:input?.files?.[0]?.name||'csv'});
+        state.imports.push({id:uid(),at:new Date().toISOString(),scope:'products',before:{products:JSON.parse(JSON.stringify(state.products||[]))},source:input?.files?.[0]?.name||'csv'});
         state.imports=state.imports.slice(-10);
         _csvImport(input);
       }catch(e){alert('Import failed safely: '+e.message);}
     };
   }
   window.advRestoreSecure=async function(input){
-    const file=input?.files?.[0];
-    if(!file)return;
-    if(file.size>10*1024*1024){alert('Encrypted backup is too large. The maximum size is 10 MB.');return;}
-    const pass=prompt('Backup password');
-    if(!pass)return;
-    try{
-      const obj=JSON.parse(await file.text());
-      const validByteArray=(value,length)=>Array.isArray(value)&&(!length||value.length===length)&&value.every(x=>Number.isInteger(x)&&x>=0&&x<=255);
-      if(!obj||obj.v!==1||!validByteArray(obj.s,16)||!validByteArray(obj.i,12)||!validByteArray(obj.d)||!obj.d.length||obj.d.length>5*1024*1024)throw new Error('Invalid encrypted backup envelope');
-      const enc=new TextEncoder(),dec=new TextDecoder();
-      const salt=new Uint8Array(obj.s),iv=new Uint8Array(obj.i),data=new Uint8Array(obj.d);
-      const km=await crypto.subtle.importKey('raw',enc.encode(pass),'PBKDF2',false,['deriveKey']);
-      const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
-      const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data);
-      const restored=normalizeState(JSON.parse(dec.decode(plain)));
-      restored.subscription={...state.subscription};
-      restored.plan=state.plan;
-      state=restored;
-      save();
-      advToast('Encrypted backup restored.');
-    }catch(e){
-      alert('Encrypted restore failed. Wrong password or corrupted backup.');
-    }
+    try { return await restoreBackup(input?.files?.[0], true); }
+    finally { if(input) input.value=''; }
   };
   const _oldSec=window.advSecureBackup;
 })();
@@ -6747,10 +7098,7 @@ render();
       state.plan =
         plan;
 
-      localStorage.setItem(
-        "vyapar_ai_prod_v1",
-        JSON.stringify(state)
-      );
+      persistBusinessState(state).catch(() => {});
 
       const badge =
         document.getElementById(
@@ -6852,6 +7200,7 @@ render();
   }
 
   async function initialCloudDecision(){
+    if(window.VyaparStorage) await window.VyaparStorage.ready;
     if(!authToken()){
       return;
     }
@@ -6880,30 +7229,8 @@ render();
         !localHasData &&
         cloudHasData
       ){
-        const restored =
-          typeof normalizeState ===
-          "function"
-            ? normalizeState(
-                cloud.state
-              )
-            : cloud.state;
-
-        state =
-          restored;
-
-        applyAccountToApp();
-
-        localStorage.setItem(
-          "vyapar_ai_prod_v1",
-          JSON.stringify(state)
-        );
-
-        if(
-          typeof render ===
-          "function"
-        ){
-          render();
-        }
+        const restored = normalizeState(window.VyaparFiles.backupData(cloud.state));
+        await replaceBusinessData(restored);
 
       }else if(
         localHasData &&
@@ -6925,6 +7252,7 @@ render();
   async function pushCloudState(
     showMessage
   ){
+    if(window.VyaparStorage) await window.VyaparStorage.ready;
     if(
       !authToken() ||
       syncBusy
@@ -7012,6 +7340,7 @@ render();
   }
 
   async function pullCloudState(){
+    if(window.VyaparStorage) await window.VyaparStorage.ready;
     if(!authToken()){
       forceOtpLogin();
       return;
@@ -7049,27 +7378,8 @@ render();
         }
       }
 
-      state =
-        typeof normalizeState ===
-        "function"
-          ? normalizeState(
-              data.state
-            )
-          : data.state;
-
-      applyAccountToApp();
-
-      localStorage.setItem(
-        "vyapar_ai_prod_v1",
-        JSON.stringify(state)
-      );
-
-      if(
-        typeof render ===
-        "function"
-      ){
-        render();
-      }
+      const restored = normalizeState(window.VyaparFiles.backupData(data.state));
+      await replaceBusinessData(restored);
 
       premiumToast(
         "Cloud data restored",
@@ -11398,22 +11708,22 @@ function renderBusinessHome(){
   const cards=[];
 
   const daily=[
-    featureCard('Transactions','Record sales, purchases, returns and payments.',button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')+button('Purchase',"vx621OpenPlatform('business','transactions','business','PURCHASE')",'business'),'⇄'),
-    featureCard('Customers & Udhaar','Customer balances, receipts, statements and reminders.',button('Customers',"vx621OpenAdvanced('business','customers','business')",'business','primary')+button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business'),'👥'),
-    featureCard('Suppliers & Purchases','Supplier records, purchases, payable flows and purchase returns.',button('Suppliers',"vx621OpenAdvanced('business','suppliers','business')",'business')+button('Purchase Return',"vx621OpenPlatform('business','transactions','business','PURCHASE_RETURN')",'business'),'▣'),
-    featureCard('Cash & Bank','Cash, bank, UPI, custom accounts, payment-in/out and reconciled balances.',button('Open Cash & Bank',"vx621OpenDomain('finance','business')",'business','primary')+button('Cheques & Loans',"vx621OpenPlatform('business','finance620','business')",'business'),'₹')
+    featureCard('Transactions','Sales, purchases and returns.',button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')+button('Purchase',"vx621OpenPlatform('business','transactions','business','PURCHASE')",'business'),'⇄'),
+    featureCard('Customers & Udhaar','Balances, receipts and reminders.',button('Customers',"vx621OpenAdvanced('business','customers','business')",'business','primary')+button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business'),'👥'),
+    featureCard('Suppliers & Purchases','Suppliers, dues and returns.',button('Suppliers',"vx621OpenAdvanced('business','suppliers','business')",'business')+button('Purchase Return',"vx621OpenPlatform('business','transactions','business','PURCHASE_RETURN')",'business'),'▣'),
+    featureCard('Cash & Bank','Cash, bank and UPI payments.',button('Open Cash & Bank',"vx621OpenDomain('finance','business')",'business','primary')+button('Cheques & Loans',"vx621OpenPlatform('business','finance620','business')",'business'),'₹')
   ];
   const accounting=[
     featureCard('Central Ledgers','View customer, supplier and account balances.',button('Open Ledgers',"vx621OpenPlatform('business','ledger','business')",'business','primary'),'≡'),
-    featureCard('58 Reports','Day Book, P&L, Balance Sheet, bill/party profit, stock, party and GST reports.',button('Open Reports',"vx621OpenDomain('reports','business')",'business','primary'),'▥'),
-    featureCard('Advanced GST & Tax','State of Supply, CESS, RCM, E-Way fields, TDS/TCS and Composition configuration.',button('Advanced GST',"vx621OpenDomain('gst','business')",'business','primary'),'GST'),
+    featureCard('58 Reports','Profit, balance sheet and GST reports.',button('Open Reports',"vx621OpenDomain('reports','business')",'business','primary'),'▥'),
+    featureCard('Advanced GST & Tax','GST, e-way bills and tax settings.',button('Advanced GST',"vx621OpenDomain('gst','business')",'business','primary'),'GST'),
     featureCard('Business Expenses','Record shop expenses and track their effect on profit.',button('Expense Entry',"businessShowModule('expenses')",'business','primary'),'−')
   ];
   const docs=[
-    featureCard('Invoice & Thermal','A4/A5 invoice themes, custom fields, terms, signature, 58/80mm and ESC/POS.',button('Invoice & Print',"vx621OpenPlatform('business','print620','business')",'business','primary'),'▤'),
-    featureCard('Orders & Lifecycle','Estimate, Proforma, Sale Order, Purchase Order and Delivery Challan conversion.',button('Orders & Documents',"vx621OpenPlatform('business','documents620','business')",'business','primary'),'↗'),
-    featureCard('Messaging & Reminders','Transaction templates, provider messaging, payment reminders and service reminders.',button('Messaging',"vx621OpenPlatform('business','messages620','business')",'business','primary'),'✉'),
-    featureCard('Multi-Currency','Saved exchange rates and base-currency normalized transaction posting.',button('Currencies',"vx621OpenPlatform('business','currency620','business')",'business'),'¤')
+    featureCard('Invoice & Thermal','PDF invoices and thermal printing.',button('Invoice & Print',"vx621OpenPlatform('business','print620','business')",'business','primary'),'▤'),
+    featureCard('Orders & Lifecycle','Quotes, orders and delivery notes.',button('Orders & Documents',"vx621OpenPlatform('business','documents620','business')",'business','primary'),'↗'),
+    featureCard('Messaging & Reminders','Invoice messages and reminders.',button('Messaging',"vx621OpenPlatform('business','messages620','business')",'business','primary'),'✉'),
+    featureCard('Multi-Currency','Currencies and exchange rates.',button('Currencies',"vx621OpenPlatform('business','currency620','business')",'business'),'¤')
   ];
   const stockCards=[
     featureCard('Product Catalog & Barcode','Product identity, SKU/article, size/color, barcode and bulk import live in Stock.',button('Open in Stock',"vx621GoStock('catalog')",'business','primary'),'▦'),
@@ -11453,7 +11763,7 @@ function renderBusinessHome(){
     ${group('Company, Security & Settings','Administration and data-control tools.',admin)}
     </div>
     <section class="card vx621-recent">${recentActivityHtml()}</section>
-    <section id="vx621-business-host" data-vx621-host="business" class="card vx621-platform-host"><div class="vx621-empty"><b>Choose a feature above.</b><span>Your selected tool will open here.</span></div></section>
+    <section id="vx621-business-host" data-vx621-host="business" hidden class="card vx621-platform-host"><div class="vx621-empty"><b>Choose a feature above.</b><span>Your selected tool will open here.</span></div></section>
   </div>`;
   activateHost('business');
   observeHost(findHost('business'));
@@ -11486,10 +11796,10 @@ function appendSalesTools(){
   const block=document.createElement('section');
   block.className='card vx621-sales-tools';
   block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Sales Tools</span><h2>Advanced Sales & Billing</h2><p>Create bills, handle returns and print invoices.</p></div></div><div class="vx621-feature-grid compact">
-    ${featureCard('Sale / Sale Return','Create accounting sale or return with stock, ledger, GST and balance effects.',button('New Sale',"vx621OpenPlatform('sales','transactions','business','SALE')",'business','primary')+button('Sale Return',"vx621OpenPlatform('sales','transactions','business','SALE_RETURN')",'business'),'⇄')}
-    ${featureCard('Invoice & Thermal','A4/A5 invoice configuration and thermal/ESC-POS output.',button('Invoice & Print',"vx621OpenPlatform('sales','print620','pro')",'pro','primary'),'▤')}
-    ${featureCard('Quotation & Orders','Estimate/quotation, Proforma, Sale Order and Delivery Challan.',button('Open Documents',"vx621OpenPlatform('sales','documents620','pro')",'pro','primary'),'⇢')}
-    ${featureCard('Customer Messaging','Invoice/share messaging and payment/service reminders.',button('Messaging',"vx621OpenPlatform('sales','messages620','business')",'business','primary'),'✉')}
+    ${featureCard('Sale / Sale Return','Create a sale or record a return.',button('New Sale',"vx621OpenPlatform('sales','transactions','business','SALE')",'business','primary')+button('Sale Return',"vx621OpenPlatform('sales','transactions','business','SALE_RETURN')",'business'),'⇄')}
+    ${featureCard('Invoice & Thermal','Download PDF or print an invoice.',button('Invoice & Print',"vx621OpenPlatform('sales','print620','pro')",'pro','primary'),'▤')}
+    ${featureCard('Quotation & Orders','Quotes, orders and delivery notes.',button('Open Documents',"vx621OpenPlatform('sales','documents620','pro')",'pro','primary'),'⇢')}
+    ${featureCard('Customer Messaging','Share invoices and send reminders.',button('Messaging',"vx621OpenPlatform('sales','messages620','business')",'business','primary'),'✉')}
   </div><div id="vx621-sales-host" data-vx621-host="sales" class="vx621-platform-host"><div class="vx621-empty"><b>Choose an advanced sales tool.</b><span>It opens here; you do not need to enter the Business page.</span></div></div>`;
   const firstGrid=el.querySelector('.grid');
   if(firstGrid) firstGrid.insertAdjacentElement('afterend',block); else el.prepend(block);
@@ -11532,9 +11842,9 @@ function appendStockTools(){
   const block=document.createElement('section'); block.className='card vx621-stock-tools';
   block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Stock Tools</span><h2>Inventory Workspace</h2><p>Manage your catalog, godowns and stock transfers.</p></div></div><div class="vx621-feature-grid compact">
     ${featureCard('Product Catalog & Barcode','Product, SKU/article, size/color, barcode, bulk import, reorder and dead-stock helpers.',button('Catalog & Barcode',"vx621OpenAdvanced('stock','inventory','business')",'business','primary'),'▦')}
-    ${featureCard('Godowns & Transfers','Godown-wise stock, stock ledger, valuation and transfer workflow.',button('Godowns',"vx621OpenPlatform('stock','inventory','business')",'business','primary'),'⌂')}
-    ${featureCard('Advanced Inventory','Units, wholesale, party-wise rates, BOM/manufacturing and loyalty.',button('Advanced Inventory',"vx621OpenPlatform('stock','inventory620','business')",'business','primary'),'⚙')}
-    ${featureCard('Stock Reports','Stock summaries, movements, valuation, low stock and broader 58-report catalog.',button('Stock Reports',"vx621OpenPlatform('stock','reports620','business')",'business','primary'),'▥')}
+    ${featureCard('Godowns & Transfers','Stock locations and transfers.',button('Godowns',"vx621OpenPlatform('stock','inventory','business')",'business','primary'),'⌂')}
+    ${featureCard('Advanced Inventory','Units, wholesale rates and stock tools.',button('Advanced Inventory',"vx621OpenPlatform('stock','inventory620','business')",'business','primary'),'⚙')}
+    ${featureCard('Stock Reports','Stock levels, value and movement.',button('Stock Reports',"vx621OpenPlatform('stock','reports620','business')",'business','primary'),'▥')}
   </div><div id="vx621-stock-host" data-vx621-host="stock" class="vx621-platform-host"><div class="vx621-empty"><b>Choose a stock tool.</b><span>Advanced inventory modules open here.</span></div></div>`;
   el.appendChild(block);
   renderStockRecords(el);
@@ -12678,11 +12988,12 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
     const margin=stats.find(card=>/margin/i.test(card.textContent||''));
     if(margin){
       const small=margin.querySelector('small');
-      if(small) small.textContent='Recorded transaction profit vs sales';
+      if(small && small.textContent!=='Recorded transaction profit vs sales') small.textContent='Recorded transaction profit vs sales';
     }
   }
 
   function enhanceAnalytics(){
+    if(window.VyaparInsights)return;
     const screen=document.getElementById('screen-analytics'); if(!screen) return;
     const year=typeof window.currentYearValue==='function'?window.currentYearValue():currentYear();
     const declared=typeof window.yearlyProfitForYear==='function'?window.yearlyProfitForYear(year):0;
@@ -12746,7 +13057,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
         state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};
         try{
           const key=(typeof window.STORAGE_KEY==='string'&&window.STORAGE_KEY)||'vyapar_ai_prod_v1';
-          localStorage.setItem(key,JSON.stringify(state));
+          persistBusinessState(state).catch(()=>{});
         }catch(_){}
       }
       if(Number(data.versionCode)>currentCode){
@@ -12779,7 +13090,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
       const h=card.querySelector('h2');
       if(h && /app update/i.test(h.textContent||'')){
         const p=card.querySelector('p.muted');
-        if(p) p.textContent='Check whether a newer Vyapar AI version is available.';
+        if(p && p.textContent!=='Check whether a newer Vyapar AI version is available.') p.textContent='Check whether a newer Vyapar AI version is available.';
       }
     });
   }
@@ -12818,7 +13129,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
       if(!footer.querySelector('.vy658-footer-logo')){
         const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
       }
-      [...footer.querySelectorAll('a')].forEach(a=>{ if(/delete account/i.test(a.textContent||'')) a.remove(); });
+      // The Settings footer owns its legal links; do not remove/re-add them on every mutation.
     });
   }
 
@@ -12966,7 +13277,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
         if(window.AndroidApp){try{if(typeof AndroidApp.getVersionCode==='function')currentCode=Number(AndroidApp.getVersionCode())||currentCode;}catch(_){}try{if(typeof AndroidApp.getVersionName==='function')currentName=String(AndroidApp.getVersionName()||currentName);}catch(_){}}
         const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
         const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});const data=await res.json();if(!res.ok||!data.success)throw new Error(data.message||'Update check failed');
-        try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state));}}catch(_){}
+        try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};persistBusinessState(state).catch(()=>{});}}catch(_){}
         const requested=()=>Boolean(window.__vy670ManualUpdateRequested);
         if(Number(data.versionCode)>currentCode){
           const force=currentCode<Number(data.minimumSupportedVersionCode||0);
@@ -13018,26 +13329,31 @@ function VK(v){const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)re
 function DK(v){const r=String(v??'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(r)){const k=r.slice(0,10);return VK(k)?k:''}const d=new Date(r);return Number.isNaN(d.getTime())?'':d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate())}
 function key(x){return String(x?.id||[x?.date,x?.month,x?.number,x?.name,x?.type,x?.amount].join('|'))}
 function merge(a,b){const o=Array.isArray(a)?a.slice():[],s=new Set(o.map(key));(Array.isArray(b)?b:[]).forEach(x=>{const k=key(x);if(!s.has(k)){s.add(k);o.push(x)}});return o}
-function S(){try{if(typeof state==='undefined'||!state)return window.state||{};const w=window.state;if(w&&w!==state){Object.keys(w).forEach(k=>{const v=w[k],c=state[k];if(Array.isArray(v))state[k]=merge(c,v);else if(v&&typeof v==='object')state[k]={...(c&&typeof c==='object'?c:{}),...v};else if(state[k]===undefined)state[k]=v})}window.state=state;try{localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state))}catch(_){}return state}catch(_){return window.state||{}}}
+function S(){try{if(typeof state==='undefined'||!state)return window.state||{};const w=window.state;if(w&&w!==state){Object.keys(w).forEach(k=>{const v=w[k],c=state[k];if(Array.isArray(v))state[k]=merge(c,v);else if(v&&typeof v==='object')state[k]={...(c&&typeof c==='object'?c:{}),...v};else if(state[k]===undefined)state[k]=v})}window.state=state;return state}catch(_){return window.state||{}}}
 S();
 function bid(){const s=S();return String(s.activeBusinessId||s.currentStoreId||'MAIN')}
 function itemProfit(x){return (N(x.sellingPrice)-N(x.purchasePrice))*Math.max(0,N(x.qty))}function itemSale(x){return Math.max(0,N(x.sellingPrice))*Math.max(0,N(x.qty))}
-function dayMaps(y){const s=S(),pre=y+'-',item={},daily={},acc={};(s.sales||[]).forEach(x=>{const d=DK(x.date);if(!d.startsWith(pre))return;const r=item[d]||(item[d]={revenue:0,profit:0});r.revenue+=itemSale(x);r.profit+=itemProfit(x)});(s.daily||[]).forEach(x=>{const d=DK(x.date);if(!d.startsWith(pre))return;daily[d]={revenue:Math.max(0,N(x.sale)),profit:N(x.profit)}});(s.transactions611||[]).forEach(t=>{if(String(t.businessId||'MAIN')!==bid()||t.status==='cancelled'||!['SALE','SALE_RETURN'].includes(String(t.type).toUpperCase()))return;const d=DK(t.date);if(!d.startsWith(pre))return;const sign=String(t.type).toUpperCase()==='SALE_RETURN'?-1:1;let rev=0,cogs=0;(t.items||[]).forEach(i=>{const q=Math.max(0,N(i.qty||i.quantity)),rate=Math.max(0,N(i.rate||i.price)),disc=Math.max(0,N(i.discount));rev+=q*rate*(1-disc/100);cogs+=q*Math.max(0,N(i.purchaseRate||i.purchasePrice))});if(!(t.items||[]).length)rev=Math.max(0,N(t.baseAmount||t.total)-N(t.tax)-N(t.cess));const r=acc[d]||(acc[d]={revenue:0,profit:0});r.revenue+=sign*rev;r.profit+=sign*(rev-cogs)});return{item,daily,acc}}
+function dayMaps(y){const s=S(),business=bid(),pre=y+'-',item={},daily={},acc={};(s.sales||[]).forEach(x=>{const d=DK(x.date);if(!d.startsWith(pre))return;const r=item[d]||(item[d]={revenue:0,profit:0});r.revenue+=itemSale(x);r.profit+=itemProfit(x)});(s.daily||[]).forEach(x=>{const d=DK(x.date);if(!d.startsWith(pre))return;daily[d]={revenue:Math.max(0,N(x.sale)),profit:N(x.profit)}});(s.transactions611||[]).forEach(t=>{if(String(t.businessId||'MAIN')!==business||t.status==='cancelled'||!['SALE','SALE_RETURN'].includes(String(t.type).toUpperCase()))return;const d=DK(t.date);if(!d.startsWith(pre))return;const sign=String(t.type).toUpperCase()==='SALE_RETURN'?-1:1;let rev=0,cogs=0;(t.items||[]).forEach(i=>{const q=Math.max(0,N(i.qty||i.quantity)),rate=Math.max(0,N(i.rate||i.price)),disc=Math.max(0,N(i.discount));rev+=q*rate*(1-disc/100);cogs+=q*Math.max(0,N(i.purchaseRate||i.purchasePrice))});if(!(t.items||[]).length)rev=Math.max(0,N(t.baseAmount||t.total)-N(t.tax)-N(t.cess));const r=acc[d]||(acc[d]={revenue:0,profit:0});r.revenue+=sign*rev;r.profit+=sign*(rev-cogs)});return{item,daily,acc}}
 function FY(year){const y=String(year);if(!/^\d{4}$/.test(y))return{year:y,revenue:0,profit:0,expenses:0,net:0,months:{}};const s=S(),m=dayMaps(y),months={},days=new Set([...Object.keys(m.item),...Object.keys(m.daily),...Object.keys(m.acc)]);days.forEach(d=>{const c=m.acc[d]||m.daily[d]||m.item[d]||{revenue:0,profit:0},k=d.slice(0,7),r=months[k]||(months[k]={revenue:0,profit:0});r.revenue+=N(c.revenue);r.profit+=N(c.profit)});const manual={};(s.monthly||[]).forEach(x=>{const k=String(x.month||'').slice(0,7);if(k.startsWith(y+'-'))manual[k]=N(x.profit)});Object.entries(manual).forEach(([k,value])=>{const r=months[k]||(months[k]={revenue:0,profit:0});r.profit+=value});const revenue=Object.values(months).reduce((z,r)=>z+N(r.revenue),0),profit=Object.values(months).reduce((z,r)=>z+N(r.profit),0),expenses=(s.expenses||[]).filter(x=>DK(x.date).startsWith(y+'-')).reduce((z,x)=>z+N(x.amount),0);return{year:y,revenue,profit,expenses,net:profit-expenses,months}}
-function series(){const ys=new Set(),s=S();[s.sales,s.daily,s.monthly,s.transactions611].forEach(a=>(a||[]).forEach(x=>{const y=String(x.month||x.date||'').slice(0,4);if(/^\d{4}$/.test(y))ys.add(y)}));const out=[];[...ys].sort().forEach(y=>{const f=FY(y);Object.keys(f.months).sort().forEach(k=>out.push([k,N(f.months[k].profit)]))});return out}
+function series(){
+  if(window.VyaparProfit){const all=window.VyaparProfit.build(S());return Object.keys(all).sort().flatMap(y=>Object.keys(all[y].months).sort().filter(m=>all[y].months[m].activity).map(m=>[m,N(all[y].months[m].profit)]));}
+  const s=S(),ys=new Set();[s.sales,s.daily,s.monthly,s.transactions611].forEach(a=>(a||[]).forEach(x=>{const y=String(x.month||x.date||'').slice(0,4);if(/^\d{4}$/.test(y))ys.add(y)}));return [...ys].sort().flatMap(y=>Object.entries(FY(y).months).map(([k,v])=>[k,N(v.profit)]));
+}
+
 function yprofit(y){return FY(y).profit}function stats(y){const v=series().filter(([m])=>m.startsWith(String(y)+'-')).map(([,x])=>N(x)),t=v.reduce((a,b)=>a+b,0);return{count:v.length,avg:v.length?t/v.length:0,high:v.length?Math.max(...v):0,low:v.length?Math.min(...v):0,total:t}}
 window.VyaparFinance6601={version:VER,code:CODE,year:FY,monthlySeries:series};try{resolvedMonthlyProfitSeries=series;yearlyProfitForYear=yprofit;monthlyStatsForYear=stats;yearlySalesForYear=y=>FY(y).revenue;accountingTotals=()=>{const f=FY(String(new Date().getFullYear()));return{revenue:f.revenue,expenses:f.expenses,net:f.net,cogs:Math.max(0,f.revenue-f.profit),other:0}}}catch(_){}Object.assign(window,{resolvedMonthlyProfitSeries:series,yearlyProfitForYear:yprofit,monthlyStatsForYear:stats});
 function now(){const d=new Date();return{y:String(d.getFullYear()),m:d.getFullYear()+'-'+P(d.getMonth()+1),d:d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate())}}
 function monthBreak(k){const y=k.slice(0,4),m=dayMaps(y);let acc=0,daily=0,item=0,manual=0;Object.entries(m.acc).forEach(([d,v])=>{if(d.startsWith(k+'-'))acc+=N(v.profit)});Object.entries(m.daily).forEach(([d,v])=>{if(d.startsWith(k+'-')&&!m.acc[d])daily+=N(v.profit)});Object.entries(m.item).forEach(([d,v])=>{if(d.startsWith(k+'-')&&!m.acc[d]&&!m.daily[d])item+=N(v.profit)});(S().monthly||[]).forEach(x=>{if(String(x.month||'').slice(0,7)===k)manual=N(x.profit)});return{acc,daily,item,manual,total:acc+daily+item+manual}}
 function profitCard(){const c=document.getElementById('vy660ProfitCard');if(!c)return;const p=now(),f=FY(p.y),b=monthBreak(p.m),todays=(S().daily||[]).filter(x=>DK(x.date)===p.d),today=N(todays.length?todays[todays.length-1].profit:0),h='<div class="vy660-profit-head"><div><span class="home-section-kicker">PROFIT OVERVIEW</span><h2>Yearly Profit · '+p.y+'</h2><strong>'+M(f.profit)+'</strong></div></div><div class="vy660-live-grid"><div class="vy660-live-box"><span>This month · live</span><b>'+M(b.total)+'</b><small>Manual '+M(b.manual)+' + daily '+M(b.daily)+' + item '+M(b.item)+' + accounting '+M(b.acc)+'</small></div><div class="vy660-live-box"><span>Today\'s Daily Profit</span><b>'+M(today)+'</b><small>Today only · Daily Quick Entry</small></div></div><p class="muted vy660-note">Unified finance prevents duplicate sales on the same date: accounting transaction → Daily Quick Entry → item-wise sale. Monthly manual profit stays additive.</p>';if(c.innerHTML!==h)c.innerHTML=h}
-function yearFilter(){const c=document.getElementById('monthly-profit-records');if(!c)return;c.querySelectorAll('.vy658-year-filter').forEach(x=>x.remove());const existing=[...c.querySelectorAll('.vy6601-year-filter')];existing.slice(1).forEach(x=>x.remove());const title=c.querySelector('h2');if(title&&title.textContent!=='Monthly Manual Profit Records')title.textContent='Monthly Manual Profit Records';[...c.querySelectorAll('thead th')].forEach(x=>{if(/Net Profit/i.test(x.textContent))x.textContent='Manual Profit'});if(!c.querySelector('.vy6601-month-note')){const p=document.createElement('p');p.className='muted vy6601-month-note';p.textContent='Manual entries only. Live totals also include non-duplicate Daily, item-sale and accounting profit.';title?.after(p)}const ys=[...new Set((S().monthly||[]).map(x=>String(x.month||'').slice(0,4)).filter(x=>/^\d{4}$/.test(x)))].sort().reverse();let w=existing[0]||null;if(!ys.length){if(w)w.remove();return}if(!w){w=document.createElement('div');w.className='vy6601-year-filter';w.innerHTML='<label>Year</label><select><option value="all">All years</option>'+ys.map(y=>'<option>'+y+'</option>').join('')+'</select>';c.insertBefore(w,c.querySelector('.scroll'));w.querySelector('select').addEventListener('change',yearFilter)}const sel=w.querySelector('select');if(!sel)return;const options=[...sel.options].map(o=>o.value||o.textContent);if(options.length!==ys.length+1||!ys.every(y=>options.includes(y))){const previous=sel.value;sel.innerHTML='<option value="all">All years</option>'+ys.map(y=>'<option>'+y+'</option>').join('');sel.value=(previous==='all'||ys.includes(previous))?previous:'all'}const y=sel.value;[...c.querySelectorAll('tbody tr')].forEach(r=>{const t=[...r.querySelectorAll('td')].map(x=>x.textContent).join(' ');r.hidden=y!=='all'&&!t.includes(y)})}
-function business(){const s=document.getElementById('screen-business');if(!s)return;s.querySelectorAll('.vx621-group').forEach(g=>{const h=g.querySelector('h2')?.textContent;if(h==='Stock-related Tools'||h==='Sales-related Tools')g.remove()});s.querySelectorAll('.pill').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform'});const h=s.querySelector('.vx621-hero p'),ht='Advanced tools are grouped by job: Sales stays in Sales, inventory stays in Stock, while the accounting engine remains authoritative.';if(h&&h.textContent!==ht)h.textContent=ht;const f=FY(String(new Date().getFullYear()));s.querySelectorAll('.vx621-kpi').forEach(k=>{const l=k.querySelector('span')?.textContent,b=k.querySelector('b');if(!b)return;if(l==='Revenue')b.textContent=M(f.revenue);if(l==='Net Profit')b.textContent=M(f.net);if(l==='Expenses')b.textContent=M(f.expenses)});if(!s.querySelector('.vy6601-fin-note')){const n=document.createElement('div');n.className='notice vy6601-fin-note';n.innerHTML='<b>Unified finance:</b> Net Profit = '+M(f.profit)+' − '+M(f.expenses)+' expenses = '+M(f.net);s.querySelector('.vx621-kpis')?.after(n)}}
+function yearFilter(){if(window.VyaparRecords)return;const c=document.getElementById('monthly-profit-records');if(!c)return;c.querySelectorAll('.vy658-year-filter').forEach(x=>x.remove());const existing=[...c.querySelectorAll('.vy6601-year-filter')];existing.slice(1).forEach(x=>x.remove());const title=c.querySelector('h2');if(title&&title.textContent!=='Monthly Manual Profit Records')title.textContent='Monthly Manual Profit Records';[...c.querySelectorAll('thead th')].forEach(x=>{if(/Net Profit/i.test(x.textContent))x.textContent='Manual Profit'});if(!c.querySelector('.vy6601-month-note')){const p=document.createElement('p');p.className='muted vy6601-month-note';p.textContent='Manual entries only. Live totals also include non-duplicate Daily, item-sale and accounting profit.';title?.after(p)}const ys=[...new Set((S().monthly||[]).map(x=>String(x.month||'').slice(0,4)).filter(x=>/^\d{4}$/.test(x)))].sort().reverse();let w=existing[0]||null;if(!ys.length){if(w)w.remove();return}if(!w){w=document.createElement('div');w.className='vy6601-year-filter';w.innerHTML='<label>Year</label><select><option value="all">All years</option>'+ys.map(y=>'<option>'+y+'</option>').join('')+'</select>';c.insertBefore(w,c.querySelector('.scroll'));w.querySelector('select').addEventListener('change',yearFilter)}const sel=w.querySelector('select');if(!sel)return;const options=[...sel.options].map(o=>o.value||o.textContent);if(options.length!==ys.length+1||!ys.every(y=>options.includes(y))){const previous=sel.value;sel.innerHTML='<option value="all">All years</option>'+ys.map(y=>'<option>'+y+'</option>').join('');sel.value=(previous==='all'||ys.includes(previous))?previous:'all'}const y=sel.value;[...c.querySelectorAll('tbody tr')].forEach(r=>{const t=[...r.querySelectorAll('td')].map(x=>x.textContent).join(' ');r.hidden=y!=='all'&&!t.includes(y)})}
+function business(){const s=document.getElementById('screen-business');if(!s)return;s.querySelectorAll('.vx621-group').forEach(g=>{const h=g.querySelector('h2')?.textContent;if(h==='Stock-related Tools'||h==='Sales-related Tools')g.remove()});s.querySelectorAll('.pill').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform'});const h=s.querySelector('.vx621-hero p'),ht='Choose a tool to manage your business.';if(h&&h.textContent!==ht)h.textContent=ht;const f=FY(String(new Date().getFullYear()));s.querySelectorAll('.vx621-kpi').forEach(k=>{const l=k.querySelector('span')?.textContent,b=k.querySelector('b');if(!b)return;if(l==='Revenue'&&b.textContent!==M(f.revenue))b.textContent=M(f.revenue);if(l==='Net Profit'&&b.textContent!==M(f.net))b.textContent=M(f.net);if(l==='Expenses'&&b.textContent!==M(f.expenses))b.textContent=M(f.expenses)});if(!s.querySelector('.vy6601-fin-note')){const n=document.createElement('div');n.className='notice vy6601-fin-note';n.innerHTML='<b>Unified finance:</b> Net Profit = '+M(f.profit)+' − '+M(f.expenses)+' expenses = '+M(f.net);s.querySelector('.vx621-kpis')?.after(n)}}
 function footer(){document.querySelectorAll('#appLegalFooter').forEach(f=>{const imgs=[...f.querySelectorAll('img')],keep=imgs.find(x=>x.classList.contains('vy660-footer-logo'))||imgs[0];if(keep){keep.classList.add('vy658-footer-logo','vy6601-footer-logo');imgs.forEach(x=>{if(x!==keep)x.remove()})}const sig=f.querySelector('.gupta-legacy-signature');if(sig&&sig.textContent!=='A Gupta Legacy product')sig.textContent='A Gupta Legacy product';const l=f.querySelector('.app-legal-links');if(l&&!l.querySelector('a[href*="delete-account"]')){const a=document.createElement('a');a.href='pages/legal/delete-account.html';a.target='_blank';a.textContent='Delete Account';l.appendChild(a)}})}
 const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];function dates(root=document){root.querySelectorAll('td,time').forEach(x=>{if(x.children.length)return;const t=x.textContent.trim(),m=t.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)x.textContent=Number(m[3])+' '+MN[Number(m[2])-1]+' '+m[1]})}
 function labels(root=document){root.querySelectorAll('.pill,.auth-help').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform';if(/^Vyapar AI\s+6\./.test(x.textContent))x.textContent='Vyapar AI '+VER});const sale=[...document.querySelectorAll('#screen-sales .card')].find(c=>c.querySelector('h2')?.textContent==='Sales Records'),td=sale&&[...sale.querySelectorAll('tbody td')].find(x=>/No sale records yet/.test(x.textContent));if(td)td.textContent='No item-wise sales yet. Daily Quick Entry and monthly manual records are tracked separately.'}
 function otp(){const g=document.getElementById('vyaparOtpGate');if(!g||g.dataset.v6601)return;g.dataset.v6601='1';const l=document.getElementById('login-otp-code'),u=document.getElementById('signup-otp');l?.parentElement?.classList.add('vy6601-login-step');document.getElementById('login-otp-submit')?.classList.add('vy6601-login-step');u?.parentElement?.classList.add('vy6601-signup-step');const tab=document.getElementById('tab-login-otp'),sub=document.getElementById('login-otp-submit');if(tab)tab.textContent='Email OTP';if(sub)sub.textContent='Verify & Sign In';const msg=document.getElementById('auth-message');if(msg)new MutationObserver(()=>{if(msg.classList.contains('success')&&/sent|verification code/i.test(msg.textContent)){const sign=!document.getElementById('signup-section')?.classList.contains('hidden');g.classList.add(sign?'vy6601-signup-sent':'vy6601-login-sent')}}).observe(msg,{attributes:true,childList:true,characterData:true,subtree:true});const tabs=g.querySelector('.auth-method-tabs');if(tabs){let sx=null;tabs.addEventListener('touchstart',e=>sx=e.touches?.[0]?.clientX??null,{capture:true,passive:true});tabs.addEventListener('touchend',e=>{if(sx===null)return;const dx=(e.changedTouches?.[0]?.clientX??sx)-sx;sx=null;if(Math.abs(dx)>=24){e.preventDefault();e.stopImmediatePropagation()}},{capture:true,passive:false})}}
 let last=0;function closeSel(immediate){const node=document.getElementById('vy6601Select');if(!node)return;if(immediate===true){if(window.vyaparMotion)window.vyaparMotion.cancelOverlay(node);node.remove()}else if(window.vyaparMotion)window.vyaparMotion.closeOverlay(node);else node.remove()}function openSel(s){if(!s||s.disabled)return;closeSel(true);last=Date.now();const o=document.createElement('div');o.id='vy6601Select';o.className='vy6601-select-overlay';o.innerHTML='<div class="vy6601-select-sheet" role="dialog" aria-modal="true" aria-label="Choose an option"><div class="vy6601-select-head"><b>Choose an option</b><button>×</button></div><div class="vy6601-select-options"></div></div>';const list=o.querySelector('.vy6601-select-options');[...s.options].forEach(x=>{const b=document.createElement('button');b.textContent=x.textContent;b.disabled=x.disabled;b.className=x.selected?'selected':'';b.onclick=()=>{s.value=x.value;s.dispatchEvent(new Event('change',{bubbles:true}));closeSel()};list.appendChild(b)});o.querySelector('.vy6601-select-head button').onclick=closeSel;o.onclick=e=>{if(e.target===o)closeSel()};document.body.appendChild(o)}function selects(){if(!document.documentElement.classList.contains('native-android')||document.documentElement.dataset.v6601sel)return;document.documentElement.dataset.v6601sel='1';document.addEventListener('touchstart',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();openSel(s)},{capture:true,passive:false});document.addEventListener('click',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-last>600)openSel(s)},true)}
-function fix(root=document){S();profitCard();yearFilter();business();footer();labels(root);dates(root);otp();selects()}
+let lastFinanceRevision=-1,lastProfitNode=null,lastBusinessNode=null;
+function fix(root=document){S();const rev=window.__vyaparDataRevision||0,pc=document.getElementById('vy660ProfitCard'),bc=document.getElementById('screen-business')?.firstElementChild;if(rev!==lastFinanceRevision||pc!==lastProfitNode){profitCard();lastProfitNode=pc}if(rev!==lastFinanceRevision||bc!==lastBusinessNode){business();lastBusinessNode=bc}lastFinanceRevision=rev;yearFilter();footer();labels(root);dates(root);otp();selects()}
 function wrap(n,fn){const old=window[n];if(typeof old!=='function'||old.__6601)return;const w=function(){S();const r=old.apply(this,arguments);fn();return r};w.__6601=1;window[n]=w}wrap('renderSales',()=>{profitCard();yearFilter();labels();dates(document.getElementById('screen-sales')||document)});wrap('renderBusiness',()=>{business();dates(document.getElementById('screen-business')||document)});wrap('renderSettings',footer);
 const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=setTimeout(()=>fix(document),55)});ob.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>{try{renderHome?.();renderSales?.();renderBusiness?.();renderSettings?.()}catch(_){}fix()},0);
 })();
@@ -14090,14 +14406,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const root = document.documentElement;
     root.classList.add(ROOT_CLASS);
 
-    // Default to the cleaner light system only when the user has never
-    // explicitly chosen a theme. Existing light/dark preferences are kept.
-    if (!readSavedTheme() && !root.classList.contains("theme-light")) {
-      root.classList.add("theme-light");
-      root.style.colorScheme = "light";
-      const themeMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeMeta) themeMeta.setAttribute("content", "#F8F9FA");
-    }
+    root.classList.remove('theme-light');
+    root.style.colorScheme = 'dark';
   }
 
   function cleanStaticChrome() {
@@ -14350,7 +14660,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       group: 'App preferences',
       items: [
         { id: 'security', icon: 'lock', title: 'Privacy & security', subtitle: 'Password login and app protection', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
-        { id: 'appearance', icon: 'appearance', title: 'Appearance & performance', subtitle: 'Theme, motion and device speed', keywords: 'light dark auto smooth lite animation', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
+        { id: 'appearance', icon: 'appearance', title: 'Motion & performance', subtitle: 'Animations and device speed', keywords: 'dark auto smooth lite animation lag fast', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
         { id: 'navigation', icon: 'navigation', title: 'Navigation', subtitle: 'Scrolling and page behaviour', keywords: 'auto scroll top remember page position', match: card => card.id === 'vy675NavigationSettings' },
         { id: 'data', icon: 'backup', title: 'Backup & restore', subtitle: 'Device backup and Google Drive', keywords: 'download upload json cloud disconnect', match: card => card.classList.contains('data-safety-section') || /backup & data safety|data safety/i.test(card.textContent || '') }
       ]
@@ -14381,10 +14691,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     return null;
   }
 
-  function themeName() {
-    try { if (typeof activeTheme === 'function') return activeTheme() === 'light' ? 'Light' : 'Dark'; } catch (_) {}
-    return document.documentElement.classList.contains('theme-light') ? 'Light' : 'Dark';
-  }
+  function themeName() { return 'Dark'; }
 
   function currentPlan() {
     const node = document.querySelector('#productionAccountCard .production-plan, #planBadge');
@@ -14448,10 +14755,10 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
         </header>
         <label class="vy675-settings-search">
           <span>${ICONS.search}</span>
-          <input type="search" autocomplete="off" placeholder="Search settings" aria-label="Search settings">
+          <input id="settingsSearch" type="search" autocomplete="off" placeholder="Search settings, backup, password…" aria-label="Search settings" aria-controls="settingsSearchResults">
           <button type="button" aria-label="Clear search" hidden>×</button>
         </label>
-        <div class="vy675-settings-groups">
+        <div class="vy675-settings-groups" id="settingsSearchResults">
           ${SECTIONS.map(section => `
             <section class="vy675-settings-group" data-vy675-group>
               <h3>${section.group}</h3>
@@ -14460,6 +14767,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
               </div>
             </section>`).join('')}
         </div>
+        <p class="vy675-search-status" role="status" aria-live="polite"></p>
         <div class="vy675-search-empty" hidden>
           <span>${ICONS.search}</span>
           <b>No setting found</b>
@@ -14506,6 +14814,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const input = shell.querySelector('.vy675-settings-search input');
     const clear = shell.querySelector('.vy675-settings-search button');
     input?.addEventListener('input', () => filterRows(input.value));
+    input?.addEventListener('search', () => filterRows(input.value));
+    input?.addEventListener('keydown', event => { if(event.key==='Escape' && input.value){event.preventDefault();event.stopPropagation();input.value='';filterRows('');} });
     clear?.addEventListener('click', () => {
       input.value = '';
       filterRows('');
@@ -14517,12 +14827,14 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function filterRows(value) {
     const shell = screen()?.querySelector(':scope > .vy675-settings-shell');
     if (!shell) return;
-    const query = String(value || '').trim().toLowerCase();
+    const query = String(value || '').trim().toLowerCase().replace(/\s+/g,' ');
+    const terms=query.split(' ').filter(Boolean);
     const clear = shell.querySelector('.vy675-settings-search button');
     if (clear) clear.hidden = !query;
     let visibleCount = 0;
     shell.querySelectorAll('.vy675-settings-row').forEach(row => {
-      const matches = !query || String(row.dataset.vy675Search || row.textContent || '').toLowerCase().includes(query);
+      const text=String(row.dataset.vy675Search || row.textContent || '').toLowerCase();
+      const matches=terms.every(term=>text.includes(term));
       row.hidden = !matches;
       if (matches) visibleCount += 1;
     });
@@ -14531,6 +14843,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     });
     const empty = shell.querySelector('.vy675-search-empty');
     if (empty) empty.hidden = visibleCount !== 0;
+    const status=shell.querySelector('.vy675-search-status');
+    if(status)status.textContent=query?visibleCount+' settings found':'';
   }
 
   function ensureRepository(scr) {
@@ -14617,6 +14931,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     shell.querySelector('.vy675-settings-home').hidden = false;
     shell.querySelector('.vy675-settings-page').hidden = true;
     updateStatuses();
+    filterRows(shell.querySelector('.vy675-settings-search input')?.value || '');
     if (scrollTop && window.vyaparMotion) {
       window.vyaparMotion.scrollTo(homeScrollPosition);
       window.vyaparMotion.enter(shell.querySelector('.vy675-settings-home'), -1);
@@ -15005,7 +15320,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   OLD_CLASSES.forEach(name=>root.classList.remove(name));
 
   function isLight(){
-    return root.classList.contains('theme-light') || Boolean(document.body&&document.body.classList.contains('theme-light'));
+    return false;
   }
 
   function cleanupOptics(){
@@ -15035,14 +15350,15 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   function persistTheme(target){
-    const light=target==='light';
+    target='dark';
+    const light=false;
     root.classList.toggle('theme-light',light);
     if(document.body)document.body.classList.toggle('theme-light',light);
     try{
       if(window.state){
         window.state.settings=window.state.settings&&typeof window.state.settings==='object'?window.state.settings:{};
         window.state.settings.theme=target;
-        localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
+        if(window.VyaparStorage)window.VyaparStorage.save(window.state).catch(()=>{});else localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(window.state));
       }else{
         const saved=JSON.parse(localStorage.getItem('vyapar_ai_prod_v1')||'{}');
         saved.settings=saved.settings&&typeof saved.settings==='object'?saved.settings:{};
@@ -15225,7 +15541,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       if(copy&&copy.textContent!=='Change your sign-in password. Email OTP remains available.')copy.textContent='Change your sign-in password. Email OTP remains available.';
       const kicker=section.querySelector('.settings-kicker');
       if(kicker&&kicker.textContent!=='SIGN-IN')kicker.textContent='SIGN-IN';
-      section.classList.add('vy862-security-simplified');
+      if(!section.classList.contains('vy862-security-simplified'))section.classList.add('vy862-security-simplified');
     }
 
     document.querySelectorAll('#screen-settings .vy675-settings-row,#screen-settings [data-vy675-setting]').forEach(row=>{
@@ -15683,3 +15999,55 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   setTimeout(repair,120);
   setTimeout(repair,500);
 })();
+
+/* ===== SCRIPT SOURCE: workspace-startup.js ===== */
+
+/* Final wiring: the app remains covered until its durable data has loaded. */
+(function (root) {
+  'use strict';
+  let busy = false, lastFocus = null;
+  function busyMessage(text) { const el = document.getElementById('workspaceBusyMessage'); if (el) el.textContent = text; }
+  function setBusy(value, message) {
+    if (value && busy) throw new Error('Please wait for the current import to finish.');
+    busy = value;
+    let overlay = document.getElementById('workspaceBusy');
+    if (!value) { if (overlay) overlay.remove(); if (lastFocus && lastFocus.isConnected) lastFocus.focus(); return; }
+    lastFocus = document.activeElement;
+    overlay = document.createElement('div'); overlay.id = 'workspaceBusy'; overlay.className = 'workspace-blocker';
+    overlay.innerHTML = '<div role="dialog" aria-modal="true" aria-labelledby="workspaceBusyMessage" tabindex="-1"><span class="workspace-spinner" aria-hidden="true"></span><p id="workspaceBusyMessage" role="status" aria-live="polite"></p></div>';
+    document.body.appendChild(overlay); busyMessage(message || 'Saving…'); overlay.firstElementChild.focus();
+  }
+  function storageBlocked(message) {
+    const el = document.createElement('div'); el.className = 'workspace-blocker'; el.id = 'workspaceStorageBlocked';
+    el.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="storageBlockedTitle"><h2 id="storageBlockedTitle">Could not load your records</h2><p></p><button type="button" class="btn primary">Reopen app</button></div>';
+    try { if(root.AndroidApp && root.AndroidApp.onStartupFrameReady) root.AndroidApp.onStartupFrameReady(); } catch(_) {}
+    el.querySelector('p').textContent = message; el.querySelector('button').onclick = () => location.reload(); document.body.appendChild(el);
+  }
+  function storageStatus() {
+    const status = root.VyaparStorage.getStatus();
+    const label = status.error ? 'Not saved: ' + status.error : status.mode === 'loading' ? 'Opening device storage…' : status.mode === 'basic' ? 'Basic local storage · download backups regularly' : status.records.toLocaleString('en-IN') + ' records saved on this device';
+    const settings = document.getElementById('settingsStatus'); if (settings && settings.textContent !== label) settings.textContent = label;
+    let banner = document.getElementById('workspaceStorageError');
+    if (status.error) {
+      if (!banner) { banner = document.createElement('div'); banner.id = 'workspaceStorageError'; banner.setAttribute('role','alert'); banner.innerHTML = '<p></p><button type="button" class="btn">Retry save</button><button type="button" class="btn">Download backup</button>'; document.body.appendChild(banner); const buttons = banner.querySelectorAll('button'); buttons[0].onclick = () => root.VyaparStorage.save(root.state).catch(() => {}); buttons[1].onclick = () => root.downloadBackup(); }
+      banner.querySelector('p').textContent = label;
+    } else if (banner) banner.remove();
+  }
+  root.VyaparWorkspace = { setBusy, busyMessage, storageBlocked };
+  root.addEventListener('vyapar:storage-status', storageStatus);
+  document.addEventListener('keydown', event => {
+    if (busy) { event.preventDefault(); event.stopImmediatePropagation(); return; }
+    if (event.key === 'Tab') document.documentElement.classList.add('keyboard-navigation');
+  }, true);
+  document.addEventListener('pointerdown', () => document.documentElement.classList.remove('keyboard-navigation'), {passive:true});
+  // Do not let background handlers save or edit while the import transaction is staged.
+  document.addEventListener('click', event => { if (busy && !event.target.closest('#workspaceBusy')) { event.preventDefault(); event.stopImmediatePropagation(); } }, true);
+  const renderSettings = root.renderSettings;
+  root.renderSettings = function () { const result = renderSettings.apply(this, arguments); storageStatus(); return result; };
+  root.VyaparStorage.attach(() => root.state, saved => {
+    const current = root.state;
+    const restored = normalizeState(saved);
+    restored.subscription = { ...current.subscription }; restored.plan = current.plan;
+    root.state = restored;
+  }).then(() => { root.VyaparInsights.invalidate(); root.render(); storageStatus(); });
+})(window);

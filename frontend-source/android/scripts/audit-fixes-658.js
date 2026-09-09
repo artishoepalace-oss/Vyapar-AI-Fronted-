@@ -39,11 +39,12 @@
     const margin=stats.find(card=>/margin/i.test(card.textContent||''));
     if(margin){
       const small=margin.querySelector('small');
-      if(small) small.textContent='Recorded transaction profit vs sales';
+      if(small && small.textContent!=='Recorded transaction profit vs sales') small.textContent='Recorded transaction profit vs sales';
     }
   }
 
   function enhanceAnalytics(){
+    if(window.VyaparInsights)return;
     const screen=document.getElementById('screen-analytics'); if(!screen) return;
     const year=typeof window.currentYearValue==='function'?window.currentYearValue():currentYear();
     const declared=typeof window.yearlyProfitForYear==='function'?window.yearlyProfitForYear(year):0;
@@ -107,7 +108,7 @@
         state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};
         try{
           const key=(typeof window.STORAGE_KEY==='string'&&window.STORAGE_KEY)||'vyapar_ai_prod_v1';
-          localStorage.setItem(key,JSON.stringify(state));
+          persistBusinessState(state).catch(()=>{});
         }catch(_){}
       }
       if(Number(data.versionCode)>currentCode){
@@ -140,7 +141,7 @@
       const h=card.querySelector('h2');
       if(h && /app update/i.test(h.textContent||'')){
         const p=card.querySelector('p.muted');
-        if(p) p.textContent='Check whether a newer Vyapar AI version is available.';
+        if(p && p.textContent!=='Check whether a newer Vyapar AI version is available.') p.textContent='Check whether a newer Vyapar AI version is available.';
       }
     });
   }
@@ -179,7 +180,7 @@
       if(!footer.querySelector('.vy658-footer-logo')){
         const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
       }
-      [...footer.querySelectorAll('a')].forEach(a=>{ if(/delete account/i.test(a.textContent||'')) a.remove(); });
+      // The Settings footer owns its legal links; do not remove/re-add them on every mutation.
     });
   }
 

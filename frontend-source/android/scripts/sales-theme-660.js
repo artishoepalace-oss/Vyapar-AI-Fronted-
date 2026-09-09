@@ -128,7 +128,7 @@
         if(window.AndroidApp){try{if(typeof AndroidApp.getVersionCode==='function')currentCode=Number(AndroidApp.getVersionCode())||currentCode;}catch(_){}try{if(typeof AndroidApp.getVersionName==='function')currentName=String(AndroidApp.getVersionName()||currentName);}catch(_){}}
         const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
         const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});const data=await res.json();if(!res.ok||!data.success)throw new Error(data.message||'Update check failed');
-        try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};localStorage.setItem('vyapar_ai_prod_v1',JSON.stringify(state));}}catch(_){}
+        try{if(typeof state!=='undefined'&&state){state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};persistBusinessState(state).catch(()=>{});}}catch(_){}
         const requested=()=>Boolean(window.__vy670ManualUpdateRequested);
         if(Number(data.versionCode)>currentCode){
           const force=currentCode<Number(data.minimumSupportedVersionCode||0);
