@@ -30,10 +30,15 @@ jobs:
         run: |
           set -euo pipefail
           test -f .release/READY-UI007
-          test -d .release/00007
+          test -f .release/00007/app.patch.gz
           cat .release/00007/payload.* > /tmp/vyapar-00007-critical.tar.gz
-          echo 'a29a1eace0d38a968df9a0956b78a3a26f60d4da7667493e9efa00fbe31a15eb  /tmp/vyapar-00007-critical.tar.gz' | sha256sum -c -
+          echo 'e07a8ec06234ad842b370a65920cd6dc263219dcee9cab702aca3ac3212ef791  /tmp/vyapar-00007-critical.tar.gz' | sha256sum -c -
           tar -xzf /tmp/vyapar-00007-critical.tar.gz -C .
+
+          git cat-file blob 01f12f74ac072cf1d37af08ee7324424a0991244 > frontend-source/android/scripts/app.js
+          gzip -dc .release/00007/app.patch.gz > /tmp/app-00007.patch
+          git apply --check /tmp/app-00007.patch
+          git apply /tmp/app-00007.patch
 
       - name: Verify exact 00007 canonical source
         shell: bash
