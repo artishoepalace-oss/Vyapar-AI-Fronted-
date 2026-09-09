@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00006.2026** (`2010200406`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00007.2026** (`2010200407`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 
@@ -39,10 +39,29 @@ The original financial engines and feature modules remain in place. Do not remov
 
 ## Current improvements
 
-- Working category tabs and compact Business tools, with search across categories.
-- Direct offline invoice PDF downloads: A4/A5 and 58/80mm, paginated items, saved totals and native save confirmation.
-- A short first-use permission introduction and approximately 2:3 optical logo spacing.
-- One deterministic build for web and Android. A local PDF dependency is included; no install step is needed.
-- Original cleanup retained: 141 redundant files removed, historical notes archived and source modules preserved.
+- Business, Sales and Stock share compact tool cards with shorter descriptions and consistent actions. Business categories and cross-category search remain available.
+- Telegram-inspired compact top/bottom bar proportions, five navigation destinations, visible active icons and one bottom content inset.
+- Dark-only Settings with search, multiword matching, clear/Escape and empty results.
+- Profit dashboard with a year selector, Overview / Compare / History / Plan, signed profit charts, annual history pages, monthly details, CSV export, goals and investment metrics.
+- IndexedDB is the primary device store. Record arrays are saved in chunks inside atomic snapshot transactions; startup waits for hydration. Legacy local data migrates after a successful commit. Save failures remain visible.
+- Full-list search and 40-row pages for daily, sales, monthly and stock lists. No silent 50,000-record clipping.
+- Import / Scan tabs, styled file pickers, label-photo preview, import preview, repeat-file confirmation and staged imports with rollback on failed save.
+- Shared plain/password backup reader supports Android FileReader, UTF-8/UTF-16 and legacy backup envelopes. Invalid backups cannot replace live data or the authenticated account.
+- Prior offline invoice PDF downloads, once-only permission introduction, optical logo spacing and Telegram-style motion are retained.
 
-See [current changes and verification](docs/COMPACT-PDF-VALIDATION.md), [sample PDFs](docs/examples/), and the [prior cleanup record](docs/UI-CLEANUP.md). Physical Android UI and smoothness verification are still required before distributing an APK.
+See [current validation and device checks](docs/WORKSPACE-00007-VALIDATION.md). Source and Android/web assets are included; this ZIP is not a compiled APK.
+
+## New focused modules
+
+| Responsibility | Source under `frontend-source/android/` |
+| --- | --- |
+| Atomic local storage and migration | `scripts/data-store.js` |
+| Backup reading, validation and decryption | `scripts/file-io.js` |
+| One-pass historical profit aggregation | `scripts/profit-history.js` |
+| Profit dashboard and export | `scripts/insights-workspace.js` |
+| File review, staged import and scanner UI | `scripts/upload-workspace.js` |
+| Full-list search and record pagination | `scripts/record-pages.js` |
+| Storage startup barrier and status | `scripts/workspace-startup.js` |
+| Final responsive workspace controls | `styles/workspace-v7.css` |
+
+Storage remains limited by device space and memory. Data is still loaded into memory at startup; this is not an unlimited server database. Keep external backups. Automated large-data tests use transaction doubles; Android WebView performance and physical-device storage still require verification.
