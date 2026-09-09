@@ -31,10 +31,9 @@ jobs:
           set -euo pipefail
           test -f .release/READY-UI007
           test -f .release/00007/app.patch.gz
-          cat .release/00007/payload.* > /tmp/vyapar-00007-critical.tar.gz
-          echo 'e07a8ec06234ad842b370a65920cd6dc263219dcee9cab702aca3ac3212ef791  /tmp/vyapar-00007-critical.tar.gz' | sha256sum -c -
-          tar -xzf /tmp/vyapar-00007-critical.tar.gz -C .
-
+          cat .release/00007/payload.* > /tmp/vyapar-00007-critical.tar.xz
+          echo 'ca2a7c729f92800c303e1be2da111b0dd12a7c610563f7fea17c8343744d7c9a  /tmp/vyapar-00007-critical.tar.xz' | sha256sum -c -
+          tar -xJf /tmp/vyapar-00007-critical.tar.xz -C .
           git cat-file blob 01f12f74ac072cf1d37af08ee7324424a0991244 > frontend-source/android/scripts/app.js
           gzip -dc .release/00007/app.patch.gz > /tmp/app-00007.patch
           git apply --check /tmp/app-00007.patch
@@ -44,10 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          check_blob() {
-            actual="$(git hash-object "$1")"
-            test "$actual" = "$2" || { echo "SHA mismatch: $1 $actual != $2"; exit 1; }
-          }
+          check_blob() { actual="$(git hash-object "$1")"; test "$actual" = "$2" || { echo "SHA mismatch: $1 $actual != $2"; exit 1; }; }
           check_blob frontend-source/android/scripts/app.js 8d9d574bbd1bdfb8b28b24efbf852e4e7efe018c
           check_blob tools/build-frontend-bundles.mjs 47d5369d6c52069e4bd0635a96891a5e89eda57f
           check_blob frontend-source/android/styles/workspace-v7.css f4d683050ad30a47052def7ee6200662566b57e1
