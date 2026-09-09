@@ -66,6 +66,7 @@ const scripts = [
   'platform-android.js',
   'performance-android7-16.js',
   'business-tool-search.js',
+  'invoice-pdf.js',
   'app.js',
   'security-ui-643.js',
   'plan-badge-menu-645.js',
@@ -123,3 +124,17 @@ function writeBundle(subdirectory, outputName, filenames, sectionLabel) {
 writeBundle('styles', 'vyapar-core.css', coreStyles, 'STYLE SOURCE');
 writeBundle('styles', 'vyapar-ui.css', uiStyles, 'STYLE SOURCE');
 writeBundle('scripts', 'vyapar-app.js', scripts, 'SCRIPT SOURCE');
+
+// PDF engine is shipped locally but loaded only when an invoice is exported.
+for (const name of ['pdf-lib.min.js', 'pdf-lib-LICENSE.md']) {
+  const source = fs.readFileSync(path.join(projectDir, 'frontend-source/vendor', name));
+  for (const runtime of runtimeDirs) {
+    const target = path.join(runtime, 'vendor', name);
+    if (checkOnly) {
+      if (!fs.existsSync(target) || !source.equals(fs.readFileSync(target))) throw new Error(`Stale PDF dependency: ${target}`);
+    } else {
+      fs.mkdirSync(path.dirname(target), {recursive: true});
+      fs.writeFileSync(target, source);
+    }
+  }
+}

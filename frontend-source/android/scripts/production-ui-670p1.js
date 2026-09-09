@@ -90,6 +90,8 @@
       node.setAttribute('aria-hidden', String(!visible));
     });
 
+    if(screenId === 'business' && window.VyaparBusinessTools) window.VyaparBusinessTools.refresh(screen);
+
     screen.querySelectorAll('.grid').forEach(function(grid){
       const sections = Array.from(grid.children).filter(function(child){
         return child.classList && child.classList.contains('p1-mode-section');
@@ -163,7 +165,7 @@
     const shell = screen && screen.querySelector('.vx621-business-shell');
     if(!screen || !shell) return;
 
-    Array.from(shell.children).forEach(function(node){
+    Array.from(shell.querySelectorAll('.vx621-group,.vx621-recent')).forEach(function(node){
       node.classList.remove('p1-mode-section');
       node.removeAttribute('data-p1-mode');
       node.hidden = false;
@@ -172,6 +174,7 @@
         if(/daily business/.test(title)) setSectionMode(node, 'daily');
         else if(/accounting|compliance/.test(title)) setSectionMode(node, 'accounts');
         else if(/documents|communication/.test(title)) setSectionMode(node, 'documents');
+        else setSectionMode(node, 'daily');
       }else if(node.classList.contains('vx621-recent')) setSectionMode(node, 'activity');
     });
 
@@ -191,8 +194,17 @@
       bar.addEventListener('click',function(event){
         const button=event.target.closest('button[data-mode]');
         if(!button) return;
+        const search=screen.querySelector('#businessToolSearch');
+        if(search) search.value='';
         saveMode('business',button.dataset.mode);
         applyMode(screen,'business',modes);
+      });
+      bar.addEventListener('keydown',function(event){
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        const buttons=Array.from(bar.querySelectorAll('button[data-mode]'));
+        const index=buttons.indexOf(event.target); if(index<0) return;
+        const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+        event.preventDefault();buttons[next].click();buttons[next].focus();
       });
       shell.insertBefore(bar,kpis && kpis.nextSibling ? kpis.nextSibling : shell.firstChild);
     }

@@ -17,6 +17,8 @@
     function filter() {
       const terms = normalize(input.value).split(' ').filter(Boolean);
       let count = 0;
+      const selected=root.querySelector('.p1-modebar[data-screen="business"] [aria-selected="true"]');
+      const active=selected ? selected.dataset.mode : 'daily';
       results.querySelectorAll('.vx621-group').forEach(function (group) {
         let visible = 0;
         const heading = group.querySelector('h2');
@@ -26,9 +28,16 @@
           card.hidden = !matches;
           if (matches) visible++;
         });
-        group.hidden = visible === 0;
+        const mode=group.dataset && group.dataset.p1Mode;
+        group.hidden = visible === 0 || (!terms.length && mode && !mode.split(' ').includes(active));
+        if(group.setAttribute) group.setAttribute('aria-hidden',String(group.hidden));
         count += visible;
       });
+      const recent=root.querySelector('.vx621-recent');
+      if(recent) {
+        recent.hidden=terms.length>0 || active!=='activity';
+        if(recent.setAttribute) recent.setAttribute('aria-hidden',String(recent.hidden));
+      }
       clear.hidden = !input.value;
       status.textContent = !terms.length ? '' : count
         ? count + (count === 1 ? ' tool found' : ' tools found')
@@ -41,6 +50,7 @@
       input.focus();
     }
 
+    input.__refreshBusinessSearch = filter;
     input.addEventListener('input', filter);
     input.addEventListener('search', filter);
     input.addEventListener('keydown', function (event) {
@@ -53,5 +63,8 @@
     clear.addEventListener('click', reset);
   }
 
-  window.VyaparBusinessTools = { bind: bind };
+  window.VyaparBusinessTools = { bind: bind, refresh: function(root) {
+    const input=root.querySelector('#businessToolSearch');
+    if(input && input.__refreshBusinessSearch) input.__refreshBusinessSearch();
+  } };
 })();

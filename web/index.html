@@ -2,7 +2,7 @@
 <html lang="en" class="vy-professional-ui vy861-flat-black vy855-inspected-fix vy855-booting">
 <head>
   <meta charset="UTF-8" />
-  <meta name="vyapar-ui-version" content="20.10.2004.00005.2026" />
+  <meta name="vyapar-ui-version" content="20.10.2004.00006.2026" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="icon" href="assets/images/logo.png" type="image/png">
   <title>Vyapar AI</title>
@@ -25,8 +25,9 @@
       width:112px!important;height:112px!important;max-width:112px!important;
       object-fit:contain!important;border-radius:24px!important;
       background:transparent!important;box-shadow:none!important;filter:none!important;
-      opacity:1!important;transform:none!important;animation:none!important;
+      opacity:1!important;transform:translateY(-12%)!important;animation:none!important;
     }
+    .vy-boot-logo-frame{width:112px;height:112px;overflow:hidden;background:#fff;border-radius:24px;}
     html.vy855-booting body>.app,html.vy855-booting #nav,
     html.vy855-booting #vyaparOtpGate{visibility:hidden!important;pointer-events:none!important}
     html #appLoader,html #vy647StartupSplash{display:none!important}
@@ -45,11 +46,11 @@
       }
     } catch (error) {}
   </script>
-  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=2010200405-uiorganized1" />
-  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=2010200405-uiorganized1" />
+  <link rel="stylesheet" href="assets/styles/vyapar-core.css?v=2010200406-compactpdf1" />
+  <link rel="stylesheet" href="assets/styles/vyapar-ui.css?v=2010200406-compactpdf1" />
 </head>
 <body>
-  <div id="vy855BootGuard" aria-hidden="true"><img src="assets/images/logo.png" alt="" /></div>
+  <div id="vy855BootGuard" aria-hidden="true"><span class="vy-boot-logo-frame"><img src="assets/images/logo.png" alt="" /></span></div>
 
   <div id="appLoader" class="android-loader" aria-label="Loading Vyapar AI">
     <div class="android-loader-logo" aria-hidden="true">
@@ -72,7 +73,7 @@
   <div class="app">
     <header class="top">
       <div class="brand">
-        <img class="logo" src="assets/images/logo.png" alt="Vyapar AI" />
+        <span class="vy-logo-frame"><img class="logo" src="assets/images/logo.png" alt="Vyapar AI" /></span>
         <div>
           <h1>Vyapar AI</h1>
           <div class="tag">Clear business overview</div>
@@ -101,7 +102,7 @@
   </div>
 
   <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="assets/scripts/vyapar-app.js?v=2010200405-uiorganized1"></script>
+  <script src="assets/scripts/vyapar-app.js?v=2010200406-compactpdf1"></script>
 
 </body>
 </html>

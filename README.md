@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00005.2026** (`2010200405`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00006.2026** (`2010200406`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 
@@ -20,6 +20,8 @@ Build the Android app using the existing GitHub Actions workflow or Android SDK/
 | Area | Source |
 | --- | --- |
 | App screens, actions and accounting integrations | `frontend-source/android/scripts/app.js` |
+| Invoice PDF generation and local download | `frontend-source/android/scripts/invoice-pdf.js` |
+| Local PDF dependency + MIT license | `frontend-source/vendor/` |
 | Business tool search | `frontend-source/android/scripts/business-tool-search.js` |
 | Login and session restoration | `frontend-source/android/scripts/auth.js`, `android-session-flow-647.js` |
 | Settings navigation and search | `frontend-source/android/scripts/settings-center-675.js` |
@@ -35,12 +37,12 @@ The `android` source directory is shared by both platforms. Its name is retained
 
 The original financial engines and feature modules remain in place. Do not remove an older named layer solely because its version is old; many contain active behavior. There is no separate legacy source mirror to maintain.
 
-## This cleanup
+## Current improvements
 
-- Shorter Business page explanations and a local tool search with clear, no-result and keyboard-reset behavior.
-- Flat, consistent tool cards; readable text; 44px action/input targets; visible focus; single-column tools on phones.
-- One deterministic build writes both platform bundles. `--check` detects source edits that have not been built.
-- 141 unused duplicate source/runtime files removed (3,653,445 bytes); historical notes moved into documentation folders.
-- Original version, account data keys, navigation destinations, entitlements, startup and accounting behavior retained.
+- Working category tabs and compact Business tools, with search across categories.
+- Direct offline invoice PDF downloads: A4/A5 and 58/80mm, paginated items, saved totals and native save confirmation.
+- A short first-use permission introduction and approximately 2:3 optical logo spacing.
+- One deterministic build for web and Android. A local PDF dependency is included; no install step is needed.
+- Original cleanup retained: 141 redundant files removed, historical notes archived and source modules preserved.
 
-See [validation and limitations](docs/UI-CLEANUP.md) and the [exact cleanup list](docs/cleanup-manifest.json). Full historical feature documentation is in [the archived README](docs/history/README-legacy.md).
+See [current changes and verification](docs/COMPACT-PDF-VALIDATION.md), [sample PDFs](docs/examples/), and the [prior cleanup record](docs/UI-CLEANUP.md). Physical Android UI and smoothness verification are still required before distributing an APK.

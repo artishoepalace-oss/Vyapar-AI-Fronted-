@@ -1084,6 +1084,8 @@
     function filter() {
       const terms = normalize(input.value).split(' ').filter(Boolean);
       let count = 0;
+      const selected=root.querySelector('.p1-modebar[data-screen="business"] [aria-selected="true"]');
+      const active=selected ? selected.dataset.mode : 'daily';
       results.querySelectorAll('.vx621-group').forEach(function (group) {
         let visible = 0;
         const heading = group.querySelector('h2');
@@ -1093,9 +1095,16 @@
           card.hidden = !matches;
           if (matches) visible++;
         });
-        group.hidden = visible === 0;
+        const mode=group.dataset && group.dataset.p1Mode;
+        group.hidden = visible === 0 || (!terms.length && mode && !mode.split(' ').includes(active));
+        if(group.setAttribute) group.setAttribute('aria-hidden',String(group.hidden));
         count += visible;
       });
+      const recent=root.querySelector('.vx621-recent');
+      if(recent) {
+        recent.hidden=terms.length>0 || active!=='activity';
+        if(recent.setAttribute) recent.setAttribute('aria-hidden',String(recent.hidden));
+      }
       clear.hidden = !input.value;
       status.textContent = !terms.length ? '' : count
         ? count + (count === 1 ? ' tool found' : ' tools found')
@@ -1108,6 +1117,7 @@
       input.focus();
     }
 
+    input.__refreshBusinessSearch = filter;
     input.addEventListener('input', filter);
     input.addEventListener('search', filter);
     input.addEventListener('keydown', function (event) {
@@ -1120,7 +1130,251 @@
     clear.addEventListener('click', reset);
   }
 
-  window.VyaparBusinessTools = { bind: bind };
+  window.VyaparBusinessTools = { bind: bind, refresh: function(root) {
+    const input=root.querySelector('#businessToolSearch');
+    if(input && input.__refreshBusinessSearch) input.__refreshBusinessSearch();
+  } };
+})();
+
+/* ===== SCRIPT SOURCE: invoice-pdf.js ===== */
+
+/* Offline invoice PDF export. Financial values are read from the saved document. */
+(function () {
+  'use strict';
+  let libraryPromise, activeJob = null;
+  const pending = new Map();
+  const nativeCallback = window.onNativeDownloadResult;
+  window.onNativeDownloadResult = function (id, ok, message) {
+    const request = pending.get(id);
+    if (request) {
+      pending.delete(id); clearTimeout(request.timer);
+      if (ok) request.resolve(message); else request.reject(new Error(message || 'File could not be saved.'));
+    } else if (typeof nativeCallback === 'function') nativeCallback(id, ok, message);
+  };
+  function loadLibrary() {
+    if (window.PDFLib) return Promise.resolve(window.PDFLib);
+    if (libraryPromise) return libraryPromise;
+    libraryPromise = new Promise(function (resolve, reject) {
+      const script = document.createElement('script');
+      script.src = 'assets/vendor/pdf-lib.min.js';
+      const timer = setTimeout(fail, 15000);
+      function fail() { clearTimeout(timer); script.remove(); libraryPromise = null; reject(new Error('PDF engine could not load. Try again.')); }
+      script.onload = function () { clearTimeout(timer); if (window.PDFLib) resolve(window.PDFLib); else fail(); };
+      script.onerror = fail; document.head.appendChild(script);
+    });
+    return libraryPromise;
+  }
+  function value(v) { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+  function clean(v) { return String(v == null ? '' : v).replace(/[\u0000-\u0008\u000b-\u001f]/g, '').trim(); }
+  function filename(number) { return ('Invoice-' + clean(number || 'document')).replace(/[\\/:*?"<>|\u0000-\u001f]/g, '-').slice(0,100) + '.pdf'; }
+  function splitText(text, maxWidth, measure) {
+    const lines = [];
+    clean(text).split(/\r?\n/).forEach(function (paragraph) {
+      let line = '';
+      paragraph.split(/\s+/).forEach(function (word) {
+        const candidate = line ? line + ' ' + word : word;
+        if (measure(candidate) <= maxWidth) { line = candidate; return; }
+        if (line) { lines.push(line); line = ''; }
+        for (const letter of Array.from(word)) {
+          if (line && measure(line + letter) > maxWidth) { lines.push(line); line = ''; }
+          line += letter;
+        }
+      });
+      lines.push(line);
+    });
+    return lines;
+  }
+  function status(message, error) {
+    if (typeof window.premiumToast === 'function') window.premiumToast(message, error ? 'error' : 'success');
+    else if (typeof window.showGlassToast === 'function') window.showGlassToast(message);
+    else if (error) window.alert(message);
+  }
+  async function generate(model, providedLibrary) {
+    model=JSON.parse(JSON.stringify(model || {}));
+    const lib = providedLibrary || await loadLibrary();
+    const pdf = await lib.PDFDocument.create();
+    const regular = await pdf.embedFont(lib.StandardFonts.Helvetica);
+    const bold = await pdf.embedFont(lib.StandardFonts.HelveticaBold);
+    // Copy the document so a later edit cannot change an in-flight export.
+    const tx = model.transaction || {}, business = model.business || {}, s = model.settings || {};
+    const currency = clean(tx.currency || business.baseCurrency || 'INR');
+    const money = n => currency + ' ' + value(n).toFixed(2);
+    const thermal = !!model.thermal;
+    let size = thermal ? [s.thermalWidth === '58' ? 164.41 : 226.77, 650] : s.paperSize === 'A5' ? [419.53,595.28] : [595.28,841.89];
+    if (!thermal && s.orientation === 'landscape') size.reverse();
+    const [width,height] = size, margin = thermal ? 10 : s.paperSize==='A5'?22:30, usable = width - margin * 2;
+    const fontSize = thermal ? 8 : s.fontSize === 'small' ? 9 : s.fontSize === 'large' ? 12 : s.paperSize==='A5'?9:10;
+    const rowGap = fontSize * (s.theme==='compact'?1.25:1.4), bottom = thermal?26:32;
+    const summaryStep=thermal || s.paperSize==='A5' || s.theme==='compact'?18:22;
+    const cellPadding=thermal || s.paperSize==='A5'?8:12;
+    const rgb = lib.rgb, ink = rgb(.08,.10,.13), muted = rgb(.35,.38,.43), line = rgb(.84,.86,.89);
+    const accent = /^#[0-9a-f]{6}$/i.test(s.accent || '') ? s.accent : '#273449';
+    const tint = rgb(parseInt(accent.slice(1,3),16)/255,parseInt(accent.slice(3,5),16)/255,parseInt(accent.slice(5),16)/255);
+    const pages = []; let page,y,logo;
+    const ctx = typeof document !== 'undefined' ? document.createElement('canvas').getContext('2d') : null;
+    function unicode(text) { try { regular.encodeText(text); return false; } catch (_) { return true; } }
+    function measure(text,size,strong) {
+      const textValue=clean(text); if(!textValue)return 0;
+      if(!unicode(textValue)) return (strong?bold:regular).widthOfTextAtSize(textValue,size);
+      if(!ctx) throw new Error('Unicode invoice text requires a canvas-capable browser.');
+      ctx.font=(strong?'600 ':'400 ')+size+'px sans-serif'; return ctx.measureText(textValue).width;
+    }
+    async function text(textValue,x,top,size=fontSize,strong=false,color=ink,maxWidth) {
+      textValue=clean(textValue); if(!textValue)return;
+      let actual=size;
+      if(maxWidth && measure(textValue,actual,strong)>maxWidth) actual=Math.max(6,actual*maxWidth/measure(textValue,actual,strong));
+      if(!unicode(textValue)) { page.drawText(textValue,{x,y:height-top-actual,size:actual,font:strong?bold:regular,color}); return; }
+      // Canvas uses the device's font shaping for Hindi/Unicode; no missing-glyph substitution.
+      const canvas=document.createElement('canvas'),scale=3;
+      const w=measure(textValue,actual,strong),h=actual*1.6;
+      canvas.width=Math.ceil(w*scale+4);canvas.height=Math.ceil(h*scale+4);
+      const c=canvas.getContext('2d');c.scale(scale,scale);c.font=(strong?'600 ':'400 ')+actual+'px sans-serif';c.fillStyle='#171a21';c.textBaseline='top';c.fillText(textValue,0,actual*.1);
+      const image=await pdf.embedPng(canvas.toDataURL('image/png'));
+      page.drawImage(image,{x,y:height-top-h,width:canvas.width/scale,height:canvas.height/scale});
+      canvas.width=canvas.height=1;
+    }
+    function rule(top) { page.drawLine({start:{x:margin,y:height-top},end:{x:width-margin,y:height-top},thickness:.6,color:line}); }
+    if(s.showLogo !== false && business.logo && /^data:image\/(png|jpeg);base64,/i.test(business.logo)) {
+      try { logo=/^data:image\/png/i.test(business.logo)?await pdf.embedPng(business.logo):await pdf.embedJpg(business.logo); } catch (_) { /* Optional damaged logo must not prevent invoice export. */ }
+    }
+    const label = tx.type === 'SALE' || !tx.type ? 'INVOICE' : clean(tx.type).replace(/_/g,' ');
+    async function newPage(copy, table) {
+      page=pdf.addPage(size);pages.push(page);y=margin;
+      await text(business.name || 'Vyapar AI',margin,y,thermal?13:20,true,tint,usable-(logo?45:0));
+      if(logo) { const dims=logo.scaleToFit(38,38);page.drawImage(logo,{x:width-margin-dims.width,y:height-y-dims.height,width:dims.width,height:dims.height}); }
+      y+=thermal?24:32;
+      await text(label+'  '+clean(tx.number),margin,y,fontSize,true,ink,usable);y+=rowGap;
+      await text(clean(tx.date)+(copy?'  |  '+copy:''),margin,y,fontSize,false,muted,usable);y+=rowGap;
+      if(table) { rule(y+3); y+=12; await tableHeader(); }
+    }
+    async function paragraph(content,strong=false,color=ink) {
+      const lines=splitText(content,usable,t=>measure(t,fontSize,strong));
+      for(const part of lines) { if(y+rowGap>height-bottom) await newPage(copyLabel,false);await text(part,margin,y,fontSize,strong,color);y+=rowGap; }
+    }
+    let columns=[];
+    const short=thermal || width<450;
+    function buildColumns() {
+      const numerical=short ? [['Qty',.12],['Rate',.23],['Amount',.27]] : [['Qty',.07],...(s.showMRP?[['MRP',.12]]:[]),['Rate',.14],...(s.showTax!==false?[['Tax',.09]]:[]),['Amount',.18]];
+      const itemWidth=thermal?usable:usable*(1-numerical.reduce((a,c)=>a+c[1],0));
+      let x=margin;columns=[{label:'Item',x,width:itemWidth}];x+=itemWidth;
+      if(thermal) { columns=[{label:'Item',x:margin,width:usable}];return; }
+      numerical.forEach(c=>{columns.push({label:c[0],x,width:usable*c[1]});x+=usable*c[1];});
+    }
+    buildColumns();
+    async function tableHeader() {
+      page.drawRectangle({x:margin,y:height-y-22,width:usable,height:22,color:rgb(.94,.95,.97)});
+      for(const col of columns) await text(thermal?'Item / Qty x Rate':col.label,col.x+3,y+5,Math.min(fontSize,9),true,ink,col.width-6);
+      y+=26;
+    }
+    async function items() {
+      if(y+60>height-bottom) await newPage(copyLabel,false);
+      await tableHeader();
+      const rows=Array.isArray(tx.items)?tx.items:[];
+      if(!rows.length) await paragraph('No item lines on this document.');
+      for(let index=0;index<rows.length;index++) {
+        const item=rows[index],qty=value(item.qty),rate=value(item.rate==null?item.price:item.rate);
+        const heading=(index+1)+'. '+clean(item.name || item.product || 'Item');
+        const description=[heading,s.showDescription!==false?clean(item.description):'',s.showHSN!==false && item.hsn?'HSN/SAC: '+clean(item.hsn):'',item.size?'Size: '+clean(item.size):'',item.color?'Colour: '+clean(item.color):'',value(item.discount)?'Line discount: '+value(item.discount)+'%':''].filter(Boolean).join('\n');
+        const wraps=splitText(description,columns[0].width-7,t=>measure(t,fontSize,false));
+        let lineIndex=0;
+        while(lineIndex<wraps.length) {
+          if(y+rowGap+cellPadding>height-bottom) await newPage(copyLabel,true);
+          const available=Math.max(1,Math.floor((height-bottom-y-cellPadding)/rowGap));
+          const chunk=wraps.slice(lineIndex,lineIndex+available),rowHeight=chunk.length*rowGap+cellPadding;
+          for(let l=0;l<chunk.length;l++) await text(chunk[l],margin+3,y+5+l*rowGap,fontSize);
+          if(lineIndex===0) {
+            const amount=item.total != null ? value(item.total) : item.amount != null ? value(item.amount) : qty*rate;
+            const vals={Qty:String(qty),MRP:value(item.mrp).toFixed(2),Rate:rate.toFixed(2),Tax:(tx.tax!=null && value(tx.tax)===0?0:value(item.tax ?? item.gst ?? item.taxRate ?? tx.gstPercent))+'%',Amount:amount.toFixed(2)};
+            for(const col of columns.slice(1)) {
+              const val=vals[col.label];const fs=Math.min(fontSize,9);const w=measure(val,fs,false);
+              await text(val,Math.max(col.x+3,col.x+col.width-w-3),y+5,fs,false,ink,col.width-6);
+            }
+          }
+          y+=rowHeight;lineIndex+=chunk.length;
+          if(!thermal) rule(y);
+        }
+        if(thermal) {
+          if(y+rowGap+8>height-bottom) await newPage(copyLabel,true);
+          const amount=item.total!=null?value(item.total):item.amount!=null?value(item.amount):qty*rate;
+          const label=qty+' x '+rate.toFixed(2),amountText=amount.toFixed(2);
+          await text(label,margin+3,y,fontSize,false,muted,usable*.52);
+          await text(amountText,Math.max(margin+usable*.55,width-margin-measure(amountText,fontSize,true)-3),y,fontSize,true,ink,usable*.45-3);
+          y+=rowGap+8;rule(y);
+        }
+        if(index%12===0) await new Promise(resolve=>setTimeout(resolve,0));
+      }
+    }
+    let copyLabel='';
+    const copies=s.originalDuplicate && !thermal ? ['CUSTOMER COPY','OFFICE COPY'] : [''];
+    for(const copy of copies) {
+      copyLabel=copy;await newPage(copy,false);
+      for(const field of [['Address','address','showAddress'],['Phone','phone','showPhone'],['Email','email','showEmail'],['GSTIN','gstin','showGSTIN']]) {
+        if(s[field[2]]!==false && business[field[1]]) await paragraph((field[0]==='Address'?'':field[0]+': ')+clean(business[field[1]]),false,muted);
+      }
+      y+=8;rule(y);y+=12;
+      await paragraph('Bill to: '+clean(tx.partyName || tx.customer || 'Walk-in Customer'),true);
+      if(tx.eWayBillNo) await paragraph('E-Way Bill: '+clean(tx.eWayBillNo));
+      for(const field of model.customFields || []) if(field.enabled!==false) await paragraph(clean(field.label)+': '+clean(field.value));
+      y+=10;await items();y+=14;
+      const lineSubtotal=(tx.items||[]).reduce((sum,item)=>sum+value(item.qty)*value(item.rate ?? item.price),0);
+      const subtotal=tx.subtotal==null?lineSubtotal:value(tx.subtotal);
+      // Platform transactions store invoice discount as a percentage. Legacy bills
+      // store discountAmount. Preserve both schemas without changing the ledger.
+      const lineDiscount=(tx.items||[]).reduce((sum,item)=>sum+value(item.qty)*value(item.rate ?? item.price)*value(item.discount)/100,0);
+      const discount=tx.discountAmount==null?lineDiscount+subtotal*value(tx.discountPercent ?? tx.discount)/100:value(tx.discountAmount);
+      const received=value(tx.receivedPaid ?? tx.paid);
+      const balance=tx.balance==null?Math.max(0,value(tx.total)-received):value(tx.balance);
+      const taxParts=[['CGST',tx.cgst],['SGST',tx.sgst],['IGST',tx.igst]].filter(part=>value(part[1])!==0);
+      const taxes=taxParts.length && Math.abs(taxParts.reduce((sum,part)=>sum+value(part[1]),0)-value(tx.tax))<.01?taxParts:[['GST',tx.tax]];
+      const summary=[['Subtotal',subtotal],...(discount?[['Discount',-discount]]:[]),
+        ...(s.showTax!==false?[...taxes,...(value(tx.cess)?[['CESS',tx.cess]]:[])]:[]),
+        ...(value(tx.additionalCharges)?[['Other charges',tx.additionalCharges]]:[]),['Total',tx.total],
+        ...(s.showReceived!==false?[['Received',received]]:[]),...(s.showBalance!==false?[['Balance',balance]]:[])];
+      if(y+summary.length*summaryStep>height-bottom) await newPage(copy,false);
+      for(const [label,amount] of summary) {
+        if(y+summaryStep>height-bottom) await newPage(copy,false);
+        const strong=label==='Total'; if(strong)rule(y-3);
+        const display=money(amount),space=measure(display,fontSize,strong);
+        const labelX=thermal?margin:Math.max(margin,width-margin-250);
+        await text(label,labelX,y,fontSize,strong);await text(display,Math.max(labelX+65,width-margin-space),y,fontSize,strong,ink,width-margin-labelX-65);y+=summaryStep;
+      }
+      if(s.showPaymentMode!==false && tx.paymentMode) await paragraph('Payment: '+clean(tx.paymentMode));
+      if(s.showAmountWords!==false && model.amountWords) await paragraph('Amount in words: '+clean(model.amountWords));
+      y+=8;
+      if(tx.notes) await paragraph('Notes: '+clean(tx.notes),false,muted);
+      if(s.showTerms!==false && s.terms) await paragraph('Terms: '+clean(s.terms),false,muted);
+      if(s.showSignature!==false) { y+=s.paperSize==='A5'?6:14;await paragraph(clean(s.signatureText || 'Authorized Signatory'),true); }
+    }
+    if(s.showPageNumbers!==false) {
+      for(let i=0;i<pages.length;i++) { page=pages[i];await text('Page '+(i+1)+' of '+pages.length,margin,height-22,8,false,muted); }
+    }
+    pdf.setTitle('Invoice '+clean(tx.number));pdf.setAuthor(clean(business.name || 'Vyapar AI'));pdf.setCreator('Vyapar AI');
+    return { bytes:await pdf.save(),name:filename(tx.number),pageCount:pages.length };
+  }
+  function base64(bytes) { let result='';for(let i=0;i<bytes.length;i+=8192)result+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));return btoa(result); }
+  async function save(result) {
+    const bridge=window.AndroidDownloads;
+    if(bridge && typeof bridge.saveBase64WithResult==='function') {
+      const id='invoice-'+Date.now();
+      return new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>{pending.delete(id);reject(new Error('Save confirmation timed out. Check Downloads before retrying.'));},180000);
+        pending.set(id,{resolve,reject,timer});
+        try { bridge.saveBase64WithResult(result.name,'application/pdf',base64(result.bytes),id); }
+        catch(error){clearTimeout(timer);pending.delete(id);reject(error);}
+      });
+    }
+    if(bridge && typeof bridge.saveBase64==='function') {bridge.saveBase64(result.name,'application/pdf',base64(result.bytes));return 'Save requested. Check Downloads/Vyapar AI.';}
+    const url=URL.createObjectURL(new Blob([result.bytes],{type:'application/pdf'}));
+    const a=document.createElement('a');a.href=url;a.download=result.name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);return 'PDF download started.';
+  }
+  function download(model) {
+    if(activeJob)return activeJob;
+    status('Preparing invoice PDF…');
+    activeJob=generate(model).then(save).then(message=>{status(message);return true;}).catch(error=>{status(error.message || 'PDF could not be saved. Please try again.',true);return false;}).finally(()=>{activeJob=null;});
+    return activeJob;
+  }
+  window.VyaparInvoicePDF={generate,download,filename,splitText};
 })();
 
 /* ===== SCRIPT SOURCE: app.js ===== */
@@ -5803,7 +6057,7 @@ function businessShowModule(module){
   } else if(module==='payments'){
     el.innerHTML=`<h2>Payments</h2><div class="business-calc-grid"><div><label>Direction</label><select id="payDirection"><option value="in">Money In</option><option value="out">Money Out</option></select></div><div><label>Amount</label><input id="payAmount" type="number" placeholder="2000"></div><div><label>Method</label><select id="payMethod"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank</option></select></div><div><label>Note</label><input id="payNote" placeholder="Customer payment"></div></div><div class="actions"><button class="btn primary" onclick="businessAddPayment()">Save Payment</button></div><div class="notice success" style="margin-top:12px">Recorded payments in: <b>${money(businessTotals().paymentsIn)}</b> · out: <b>${money(businessTotals().paymentsOut)}</b></div>`;
   } else if(module==='billing'){
-    el.innerHTML=`<h2>Create Invoice</h2><div class="business-calc-grid"><div><label>Customer</label><input id="invCustomer" placeholder="Walk-in Customer"></div><div><label>Product</label><input id="invProduct" placeholder="Product"></div><div><label>Qty</label><input id="invQty" type="number" value="1"></div><div><label>Unit Price</label><input id="invPrice" type="number" placeholder="999"></div><div><label>GST %</label><input id="invGst" type="number" value="18"></div><div><label>Discount %</label><input id="invDiscount" type="number" value="0"></div></div><div class="actions"><button class="btn primary" onclick="businessCreateInvoice()">Create Invoice</button></div><div class="business-table scroll"><table class="table"><thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Action</th></tr></thead><tbody>${state.invoices.slice().reverse().map(i=>`<tr><td>${esc(i.number)}</td><td>${esc(i.customer)}</td><td>${money(i.total)}</td><td><button class="btn mini" onclick="businessPrintInvoice('${esc(i.id)}')">Print/PDF</button></td></tr>`).join('')||'<tr><td colspan="4" class="muted">No invoices.</td></tr>'}</tbody></table></div>`;
+    el.innerHTML=`<h2>Create Invoice</h2><div class="business-calc-grid"><div><label>Customer</label><input id="invCustomer" placeholder="Walk-in Customer"></div><div><label>Product</label><input id="invProduct" placeholder="Product"></div><div><label>Qty</label><input id="invQty" type="number" value="1"></div><div><label>Unit Price</label><input id="invPrice" type="number" placeholder="999"></div><div><label>GST %</label><input id="invGst" type="number" value="18"></div><div><label>Discount %</label><input id="invDiscount" type="number" value="0"></div></div><div class="actions"><button class="btn primary" onclick="businessCreateInvoice()">Create Invoice</button></div><div class="business-table scroll"><table class="table"><thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Action</th></tr></thead><tbody>${state.invoices.slice().reverse().map(i=>`<tr><td>${esc(i.number)}</td><td>${esc(i.customer)}</td><td>${money(i.total)}</td><td><button class="btn mini" onclick="businessPrintInvoice('${esc(i.id)}')">Download PDF</button></td></tr>`).join('')||'<tr><td colspan="4" class="muted">No invoices.</td></tr>'}</tbody></table></div>`;
   }
 }
 function businessAddCustomer(){ensureBusinessState();const name=cleanText(v('custName'),120),mobile=cleanText(v('custMobile'),25),due=Math.max(0,num(v('custDue'))),address=cleanText(v('custAddress'),250);if(!name){alert('Customer name is required.');return;}state.customers.push({id:uid(),name,mobile,address,due,createdAt:new Date().toISOString()});save();businessShowModule('customers');}
@@ -5812,7 +6066,14 @@ function businessAddPurchase(){ensureBusinessState();const supplier=cleanText(v(
 function businessAddExpense(){ensureBusinessState();const category=cleanText(v('expCategory'),80),amount=Math.max(0,num(v('expAmount'))),note=cleanText(v('expNote'),200);if(amount<=0){alert('Enter expense amount.');return;}state.expenses.push({id:uid(),date:localDateKey(),category,amount,note});save();businessShowModule('expenses');}
 function businessAddPayment(){ensureBusinessState();const direction=v('payDirection')==='out'?'out':'in',amount=Math.max(0,num(v('payAmount'))),method=cleanText(v('payMethod'),30),note=cleanText(v('payNote'),160);if(amount<=0){alert('Enter payment amount.');return;}state.payments.push({id:uid(),date:localDateKey(),direction,amount,method,note});save();businessShowModule('payments');}
 function businessCreateInvoice(){ensureBusinessState();const customer=cleanText(v('invCustomer'),120)||'Walk-in Customer',product=cleanText(v('invProduct'),160),qty=Math.max(0,num(v('invQty'))),price=Math.max(0,num(v('invPrice'))),gst=Math.max(0,num(v('invGst'))),discount=Math.max(0,Math.min(100,num(v('invDiscount'))));if(!product||qty<=0||price<=0){alert('Enter product, quantity and price.');return;}const subtotal=qty*price,discountAmount=subtotal*discount/100,net=subtotal-discountAmount,tax=net*gst/100,total=net+tax;const number='INV-'+new Date().getFullYear()+'-'+String(state.invoices.length+1).padStart(5,'0');const invoice={id:uid(),number,date:localDateKey(),customer,items:[{product,qty,price}],subtotal,discountPercent:discount,discountAmount,gstPercent:gst,tax,total};state.invoices.push(invoice);state.sales.push({id:uid(),date:invoice.date,product,category:'Invoice',purchasePrice:0,sellingPrice:price,qty,customer});save();businessShowModule('billing');showGlassToast(number+' created.');}
-function businessPrintInvoice(id){const inv=state.invoices.find(x=>x.id===id);if(!inv)return;const w=window.open('','_blank');if(!w){alert('Popup blocked. Allow popups to print invoice.');return;}w.document.write(`<html><head><title>${esc(inv.number)}</title><style>body{font-family:Arial,sans-serif;padding:28px;max-width:800px;margin:auto}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:10px;text-align:left}.total{font-size:20px;font-weight:800;text-align:right}</style></head><body><h1>Vyapar AI</h1><p>Invoice: ${esc(inv.number)}<br>Date: ${esc(inv.date)}<br>Customer: ${esc(inv.customer)}</p><table><thead><tr><th>Product</th><th>Qty</th><th>Price</th></tr></thead><tbody>${inv.items.map(x=>`<tr><td>${esc(x.product)}</td><td>${x.qty}</td><td>${money(x.price)}</td></tr>`).join('')}</tbody></table><p>Subtotal: ${money(inv.subtotal)}<br>Discount: ${money(inv.discountAmount)}<br>GST: ${money(inv.tax)}</p><p class="total">Grand Total: ${money(inv.total)}</p><script>window.onload=function(){window.print();}</script></body></html>`);w.document.close();}
+function businessPrintInvoice(id){
+  const inv=(state.invoices||[]).find(x=>x.id===id);if(!inv)return;
+  const tx={...inv,type:'SALE',partyName:inv.customer,currency:inv.currency||'INR',discount:inv.discountAmount,
+    receivedPaid:inv.receivedPaid==null?(inv.paid==null?0:inv.paid):inv.receivedPaid,
+    balance:inv.balance==null?Math.max(0,num(inv.total)-num(inv.receivedPaid==null?inv.paid:inv.receivedPaid)):inv.balance};
+  const profile=state.profile||{},company=state.businessProfile||{};
+  return window.VyaparInvoicePDF.download({transaction:tx,business:{name:company.businessName||company.name||profile.businessName||profile.shopName||'Vyapar AI',address:company.address||profile.address||'',phone:company.phone||profile.phone||'',gstin:company.gstin||''},settings:state.invoiceSettings620||{}});
+}
 function businessDeleteRecord(bucket,id){ensureBusinessState();state[bucket]=state[bucket].filter(x=>x.id!==id);save();businessShowModule(bucket==='customers'?'customers':bucket);}
 function businessSeedDemo(){ensureBusinessState();if(!state.customers.length)state.customers.push({id:uid(),name:'Demo Customer',mobile:'',address:'',due:1500});if(!state.purchases.length)state.purchases.push({id:uid(),date:localDateKey(),supplier:'Demo Supplier',product:'Demo Shoe',qty:10,unitCost:500,amount:5000});if(!state.expenses.length)state.expenses.push({id:uid(),date:localDateKey(),category:'Transport',amount:300,note:'Demo'});save();renderBusiness();showGlassToast('Demo business data added.');}
 function businessExportCSV(){ensureBusinessState();const rows=[['Type','Date','Name/Product','Amount','Note'],...state.purchases.map(x=>['Purchase',x.date,x.product,x.amount,x.supplier]),...state.expenses.map(x=>['Expense',x.date,x.category,x.amount,x.note]),...state.payments.map(x=>['Payment '+x.direction,x.date,x.method,x.amount,x.note])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');downloadBlob(new Blob([csv],{type:'text/csv'}),'vyapar-business.csv');}
@@ -6001,7 +6262,7 @@ render();
     } else if(mod==='customers'){
       el.innerHTML=`${back}<h2>Customers & Udhaar</h2><div class="adv-form-grid"><input id="advCName" placeholder="Customer name"><input id="advCMobile" placeholder="Mobile"><input id="advCDue" type="number" placeholder="Opening due"><input id="advCAddress" placeholder="Address"></div><div class="adv-actions"><button class="btn primary" onclick="advAddCustomer()">Add Customer</button><button class="btn" onclick="advReminderExport()">Due Reminder CSV</button></div><div class="adv-table"><table class="table"><thead><tr><th>Name</th><th>Mobile</th><th>Due</th><th>Actions</th></tr></thead><tbody>${(state.customers||[]).map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.mobile)}</td><td>${money(c.due)}</td><td><button class="btn mini" onclick="advReceive('${c.id}')">Receive</button><button class="btn mini" onclick="advStatement('customer','${esc(c.name)}')">Statement</button><button class="btn mini" onclick="advWhatsReminder('${c.id}')">WhatsApp</button></td></tr>`).join('')||'<tr><td colspan="4">No customers.</td></tr>'}</tbody></table></div>`;
     } else if(mod==='billing'){
-      el.innerHTML=`${back}<h2>Billing / Returns</h2><div class="adv-form-grid"><input id="advBillCustomer" placeholder="Customer"><input id="advBillProduct" placeholder="Product"><input id="advBillQty" type="number" value="1" placeholder="Qty"><input id="advBillPrice" type="number" placeholder="Price"><input id="advBillGst" type="number" value="18" placeholder="GST %"><input id="advBillDiscount" type="number" value="0" placeholder="Discount %"></div><div class="adv-actions"><button class="btn primary" onclick="advCreateBill()">Create Bill</button><button class="btn" onclick="window.print()">Print / PDF</button></div><hr><h3>Returns</h3><div class="adv-form-grid"><select id="advReturnKind"><option value="SALE">Sales Return</option><option value="PURCHASE">Purchase Return</option></select><input id="advReturnRef" placeholder="Invoice / Purchase ref"><input id="advReturnAmount" type="number" placeholder="Amount"><input id="advReturnQty" type="number" placeholder="Qty"><input id="advReturnReason" placeholder="Reason"></div><button class="btn" onclick="advRecordReturn(val('advReturnKind'))">Record Return</button><div class="adv-table"><table class="table"><thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>GST</th></tr></thead><tbody>${(state.invoices||[]).slice().reverse().map(i=>`<tr><td>${esc(i.number)}</td><td>${esc(i.customer)}</td><td>${money(i.total)}</td><td>${money(i.tax)}</td></tr>`).join('')||'<tr><td colspan="4">No invoices.</td></tr>'}</tbody></table></div>`;
+      el.innerHTML=`${back}<h2>Billing / Returns</h2><div class="adv-form-grid"><input id="advBillCustomer" placeholder="Customer"><input id="advBillProduct" placeholder="Product"><input id="advBillQty" type="number" value="1" placeholder="Qty"><input id="advBillPrice" type="number" placeholder="Price"><input id="advBillGst" type="number" value="18" placeholder="GST %"><input id="advBillDiscount" type="number" value="0" placeholder="Discount %"></div><div class="adv-actions"><button class="btn primary" onclick="advCreateBill()">Create Bill</button><button class="btn" onclick="var invoice=(state.invoices||[]).slice(-1)[0];if(invoice)businessPrintInvoice(invoice.id);else alert('Create an invoice first.')">Download last invoice</button></div><hr><h3>Returns</h3><div class="adv-form-grid"><select id="advReturnKind"><option value="SALE">Sales Return</option><option value="PURCHASE">Purchase Return</option></select><input id="advReturnRef" placeholder="Invoice / Purchase ref"><input id="advReturnAmount" type="number" placeholder="Amount"><input id="advReturnQty" type="number" placeholder="Qty"><input id="advReturnReason" placeholder="Reason"></div><button class="btn" onclick="advRecordReturn(val('advReturnKind'))">Record Return</button><div class="adv-table"><table class="table"><thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>GST</th></tr></thead><tbody>${(state.invoices||[]).slice().reverse().map(i=>`<tr><td>${esc(i.number)}</td><td>${esc(i.customer)}</td><td>${money(i.total)}</td><td>${money(i.tax)}</td></tr>`).join('')||'<tr><td colspan="4">No invoices.</td></tr>'}</tbody></table></div>`;
     } else if(mod==='suppliers'){
       el.innerHTML=`${back}<h2>Suppliers & Purchases</h2><div class="adv-form-grid"><input id="advSName" placeholder="Supplier"><input id="advSPhone" placeholder="Phone"><input id="advSProduct" placeholder="Product"><input id="advSQty" type="number" value="1"><input id="advSCost" type="number" placeholder="Unit cost"><input id="advSDue" type="number" placeholder="Outstanding"></div><button class="btn primary" onclick="advAddSupplierPurchase()">Record Purchase</button><button class="btn" onclick="advSupplierExport()">Supplier Ledger CSV</button><div class="adv-table"><table class="table"><thead><tr><th>Supplier</th><th>Product</th><th>Qty</th><th>Amount</th></tr></thead><tbody>${(state.purchases||[]).slice().reverse().slice(0,200).map(p=>`<tr><td>${esc(p.supplier)}</td><td>${esc(p.product)}</td><td>${p.qty}</td><td>${money(p.amount)}</td></tr>`).join('')||'<tr><td colspan="4">No purchases.</td></tr>'}</tbody></table></div>`;
     } else if(mod==='finance'){
@@ -10155,6 +10416,8 @@ render();
   };
 
   function maybeShowPermissionSheet(){
+    if(!window.AndroidApp || document.getElementById('vyaparOtpGate')) return;
+    if(document.documentElement.classList.contains('vy855-booting')) { setTimeout(maybeShowPermissionSheet,500); return; }
     if(document.getElementById("androidPermissionSheet")) return;
     if(localStorage.getItem("vyapar_ai_permission_intro_v1") === "1") return;
 
@@ -10162,28 +10425,22 @@ render();
     overlay.id = "androidPermissionSheet";
     overlay.className = "android-permission-overlay";
     overlay.innerHTML = `
-      <div class="android-permission-card" role="dialog" aria-modal="true" aria-label="Privacy and permissions">
-        <div class="android-sheet-handle"></div>
-        <div class="android-permission-icon">✓</div>
-        <div class="android-permission-kicker">READY TO PROTECT YOUR DATA</div>
-        <h2>Privacy and device access</h2>
-        <p>Vyapar AI uses only the access needed for features you choose. Camera access is used for capture and scan features. Notifications are used for backup and important account updates.</p>
-        <div class="android-permission-list">
-          <div><b>Camera</b><span>Capture receipts and business documents.</span></div>
-          <div><b>Notifications</b><span>Show backup and account status when enabled.</span></div>
-          <div><b>Google Drive</b><span>Optional. Your backup is saved only after you connect your Google Account.</span></div>
-        </div>
+      <div class="android-permission-card" role="dialog" aria-modal="true" aria-labelledby="permissionTitle" aria-describedby="permissionDescription">
+        <h2 id="permissionTitle">App permissions</h2>
+        <p id="permissionDescription">Enable notifications for useful account and backup updates.</p>
+        <small>Camera, printer and file access are requested only when you use those features. Drive backup is optional in Settings.</small>
         <div class="android-permission-actions">
-          <button type="button" class="btn primary" id="permissionContinue">Continue</button>
-          <button type="button" class="btn" id="permissionDrive">Enable Google Drive Backup</button>
           <button type="button" class="btn" id="permissionLater">Not now</button>
+          <button type="button" class="btn primary" id="permissionContinue">Continue</button>
         </div>
-        <small>Your data is not shared with other apps. You can change access later in Android settings.</small>
       </div>`;
     document.body.appendChild(overlay);
 
+    const previousFocus=document.activeElement;
     const close = function(mark){
       if(mark) localStorage.setItem("vyapar_ai_permission_intro_v1","1");
+      document.removeEventListener("keydown",permissionKeys,true);
+      if(previousFocus && previousFocus.isConnected && previousFocus.focus) previousFocus.focus();
       if(window.vyaparMotion) window.vyaparMotion.closeOverlay(overlay); else overlay.remove();
     };
     overlay.querySelector("#permissionContinue").onclick = function(){
@@ -10193,15 +10450,23 @@ render();
       }
       close(false);
     };
-    overlay.querySelector("#permissionDrive").onclick = function(){
-      localStorage.setItem("vyapar_ai_permission_intro_v1","1");
-      if(window.AndroidApp && typeof window.AndroidApp.requestRecommendedPermissions === "function") window.AndroidApp.requestRecommendedPermissions();
-      window.connectGoogleDrive();
-      close(false);
-    };
     overlay.querySelector("#permissionLater").onclick = function(){ close(true); };
     overlay.addEventListener("click", function(event){ if(event.target === overlay) close(true); });
+    function permissionKeys(event){
+      if(event.key==='Escape'){ event.preventDefault();event.stopPropagation();close(true); }
+      if(event.key==='Tab'){
+        const buttons=Array.from(overlay.querySelectorAll('button'));
+        if(event.shiftKey && document.activeElement===buttons[0]){event.preventDefault();buttons[buttons.length-1].focus();}
+        else if(!event.shiftKey && document.activeElement===buttons[buttons.length-1]){event.preventDefault();buttons[0].focus();}
+      }
+    }
+    document.addEventListener('keydown',permissionKeys,true);
+    overlay.querySelector('#permissionContinue').focus();
   }
+
+  window.addEventListener('vyapar:session-ready',function(event){
+    if(event.detail && ['authenticated','cached'].includes(event.detail.status)) setTimeout(maybeShowPermissionSheet,600);
+  });
 
 
   /* v4.0.2 adaptive high-quality performance governor
@@ -10834,12 +11099,19 @@ function amountWords(num){num=Math.round(Math.abs(n(num)));if(num===0)return'Zer
 function businessInfo(){const b=(S().businesses||[]).find(x=>x.id===biz())||{},p=S().profile||{};return{name:b.name||p.businessName||'Vyapar AI Business',phone:p.phone||p.mobile||'',email:p.email||'',address:p.address||p.businessAddress||'',gstin:p.gstin||p.GSTIN||'',logo:p.logo||''}}
 function invoiceHtml(tx,thermal){const st=S().invoiceSettings620,bi=businessInfo(),custom=(S().invoiceCustomFields620||[]).filter(x=>x.businessId===biz()&&x.enabled!==false),w=thermal?(st.thermalWidth==='58'?'58mm':'80mm'):(st.paperSize==='A5'?'148mm':'210mm'),compact=!!thermal;const fields=(tx.items||[]).map((i,idx)=>`<tr><td>${idx+1}</td><td><b>${safe(i.name)}</b>${st.showDescription&&item(i.itemId)?.description?`<br><small>${safe(item(i.itemId).description)}</small>`:''}${st.showHSN&&item(i.itemId)?.hsn?`<br><small>HSN ${safe(item(i.itemId).hsn)}</small>`:''}</td><td>${i.qty} ${safe(i.unit||'')}</td>${st.showMRP&&!compact?`<td>${cash(item(i.itemId)?.mrp||i.rate)}</td>`:''}<td>${cash(i.rate)}</td>${st.showTax&&!compact?`<td>${n(i.tax)}%</td>`:''}<td>${cash(n(i.qty)*n(i.rate))}</td></tr>`).join('');return `<!doctype html><html><head><meta charset="utf-8"><title>${safe(tx.number)}</title><style>@page{size:${thermal?w+' auto':st.paperSize+' '+st.orientation};margin:${thermal?'3mm':'10mm'}}*{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0 auto;padding:${thermal?'2mm':'8mm'};width:${w};color:#111;font-size:${compact?'11px':st.fontSize==='small'?'11px':st.fontSize==='large'?'15px':'13px'}}.head{border-bottom:${st.theme==='classic'?'3px double':st.theme==='compact'?'1px solid':'2px solid'} ${st.accent};padding-bottom:${st.theme==='compact'?'4px':'8px'};margin-bottom:${st.theme==='compact'?'5px':'10px'}}.brand{font-size:${compact?'18px':'26px'};font-weight:800;color:${st.accent}}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ddd;padding:${compact?'3px':'6px'};text-align:left}.right{text-align:right}.totals{margin-left:auto;max-width:${compact?'100%':'330px'};margin-top:10px}.totals div{display:flex;justify-content:space-between;padding:3px 0}.grand{font-size:${compact?'15px':'20px'};font-weight:800;border-top:2px solid #111}.footer{margin-top:18px;border-top:1px dashed #999;padding-top:10px}.copy{text-align:center;font-weight:700;margin-bottom:6px}@media print{button{display:none}}</style></head><body>${st.originalDuplicate?'<div class="copy">ORIGINAL / CUSTOMER COPY</div>':''}<div class="head">${st.showLogo&&bi.logo?`<img src="${safe(bi.logo)}" alt="Logo" style="max-height:${compact?'34px':'54px'};max-width:120px;float:right">`:''}<div class="brand">${safe(bi.name)}</div>${st.showAddress&&bi.address?`<div>${safe(bi.address)}</div>`:''}${st.showPhone&&bi.phone?`<div>Phone: ${safe(bi.phone)}</div>`:''}${st.showEmail&&bi.email?`<div>Email: ${safe(bi.email)}</div>`:''}${st.showGSTIN&&bi.gstin?`<div>GSTIN: ${safe(bi.gstin)}</div>`:''}</div><div><b>${safe(tx.type.replaceAll('_',' '))}</b> #${safe(tx.number)}<br>Date: ${safe(tx.date)}${tx.partyName?`<br>Party: ${safe(tx.partyName)}`:''}${tx.eWayBillNo?`<br>E-Way Bill: ${safe(tx.eWayBillNo)}`:''}${custom.map(f=>`<br>${safe(f.label)}: ${safe(f.value)}`).join('')}</div><table><thead><tr><th>#</th><th>Item</th><th>Qty</th>${st.showMRP&&!compact?'<th>MRP</th>':''}<th>Rate</th>${st.showTax&&!compact?'<th>Tax</th>':''}<th>Amount</th></tr></thead><tbody>${fields}</tbody></table><div class="totals"><div><span>Subtotal</span><b>${cash(tx.subtotal)}</b></div>${n(tx.discount)?`<div><span>Discount</span><b>${cash(tx.discount)}</b></div>`:''}${st.showTax?`<div><span>GST</span><b>${cash(tx.tax)}</b></div>${n(tx.cess)?`<div><span>CESS</span><b>${cash(tx.cess)}</b></div>`:''}`:''}<div class="grand"><span>Total</span><span>${cash(tx.total)}</span></div>${st.showReceived?`<div><span>Received</span><b>${cash(tx.receivedPaid)}</b></div>`:''}${st.showBalance?`<div><span>Balance</span><b>${cash(tx.balance)}</b></div>`:''}${st.showPaymentMode?`<div><span>Payment</span><b>${safe(tx.paymentMode||'')}</b></div>`:''}</div>${st.showAmountWords?`<p><b>Amount in words:</b> ${safe(amountWords(tx.total))}</p>`:''}<div class="footer">${st.showTerms?`<p><b>Terms:</b> ${safe(st.terms)}</p>`:''}${st.showSignature?`<p class="right"><br><br><b>${safe(st.signatureText)}</b></p>`:''}</div>${st.originalDuplicate&&!compact?'<div style="page-break-before:always"></div><script>document.write(document.body.innerHTML.split("<div style=\\"page-break-before:always\\"></div>")[0].replace("ORIGINAL / CUSTOMER COPY","DUPLICATE / OFFICE COPY"))</script>':''}</body></html>`}
 function printHtml(html){const w=window.open('','_blank');if(!w)return alert('Popup blocked. Allow popup/print for invoice.');w.document.open();w.document.write(html);w.document.close();setTimeout(()=>{try{w.print()}catch(_){}},250)}
-function renderPrint(){const el=$('businessModuleArea');if(!el)return;const s=S().invoiceSettings620,txs=activeTx().filter(t=>['SALE','PURCHASE','ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN'].includes(t.type)).slice().reverse().slice(0,100);el.innerHTML=shell('Invoice & Print Engine',`<div class="p620-tabs"><button class="btn" onclick="p620PrintTab('settings')">Regular / Thermal Settings</button><button class="btn" onclick="p620PrintTab('documents')">Print Documents</button></div><div id="p620PrintBody"></div>`,'A4/A5 + 58/80mm thermal · field toggles · terms · signature · ESC/POS');window.p620PrintTab('settings');window.__p620PrintTx=txs}
-window.p620PrintTab=function(tab){const v=$('p620PrintBody');if(!v)return;const s=S().invoiceSettings620;if(tab==='documents'){const txs=window.__p620PrintTx||[];v.innerHTML=`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Actions</th></tr></thead><tbody>${txs.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${safe(t.number)}</td><td>${safe(t.partyName)}</td><td>${cash(t.total)}</td><td><button class="btn mini" onclick="p620Print('${t.id}',false)">A4/A5</button> <button class="btn mini" onclick="p620Print('${t.id}',true)">Thermal</button> <button class="btn mini" onclick="p620EscPos('${t.id}')">ESC/POS</button></td></tr>`).join('')}</tbody></table></div>`;return}v.innerHTML=`<div class="p620-settings"><label>Paper size<select id="iPaper"><option ${s.paperSize==='A4'?'selected':''}>A4</option><option ${s.paperSize==='A5'?'selected':''}>A5</option></select></label><label>Orientation<select id="iOrient"><option ${s.orientation==='portrait'?'selected':''}>portrait</option><option ${s.orientation==='landscape'?'selected':''}>landscape</option></select></label><label>Font<select id="iFont"><option ${s.fontSize==='small'?'selected':''}>small</option><option ${s.fontSize==='medium'?'selected':''}>medium</option><option ${s.fontSize==='large'?'selected':''}>large</option></select></label><label>Theme<select id="iTheme"><option value="clean" ${s.theme==='clean'?'selected':''}>Clean</option><option value="compact" ${s.theme==='compact'?'selected':''}>Compact</option><option value="classic" ${s.theme==='classic'?'selected':''}>Classic</option></select></label><label>Accent<input id="iAccent" type="color" value="${safe(s.accent)}"></label><label>Thermal width<select id="iThermal"><option value="58" ${s.thermalWidth==='58'?'selected':''}>58mm</option><option value="80" ${s.thermalWidth==='80'?'selected':''}>80mm</option></select></label><label>Copies<input id="iCopies" type="number" min="1" max="5" value="${n(s.thermalCopies)||1}"></label><label>Terms<textarea id="iTerms">${safe(s.terms)}</textarea></label><label>Signature text<input id="iSign" value="${safe(s.signatureText)}"></label></div><div class="p620-checks">${[['showLogo','Logo'],['showAddress','Address'],['showEmail','Email'],['showPhone','Phone'],['showGSTIN','GSTIN'],['showHSN','HSN/SAC'],['showMRP','MRP'],['showDescription','Description'],['showTax','Tax details'],['showReceived','Received'],['showBalance','Balance'],['showAmountWords','Amount in words'],['showPaymentMode','Payment mode'],['showTerms','Terms & Conditions'],['showSignature','Signature'],['showPageNumbers','Page numbers'],['originalDuplicate','Original + Duplicate'],['thermalAutoCut','Thermal auto-cut'],['thermalCashDrawer','Cash drawer pulse']].map(([k,l])=>`<label><input id="i_${k}" type="checkbox" ${s[k]?'checked':''}> ${l}</label>`).join('')}</div><h3>Custom Invoice Fields</h3><div class="p611-form"><input id="iCustomLabel" placeholder="Field label"><input id="iCustomValue" placeholder="Field value"><button class="btn" onclick="p620AddInvoiceCustomField()">Add Field</button></div><div id="iCustomList">${(S().invoiceCustomFields620||[]).filter(x=>x.businessId===biz()).map(x=>`<span class="pill">${safe(x.label)}: ${safe(x.value)} <button class="btn mini danger" onclick="p620DeleteInvoiceCustomField('${x.id}')">×</button></span>`).join('')}</div><button class="btn primary" onclick="p620SavePrintSettings()">Save Print Settings</button><p class="muted">Direct ESC/POS uses a paired Bluetooth printer when the Android bridge is available. Browser mode safely downloads an ESC/POS .bin fallback.</p>`};
+function renderPrint(){const el=$('businessModuleArea');if(!el)return;const s=S().invoiceSettings620,txs=activeTx().filter(t=>['SALE','PURCHASE','ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN'].includes(t.type)).slice().reverse().slice(0,100);el.innerHTML=shell('Invoices & PDF',`<div class="p620-tabs"><button class="btn" onclick="p620PrintTab('settings')">Print settings</button><button class="btn" onclick="p620PrintTab('documents')">Saved invoices</button></div><div id="p620PrintBody"></div>`,'A4/A5 + 58/80mm thermal · field toggles · terms · signature · ESC/POS');window.__p620PrintTx=txs;window.p620PrintTab('documents')}
+window.p620PrintTab=function(tab){const v=$('p620PrintBody');if(!v)return;const s=S().invoiceSettings620;if(tab==='documents'){const txs=window.__p620PrintTx||[];v.innerHTML=`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Actions</th></tr></thead><tbody>${txs.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${safe(t.number)}</td><td>${safe(t.partyName)}</td><td>${cash(t.total)}</td><td><button class="btn mini primary" onclick="p620DownloadPDF('${t.id}',false)">Download PDF</button> <button class="btn mini" onclick="p620Print('${t.id}',false)">Print</button> <button class="btn mini" onclick="p620DownloadPDF('${t.id}',true)">Thermal PDF</button> <button class="btn mini" onclick="p620Print('${t.id}',true)">Print thermal</button> <button class="btn mini" onclick="p620EscPos('${t.id}')">ESC/POS</button></td></tr>`).join('')||'<tr><td colspan="6">No saved invoices yet. Create a sale or order first.</td></tr>'}</tbody></table></div>`;return}v.innerHTML=`<div class="p620-settings"><label>Paper size<select id="iPaper"><option ${s.paperSize==='A4'?'selected':''}>A4</option><option ${s.paperSize==='A5'?'selected':''}>A5</option></select></label><label>Orientation<select id="iOrient"><option ${s.orientation==='portrait'?'selected':''}>portrait</option><option ${s.orientation==='landscape'?'selected':''}>landscape</option></select></label><label>Font<select id="iFont"><option ${s.fontSize==='small'?'selected':''}>small</option><option ${s.fontSize==='medium'?'selected':''}>medium</option><option ${s.fontSize==='large'?'selected':''}>large</option></select></label><label>Theme<select id="iTheme"><option value="clean" ${s.theme==='clean'?'selected':''}>Clean</option><option value="compact" ${s.theme==='compact'?'selected':''}>Compact</option><option value="classic" ${s.theme==='classic'?'selected':''}>Classic</option></select></label><label>Accent<input id="iAccent" type="color" value="${safe(s.accent)}"></label><label>Thermal width<select id="iThermal"><option value="58" ${s.thermalWidth==='58'?'selected':''}>58mm</option><option value="80" ${s.thermalWidth==='80'?'selected':''}>80mm</option></select></label><label>Copies<input id="iCopies" type="number" min="1" max="5" value="${n(s.thermalCopies)||1}"></label><label>Terms<textarea id="iTerms">${safe(s.terms)}</textarea></label><label>Signature text<input id="iSign" value="${safe(s.signatureText)}"></label></div><div class="p620-checks">${[['showLogo','Logo'],['showAddress','Address'],['showEmail','Email'],['showPhone','Phone'],['showGSTIN','GSTIN'],['showHSN','HSN/SAC'],['showMRP','MRP'],['showDescription','Description'],['showTax','Tax details'],['showReceived','Received'],['showBalance','Balance'],['showAmountWords','Amount in words'],['showPaymentMode','Payment mode'],['showTerms','Terms & Conditions'],['showSignature','Signature'],['showPageNumbers','Page numbers'],['originalDuplicate','Original + Duplicate'],['thermalAutoCut','Thermal auto-cut'],['thermalCashDrawer','Cash drawer pulse']].map(([k,l])=>`<label><input id="i_${k}" type="checkbox" ${s[k]?'checked':''}> ${l}</label>`).join('')}</div><h3>Custom Invoice Fields</h3><div class="p611-form"><input id="iCustomLabel" placeholder="Field label"><input id="iCustomValue" placeholder="Field value"><button class="btn" onclick="p620AddInvoiceCustomField()">Add Field</button></div><div id="iCustomList">${(S().invoiceCustomFields620||[]).filter(x=>x.businessId===biz()).map(x=>`<span class="pill">${safe(x.label)}: ${safe(x.value)} <button class="btn mini danger" onclick="p620DeleteInvoiceCustomField('${x.id}')">×</button></span>`).join('')}</div><button class="btn primary" onclick="p620SavePrintSettings()">Save Print Settings</button><p class="muted">Direct ESC/POS uses a paired Bluetooth printer when the Android bridge is available. Browser mode safely downloads an ESC/POS .bin fallback.</p>`};
 window.p620SavePrintSettings=function(){const s=S().invoiceSettings620;s.paperSize=$('iPaper').value;s.orientation=$('iOrient').value;s.fontSize=$('iFont').value;s.theme=$('iTheme').value;s.accent=$('iAccent').value;s.thermalWidth=$('iThermal').value;s.thermalCopies=Math.max(1,Math.min(5,n($('iCopies').value)||1));s.terms=$('iTerms').value;s.signatureText=$('iSign').value;['showLogo','showAddress','showEmail','showPhone','showGSTIN','showHSN','showMRP','showDescription','showTax','showReceived','showBalance','showAmountWords','showPaymentMode','showTerms','showSignature','showPageNumbers','originalDuplicate','thermalAutoCut','thermalCashDrawer'].forEach(k=>s[k]=$('i_'+k).checked);log('UPDATE','PRINT_SETTINGS','620','Invoice/thermal settings updated');saveAll();toast('Print settings saved')};
 window.p620AddInvoiceCustomField=function(){const label=String($('iCustomLabel')?.value||'').trim(),value=String($('iCustomValue')?.value||'').trim();if(!label)return alert('Field label required');S().invoiceCustomFields620.push({id:uid620(),businessId:biz(),label,value,enabled:true,createdAt:now()});saveAll();p620PrintTab('settings')};
 window.p620DeleteInvoiceCustomField=function(id){S().invoiceCustomFields620=S().invoiceCustomFields620.filter(x=>x.id!==id);saveAll();p620PrintTab('settings')};
 window.p620Print=function(id,thermal){const t=txById(id);if(t)printHtml(invoiceHtml(t,thermal))};
+window.p620DownloadPDF=function(id,thermal){
+  ensure(); const t=txById(id); if(!t)return;
+  const business=businessInfo();
+  return window.VyaparInvoicePDF.download({transaction:t,business,settings:S().invoiceSettings620,thermal:!!thermal,
+    customFields:(S().invoiceCustomFields620||[]).filter(f=>f.businessId===biz()),
+    amountWords:((t.currency||business.baseCurrency||'INR')==='INR'?amountWords(t.total):'')});
+};
 function escPosBytes(t){const st=S().invoiceSettings620,bi=businessInfo(),width=st.thermalWidth==='58'?32:48,enc=new TextEncoder(),parts=[];const push=s=>parts.push(enc.encode(s));push('\x1b@');push('\x1ba\x01');push(bi.name+'\n');push('\x1ba\x00');push(t.type+' '+t.number+'\n'+t.date+'\n'+(t.partyName?'Party: '+t.partyName+'\n':'')+'-'.repeat(width)+'\n');(t.items||[]).forEach(i=>push((i.name+' x'+i.qty+' '+cash(n(i.qty)*n(i.rate))).slice(0,width)+'\n'));push('-'.repeat(width)+'\nTOTAL: '+cash(t.total)+'\nReceived: '+cash(t.receivedPaid)+'\nBalance: '+cash(t.balance)+'\n');if(st.showTerms)push(st.terms+'\n');push('\n\n');if(st.thermalCashDrawer)parts.push(Uint8Array.from([27,112,0,25,250]));if(st.thermalAutoCut)parts.push(Uint8Array.from([29,86,0]));const len=parts.reduce((z,p)=>z+p.length,0),out=new Uint8Array(len);let o=0;parts.forEach(p=>{out.set(p,o);o+=p.length});return out}
 function bytesB64(bytes){let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,Math.min(bytes.length,i+8192)));return btoa(s)}
 window.p620EscPos=function(id){const t=txById(id);if(!t)return;const bytes=escPosBytes(t),b64=bytesB64(bytes);if(window.AndroidApp?.getPairedBluetoothPrinters&&window.AndroidApp?.printEscPosBase64){let list='[]';try{list=AndroidApp.getPairedBluetoothPrinters()||'[]'}catch(_){}let devs=[];try{devs=JSON.parse(list)}catch(_){}if(devs.length){const choice=prompt('Paired printers:\n'+devs.map((d,i)=>(i+1)+'. '+d.name+' '+d.address).join('\n')+'\nEnter number','1'),d=devs[Math.max(0,n(choice)-1)];if(d){AndroidApp.printEscPosBase64(d.address,b64);return}}alert('No paired Bluetooth printer found. Saving ESC/POS file instead.')}if(window.AndroidDownloads?.saveBase64)AndroidDownloads.saveBase64(t.number+'-'+S().invoiceSettings620.thermalWidth+'mm.bin','application/octet-stream',b64);else downloadText(t.number+'.txt','text/plain','ESC/POS binary is available only in the Android app.')};
@@ -10987,6 +11259,7 @@ function findHost(context){ return document.querySelector(`[data-vx621-host="${c
 function activateHost(context){
   const target=findHost(context);
   if(!target) return null;
+  target.hidden=false;
   document.querySelectorAll('[data-vx621-host]').forEach(el=>{
     if(el!==target && el.id==='businessModuleArea'){
       el.id=el.dataset.vx621OriginalId||('vx621-'+el.dataset.vx621Host+'-host');
@@ -11184,6 +11457,7 @@ function renderBusinessHome(){
   </div>`;
   activateHost('business');
   observeHost(findHost('business'));
+  findHost('business').hidden=true;
   if (window.VyaparBusinessTools) window.VyaparBusinessTools.bind(el);
 }
 window.renderBusiness=renderBusinessHome;
@@ -11444,7 +11718,7 @@ window.vx621GenericDelete=async function(id,mode){
 };
 function observeHost(host){
   if(!host||host.dataset.vx621Observed==='1')return;host.dataset.vx621Observed='1';let pending=false;
-  const obs=new MutationObserver(()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;decorateGenericDeleteTables(host);if(host.querySelector('button[onclick*="p611Cancel"]'))decorateTransactionTable(host);});});
+  const obs=new MutationObserver(()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;const empty=host.children.length===1&&host.firstElementChild.classList.contains('vx621-empty');if(!empty)host.hidden=false;decorateGenericDeleteTables(host);if(host.querySelector('button[onclick*="p611Cancel"]'))decorateTransactionTable(host);});});
   obs.observe(host,{childList:true,subtree:true});
 }
 
@@ -12862,6 +13136,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       node.setAttribute('aria-hidden', String(!visible));
     });
 
+    if(screenId === 'business' && window.VyaparBusinessTools) window.VyaparBusinessTools.refresh(screen);
+
     screen.querySelectorAll('.grid').forEach(function(grid){
       const sections = Array.from(grid.children).filter(function(child){
         return child.classList && child.classList.contains('p1-mode-section');
@@ -12935,7 +13211,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const shell = screen && screen.querySelector('.vx621-business-shell');
     if(!screen || !shell) return;
 
-    Array.from(shell.children).forEach(function(node){
+    Array.from(shell.querySelectorAll('.vx621-group,.vx621-recent')).forEach(function(node){
       node.classList.remove('p1-mode-section');
       node.removeAttribute('data-p1-mode');
       node.hidden = false;
@@ -12944,6 +13220,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
         if(/daily business/.test(title)) setSectionMode(node, 'daily');
         else if(/accounting|compliance/.test(title)) setSectionMode(node, 'accounts');
         else if(/documents|communication/.test(title)) setSectionMode(node, 'documents');
+        else setSectionMode(node, 'daily');
       }else if(node.classList.contains('vx621-recent')) setSectionMode(node, 'activity');
     });
 
@@ -12963,8 +13240,17 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       bar.addEventListener('click',function(event){
         const button=event.target.closest('button[data-mode]');
         if(!button) return;
+        const search=screen.querySelector('#businessToolSearch');
+        if(search) search.value='';
         saveMode('business',button.dataset.mode);
         applyMode(screen,'business',modes);
+      });
+      bar.addEventListener('keydown',function(event){
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        const buttons=Array.from(bar.querySelectorAll('button[data-mode]'));
+        const index=buttons.indexOf(event.target); if(index<0) return;
+        const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+        event.preventDefault();buttons[next].click();buttons[next].focus();
       });
       shell.insertBefore(bar,kpis && kpis.nextSibling ? kpis.nextSibling : shell.firstChild);
     }

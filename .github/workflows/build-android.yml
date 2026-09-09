@@ -108,7 +108,7 @@ jobs:
           version = json.loads(Path('version.json').read_text(encoding='utf-8'))
           VERSION = version['versionName']
           CODE = str(version['versionCode'])
-          CACHE = f'{CODE}-uiorganized1'
+          CACHE = f'{CODE}-compactpdf1'
           for path in [Path('web/index.html'), Path('android-app/app/src/main/assets/index.html')]:
               text = path.read_text(encoding='utf-8')
               text = re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>', f'<meta name="vyapar-ui-version" content="{VERSION}" />', text, count=1)
@@ -138,6 +138,8 @@ jobs:
             web/assets/styles/vyapar-core.css \
             web/assets/styles/vyapar-ui.css \
             web/assets/scripts/vyapar-app.js \
+            web/assets/vendor \
+            android-app/app/src/main/assets/assets/vendor \
             android-app/app/src/main/assets/assets/styles/vyapar-core.css \
             android-app/app/src/main/assets/assets/styles/vyapar-ui.css \
             android-app/app/src/main/assets/assets/scripts/vyapar-app.js

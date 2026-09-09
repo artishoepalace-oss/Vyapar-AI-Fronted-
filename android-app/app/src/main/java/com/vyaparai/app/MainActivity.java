@@ -81,9 +81,15 @@ public class MainActivity extends Activity {
     private FrameLayout startupCover;
     private boolean startupCoverDismissQueued;
     private ValueCallback<Uri[]> filePathCallback;
-    private String pendingName;
-    private String pendingMime;
-    private byte[] pendingBytes;
+    // Accessed on the UI thread while an Android 7–9 storage prompt is open.
+    private DownloadJob pendingDownload;
+    private static final class DownloadJob {
+        final String name, mime, requestId;
+        final byte[] bytes;
+        DownloadJob(String name, String mime, byte[] bytes, String requestId) {
+            this.name = name; this.mime = mime; this.bytes = bytes; this.requestId = requestId;
+        }
+    }
     private byte[] pendingDriveBytes;
     private final ExecutorService io = Executors.newSingleThreadExecutor();
     private AuthorizationClient authorizationClient;
@@ -130,7 +136,17 @@ protected void onCreate(Bundle savedInstanceState) {
         startupLogo.setImageResource(R.drawable.startup_logo);
         startupLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         int logoSize = Math.round(112 * getResources().getDisplayMetrics().density);
-        startupCover.addView(startupLogo, new FrameLayout.LayoutParams(logoSize, logoSize, Gravity.CENTER));
+        // Centre the shop body optically, with approximately 2:3 top/bottom space.
+        // Keep a fixed white frame so moving the artwork never moves the tile.
+        FrameLayout logoFrame = new FrameLayout(this);
+        android.graphics.drawable.GradientDrawable logoBackground = new android.graphics.drawable.GradientDrawable();
+        logoBackground.setColor(android.graphics.Color.WHITE);
+        logoBackground.setCornerRadius(24 * getResources().getDisplayMetrics().density);
+        logoFrame.setBackground(logoBackground);
+        logoFrame.setClipToOutline(true);
+        logoFrame.addView(startupLogo, new FrameLayout.LayoutParams(logoSize, logoSize));
+        startupLogo.setTranslationY(-logoSize * 0.12f);
+        startupCover.addView(logoFrame, new FrameLayout.LayoutParams(logoSize, logoSize, Gravity.CENTER));
         content.addView(startupCover, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         setContentView(content);
@@ -735,50 +751,117 @@ protected void onCreate(Bundle savedInstanceState) {
     public class AndroidDownloads {
         @JavascriptInterface
         public void saveBase64(String name, String mime, String base64) {
-            try {
-                String safeName = sanitizeName(name);
-                byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-                saveToDownloads(safeName, mime == null || mime.isEmpty() ? "application/octet-stream" : mime, bytes);
-            } catch (Exception e) {
-                runOnUiThread(() -> toast("Download failed"));
-            }
+            queueDownload(name, mime, base64, null);
+        }
+
+        @JavascriptInterface
+        public void saveBase64WithResult(String name, String mime, String base64, String requestId) {
+            queueDownload(name, mime, base64, requestId);
         }
     }
 
-    private void saveToDownloads(String name, String mime, byte[] bytes) throws Exception {
+    private void queueDownload(String name, String mime, String base64, String requestId) {
+        io.execute(() -> {
+            try {
+                byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                if (bytes.length == 0) throw new Exception("Empty file");
+                DownloadJob job = new DownloadJob(sanitizeName(name),
+                        mime == null || mime.isEmpty() ? "application/octet-stream" : mime, bytes, requestId);
+                runOnUiThread(() -> {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        if (pendingDownload != null) {
+                            notifyDownload(requestId, false, "Complete the open storage prompt, then try again.");
+                            return;
+                        }
+                        pendingDownload = job;
+                        try {
+                            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_REQUEST_CODE);
+                        } catch (Exception e) {
+                            pendingDownload = null;
+                            notifyDownload(requestId, false, "Storage permission could not be requested. Please try again.");
+                        }
+                    } else {
+                        io.execute(() -> saveDownload(job));
+                    }
+                });
+            } catch (Exception e) {
+                notifyDownload(requestId, false, "File could not be prepared. Please try again.");
+            }
+        });
+    }
+
+    private void notifyDownload(String requestId, boolean saved, String message) {
+        if (requestId == null || requestId.isEmpty()) {
+            runOnUiThread(() -> toast(message));
+            return;
+        }
+        notifyWeb("window.onNativeDownloadResult && window.onNativeDownloadResult(" +
+                JSONObject.quote(requestId) + "," + saved + "," + JSONObject.quote(message) + ");");
+    }
+
+    private void saveDownload(DownloadJob job) {
+        try {
+            String savedName = saveToDownloads(job);
+            notifyDownload(job.requestId, true, "Saved to Downloads/Vyapar AI/" + savedName);
+        } catch (Exception e) {
+            notifyDownload(job.requestId, false, "File could not be saved. Check free storage and try again.");
+        }
+    }
+
+    private String saveToDownloads(DownloadJob job) throws Exception {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContentValues values = new ContentValues();
-            values.put(MediaStore.Downloads.DISPLAY_NAME, name);
-            values.put(MediaStore.Downloads.MIME_TYPE, mime);
+            values.put(MediaStore.Downloads.DISPLAY_NAME, job.name);
+            values.put(MediaStore.Downloads.MIME_TYPE, job.mime);
             values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Vyapar AI");
             values.put(MediaStore.Downloads.IS_PENDING, 1);
-
             Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
             if (uri == null) throw new Exception("Unable to create download");
-            try (OutputStream out = getContentResolver().openOutputStream(uri)) {
-                if (out == null) throw new Exception("Unable to open download");
-                out.write(bytes);
+            try {
+                try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+                    if (out == null) throw new Exception("Unable to open download");
+                    out.write(job.bytes);
+                }
+                ContentValues done = new ContentValues();
+                done.put(MediaStore.Downloads.IS_PENDING, 0);
+                if (getContentResolver().update(uri, done, null, null) == 0) throw new Exception("Unable to finish download");
+            } catch (Exception e) {
+                try { getContentResolver().delete(uri, null, null); } catch (Exception ignored) { }
+                throw e;
             }
-            ContentValues done = new ContentValues();
-            done.put(MediaStore.Downloads.IS_PENDING, 0);
-            getContentResolver().update(uri, done, null, null);
-            runOnUiThread(() -> toast("Saved to Downloads/Vyapar AI"));
-        } else {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                pendingName = name; pendingMime = mime; pendingBytes = bytes;
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_REQUEST_CODE);
-                return;
-            }
-            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Vyapar AI");
-            if (!dir.exists() && !dir.mkdirs()) throw new Exception("Unable to create Downloads folder");
-            File file = new File(dir, name);
-            try (FileOutputStream out = new FileOutputStream(file)) { out.write(bytes); }
-            runOnUiThread(() -> toast("Saved to Downloads/Vyapar AI"));
+            String savedName = job.name;
+            try (android.database.Cursor cursor = getContentResolver().query(uri,
+                    new String[]{MediaStore.Downloads.DISPLAY_NAME}, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) savedName = cursor.getString(0);
+            } catch (Exception ignored) { /* The completed file is already safely saved. */ }
+            return savedName;
         }
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Vyapar AI");
+        if (!dir.exists() && !dir.mkdirs()) throw new Exception("Unable to create Downloads folder");
+        int dot = job.name.lastIndexOf('.');
+        String stem = dot > 0 ? job.name.substring(0, dot) : job.name;
+        String extension = dot > 0 ? job.name.substring(dot) : "";
+        File file = new File(dir, job.name);
+        int suffix = 1;
+        // Never overwrite an earlier export on Android 7–9.
+        while (!file.createNewFile()) {
+            if (suffix > 1000) throw new Exception("Too many copies");
+            file = new File(dir, stem + " (" + suffix++ + ")" + extension);
+        }
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            out.write(job.bytes);
+        } catch (Exception e) {
+            file.delete();
+            throw e;
+        }
+        android.media.MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, new String[]{job.mime}, null);
+        return file.getName();
     }
 
     private String sanitizeName(String name) {
-        String clean = name == null ? "vyapar-ai-download" : name.replaceAll("[\\\\/:*?\"<>|]", "_");
+        String clean = name == null ? "vyapar-ai-download" : name.replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "_").trim();
+        if (clean.isEmpty() || clean.equals(".") || clean.equals("..")) clean = "vyapar-ai-download";
         return clean.length() > 120 ? clean.substring(clean.length() - 120) : clean;
     }
 
@@ -793,15 +876,16 @@ protected void onCreate(Bundle savedInstanceState) {
             else request.deny();
             return;
         }
-        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            try { saveToDownloads(pendingName, pendingMime, pendingBytes); }
-            catch (Exception e) { toast("Download failed"); }
-            finally { pendingName = null; pendingMime = null; pendingBytes = null; }
-            return;
-        }
         if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
-            toast("Storage permission is required to save the file");
-            pendingName = null; pendingMime = null; pendingBytes = null;
+            DownloadJob job = pendingDownload;
+            pendingDownload = null;
+            if (job != null) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    io.execute(() -> saveDownload(job));
+                } else {
+                    notifyDownload(job.requestId, false, "File was not saved. Allow storage when downloading on this Android version.");
+                }
+            }
             return;
         }
         if (requestCode == BLUETOOTH_PERMISSION_REQUEST_CODE) {

@@ -1,7 +1,9 @@
-# UI and source cleanup — 8 September 2026
+# Prior UI and source cleanup — 8 September 2026
+
+This is the earlier 00004 cleanup record. See [the current 00006 fixes and verification](COMPACT-PDF-VALIDATION.md).
 
 Based only on the supplied `Vyapar-AI-Fronted--main (4).zip`.
-App version remains `20.10.2004.00005.2026`, Android code `2010200405`.
+App version remains `20.10.2004.00004.2026`, Android code `2010200404`.
 
 ## User-facing changes
 
