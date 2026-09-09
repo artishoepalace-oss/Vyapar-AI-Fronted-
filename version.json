@@ -1,8 +1,8 @@
 {
-  "versionName": "20.10.2004.00007.2026",
-  "versionCode": 2010200407,
-  "channel": "production-20.10.2004.00007.2026",
+  "versionName": "20.10.2004.00008.2026",
+  "versionCode": 2010200408,
+  "channel": "production-20.10.2004.00008.2026",
   "baseVersion": "20.10.2004.00001.2026",
-  "released": "2026-09-09",
+  "released": "2026-09-10",
   "backendVersion": "2.5.2"
 }

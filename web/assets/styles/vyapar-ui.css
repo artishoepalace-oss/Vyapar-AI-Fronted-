@@ -9320,12 +9320,12 @@ html.vy861-flat-black #androidPermissionSheet button { min-height:44px !importan
 
 html.vy861-flat-black #screen-business #businessToolResults .vx621-feature-card[hidden],
 html.vy861-flat-black #screen-business .vx621-platform-host[hidden] { display:none !important; }
-/* Shop body, excluding its detached star, has 2:3 visual space above/below. */
+/* Complete supplied wordmark: preserve intrinsic margins without shifting the tile. */
 html.vy861-flat-black .top .brand .vy-logo-frame { display:block !important; width:44px !important; height:44px !important; flex:0 0 44px !important; background:#fff !important; border-radius:13px !important; overflow:hidden !important; }
-html.vy861-flat-black .top .brand .vy-logo-frame .logo { display:block !important; width:44px !important; height:44px !important; min-width:44px !important; max-width:44px !important; padding:0 !important; border:0 !important; border-radius:0 !important; clip-path:none !important; -webkit-clip-path:none !important; background:transparent !important; box-shadow:none !important; transform:translateY(-12%) !important; }
+html.vy861-flat-black .top .brand .vy-logo-frame .logo { display:block !important; width:44px !important; height:44px !important; min-width:44px !important; max-width:44px !important; padding:0 !important; border:0 !important; border-radius:0 !important; clip-path:none !important; -webkit-clip-path:none !important; background:transparent !important; box-shadow:none !important; transform:none !important; }
 html.vy861-flat-black #vyaparOtpGate .auth-logo-box { background:#fff !important; }
-html.vy861-flat-black #vyaparOtpGate .auth-logo { transform:translateY(-12%) !important; padding:0 !important; background:transparent !important; }
-html.vy861-flat-black body #vy855BootGuard img { transform:translateY(-12%) !important; }
+html.vy861-flat-black #vyaparOtpGate .auth-logo { transform:none !important; padding:0 !important; background:transparent !important; }
+html.vy861-flat-black body #vy855BootGuard img { transform:none !important; }
 html.vy861-flat-black .vy-boot-logo-frame { display:block; width:112px; height:112px; border-radius:24px; overflow:hidden; background:#fff; }
 
 /* 00007: one workspace rhythm, including Android WebViews without :is/:has. */
@@ -9642,3 +9642,16 @@ html.vy861-flat-black.workspace-v7 #nav.nav { height:58px!important; min-height:
 html.vy861-flat-black.workspace-v7 #nav.nav button { height:100%!important; min-height:48px!important; }
 html.vy861-flat-black.workspace-v7 .screen .file-drop:focus-within { outline:2px solid #b6c7dc; outline-offset:2px; }
 @media(min-width:800px) { html.workspace-v7 .insight-chart { max-height:330px; } }
+
+/* 00008: original grey footer artwork, with no inherited white tile or tint. */
+html.vy861-flat-black body #vy675SettingsFooter img,
+html.vy861-flat-black body #appLegalFooter img,
+html.vy861-flat-black body .legal-footer-logo,
+html.vy861-flat-black body .vy658-footer-logo,
+html.vy861-flat-black body .vy659-footer-logo,
+html.vy861-flat-black body .vy6601-footer-logo {
+  display:block!important;width:64px!important;height:64px!important;
+  padding:0!important;margin:0 auto 8px!important;object-fit:contain!important;
+  background:#000!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;filter:none!important;opacity:1!important;transform:none!important;
+}

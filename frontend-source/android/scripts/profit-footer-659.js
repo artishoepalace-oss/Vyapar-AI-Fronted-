@@ -71,7 +71,7 @@
   window.monthlyStatsForYear=combinedMonthlyStatsForYear;
 
   function footerMarkup(){
-    return '<img class="vy659-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI">'+
+    return '<img class="vy659-footer-logo" src="assets/images/footer-logo.jpg" alt="Vyapar AI">'+
       '<span>© 2026 Vyapar AI. All Rights Reserved.</span>'+
       '<span class="app-legal-links">'+
         '<a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>'+

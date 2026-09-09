@@ -178,7 +178,7 @@
   function enhanceFooter(root=document){
     root.querySelectorAll('#appLegalFooter,.android-sheet-legal').forEach(footer=>{
       if(!footer.querySelector('.vy658-footer-logo')){
-        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
+        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.jpg'; img.alt='Vyapar AI'; footer.prepend(img);
       }
       // The Settings footer owns its legal links; do not remove/re-add them on every mutation.
     });

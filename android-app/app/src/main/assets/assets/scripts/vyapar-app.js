@@ -10467,7 +10467,7 @@ render();
       footer.className = "app-legal-footer vy659-settings-footer";
     }
     footer.innerHTML =
-      '<img class="vy659-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI">' +
+      '<img class="vy659-footer-logo" src="assets/images/footer-logo.jpg" alt="Vyapar AI">' +
       '<span>© 2026 Vyapar AI. All Rights Reserved.</span>' +
       '<span class="app-legal-links">' +
         '<a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
@@ -13127,7 +13127,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
   function enhanceFooter(root=document){
     root.querySelectorAll('#appLegalFooter,.android-sheet-legal').forEach(footer=>{
       if(!footer.querySelector('.vy658-footer-logo')){
-        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.png'; img.alt='Vyapar AI'; footer.prepend(img);
+        const img=document.createElement('img'); img.className='vy658-footer-logo'; img.src='assets/images/footer-logo.jpg'; img.alt='Vyapar AI'; footer.prepend(img);
       }
       // The Settings footer owns its legal links; do not remove/re-add them on every mutation.
     });
@@ -13181,7 +13181,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
   window.yearlyProfitForYear=(year)=>yearlyBreakdown(year).total;
   window.monthlyStatsForYear=(year)=>{const vals=monthlySeries().filter(([m])=>m.startsWith(String(year)+'-')).map(([,v])=>n(v));const total=vals.reduce((a,b)=>a+b,0);return {count:vals.length,avg:vals.length?total/vals.length:0,high:vals.length?Math.max(...vals):0,low:vals.length?Math.min(...vals):0,total};};
 
-  function footerMarkup(){return '<img class="vy660-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI"><span>© 2026 Vyapar AI. All Rights Reserved.</span><span class="app-legal-links"><a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a><a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a><a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a><a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a></span><strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';}
+  function footerMarkup(){return '<img class="vy660-footer-logo" src="assets/images/footer-logo.jpg" alt="Vyapar AI"><span>© 2026 Vyapar AI. All Rights Reserved.</span><span class="app-legal-links"><a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a><a href="pages/legal/terms.html" target="_blank" rel="noopener noreferrer">Terms</a><a href="pages/legal/refund.html" target="_blank" rel="noopener noreferrer">Refund</a><a href="pages/legal/delete-account.html" target="_blank" rel="noopener noreferrer">Delete Account</a></span><strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';}
   function placeFooter(){
     document.querySelectorAll('.android-sheet-legal').forEach(x=>x.remove());
     const settings=document.getElementById('screen-settings');
@@ -14527,7 +14527,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       footer.id = "appLegalFooter";
       footer.className = "app-legal-footer vy660-settings-footer";
       footer.innerHTML =
-        '<img class="vy660-footer-logo" src="assets/images/footer-logo.png" alt="Vyapar AI">' +
+        '<img class="vy660-footer-logo" src="assets/images/footer-logo.jpg" alt="Vyapar AI">' +
         '<span>© 2026 Vyapar AI. All Rights Reserved.</span>' +
         '<span class="app-legal-links">' +
           '<a href="pages/legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>' +
@@ -14774,7 +14774,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
           <small>Try another word.</small>
         </div>
         <footer class="vy675-settings-footer" id="vy675SettingsFooter">
-          <img src="assets/images/footer-logo.png" alt="Vyapar AI">
+          <img src="assets/images/footer-logo.jpg" alt="Vyapar AI">
           <span>© 2026 Vyapar AI. All Rights Reserved.</span>
           <small>A Gupta Legacy product</small>
         </footer>

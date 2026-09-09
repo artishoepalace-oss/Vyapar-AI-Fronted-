@@ -148,7 +148,7 @@
           <small>Try another word.</small>
         </div>
         <footer class="vy675-settings-footer" id="vy675SettingsFooter">
-          <img src="assets/images/footer-logo.png" alt="Vyapar AI">
+          <img src="assets/images/footer-logo.jpg" alt="Vyapar AI">
           <span>© 2026 Vyapar AI. All Rights Reserved.</span>
           <small>A Gupta Legacy product</small>
         </footer>

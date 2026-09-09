@@ -102,3 +102,16 @@ html.vy861-flat-black.workspace-v7 #nav.nav { height:58px!important; min-height:
 html.vy861-flat-black.workspace-v7 #nav.nav button { height:100%!important; min-height:48px!important; }
 html.vy861-flat-black.workspace-v7 .screen .file-drop:focus-within { outline:2px solid #b6c7dc; outline-offset:2px; }
 @media(min-width:800px) { html.workspace-v7 .insight-chart { max-height:330px; } }
+
+/* 00008: original grey footer artwork, with no inherited white tile or tint. */
+html.vy861-flat-black body #vy675SettingsFooter img,
+html.vy861-flat-black body #appLegalFooter img,
+html.vy861-flat-black body .legal-footer-logo,
+html.vy861-flat-black body .vy658-footer-logo,
+html.vy861-flat-black body .vy659-footer-logo,
+html.vy861-flat-black body .vy6601-footer-logo {
+  display:block!important;width:64px!important;height:64px!important;
+  padding:0!important;margin:0 auto 8px!important;object-fit:contain!important;
+  background:#000!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;filter:none!important;opacity:1!important;transform:none!important;
+}

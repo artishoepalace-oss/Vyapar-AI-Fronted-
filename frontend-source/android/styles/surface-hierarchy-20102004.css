@@ -260,12 +260,12 @@ html.vy861-flat-black #androidPermissionSheet button { min-height:44px !importan
 
 html.vy861-flat-black #screen-business #businessToolResults .vx621-feature-card[hidden],
 html.vy861-flat-black #screen-business .vx621-platform-host[hidden] { display:none !important; }
-/* Shop body, excluding its detached star, has 2:3 visual space above/below. */
+/* Complete supplied wordmark: preserve intrinsic margins without shifting the tile. */
 html.vy861-flat-black .top .brand .vy-logo-frame { display:block !important; width:44px !important; height:44px !important; flex:0 0 44px !important; background:#fff !important; border-radius:13px !important; overflow:hidden !important; }
-html.vy861-flat-black .top .brand .vy-logo-frame .logo { display:block !important; width:44px !important; height:44px !important; min-width:44px !important; max-width:44px !important; padding:0 !important; border:0 !important; border-radius:0 !important; clip-path:none !important; -webkit-clip-path:none !important; background:transparent !important; box-shadow:none !important; transform:translateY(-12%) !important; }
+html.vy861-flat-black .top .brand .vy-logo-frame .logo { display:block !important; width:44px !important; height:44px !important; min-width:44px !important; max-width:44px !important; padding:0 !important; border:0 !important; border-radius:0 !important; clip-path:none !important; -webkit-clip-path:none !important; background:transparent !important; box-shadow:none !important; transform:none !important; }
 html.vy861-flat-black #vyaparOtpGate .auth-logo-box { background:#fff !important; }
-html.vy861-flat-black #vyaparOtpGate .auth-logo { transform:translateY(-12%) !important; padding:0 !important; background:transparent !important; }
-html.vy861-flat-black body #vy855BootGuard img { transform:translateY(-12%) !important; }
+html.vy861-flat-black #vyaparOtpGate .auth-logo { transform:none !important; padding:0 !important; background:transparent !important; }
+html.vy861-flat-black body #vy855BootGuard img { transform:none !important; }
 html.vy861-flat-black .vy-boot-logo-frame { display:block; width:112px; height:112px; border-radius:24px; overflow:hidden; background:#fff; }
 
 /* 00007: one workspace rhythm, including Android WebViews without :is/:has. */

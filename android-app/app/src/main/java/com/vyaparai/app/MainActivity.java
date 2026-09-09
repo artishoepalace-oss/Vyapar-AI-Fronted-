@@ -136,8 +136,8 @@ protected void onCreate(Bundle savedInstanceState) {
         startupLogo.setImageResource(R.drawable.startup_logo);
         startupLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         int logoSize = Math.round(112 * getResources().getDisplayMetrics().density);
-        // Centre the shop body optically, with approximately 2:3 top/bottom space.
-        // Keep a fixed white frame so moving the artwork never moves the tile.
+        // Display the complete supplied artwork with its intrinsic margins.
+        // Match the stationary HTML startup tile without cropping the wordmark.
         FrameLayout logoFrame = new FrameLayout(this);
         android.graphics.drawable.GradientDrawable logoBackground = new android.graphics.drawable.GradientDrawable();
         logoBackground.setColor(android.graphics.Color.WHITE);
@@ -145,7 +145,7 @@ protected void onCreate(Bundle savedInstanceState) {
         logoFrame.setBackground(logoBackground);
         logoFrame.setClipToOutline(true);
         logoFrame.addView(startupLogo, new FrameLayout.LayoutParams(logoSize, logoSize));
-        startupLogo.setTranslationY(-logoSize * 0.12f);
+        startupLogo.setTranslationY(0f);
         startupCover.addView(logoFrame, new FrameLayout.LayoutParams(logoSize, logoSize, Gravity.CENTER));
         content.addView(startupCover, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
