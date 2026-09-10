@@ -2,6 +2,19 @@ name: CI - Vyapar AI Android
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'android-app/**'
+      - 'frontend-source/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'web/**'
+      - 'version.json'
+      - 'update.json'
+      - 'RELEASE_*.md'
+      - '.github/workflows/build-android.yml'
+      - '.github/workflows/publish-in-app-update.yml'
 
 permissions:
   contents: read
@@ -16,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
