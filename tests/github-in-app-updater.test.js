@@ -43,10 +43,10 @@ assert.match(updater, /ACTION_MANAGE_UNKNOWN_APP_SOURCES/);
 assert.match(updater, /private static final long MAX\s*=/);
 assert.match(updater, /releases\/download\//);
 
-assert.match(updaterJs, /window\.fs607CheckUpdate = checkForUpdate/);
+assert.match(updaterJs, /window\.fs607CheckUpdate\s*=\s*checkForUpdate/);
 assert.match(updaterJs, /Automatic update checks/);
 assert.match(updaterJs, /Download & install/);
-assert.match(updaterJs, /CHECK_INTERVAL = 12 \* 60 \* 60 \* 1000/);
+assert.match(updaterJs, /CHECK_INTERVAL\s*=\s*12 \* 60 \* 60 \* 1000/);
 assert.match(updaterJs, /AndroidApp\.downloadAndInstallUpdate/);
 assert(builder.includes("'github-updater-20102004.js'"));
 assert(builder.includes("'github-updater-20102004.css'"));
