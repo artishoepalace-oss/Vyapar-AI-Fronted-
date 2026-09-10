@@ -1,32 +1,19 @@
-name: Build Vyapar AI Android APK - Main
+name: CI - Vyapar AI Android
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'android-app/**'
-      - 'frontend-source/**'
-      - 'tools/**'
-      - 'tests/**'
-      - 'web/**'
-      - 'version.json'
-      - 'RELEASE_*.md'
-      - '.github/workflows/build-android.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: vyapar-main-release
-  cancel-in-progress: false
+  group: vyapar-main-ci
+  cancel-in-progress: true
 
 jobs:
-  build-apk:
-    name: Build and Release Android APK from main
-    if: github.ref_name == 'main'
+  verify-android:
+    name: Verify and build debug artifact
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -34,15 +21,8 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Verify APK source branch
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "${GITHUB_REF_NAME}" = "main"
-          echo "APK source branch: ${GITHUB_REF_NAME}"
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -51,54 +31,18 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android SDK 34
-        run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-      - name: Detect native C++ / JNI configuration
-        id: native
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f android-app/app/src/main/cpp/CMakeLists.txt ]; then
-            echo "kind=cmake" >> "$GITHUB_OUTPUT"
-          elif [ -f android-app/app/src/main/jni/Android.mk ]; then
-            echo "kind=ndk-build" >> "$GITHUB_OUTPUT"
-          elif find android-app/app/src/main -type f \
-            \( -name '*.cpp' -o -name '*.cc' -o -name '*.c' -o -name '*.h' -o -name '*.hpp' \) \
-            -print -quit | grep -q .; then
-            echo "JNI/C++ source exists, but no supported build file was found." >&2
-            exit 1
-          else
-            echo "kind=none" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Install native toolchain when JNI exists
-        if: steps.native.outputs.kind != 'none'
-        run: sdkmanager "ndk;26.1.10909125" "cmake;3.22.1"
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '8.7'
 
-      - name: Apply native stability patch
-        shell: bash
-        run: |
-          set -euo pipefail
-          PATCH=release-patches/mainactivity-851.patch
-          if [ ! -f "$PATCH" ]; then
-            echo "No native stability patch present; continuing."
-          elif git apply --check "$PATCH"; then
-            git apply "$PATCH"
-          elif git apply --reverse --check "$PATCH"; then
-            echo "Native stability patch already applied."
-          else
-            echo "Native stability patch cannot be applied cleanly." >&2
-            exit 1
-          fi
-
-      - name: Align runtime release metadata
+      - name: Align runtime metadata in CI workspace
         shell: bash
         run: |
           set -euo pipefail
@@ -106,104 +50,47 @@ jobs:
           from pathlib import Path
           import json, re
           version = json.loads(Path('version.json').read_text(encoding='utf-8'))
-          VERSION = version['versionName']
-          CODE = str(version['versionCode'])
-          CACHE = f'{CODE}-workspace1'
+          name = version['versionName']
+          code = str(version['versionCode'])
+          cache = f'{code}-workspace1'
           for path in [Path('web/index.html'), Path('android-app/app/src/main/assets/index.html')]:
               text = path.read_text(encoding='utf-8')
-              text = re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>', f'<meta name="vyapar-ui-version" content="{VERSION}" />', text, count=1)
-              text = re.sub(r'assets/styles/vyapar-core\.css\?v=[^"]+', f'assets/styles/vyapar-core.css?v={CACHE}', text, count=1)
-              text = re.sub(r'assets/styles/vyapar-ui\.css\?v=[^"]+', f'assets/styles/vyapar-ui.css?v={CACHE}', text, count=1)
-              text = re.sub(r'assets/scripts/vyapar-app\.js\?v=[^"]+', f'assets/scripts/vyapar-app.js?v={CACHE}', text, count=1)
+              text = re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>', f'<meta name="vyapar-ui-version" content="{name}" />', text, count=1)
+              text = re.sub(r'assets/styles/vyapar-core\.css\?v=[^"]+', f'assets/styles/vyapar-core.css?v={cache}', text, count=1)
+              text = re.sub(r'assets/styles/vyapar-ui\.css\?v=[^"]+', f'assets/styles/vyapar-ui.css?v={cache}', text, count=1)
+              text = re.sub(r'assets/scripts/vyapar-app\.js\?v=[^"]+', f'assets/scripts/vyapar-app.js?v={cache}', text, count=1)
               path.write_text(text, encoding='utf-8')
-          print('Runtime metadata:', VERSION, CODE, CACHE)
           PY
 
-      - name: Rebuild Android and web frontend bundles
-        run: npm run build
+      - name: Rebuild and verify frontend runtime
+        run: npm run build && npm run verify
 
-      - name: Verify frontend bundles and runtime
-        run: npm run verify
-
-      - name: Persist synchronized generated release files to main
+      - name: Verify Android release identity
         shell: bash
         run: |
           set -euo pipefail
-          VERSION_NAME=$(node -p "require('./version.json').versionName")
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            web/index.html \
-            android-app/app/src/main/assets/index.html \
-            web/assets/styles/vyapar-core.css \
-            web/assets/styles/vyapar-ui.css \
-            web/assets/scripts/vyapar-app.js \
-            web/assets/vendor \
-            android-app/app/src/main/assets/assets/vendor \
-            android-app/app/src/main/assets/assets/styles/vyapar-core.css \
-            android-app/app/src/main/assets/assets/styles/vyapar-ui.css \
-            android-app/app/src/main/assets/assets/scripts/vyapar-app.js
-          if ! git diff --cached --quiet; then
-            git commit -m "[skip ci] Sync generated release files for ${VERSION_NAME}"
-            git push origin HEAD:main
-          else
-            echo "Generated release files are already synchronized."
-          fi
-
-      - name: Verify Android SDK and version configuration
-        run: |
           node - <<'NODE'
-          const fs = require('fs');
-          const version = JSON.parse(fs.readFileSync('version.json','utf8'));
-          const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
-          const compileSdk = Number((gradle.match(/compileSdk\s+(\d+)/)||[])[1]);
-          const targetSdk = Number((gradle.match(/targetSdk\s+(\d+)/)||[])[1]);
-          const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
-          const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
-          if (compileSdk !== 34 || targetSdk !== 34) throw new Error(`SDK mismatch: compile=${compileSdk}, target=${targetSdk}`);
-          if (versionName !== version.versionName || versionCode !== Number(version.versionCode)) throw new Error(`Version mismatch: ${versionName}/${versionCode} vs ${version.versionName}/${version.versionCode}`);
-          console.log('Android config OK:', {compileSdk,targetSdk,versionName,versionCode});
+          const fs=require('fs');
+          const v=JSON.parse(fs.readFileSync('version.json','utf8'));
+          const g=fs.readFileSync('android-app/app/build.gradle','utf8');
+          const name=(g.match(/versionName\s+["']([^"']+)/)||[])[1];
+          const code=Number((g.match(/versionCode\s+(\d+)/)||[])[1]);
+          if(name!==v.versionName || code!==Number(v.versionCode)) throw new Error(`Version mismatch: ${name}/${code} vs ${v.versionName}/${v.versionCode}`);
           NODE
 
       - name: Generate Gradle wrapper
         working-directory: android-app
         run: gradle wrapper --gradle-version 8.7 --distribution-type bin
 
-      - name: Build debug APK
+      - name: Build debug APK for CI only
         working-directory: android-app
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug \
-            -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
-            --stacktrace \
-            --no-daemon
+          ./gradlew :app:assembleDebug -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" --stacktrace --no-daemon
 
-      - name: Read app version
-        id: version
-        working-directory: android-app
-        run: |
-          VERSION_NAME=$(node -p "require('../version.json').versionName")
-          VERSION_CODE=$(node -p "require('../version.json').versionCode")
-          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
-          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
-
-      - name: Rename APK
-        run: |
-          cp android-app/app/build/outputs/apk/debug/app-debug.apk \
-            "VyaparAI-${{ steps.version.outputs.version_name }}.apk"
-
-      - name: Upload APK artifact
+      - name: Upload CI APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: VyaparAI-${{ steps.version.outputs.version_name }}-apk
-          path: VyaparAI-${{ steps.version.outputs.version_name }}.apk
-
-      - name: Create or update GitHub Release from main
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.version_name }}
-          name: Vyapar AI v${{ steps.version.outputs.version_name }} - Main Android
-          target_commitish: main
-          body_path: RELEASE_${{ steps.version.outputs.version_name }}.md
-          files: VyaparAI-${{ steps.version.outputs.version_name }}.apk
-          overwrite_files: true
+          name: VyaparAI-${{ github.sha }}-debug-ci
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
