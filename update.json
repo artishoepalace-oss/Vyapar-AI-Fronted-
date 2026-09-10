@@ -3,12 +3,12 @@
   "enabled": true,
   "appId": "com.anuj.guptalegacy.vyaparai",
   "channel": "stable",
-  "versionName": "20.10.2004.00009.2026",
-  "versionCode": 2010200409,
+  "versionName": "20.10.2004.00010.2026",
+  "versionCode": 2010200410,
   "minimumSupportedVersionCode": 0,
   "mandatory": false,
-  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00009.2026/VyaparAI-20.10.2004.00009.2026.apk",
-  "sha256": "ac4f6985ecee2caeb15a8dd9a67ff49c5ea70f1b89cfaafe666cfca9f36502b8",
-  "releaseNotes": "Add secure GitHub-based in-app updates with an approved update manifest.\nAdd automatic and manual update checks in Settings.\nAdd native APK download progress and Android installer handoff.\nVerify SHA-256, package identity, versionCode and signing certificate before installation.\nAdd Android 8+ unknown-app install permission recovery and private FileProvider delivery.\nAdd optional mandatory updates and minimum-supported-version enforcement.\nAdd permanent signing support for future in-place updates.\nPreserve existing business, login, backup and navigation functionality.",
-  "publishedAt": "2026-09-10T22:05:16Z"
+  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00010.2026/VyaparAI-20.10.2004.00010.2026.apk",
+  "sha256": "1222a554d5ce307e3af4d0281648dc2a7cdd6a80cb7716534d01e1ba843bed5f",
+  "releaseNotes": "Fix startup hanging on Android 8.x / older Android System WebView builds.\nBuild the Android runtime JavaScript down to an ES2017-compatible bundle before packaging the APK.\nKeep the web runtime unchanged while preserving Android/Web source-of-truth parity before packaging.\nRetain the startup storage watchdog and native splash release fallback from 00009.\nPreserve existing login, business data, backup, navigation and in-app updater functionality.\nPublish as a permanently signed Android update for in-place installation.",
+  "publishedAt": "2026-09-10T23:06:04Z"
 }
