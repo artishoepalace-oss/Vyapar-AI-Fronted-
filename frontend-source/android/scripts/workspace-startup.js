@@ -13,11 +13,23 @@
     overlay.innerHTML = '<div role="dialog" aria-modal="true" aria-labelledby="workspaceBusyMessage" tabindex="-1"><span class="workspace-spinner" aria-hidden="true"></span><p id="workspaceBusyMessage" role="status" aria-live="polite"></p></div>';
     document.body.appendChild(overlay); busyMessage(message || 'Saving…'); overlay.firstElementChild.focus();
   }
-  function storageBlocked(message) {
-    const el = document.createElement('div'); el.className = 'workspace-blocker'; el.id = 'workspaceStorageBlocked';
-    el.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="storageBlockedTitle"><h2 id="storageBlockedTitle">Could not load your records</h2><p></p><button type="button" class="btn primary">Reopen app</button></div>';
+  function releaseStartupGuard() {
+    const guard = document.getElementById('vy855BootGuard');
+    if (guard) guard.remove();
+    document.documentElement.classList.remove('vy855-booting');
+    ['appLoader','vy647StartupSplash'].forEach(id => document.getElementById(id)?.remove());
     try { if(root.AndroidApp && root.AndroidApp.onStartupFrameReady) root.AndroidApp.onStartupFrameReady(); } catch(_) {}
-    el.querySelector('p').textContent = message; el.querySelector('button').onclick = () => location.reload(); document.body.appendChild(el);
+  }
+  function storageBlocked(message) {
+    let el = document.getElementById('workspaceStorageBlocked');
+    if (!el) {
+      el = document.createElement('div'); el.className = 'workspace-blocker'; el.id = 'workspaceStorageBlocked';
+      el.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="storageBlockedTitle"><h2 id="storageBlockedTitle">Could not load your records</h2><p></p><button type="button" class="btn primary">Reopen app</button></div>';
+      document.body.appendChild(el);
+    }
+    releaseStartupGuard();
+    el.querySelector('p').textContent = message || 'Device storage could not be opened. Your saved data has not been overwritten.';
+    el.querySelector('button').onclick = () => location.reload();
   }
   function storageStatus() {
     const status = root.VyaparStorage.getStatus();
@@ -40,10 +52,22 @@
   document.addEventListener('click', event => { if (busy && !event.target.closest('#workspaceBusy')) { event.preventDefault(); event.stopImmediatePropagation(); } }, true);
   const renderSettings = root.renderSettings;
   root.renderSettings = function () { const result = renderSettings.apply(this, arguments); storageStatus(); return result; };
+  const startupStorageWatchdog = setTimeout(() => {
+    if (!root.VyaparStorage.bootReady && !document.getElementById('workspaceStorageBlocked')) {
+      storageBlocked('Device storage is taking too long to open. Your saved data has not been overwritten. Reopen the app and try again.');
+    }
+  }, 12000);
   root.VyaparStorage.attach(() => root.state, saved => {
     const current = root.state;
     const restored = normalizeState(saved);
     restored.subscription = { ...current.subscription }; restored.plan = current.plan;
     root.state = restored;
-  }).then(() => { root.VyaparInsights.invalidate(); root.render(); storageStatus(); });
+  }).then(() => {
+    clearTimeout(startupStorageWatchdog);
+    if (!root.VyaparStorage.bootReady) return;
+    root.VyaparInsights.invalidate(); root.render(); storageStatus();
+  }).catch(error => {
+    clearTimeout(startupStorageWatchdog);
+    storageBlocked(error?.message || 'Device storage could not be opened. Your saved data has not been overwritten.');
+  });
 })(window);
