@@ -4,53 +4,35 @@ def googleWebClientId = (project.findProperty("GOOGLE_WEB_CLIENT_ID") ?: System.
 def cmakeConfig = file('src/main/cpp/CMakeLists.txt')
 def ndkBuildConfig = file('src/main/jni/Android.mk')
 def hasNativeBuild = cmakeConfig.exists() || ndkBuildConfig.exists()
+def releaseKeystoreFile = (project.findProperty("ANDROID_KEYSTORE_FILE") ?: System.getenv("ANDROID_KEYSTORE_FILE") ?: "").toString()
+def releaseKeyAlias = (project.findProperty("ANDROID_KEY_ALIAS") ?: System.getenv("ANDROID_KEY_ALIAS") ?: "").toString()
+def releaseKeyPassword = (project.findProperty("ANDROID_KEY_PASSWORD") ?: System.getenv("ANDROID_KEY_PASSWORD") ?: "").toString()
+def releaseStorePassword = (project.findProperty("ANDROID_STORE_PASSWORD") ?: System.getenv("ANDROID_STORE_PASSWORD") ?: "").toString()
+def hasReleaseSigning = !releaseKeystoreFile.isEmpty() && !releaseKeyAlias.isEmpty() && !releaseKeyPassword.isEmpty() && !releaseStorePassword.isEmpty()
 
 android {
     namespace 'com.vyaparai.app'
     compileSdk 34
-
     defaultConfig {
         applicationId 'com.anuj.guptalegacy.vyaparai'
         minSdk 23
         targetSdk 34
         resValue "string", "google_web_client_id", googleWebClientId
-        versionCode 2010200408
-        versionName "20.10.2004.00008.2026"
-
-        if (cmakeConfig.exists()) {
-            externalNativeBuild {
-                cmake {
-                    cppFlags '-std=c++17'
-                }
-            }
-        }
+        versionCode 2010200409
+        versionName "20.10.2004.00009.2026"
+        if (cmakeConfig.exists()) { externalNativeBuild { cmake { cppFlags '-std=c++17' } } }
     }
-
-    if (hasNativeBuild) {
-        ndkVersion '26.1.10909125'
-    }
-
-    if (cmakeConfig.exists()) {
-        externalNativeBuild {
-            cmake {
-                path cmakeConfig
-                version '3.22.1'
-            }
-        }
-    } else if (ndkBuildConfig.exists()) {
-        externalNativeBuild {
-            ndkBuild {
-                path ndkBuildConfig
-            }
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
+    if (hasNativeBuild) { ndkVersion '26.1.10909125' }
+    if (cmakeConfig.exists()) { externalNativeBuild { cmake { path cmakeConfig; version '3.22.1' } } }
+    else if (ndkBuildConfig.exists()) { externalNativeBuild { ndkBuild { path ndkBuildConfig } } }
+    if (hasReleaseSigning) {
+        signingConfigs { release { storeFile file(releaseKeystoreFile); storePassword releaseStorePassword; keyAlias releaseKeyAlias; keyPassword releaseKeyPassword } }
+        buildTypes { release { signingConfig signingConfigs.release; minifyEnabled false; shrinkResources false } }
+    } else { buildTypes { release { minifyEnabled false; shrinkResources false } } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 
 dependencies {
+    implementation 'androidx.core:core:1.13.1'
     implementation 'com.google.android.gms:play-services-auth:21.6.0'
 }
