@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "appId": "com.anuj.guptalegacy.vyaparai",
+  "channel": "stable",
+  "versionName": "20.10.2004.00008.2026",
+  "versionCode": 2010200408,
+  "minimumSupportedVersionCode": 0,
+  "mandatory": false,
+  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00008.2026/VyaparAI-20.10.2004.00008.2026.apk",
+  "sha256": "ccbfcf8f18e4325c5dd726e9f49d0b3280ebd276de5876c493be0d60ec07c92c",
+  "releaseNotes": "Branding and launcher polish\nSettings footer artwork update\nRuntime assets synchronized",
+  "publishedAt": "2026-09-10T00:00:00Z"
+}
