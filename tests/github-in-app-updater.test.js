@@ -37,10 +37,10 @@ assert.match(nativeActivity, /webView\.addJavascriptInterface/);
 assert.match(updater, /raw\.githubusercontent\.com\/artishoepalace-oss\/Vyapar-AI-Fronted-\/main\/update\.json/);
 assert.match(updater, /Downloaded APK checksum does not match/);
 assert.match(updater, /Update signing certificate does not match/);
-assert.match(updater, /activity\.getPackageName\(\)\.equals\(downloaded\.packageName\)/);
+assert.match(updater, /activity\.getPackageName\(\)\.equals\(d\.packageName\)/);
 assert.match(updater, /FileProvider\.getUriForFile/);
 assert.match(updater, /ACTION_MANAGE_UNKNOWN_APP_SOURCES/);
-assert.match(updater, /MAX_APK_BYTES/);
+assert.match(updater, /private static final long MAX\s*=/);
 assert.match(updater, /releases\/download\//);
 
 assert.match(updaterJs, /window\.fs607CheckUpdate = checkForUpdate/);
