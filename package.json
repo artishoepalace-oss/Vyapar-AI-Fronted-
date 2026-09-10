@@ -8,6 +8,10 @@
     "check": "node tools/build-frontend-bundles.mjs --check && node tools/validate-runtime.mjs",
     "test": "node --test tests/*.test.js",
     "verify": "npm run check && npm test",
+    "android:legacy": "node tools/transpile-android-legacy.mjs",
     "preview": "python3 -m http.server 8080 --directory web"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
   }
 }
