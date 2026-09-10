@@ -10,6 +10,7 @@ on:
       - 'tools/**'
       - 'tests/**'
       - 'web/**'
+      - 'package.json'
       - 'version.json'
       - 'update.json'
       - 'RELEASE_*.md'
@@ -33,6 +34,9 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+
+      - name: Set up Node dependencies
+        run: npm install --no-audit --no-fund
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -77,6 +81,9 @@ jobs:
 
       - name: Rebuild and verify frontend runtime
         run: npm run build && npm run verify
+
+      - name: Generate Android 8-compatible JavaScript
+        run: npm run android:legacy
 
       - name: Verify Android release identity
         shell: bash
