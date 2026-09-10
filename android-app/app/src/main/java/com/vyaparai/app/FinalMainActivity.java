@@ -3,29 +3,18 @@ package com.vyaparai.app;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
-/**
- * Final Android 7-16 shell for Vyapar AI 8.6.1.2026.
- *
- * MainActivity remains the authoritative feature implementation. This thin
- * subclass only aligns the first WebView compositor frame with the branded
- * black launch surface and applies a few safe rendering flags before the
- * first frame is drawn. No business/auth/payment logic is changed.
- */
+/** Final Android shell plus the secure GitHub update bridge. */
 public class FinalMainActivity extends MainActivity {
+    private UpdateManager updateManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Keep the system window on the same black surface used by launch_screen
-        // before MainActivity creates the WebView.
         getWindow().setStatusBarColor(android.graphics.Color.BLACK);
         getWindow().setNavigationBarColor(android.graphics.Color.BLACK);
-
         super.onCreate(savedInstanceState);
-
-        // super.onCreate finishes before Android draws the first activity frame,
-        // so enforcing the same launch color here also protects future shell
-        // changes without duplicating MainActivity's feature code.
         WebView webView = findWebView(getWindow().getDecorView());
         if (webView != null) {
             webView.setBackgroundColor(android.graphics.Color.BLACK);
@@ -33,7 +22,33 @@ public class FinalMainActivity extends MainActivity {
             webView.setHorizontalScrollBarEnabled(false);
             webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
             webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            updateManager = new UpdateManager(this, webView);
+            // Replace the base AndroidApp bridge with a subclass that preserves all
+            // existing methods and adds only updater operations.
+            webView.addJavascriptInterface(new FinalAndroidApp(), "AndroidApp");
         }
+    }
+
+    public class FinalAndroidApp extends AndroidApp {
+        @JavascriptInterface public void checkForAppUpdate(boolean manual) {
+            if (updateManager != null) updateManager.checkForUpdate(manual);
+        }
+        @JavascriptInterface public void downloadAndInstallUpdate(String manifestJson) {
+            if (updateManager != null) updateManager.downloadAndInstall(manifestJson);
+        }
+        @JavascriptInterface public String getUpdateManifestUrl() {
+            return UpdateManager.UPDATE_MANIFEST_URL;
+        }
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (updateManager != null) updateManager.onResume();
+    }
+
+    @Override protected void onDestroy() {
+        if (updateManager != null) { updateManager.destroy(); updateManager = null; }
+        super.onDestroy();
     }
 
     private WebView findWebView(View view) {
