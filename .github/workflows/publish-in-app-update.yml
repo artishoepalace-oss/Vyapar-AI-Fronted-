@@ -1,10 +1,18 @@
 name: Publish Signed In-App Update
 
 on:
-  push:
-    branches: [main]
-    paths: ['version.json']
   workflow_dispatch:
+    inputs:
+      mandatory:
+        description: 'Require this update before continuing'
+        required: true
+        default: false
+        type: boolean
+      minimum_supported_version_code:
+        description: 'Force update for installs below this versionCode (0 disables threshold)'
+        required: true
+        default: '0'
+        type: string
 
 permissions:
   contents: write
@@ -15,77 +23,210 @@ concurrency:
 
 jobs:
   publish:
+    name: Build, verify and publish signed update
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: {ref: main, fetch-depth: 0}
-      - name: Read version
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Require permanent Android signing secrets
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE_B64" || { echo "Missing ANDROID_KEYSTORE_BASE64" >&2; exit 1; }
+          test -n "$KEY_ALIAS" || { echo "Missing ANDROID_KEY_ALIAS" >&2; exit 1; }
+          test -n "$KEY_PASSWORD" || { echo "Missing ANDROID_KEY_PASSWORD" >&2; exit 1; }
+          test -n "$STORE_PASSWORD" || { echo "Missing ANDROID_STORE_PASSWORD" >&2; exit 1; }
+
+      - name: Read release identity and reject an existing tag
         id: version
         shell: bash
-        run: |
-          echo "name=$(node -p "require('./version.json').versionName")" >> "$GITHUB_OUTPUT"
-          echo "code=$(node -p "require('./version.json').versionCode")" >> "$GITHUB_OUTPUT"
-      - name: Require permanent signing secrets
         env:
-          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          KP: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          SP: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          test -n "$KS" && test -n "$ALIAS" && test -n "$KP" && test -n "$SP" || { echo 'Permanent Android signing secrets are required for safe in-app updates.'; exit 1; }
-      - uses: actions/setup-java@v4
-        with: {distribution: temurin, java-version: '17'}
-      - uses: android-actions/setup-android@v3
-      - run: sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-      - uses: gradle/actions/setup-gradle@v6
-        with: {gradle-version: '8.7'}
-      - name: Decode keystore
-        env: {KS: '${{ secrets.ANDROID_KEYSTORE_BASE64 }}'}
-        run: printf '%s' "$KS" | base64 --decode > "$RUNNER_TEMP/vyapar-release.jks"
-      - name: Build frontend and verify
-        run: npm run build && npm run verify
-      - name: Build signed release APK
+          set -euo pipefail
+          VERSION_NAME=$(node -p "require('./version.json').versionName")
+          VERSION_CODE=$(node -p "require('./version.json').versionCode")
+          TAG="v${VERSION_NAME}"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Release/tag $TAG already exists. Increase versionName/versionCode before publishing a signed in-app update." >&2
+            exit 1
+          fi
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 34
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '8.7'
+
+      - name: Decode permanent signing keystore
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/vyapar-release.jks"
+          test -s "$RUNNER_TEMP/vyapar-release.jks"
+          chmod 600 "$RUNNER_TEMP/vyapar-release.jks"
+
+      - name: Align runtime release metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+          version = json.loads(Path('version.json').read_text(encoding='utf-8'))
+          VERSION = version['versionName']
+          CODE = str(version['versionCode'])
+          CACHE = f'{CODE}-workspace1'
+          for path in [Path('web/index.html'), Path('android-app/app/src/main/assets/index.html')]:
+              text = path.read_text(encoding='utf-8')
+              text = re.sub(r'<meta name="vyapar-ui-version" content="[^"]+"\s*/>', f'<meta name="vyapar-ui-version" content="{VERSION}" />', text, count=1)
+              text = re.sub(r'assets/styles/vyapar-core\.css\?v=[^"]+', f'assets/styles/vyapar-core.css?v={CACHE}', text, count=1)
+              text = re.sub(r'assets/styles/vyapar-ui\.css\?v=[^"]+', f'assets/styles/vyapar-ui.css?v={CACHE}', text, count=1)
+              text = re.sub(r'assets/scripts/vyapar-app\.js\?v=[^"]+', f'assets/scripts/vyapar-app.js?v={CACHE}', text, count=1)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Rebuild and verify frontend runtime
+        run: |
+          npm run build
+          npm run verify
+
+      - name: Generate Gradle wrapper
+        working-directory: android-app
+        run: gradle wrapper --gradle-version 8.7 --distribution-type bin
+
+      - name: Build permanently signed release APK
         working-directory: android-app
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
-          gradle wrapper --gradle-version 8.7 --distribution-type bin
+          set -euo pipefail
           chmod +x gradlew
-          ./gradlew :app:assembleRelease -PANDROID_KEYSTORE_FILE="$RUNNER_TEMP/vyapar-release.jks" -PANDROID_KEY_ALIAS="$ANDROID_KEY_ALIAS" -PANDROID_KEY_PASSWORD="$ANDROID_KEY_PASSWORD" -PANDROID_STORE_PASSWORD="$ANDROID_STORE_PASSWORD" -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" --no-daemon
-      - name: Verify and prepare APK
+          ./gradlew :app:assembleRelease \
+            -PANDROID_KEYSTORE_FILE="$RUNNER_TEMP/vyapar-release.jks" \
+            -PANDROID_KEY_ALIAS="$ANDROID_KEY_ALIAS" \
+            -PANDROID_KEY_PASSWORD="$ANDROID_KEY_PASSWORD" \
+            -PANDROID_STORE_PASSWORD="$ANDROID_STORE_PASSWORD" \
+            -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
+            --stacktrace --no-daemon
+
+      - name: Verify signed APK identity and signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android-app/app/build/outputs/apk/release/app-release.apk"
+          test -s "$APK"
+          APKSIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
+          AAPT="$ANDROID_HOME/build-tools/34.0.0/aapt"
+          "$APKSIGNER" verify --verbose --print-certs "$APK"
+          PACKAGE=$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)
+          VERSION_CODE=$("$AAPT" dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)
+          test "$PACKAGE" = "com.anuj.guptalegacy.vyaparai"
+          test "$VERSION_CODE" = "${{ steps.version.outputs.version_code }}"
+
+      - name: Prepare release APK and checksum
         id: apk
         shell: bash
         run: |
-          APK=android-app/app/build/outputs/apk/release/app-release.apk
-          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose --print-certs "$APK"
-          NAME="VyaparAI-${{ steps.version.outputs.name }}.apk"
-          cp "$APK" "$NAME"
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version_name }}"
+          NAME="VyaparAI-${VERSION}.apk"
+          cp android-app/app/build/outputs/apk/release/app-release.apk "$NAME"
+          SHA=$(sha256sum "$NAME" | awk '{print $1}')
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "sha=$(sha256sum "$NAME" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
-      - name: Publish GitHub release
-        env: {GH_TOKEN: '${{ github.token }}'}
-        run: |
-          TAG="v${{ steps.version.outputs.name }}"
-          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 && { echo "Release already exists"; exit 1; } || true
-          gh release create "$TAG" "${{ steps.apk.outputs.name }}" --repo "$GITHUB_REPOSITORY" --target main --title "Vyapar AI $TAG - In-App Update" --notes-file "RELEASE_${{ steps.version.outputs.name }}.md"
-      - name: Approve release for in-app updater
-        env: {SHA: '${{ steps.apk.outputs.sha }}'}
+          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Create signed GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version_name }}"
+          TAG="${{ steps.version.outputs.tag }}"
+          APK="${{ steps.apk.outputs.name }}"
+          NOTES="RELEASE_${VERSION}.md"
+          if [ ! -f "$NOTES" ]; then
+            printf '# Vyapar AI %s\n\nSigned stable in-app update.\n' "$VERSION" > "$RUNNER_TEMP/release-notes.md"
+            NOTES="$RUNNER_TEMP/release-notes.md"
+          fi
+          gh release create "$TAG" "$APK" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target main \
+            --title "Vyapar AI v${VERSION} - Signed Android Update" \
+            --notes-file "$NOTES"
+
+      - name: Publish approved update manifest to main
+        shell: bash
+        env:
+          MANDATORY: ${{ inputs.mandatory }}
+          MIN_SUPPORTED: ${{ inputs.minimum_supported_version_code }}
+        run: |
+          set -euo pipefail
           python - <<'PY'
-          import json,os,datetime
           from pathlib import Path
-          v=json.loads(Path('version.json').read_text())
-          name=v['versionName']; code=v['versionCode']
-          notes=Path(f'RELEASE_{name}.md').read_text().splitlines()[2:]
-          notes='\n'.join(x.strip().lstrip('- ').strip() for x in notes if x.strip())
-          m={'schemaVersion':1,'enabled':True,'appId':'com.anuj.guptalegacy.vyaparai','channel':'stable','versionName':name,'versionCode':code,'minimumSupportedVersionCode':0,'mandatory':False,'apkUrl':f'https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v{name}/VyaparAI-{name}.apk','sha256':os.environ['SHA'],'releaseNotes':notes,'publishedAt':datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')}
-          Path('update.json').write_text(json.dumps(m,indent=2)+'\n')
+          import datetime, json, os
+          version = json.loads(Path('version.json').read_text(encoding='utf-8'))
+          name = version['versionName']
+          code = int(version['versionCode'])
+          notes_path = Path(f'RELEASE_{name}.md')
+          notes = notes_path.read_text(encoding='utf-8') if notes_path.exists() else f'Vyapar AI {name} signed stable update.'
+          lines = []
+          for raw in notes.splitlines():
+              line = raw.strip().lstrip('#').strip()
+              if not line or line.lower().startswith('vyapar ai '):
+                  continue
+              lines.append(line.lstrip('-• ').strip())
+              if len(lines) >= 8:
+                  break
+          minimum = int(os.environ.get('MIN_SUPPORTED','0') or 0)
+          manifest = {
+              'schemaVersion': 1,
+              'enabled': True,
+              'appId': 'com.anuj.guptalegacy.vyaparai',
+              'channel': 'stable',
+              'versionName': name,
+              'versionCode': code,
+              'minimumSupportedVersionCode': minimum,
+              'mandatory': os.environ.get('MANDATORY','false').lower() == 'true',
+              'apkUrl': f'https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v{name}/VyaparAI-{name}.apk',
+              'sha256': '${{ steps.apk.outputs.sha256 }}',
+              'releaseNotes': '\n'.join(lines) or f'Vyapar AI {name} update.',
+              'publishedAt': datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
+          }
+          Path('update.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
           PY
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add update.json
-          git commit -m "[skip ci] Approve in-app update ${{ steps.version.outputs.name }}"
+          git commit -m "[skip ci] Publish approved in-app update ${{ steps.version.outputs.version_name }}"
           git push origin HEAD:main
