@@ -13,11 +13,6 @@ on:
         required: true
         default: '0'
         type: string
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/release-trigger-00009'
 
 permissions:
   contents: write
