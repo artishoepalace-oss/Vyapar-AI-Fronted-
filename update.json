@@ -3,12 +3,12 @@
   "enabled": true,
   "appId": "com.anuj.guptalegacy.vyaparai",
   "channel": "stable",
-  "versionName": "20.10.2004.00008.2026",
-  "versionCode": 2010200408,
+  "versionName": "20.10.2004.00009.2026",
+  "versionCode": 2010200409,
   "minimumSupportedVersionCode": 0,
   "mandatory": false,
-  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00008.2026/VyaparAI-20.10.2004.00008.2026.apk",
-  "sha256": "ccbfcf8f18e4325c5dd726e9f49d0b3280ebd276de5876c493be0d60ec07c92c",
-  "releaseNotes": "Branding and launcher polish\nSettings footer artwork update\nRuntime assets synchronized",
-  "publishedAt": "2026-09-10T00:00:00Z"
+  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00009.2026/VyaparAI-20.10.2004.00009.2026.apk",
+  "sha256": "ac4f6985ecee2caeb15a8dd9a67ff49c5ea70f1b89cfaafe666cfca9f36502b8",
+  "releaseNotes": "Add secure GitHub-based in-app updates with an approved update manifest.\nAdd automatic and manual update checks in Settings.\nAdd native APK download progress and Android installer handoff.\nVerify SHA-256, package identity, versionCode and signing certificate before installation.\nAdd Android 8+ unknown-app install permission recovery and private FileProvider delivery.\nAdd optional mandatory updates and minimum-supported-version enforcement.\nAdd permanent signing support for future in-place updates.\nPreserve existing business, login, backup and navigation functionality.",
+  "publishedAt": "2026-09-10T22:05:16Z"
 }
