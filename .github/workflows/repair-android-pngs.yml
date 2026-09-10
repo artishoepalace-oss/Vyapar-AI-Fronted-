@@ -33,6 +33,8 @@ jobs:
               Path('android-app/app/src/main/res/drawable/ic_launcher.png'),
               Path('android-app/app/src/main/res/drawable/ic_launcher_512.png'),
               Path('android-app/app/src/main/res/drawable-nodpi/startup_logo.png'),
+              Path('web/assets/images/logo.png'),
+              Path('android-app/app/src/main/assets/assets/images/logo.png'),
           ]
           for path in paths:
               with Image.open(path) as image:
@@ -44,6 +46,11 @@ jobs:
               if signature != b'\x89PNG\r\n\x1a\n':
                   raise SystemExit(f'{path} is still not a valid PNG')
               print(f'Normalized {path}')
+
+          if Path('web/assets/images/logo.png').read_bytes() != Path('android-app/app/src/main/res/drawable-nodpi/startup_logo.png').read_bytes():
+              raise SystemExit('Web and native startup logo bytes are not identical after normalization')
+          if Path('android-app/app/src/main/assets/assets/images/logo.png').read_bytes() != Path('web/assets/images/logo.png').read_bytes():
+              raise SystemExit('Android WebView and web logo bytes are not identical after normalization')
           PY
 
       - name: Commit repaired binary resources
@@ -54,6 +61,10 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add android-app/app/src/main/res/drawable/ic_launcher.png \
                   android-app/app/src/main/res/drawable/ic_launcher_512.png \
-                  android-app/app/src/main/res/drawable-nodpi/startup_logo.png
-          git commit -m 'Fix Android PNG resource encoding'
-          git push origin HEAD:main
+                  android-app/app/src/main/res/drawable-nodpi/startup_logo.png \
+                  web/assets/images/logo.png \
+                  android-app/app/src/main/assets/assets/images/logo.png
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix PNG encoding and startup logo parity'
+            git push origin HEAD:main
+          fi
