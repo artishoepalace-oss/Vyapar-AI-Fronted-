@@ -3,6 +3,7 @@
   "versionCode": 2010200412,
   "channel": "production-20.10.2004.00012.2026",
   "baseVersion": "20.10.2004.00001.2026",
+  "startupBaseVersion": "20.10.2004.00008.2026",
   "released": "2026-09-11",
   "backendVersion": "2.5.2",
   "inAppUpdater": 1
