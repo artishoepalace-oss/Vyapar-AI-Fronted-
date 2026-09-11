@@ -125,9 +125,6 @@ jobs:
           npm run build
           npm run verify
 
-      - name: Generate Android 8-compatible JavaScript
-        run: npm run android:legacy
-
       - name: Generate Gradle wrapper
         working-directory: android-app
         run: gradle wrapper --gradle-version 8.7 --distribution-type bin
