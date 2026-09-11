@@ -3,12 +3,12 @@
   "enabled": true,
   "appId": "com.anuj.guptalegacy.vyaparai",
   "channel": "stable",
-  "versionName": "20.10.2004.00012.2026",
-  "versionCode": 2010200412,
+  "versionName": "20.10.2004.00013.2026",
+  "versionCode": 2010200413,
   "minimumSupportedVersionCode": 0,
   "mandatory": false,
-  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00012.2026/VyaparAI-20.10.2004.00012.2026.apk",
-  "sha256": "4fd819f0fe02f425c603882cfa372e73f8daefb1c95e6d8a4a6c7f8ab615fe4b",
-  "releaseNotes": "Restore the proven Vyapar AI 20.10.2004.00008.2026 startup and login runtime behavior.\nRemove the later startup watchdog, fail-safe overlay and whole-bundle legacy rewrite that were added while debugging the loader.\nKeep the secure GitHub in-app updater, update popup, signed APK verification, download/install flow and Settings update controls.\nKeep Render authentication/backend behavior unchanged.\nIn-app update checks remain separate from the login/startup owner and must not gate the login screen.\nPreserve existing business, sales, stock, backup, navigation, UI and local-data behavior from the proven runtime.",
-  "publishedAt": "2026-09-11T07:58:46Z"
+  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00013.2026/VyaparAI-20.10.2004.00013.2026.apk",
+  "sha256": "dc48a56871032516a59a5f054b25501337cd60f8845744862a85ffcc7a89370b",
+  "releaseNotes": "Keep the proven v20.10.2004.00008.2026 startup/auth bridge unchanged.\nMove GitHub in-app update methods to a separate `VyaparUpdater` JavaScript bridge instead of replacing `AndroidApp`.\nDelay automatic updater initialization until the startup session is ready.\nPreserve the existing update popup, signed APK verification, download/install flow and Settings update controls.\nKeep business data, Render authentication/backend behavior, navigation, backup, sales and stock logic unchanged.",
+  "publishedAt": "2026-09-11T08:48:08Z"
 }
