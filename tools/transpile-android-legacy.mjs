@@ -5,10 +5,11 @@ const target = 'android-app/app/src/main/assets/assets/scripts/vyapar-app.js';
 const source = fs.readFileSync(target, 'utf8');
 const result = ts.transpileModule(source, {
   compilerOptions: {
-    target: ts.ScriptTarget.ES2017,
+    target: ts.ScriptTarget.ES5,
     module: ts.ModuleKind.None,
     removeComments: false,
-    newLine: ts.NewLineKind.LineFeed
+    newLine: ts.NewLineKind.LineFeed,
+    downlevelIteration: true
   },
   fileName: 'vyapar-app.js',
   reportDiagnostics: true
@@ -20,4 +21,4 @@ if (errors.length) {
 }
 
 fs.writeFileSync(target, result.outputText.replace(/\r\n/g, '\n'), 'utf8');
-console.log(`Android 8-compatible JavaScript generated: ${target}`);
+console.log(`Legacy Android WebView JavaScript generated: ${target}`);
