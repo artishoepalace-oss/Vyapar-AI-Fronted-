@@ -15,8 +15,8 @@ const updater = read(path.join(root, 'android-app/app/src/main/java/com/vyaparai
 const updaterJs = read(path.join(root, 'frontend-source/android/scripts/github-updater-20102004.js'));
 const builder = read(path.join(root, 'tools/build-frontend-bundles.mjs'));
 const workflow = read(path.join(root, '.github/workflows/publish-in-app-update.yml'));
-const updateJson = JSON.parse(read(path.join(root, 'update.json')));
-const currentVersion = JSON.parse(read(path.join(root, 'version.json')));
+const updateJson = JSON.parse(read(path.join(root, 'update.json'));
+const currentVersion = JSON.parse(read(path.join(root, 'version.json'));
 const webBundle = read(path.join(root, 'web/assets/scripts/vyapar-app.js'));
 const androidBundle = read(path.join(root, 'android-app/app/src/main/assets/assets/scripts/vyapar-app.js'));
 const webStyle = read(path.join(root, 'web/assets/styles/vyapar-ui.css'));
@@ -29,9 +29,13 @@ assert.match(gradle, /androidx\.core:core:1\.13\.1/);
 assert.match(gradle, /ANDROID_KEYSTORE_FILE/);
 assert.match(gradle, /signingConfigs/);
 assert.match(finalActivity, /new UpdateManager\(this, webView\)/);
+assert.match(finalActivity, /class UpdateBridge/);
+assert.match(finalActivity, /addJavascriptInterface\(new UpdateBridge\(\), "VyaparUpdater"\)/);
+assert.doesNotMatch(finalActivity, /addJavascriptInterface\([^\n]*"AndroidApp"\)/);
 assert.match(finalActivity, /checkForAppUpdate\(boolean manual\)/);
 assert.match(finalActivity, /downloadAndInstallUpdate\(String manifestJson\)/);
 assert.match(finalActivity, /updateManager\.onResume\(\)/);
+assert.match(mainActivity, /addJavascriptInterface\(new AndroidApp\(\), "AndroidApp"\)/);
 assert.match(nativeActivity, /webView\.addJavascriptInterface/);
 
 assert.match(updater, /raw\.githubusercontent\.com\/artishoepalace-oss\/Vyapar-AI-Fronted-\/main\/update\.json/);
@@ -47,7 +51,9 @@ assert.match(updaterJs, /window\.fs607CheckUpdate\s*=\s*checkForUpdate/);
 assert.match(updaterJs, /Automatic update checks/);
 assert.match(updaterJs, /Download & install/);
 assert.match(updaterJs, /CHECK_INTERVAL\s*=\s*12 \* 60 \* 60 \* 1000/);
-assert.match(updaterJs, /AndroidApp\.downloadAndInstallUpdate/);
+assert.match(updaterJs, /VyaparUpdater\.downloadAndInstallUpdate/);
+assert.match(updaterJs, /VyaparUpdater\.checkForAppUpdate/);
+assert.match(updaterJs, /vyapar:session-ready/);
 assert(builder.includes("'github-updater-20102004.js'"));
 assert(builder.includes("'github-updater-20102004.css'"));
 
@@ -73,4 +79,4 @@ assert(webStyle.includes('STYLE SOURCE: github-updater-20102004.css'));
 assert.strictEqual(webBundle, androidBundle);
 assert.strictEqual(webStyle, androidStyle);
 
-console.log('✓ Secure GitHub in-app updater, signed publisher and runtime sync checks passed');
+console.log('✓ Secure GitHub in-app updater is isolated from the startup AndroidApp bridge');
