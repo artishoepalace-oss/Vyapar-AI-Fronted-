@@ -16,7 +16,7 @@ function fixture(platform='android',reduce=false){
       setAttribute(){},removeAttribute(){},getClientRects:()=>[{}],getBoundingClientRect:()=>({top:80,left:0,width:360,height:900}),
       addEventListener(type,fn){(events[type]||=[]).push(fn)},removeEventListener(type,fn){events[type]=(events[type]||[]).filter(x=>x!==fn)},
       querySelector:()=>el.card||null,querySelectorAll:()=>[],contains:node=>node===el||node===el.card,
-      remove(){el.isConnected=false;nodes.delete(id)},focus(){env.document.activeElement=el},dispatch(type,event){(events[type]||[]).slice().forEach(fn=>fn({target:el,...event}))}
+      remove(){el.isConnected=false;nodes.delete(id)},focus(){env.document.activeElement=el},dispatch(type,event){(events[type]||=[]).slice().forEach(fn=>fn({target:el,...event}))}
     };nodes.set(id,el);return el;
   }
   const html=element('html'),body=element('body');
@@ -71,9 +71,9 @@ test('Popup close remains single-owner and resolver executes once',()=>{
  const f=fixture();const overlay=f.element('test-popup');overlay.card=f.element('test-card');let resolved=0;f.env.vyaparMotion.openOverlay(overlay);f.flushFrames();f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;overlay.remove();});f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;});assert.equal(resolved,0);f.finish();assert.equal(resolved,1);assert(!overlay.isConnected);
 });
 test('Release identity and bundled motion order are synchronized',()=>{
- assert.equal(JSON.parse(fs.readFileSync(path.join(root,'version.json'))).versionName,'20.10.2004.00012.2026');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(root,'version.json'))).versionName,'20.10.2004.00013.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
-  const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes('vyapar-ui.css?v=2010200412-workspace1'));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
+  const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes('vyapar-ui.css?v=2010200413-workspace1'));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));
   const scripts=fs.readFileSync(path.join(root,base,'assets/scripts/vyapar-app.js'),'utf8');assert(scripts.indexOf('SCRIPT SOURCE: motion-20102004.js')<scripts.indexOf('SCRIPT SOURCE: auth.js'));
  }
