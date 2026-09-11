@@ -82,9 +82,6 @@ jobs:
       - name: Rebuild and verify frontend runtime
         run: npm run build && npm run verify
 
-      - name: Generate Android 8-compatible JavaScript
-        run: npm run android:legacy
-
       - name: Verify Android release identity
         shell: bash
         run: |
