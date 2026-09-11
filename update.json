@@ -3,12 +3,12 @@
   "enabled": true,
   "appId": "com.anuj.guptalegacy.vyaparai",
   "channel": "stable",
-  "versionName": "20.10.2004.00011.2026",
-  "versionCode": 2010200411,
+  "versionName": "20.10.2004.00012.2026",
+  "versionCode": 2010200412,
   "minimumSupportedVersionCode": 0,
   "mandatory": false,
-  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00011.2026/VyaparAI-20.10.2004.00011.2026.apk",
-  "sha256": "efbb5f18c1d3800b0306c32ff4bc78d984eebaa7211c638e2d15c6b98ebffde8",
-  "releaseNotes": "Fix the second startup deadlock confirmed by the 39-second Android 8.1 launch recording.\nRun a startup fail-safe before every other bundled app module so a later runtime error cannot leave the opaque loader forever.\nAdd a 9-second JavaScript startup deadline with a safe recovery screen instead of an infinite logo screen.\nAdd a 10-second native Android hard deadline that removes both native and HTML startup covers even if the normal coordinator stalls.\nRemove the dependency on WebView VisualStateCallback for dismissing the native startup cover.\nDownlevel the packaged Android JavaScript to ES5 for older Android System WebView compatibility.\nKeep saved business data protected; startup recovery does not clear or overwrite local records.\nPreserve login, business, sales, stock, backup, navigation and in-app update functionality.",
-  "publishedAt": "2026-09-11T05:09:58Z"
+  "apkUrl": "https://github.com/artishoepalace-oss/Vyapar-AI-Fronted-/releases/download/v20.10.2004.00012.2026/VyaparAI-20.10.2004.00012.2026.apk",
+  "sha256": "4fd819f0fe02f425c603882cfa372e73f8daefb1c95e6d8a4a6c7f8ab615fe4b",
+  "releaseNotes": "Restore the proven Vyapar AI 20.10.2004.00008.2026 startup and login runtime behavior.\nRemove the later startup watchdog, fail-safe overlay and whole-bundle legacy rewrite that were added while debugging the loader.\nKeep the secure GitHub in-app updater, update popup, signed APK verification, download/install flow and Settings update controls.\nKeep Render authentication/backend behavior unchanged.\nIn-app update checks remain separate from the login/startup owner and must not gate the login screen.\nPreserve existing business, sales, stock, backup, navigation, UI and local-data behavior from the proven runtime.",
+  "publishedAt": "2026-09-11T07:58:46Z"
 }
