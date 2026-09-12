@@ -58,7 +58,8 @@ const uiStyles = [
   'surface-hierarchy-20102004.css',
   'motion-20102004.css',
   'workspace-v7.css',
-  'alignment-updates.css'
+  'alignment-updates.css',
+  'form-sheets.css'
 ];
 
 const scripts = [
@@ -96,7 +97,8 @@ const scripts = [
   'premium-tier-864.js',
   'video-final-867.js',
   'workspace-startup.js',
-  'github-updates.js'
+  'github-updates.js',
+  'form-sheets.js'
 ];
 
 function readSource(subdirectory, filename) {

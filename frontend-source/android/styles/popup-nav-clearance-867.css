@@ -74,7 +74,6 @@ html.android-ui :is(.android-sheet,.shop-progress-sheet,.vy6601-select-sheet){
   bottom:auto!important;
   left:auto!important;
   right:auto!important;
-  transform:none!important;
   translate:none!important;
   margin:0!important;
   max-height:calc(100vh - var(--vy867-popup-nav-clearance) - 14px)!important;

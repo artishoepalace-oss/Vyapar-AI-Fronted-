@@ -786,12 +786,12 @@
   const overlaySelector=[
     '.glass-dialog-overlay','.subscription-overlay','.shop-progress-overlay','.vx643-modal-overlay',
     '.production-overlay','.android-permission-overlay','.android-sheet-overlay','.account-delete-overlay',
-    '.upgrade-plan-popup','.upgrade-popup-overlay','.vy6601-select-overlay','.plan-success-overlay'
+    '.upgrade-plan-popup','.upgrade-popup-overlay','.vy6601-select-overlay','.plan-success-overlay','.vy-form-overlay'
   ].join(',');
   const cardSelector=[
     '[role="dialog"]','.android-sheet','.shop-progress-sheet','.production-modal','.subscription-dialog',
     '.glass-dialog-card','.vx643-modal','.vy6601-select-sheet','.upgrade-popup-box','.upgrade-plan-reference-card',
-    '.account-delete-dialog','.modal-card','.sheet-content'
+    '.account-delete-dialog','.modal-card','.sheet-content','.vy-form-sheet'
   ].join(',');
   const transientSelector='.glass-toast';
   const ease='cubic-bezier(.16,1,.3,1)';
@@ -1040,6 +1040,7 @@
   function topOverlay(){return Array.from(document.querySelectorAll(overlaySelector)).filter(visible).pop();}
   function focusables(node){return Array.from(node.querySelectorAll(focusSelector)).filter(el=>visible(el) && el.getClientRects().length);}
   function isSheet(overlay,card){
+    if(overlay && overlay.matches && overlay.matches('.vy-form-overlay'))return true;
     return !!(card && ((typeof card.matches==='function' && card.matches('.android-sheet,.shop-progress-sheet,.vy6601-select-sheet,.sheet-content')) || (typeof overlay.matches==='function' && overlay.matches('.android-sheet-overlay,.shop-progress-overlay,.vy6601-select-overlay'))));
   }
   function guardOverlay(overlay){
@@ -1064,7 +1065,8 @@
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
     tween(overlay,{opacity:'0'},{opacity:'1'},sheet?145:125,null,easeSoft);
-    tween(card,{transform:rest+'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')'},{transform:base},sheet?220:185,null,ease);
+    const fullSheet=typeof overlay.matches==='function' && overlay.matches('.vy-form-overlay,.shop-progress-overlay');
+    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},fullSheet?280:sheet?220:185,null,ease);
     requestAnimationFrame(()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
       if(!overlay.contains(document.activeElement)){
@@ -1097,12 +1099,13 @@
     info.finish=finish;overlays.set(overlay,info);
     if(!duration(120)){finish();return;}
     const card=info.card,overlayOpacity=css(overlay,'opacity','1');
+    const fullSheet=typeof overlay.matches==='function' && overlay.matches('.vy-form-overlay,.shop-progress-overlay');
     if(card){
       const currentTransform=css(card,'transform','none');cancel(card);
       const rest=currentTransform==='none'?'':currentTransform+' ';
-      tween(card,{transform:currentTransform},{transform:rest+'translate3d(0,'+(info.sheet?'14':'7')+'px,0) scale('+(info.sheet?'.997':'.995')+')'},info.sheet?145:120,null,easeClose);
+      tween(card,{transform:currentTransform},{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(info.sheet?'14':'7')+'px,0) scale('+(info.sheet?'.997':'.995')+')')},fullSheet?180:info.sheet?145:120,null,easeClose);
     }
-    cancel(overlay);tween(overlay,{opacity:overlayOpacity},{opacity:'0'},info.sheet?145:120,finish,easeClose);
+    cancel(overlay);tween(overlay,{opacity:overlayOpacity},{opacity:'0'},fullSheet?180:info.sheet?145:120,finish,easeClose);
   }
 
   function dismissTop(){
@@ -11559,6 +11562,7 @@ function activateHost(context){
 function scrollToHost(context){
   setTimeout(()=>{
     const h=findHost(context)||document.getElementById('businessModuleArea');
+    if(h && window.VyaparFormSheets){window.VyaparFormSheets.openHost(h,context);return;}
     h?.scrollIntoView?.({behavior:'smooth',block:'start'});
   },40);
 }
@@ -16086,4 +16090,109 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   root.fs607CheckUpdate=check;
   root.VyaparUpdates={check,compare,normalize,install,close};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})(window);
+
+/* ===== SCRIPT SOURCE: form-sheets.js ===== */
+
+/* Shared form presentation. Move the live form; never copy inputs or save logic. */
+(function(root){
+  'use strict';
+  let active=null, scheduled=false;
+  const fields=['sproduct','dsale','mprofit','stockItem'];
+  function close(immediate){
+    const entry=active;if(!entry)return false;
+    const finish=()=>{
+      if(entry.placeholder.isConnected) entry.placeholder.replaceWith(entry.node);
+      entry.node.hidden=entry.module || entry.hidden;
+      if(entry.module)entry.node.classList.add('vy-form-parked');
+      entry.overlay.remove();
+      if(active===entry)active=null;
+      document.body.classList.remove('vy-form-open');
+      if(entry.trigger && entry.trigger.isConnected)entry.trigger.focus({preventScroll:true});
+    };
+    if(immediate){if(root.vyaparMotion)root.vyaparMotion.cancelOverlay(entry.overlay);if(active===entry)finish();}
+    else if(root.vyaparMotion)root.vyaparMotion.closeOverlay(entry.overlay,finish);
+    else finish();
+    return true;
+  }
+  function openHost(node,context){
+    if(!node || !node.isConnected)return;
+    if(active && active.node===node){
+      active.overlay.querySelector('#vyFormHeading').textContent=node.querySelector('h1,h2,h3')?.textContent.trim()||'Business tools';
+      return;
+    }
+    close(true);
+    const trigger=document.activeElement,placeholder=document.createElement('span');
+    placeholder.hidden=true;
+    node.before(placeholder);
+    const overlay=document.createElement('div');overlay.className='vy-form-overlay';overlay.id='vyFormSheet';
+    overlay.innerHTML='<section class="vy-form-sheet" role="dialog" aria-modal="true" aria-labelledby="vyFormHeading" tabindex="-1"><div class="vy-form-handle" aria-hidden="true"></div><header class="vy-form-head"><h2 id="vyFormHeading"></h2><button type="button" class="vy-form-close" data-back-close aria-label="Close form">×</button></header><div class="vy-form-body"></div></section>';
+    overlay.querySelector('h2').textContent=node.querySelector('h1,h2,h3')?.textContent.trim()||'Business tools';
+    active={node,placeholder,overlay,trigger,context,hidden:node.hidden,module:node.id==='businessModuleArea'||!!node.dataset.vx621Host};
+    node.classList.remove('vy-form-parked');
+    node.hidden=false;
+    overlay.querySelector('.vy-form-body').appendChild(node);
+    document.body.appendChild(overlay);document.body.classList.add('vy-form-open');
+    overlay.querySelector('[data-back-close]').onclick=()=>close(false);
+    overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
+    updateViewport();
+    if(root.vyaparMotion)root.vyaparMotion.openOverlay(overlay);
+  }
+  function updateViewport(){
+    const v=root.visualViewport;
+    document.documentElement.style.setProperty('--vy-sheet-height',(v?v.height:root.innerHeight)+'px');
+    document.documentElement.style.setProperty('--vy-sheet-top',(v?v.offsetTop:0)+'px');
+  }
+  function prepare(){
+    scheduled=false;
+    fields.forEach(id=>{
+      const field=document.getElementById(id),card=field?.closest('.card');
+      if(!card || card.closest('.vy-form-overlay,.vy-form-storage'))return;
+      const screen=card.closest('.screen');if(!screen)return;
+      const title=card.querySelector('h2,h3')?.textContent.trim()||'Add record';
+      const launcher=document.createElement('section');launcher.className='card vy-form-launcher';
+      launcher.dataset.formField=id;
+      launcher.innerHTML='<h2></h2><p class="muted">Open the form to add or update your records.</p><button type="button" class="btn primary">Open form</button><div class="vy-form-storage" hidden></div>';
+      launcher.querySelector('h2').textContent=title;
+      card.before(launcher);launcher.querySelector('.vy-form-storage').appendChild(card);
+      launcher.querySelector('button').onclick=()=>openHost(card,screen.id.replace('screen-',''));
+    });
+  }
+  function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(prepare);}}
+  function openField(id){prepare();const card=document.getElementById(id)?.closest('.card');if(card)openHost(card,id==='stockItem'?'stock':'sales');}
+  function wrap(name,after,before){
+    const original=root[name];if(typeof original!=='function')return;
+    root[name]=function(){if(before)before.apply(this,arguments);const result=original.apply(this,arguments);if(after)after.call(this,result,arguments);return result;};
+  }
+  // Return the original node before its owning page rerenders after a successful save.
+  ['Sales','Stock','Business','Home'].forEach(label=>wrap('render'+label,schedule,()=>{if(active && active.context===label.toLowerCase())close(true);}));
+  ['editSale','editMonthly'].forEach((name,i)=>wrap(name,()=>openField(i?'mprofit':'sproduct')));
+  ['p611Open','businessShowModule','advRenderModule','fs607OpenPOS','vx621RenderDataManager'].forEach(name=>wrap(name,(result)=>{
+    if(result===false)return;
+    const host=document.getElementById('businessModuleArea');
+    if(host?.closest('#screen-settings'))return;
+    const context=host?.dataset.vx621Host||'business';
+    if(host && host.querySelector('input,select,textarea,table'))openHost(host,context);
+  }));
+  ['p611Home','renderAdvancedHome'].forEach(name=>{
+    const original=root[name];if(typeof original!=='function')return;
+    root[name]=function(){if(active)return close(false);return original.apply(this,arguments);};
+  });
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('.android-quick-action[data-tab="sales"]');
+    if(button)setTimeout(()=>{if(typeof currentTab!=='undefined'&&currentTab==='sales')openField('sproduct');},0);
+  });
+  document.addEventListener('focusin',event=>{
+    if(!event.target.matches('input,textarea,select') || !event.target.closest('.vy-form-overlay'))return;
+    setTimeout(()=>{if(event.target.isConnected)event.target.scrollIntoView({block:'nearest',behavior:'auto'});},180);
+  });
+  root.addEventListener('resize',updateViewport);
+  if(root.visualViewport){root.visualViewport.addEventListener('resize',updateViewport);root.visualViewport.addEventListener('scroll',updateViewport);}
+  function boot(){
+    prepare();updateViewport();
+    const app=document.querySelector('main')||document.querySelector('.app');
+    if(app)new MutationObserver(records=>{if(records.some(r=>r.addedNodes.length))schedule();}).observe(app,{childList:true,subtree:true});
+  }
+  root.VyaparFormSheets={openHost,openField,close,prepare};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })(window);

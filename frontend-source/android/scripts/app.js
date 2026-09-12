@@ -9564,6 +9564,7 @@ function activateHost(context){
 function scrollToHost(context){
   setTimeout(()=>{
     const h=findHost(context)||document.getElementById('businessModuleArea');
+    if(h && window.VyaparFormSheets){window.VyaparFormSheets.openHost(h,context);return;}
     h?.scrollIntoView?.({behavior:'smooth',block:'start'});
   },40);
 }
