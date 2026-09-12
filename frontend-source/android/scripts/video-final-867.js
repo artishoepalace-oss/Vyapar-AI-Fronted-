@@ -61,6 +61,8 @@
     if(!settings || settings.getAttribute('data-vy675-page')!=='update') return;
     var card=settings.querySelector('#fs607Settings');
     if(!card) return;
+    // The GitHub updater owns its distinct primary, secondary and link controls.
+    if(card.querySelector('.github-update-card')) return;
     card.querySelectorAll('button,.btn').forEach(function(btn){
       important(btn,'background','#222428');
       important(btn,'background-image','none');

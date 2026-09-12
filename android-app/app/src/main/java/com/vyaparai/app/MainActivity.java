@@ -78,6 +78,7 @@ public class MainActivity extends Activity {
     private static final String PREF_LAST_AUTO_BACKUP = "last_auto_backup";
 
     private WebView webView;
+    private GitHubUpdater gitHubUpdater;
     private FrameLayout startupCover;
     private boolean startupCoverDismissQueued;
     private ValueCallback<Uri[]> filePathCallback;
@@ -171,6 +172,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
         webView.addJavascriptInterface(new AndroidDownloads(), "AndroidDownloads");
         webView.addJavascriptInterface(new AndroidApp(), "AndroidApp");
+        gitHubUpdater = new GitHubUpdater(this, webView);
         authorizationClient = Identity.getAuthorizationClient(this);
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -254,6 +256,7 @@ protected void onCreate(Bundle savedInstanceState) {
     @Override
     protected void onResume() {
         super.onResume();
+        if (gitHubUpdater != null) gitHubUpdater.resume();
         if (webView != null) {
             webView.onResume();
             webView.removeCallbacks(nativeResumeNotifier);
@@ -289,6 +292,18 @@ protected void onCreate(Bundle savedInstanceState) {
     }
 
     public class AndroidApp {
+        @JavascriptInterface
+        public void checkGitHubUpdate(int requestId) { if (gitHubUpdater != null) gitHubUpdater.check(requestId); }
+
+        @JavascriptInterface
+        public void downloadGitHubUpdate() { if (gitHubUpdater != null) gitHubUpdater.download(); }
+
+        @JavascriptInterface
+        public void installGitHubUpdate() { runOnUiThread(() -> { if (gitHubUpdater != null) gitHubUpdater.install(); }); }
+
+        @JavascriptInterface
+        public String getGitHubUpdateState() { return gitHubUpdater == null ? "{\"status\":\"idle\"}" : gitHubUpdater.getState(); }
+
         @JavascriptInterface
         public void onStartupFrameReady() {
             runOnUiThread(() -> dismissStartupCover());
@@ -1041,6 +1056,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
     @Override
     protected void onDestroy() {
+        if (gitHubUpdater != null) gitHubUpdater.close();
         io.shutdownNow();
         if (filePathCallback != null) {
             filePathCallback.onReceiveValue(null);

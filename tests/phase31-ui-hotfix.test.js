@@ -5,8 +5,8 @@ const fs=require('fs');
 const path=require('path');
 const ROOT=path.resolve(__dirname,'..');
 const pairs=[
-  ['web/assets/scripts/audit-fixes-658.js','web/assets/scripts/audit-stage2-6601.js','web/assets/scripts/sales-theme-660.js'],
-  ['frontend-source/android/scripts/audit-fixes-658.js','frontend-source/android/scripts/audit-stage2-6601.js','frontend-source/android/scripts/sales-theme-660.js']
+  ['web/assets/scripts/audit-fixes-658.js','web/assets/scripts/audit-stage2-6601.js','web/assets/scripts/github-updates.js'],
+  ['frontend-source/android/scripts/audit-fixes-658.js','frontend-source/android/scripts/audit-stage2-6601.js','frontend-source/android/scripts/github-updates.js']
 ];
 for(const [legacyRel,stageRel,updateRel] of pairs){
   const legacy=readRuntimeSource(path.join(ROOT,legacyRel),'utf8');
@@ -14,9 +14,9 @@ for(const [legacyRel,stageRel,updateRel] of pairs){
   const update=readRuntimeSource(path.join(ROOT,updateRel),'utf8');
   assert.ok(!legacy.includes("wrap.className='vy658-year-filter'"), legacyRel+' must not inject the legacy Year selector');
   assert.ok(stage.includes("existing.slice(1).forEach(x=>x.remove())"), stageRel+' must dedupe canonical Year selectors');
-  assert.ok(update.includes("popup.id='vy670UpdatePrompt'"), updateRel+' must render the in-app update modal');
-  const active=update.slice(update.indexOf('window.fs607CheckUpdate=async function(manual)'));
+  assert.ok(update.includes("modal.id='vyGitHubUpdate'"), updateRel+' must render the in-app update modal');
+  const active=update;
   assert.ok(!active.includes('confirm('), updateRel+' active update checker must not use browser/WebView confirm');
-  assert.ok(active.includes('__vy670UpdateCheckPromise'), updateRel+' must dedupe concurrent update checks');
+  assert.ok(active.includes('if(pending)return pending;'), updateRel+' must dedupe concurrent update checks');
 }
 console.log('✓ phase 3.1 duplicate UI hotfix checks passed');

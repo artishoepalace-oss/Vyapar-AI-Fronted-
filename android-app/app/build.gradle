@@ -4,6 +4,7 @@ def googleWebClientId = (project.findProperty("GOOGLE_WEB_CLIENT_ID") ?: System.
 def cmakeConfig = file('src/main/cpp/CMakeLists.txt')
 def ndkBuildConfig = file('src/main/jni/Android.mk')
 def hasNativeBuild = cmakeConfig.exists() || ndkBuildConfig.exists()
+def updateKeystore = System.getenv('VYAPAR_SIGNING_STORE_FILE')
 
 android {
     namespace 'com.vyaparai.app'
@@ -14,8 +15,8 @@ android {
         minSdk 23
         targetSdk 34
         resValue "string", "google_web_client_id", googleWebClientId
-        versionCode 2010200414
-        versionName "20.10.2004.00014.2026"
+        versionCode 2010200415
+        versionName "20.10.2004.00015.2026"
 
         if (cmakeConfig.exists()) {
             externalNativeBuild {
@@ -48,6 +49,22 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Reuse the ORIGINAL installed app key. Never generate a new key for an update.
+    if (updateKeystore) {
+        signingConfigs {
+            updateKey {
+                storeFile file(updateKeystore)
+                storePassword System.getenv('VYAPAR_SIGNING_STORE_PASSWORD')
+                keyAlias System.getenv('VYAPAR_SIGNING_KEY_ALIAS')
+                keyPassword System.getenv('VYAPAR_SIGNING_KEY_PASSWORD')
+            }
+        }
+        buildTypes {
+            debug { signingConfig signingConfigs.updateKey }
+            release { signingConfig signingConfigs.updateKey }
+        }
     }
 }
 

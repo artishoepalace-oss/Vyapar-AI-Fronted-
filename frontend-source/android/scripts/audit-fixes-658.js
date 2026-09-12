@@ -92,48 +92,7 @@
     const l=document.getElementById('tabLoader'); if(l) l.classList.remove('show');
   };
 
-  // Update check persists metadata without calling the global save() render cycle.
-  window.fs607CheckUpdate=async function(manual){
-    try{
-      let currentCode=65900,currentName=V;
-      if(window.AndroidApp){
-        try{ if(typeof AndroidApp.getVersionCode==='function') currentCode=Number(AndroidApp.getVersionCode())||currentCode; }catch(_){}
-        try{ if(typeof AndroidApp.getVersionName==='function') currentName=String(AndroidApp.getVersionName()||currentName); }catch(_){}
-      }
-      const base=(typeof window.API_BASE_URL==='string'&&window.API_BASE_URL)||'https://vypar-backend.onrender.com';
-      const res=await fetch(base+'/app/version',{headers:{Accept:'application/json'}});
-      const data=await res.json();
-      if(!res.ok||!data.success) throw new Error(data.message||'Update check failed');
-      if(typeof state!=='undefined' && state){
-        state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};
-        try{
-          const key=(typeof window.STORAGE_KEY==='string'&&window.STORAGE_KEY)||'vyapar_ai_prod_v1';
-          persistBusinessState(state).catch(()=>{});
-        }catch(_){}
-      }
-      if(Number(data.versionCode)>currentCode){
-        const force=currentCode<Number(data.minimumSupportedVersionCode||0);
-        const msg='Vyapar AI '+data.versionName+' available'+(force?' (required)':'')+'.';
-        if(data.apkUrl){
-          const ok=confirm(msg+'\n\nOpen the update download?');
-          if(ok){
-            if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function') AndroidApp.openExternalUrl(data.apkUrl);
-            else window.open(data.apkUrl,'_blank','noopener');
-          }
-        }else if(manual && typeof window.showGlassToast==='function') showGlassToast(msg+' Download link is not available yet.');
-      }else if(manual){
-        if(typeof window.showGlassToast==='function') showGlassToast('App is up to date: '+currentName);
-        else alert('App is up to date: '+currentName);
-      }
-      return data;
-    }catch(e){
-      if(manual){
-        if(typeof window.showGlassToast==='function') showGlassToast('Update check failed. Please try again.');
-        else alert('Update check failed. Please try again.');
-      }
-      return null;
-    }
-  };
+  // GitHub update checks are owned by github-updates.js (one shared controller).
 
   function enhanceSettings(){
     const screen=document.getElementById('screen-settings'); if(!screen) return;

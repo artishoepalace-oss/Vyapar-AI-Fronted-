@@ -57,7 +57,8 @@ const uiStyles = [
   'video-final-867.css',
   'surface-hierarchy-20102004.css',
   'motion-20102004.css',
-  'workspace-v7.css'
+  'workspace-v7.css',
+  'alignment-updates.css'
 ];
 
 const scripts = [
@@ -94,7 +95,8 @@ const scripts = [
   'graphite-maroon-863.js',
   'premium-tier-864.js',
   'video-final-867.js',
-  'workspace-startup.js'
+  'workspace-startup.js',
+  'github-updates.js'
 ];
 
 function readSource(subdirectory, filename) {

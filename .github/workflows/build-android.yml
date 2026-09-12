@@ -169,11 +169,26 @@ jobs:
         working-directory: android-app
         run: gradle wrapper --gradle-version 8.7 --distribution-type bin
 
-      - name: Build debug APK
+      - name: Restore original app signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "Original app signing key is required for an installable update. Check ANDROID_KEYSTORE_BASE64 and the existing ANDROID signing password/alias secrets. Do not generate a new key." >&2
+            exit 1
+          fi
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/vyapar-original.keystore"
+
+      - name: Build signed release APK
         working-directory: android-app
+        env:
+          VYAPAR_SIGNING_STORE_FILE: ${{ runner.temp }}/vyapar-original.keystore
+          VYAPAR_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          VYAPAR_SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          VYAPAR_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug \
+          ./gradlew :app:assembleRelease \
             -PGOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
             --stacktrace \
             --no-daemon
@@ -189,8 +204,13 @@ jobs:
 
       - name: Rename APK
         run: |
-          cp android-app/app/build/outputs/apk/debug/app-debug.apk \
+          cp android-app/app/build/outputs/apk/release/app-release.apk \
             "VyaparAI-${{ steps.version.outputs.version_name }}.apk"
+
+      - name: Verify APK signature and archive source
+        run: |
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs "VyaparAI-${{ steps.version.outputs.version_name }}.apk"
+          git archive --format=zip --output="Vyapar-AI-${{ steps.version.outputs.version_name }}.zip" HEAD
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -205,5 +225,8 @@ jobs:
           name: Vyapar AI v${{ steps.version.outputs.version_name }} - Main Android
           target_commitish: main
           body_path: RELEASE_${{ steps.version.outputs.version_name }}.md
-          files: VyaparAI-${{ steps.version.outputs.version_name }}.apk
+          files: |
+            VyaparAI-${{ steps.version.outputs.version_name }}.apk
+            Vyapar-AI-${{ steps.version.outputs.version_name }}.zip
+          make_latest: true
           overwrite_files: true

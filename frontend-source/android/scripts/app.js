@@ -7997,33 +7997,7 @@ render();
     byId('fs607LockPin')?.focus();
   }
 
-  // ---------- App update check using backend metadata ----------
-  window.fs607CheckUpdate=async function(manual){
-    try{
-      let currentCode=63700,currentName='6.3.7';
-      if(window.AndroidApp){
-        try{ if(typeof AndroidApp.getVersionCode==='function') currentCode=Number(AndroidApp.getVersionCode())||currentCode; }catch(_){}
-        try{ if(typeof AndroidApp.getVersionName==='function') currentName=String(AndroidApp.getVersionName()||currentName); }catch(_){}
-      }
-      const res=await fetch(API_BASE+'/app/version',{headers:{'Accept':'application/json'}});
-      const data=await res.json();
-      if(!res.ok||!data.success)throw new Error(data.message||'Update check failed');
-      state.appUpdate={checkedAt:new Date().toISOString(),currentCode,currentName,...data};
-      if(typeof save==='function')save();
-      if(Number(data.versionCode)>currentCode){
-        const force=currentCode<Number(data.minimumSupportedVersionCode||0);
-        const msg=`Vyapar AI ${data.versionName} available${force?' (required)':''}.`;
-        if(data.apkUrl){
-          const ok=confirm(msg+'\n\nOpen the update download?');
-          if(ok){
-            if(window.AndroidApp&&typeof AndroidApp.openExternalUrl==='function') AndroidApp.openExternalUrl(data.apkUrl);
-            else window.open(data.apkUrl,'_blank','noopener');
-          }
-        }else alert(msg+'\nThe APK URL is not configured on the backend.');
-      }else if(manual) toast('App is up to date: '+currentName);
-      return data;
-    }catch(e){ if(manual) alert('Update check failed: '+e.message); return null; }
-  };
+  // GitHub update checks are owned by github-updates.js (one shared controller).
 
   function autoUpdateCheck(){
     const last=Number(localStorage.getItem(UPDATE_CHECK_KEY)||0);
