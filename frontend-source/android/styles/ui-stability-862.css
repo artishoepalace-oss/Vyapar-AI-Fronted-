@@ -128,8 +128,8 @@ html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-st
 }
 
 /* Buttons: blue remains only for primary actions; secondary buttons are graphite. */
-html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) button:not(.nav button):not(.primary):not(.danger):not(.success):not(.gold),
-html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) .btn:not(.primary):not(.danger):not(.success):not(.gold){
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) button:not(.nav button):not(.primary):not(.danger):not(.success):not(.gold):not(:where(.android-quick-action,.p1-modebar button,.workspace-tabs button,.vx621-action,.vy-search-control button)),
+html.vy861-flat-black :is(#screen-home,#screen-business,#screen-sales,#screen-stock) .btn:not(.primary):not(.danger):not(.success):not(.gold):not(:where(.android-quick-action,.p1-modebar button,.workspace-tabs button,.vx621-action,.vy-search-control button)){
   background:var(--vy862-surface-2)!important;
   background-image:none!important;
   border-color:var(--vy862-border)!important;

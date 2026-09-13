@@ -9731,10 +9731,10 @@ function renderBusinessHome(){
     <section class="vx621-kpis"><div class="vx621-kpi"><span>Revenue</span><b>${M(revenue)}</b></div><div class="vx621-kpi"><span>Net Profit</span><b>${M(net)}</b></div><div class="vx621-kpi"><span>Expenses</span><b>${M(expenses)}</b></div><div class="vx621-kpi"><span>Assets</span><b>${M(assets)}</b></div><div class="vx621-kpi"><span>Customer Due</span><b>${M(lt.outstanding)}</b></div></section>
     <div class="business-tool-search" role="search" aria-label="Find business tools">
       <label for="businessToolSearch">Find a tool</label>
-      <div class="business-tool-search-field">
+      <label class="business-tool-search-field vy-search-control" for="businessToolSearch">
         <input id="businessToolSearch" type="search" placeholder="Try purchase, customer, GST…" autocomplete="off" aria-controls="businessToolResults" />
         <button id="businessToolSearchClear" type="button" hidden aria-label="Clear tool search">Clear</button>
-      </div>
+      </label>
       <p id="businessToolSearchStatus" role="status" aria-live="polite" aria-atomic="true"></p>
     </div>
     <div id="businessToolResults">

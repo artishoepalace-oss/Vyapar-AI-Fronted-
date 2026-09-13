@@ -604,7 +604,7 @@
   }
   function controls(kind){
     const data=get(kind), years=[...new Set((root.state[kind]||[]).map(x=>String(x.month||x.date||'').slice(0,4)).filter(x=>/^\d{4}$/.test(x)))].sort().reverse();
-    return '<div class="record-controls"><label class="record-search"><span class="sr-only">Search '+kind+'</span><input type="search" id="recordSearch-'+kind+'" placeholder="Search '+kind+'…" value="'+escape(queries[kind]||'')+'" oninput="VyaparRecords.search(\''+kind+'\',this.value)"></label>'+(kind==='monthly'?'<select aria-label="Record year" onchange="VyaparRecords.year(\''+kind+'\',this.value)"><option value="">All years</option>'+years.map(y=>'<option'+(selectedYears[kind]===y?' selected':'')+'>'+y+'</option>').join('')+'</select>':'')+'<div class="workspace-pager"><button type="button" class="btn" '+(!data.page?'disabled':'')+' onclick="VyaparRecords.page(\''+kind+'\',-1)">Previous</button><span>'+data.count.toLocaleString('en-IN')+' records · '+(data.page+1)+' / '+(data.max+1)+'</span><button type="button" class="btn" '+(data.page===data.max?'disabled':'')+' onclick="VyaparRecords.page(\''+kind+'\',1)">Next</button></div></div>';
+    return '<div class="record-controls"><label class="record-search vy-search-control"><span class="sr-only">Search '+kind+'</span><input type="search" id="recordSearch-'+kind+'" placeholder="Search '+kind+'…" value="'+escape(queries[kind]||'')+'" oninput="VyaparRecords.search(\''+kind+'\',this.value)"></label>'+(kind==='monthly'?'<select aria-label="Record year" onchange="VyaparRecords.year(\''+kind+'\',this.value)"><option value="">All years</option>'+years.map(y=>'<option'+(selectedYears[kind]===y?' selected':'')+'>'+y+'</option>').join('')+'</select>':'')+'<div class="workspace-pager"><button type="button" class="btn" '+(!data.page?'disabled':'')+' onclick="VyaparRecords.page(\''+kind+'\',-1)">Previous</button><span>'+data.count.toLocaleString('en-IN')+' records · '+(data.page+1)+' / '+(data.max+1)+'</span><button type="button" class="btn" '+(data.page===data.max?'disabled':'')+' onclick="VyaparRecords.page(\''+kind+'\',1)">Next</button></div></div>';
   }
   function render(kind){delete cache[kind];kind==='stocks'?root.renderStock():root.renderSales();}
   root.VyaparRecords={get,controls,invalidate(){Object.keys(cache).forEach(k=>delete cache[k]);},page(kind,delta){pages[kind]=(pages[kind]||0)+delta;render(kind);},year(kind,value){selectedYears[kind]=value;pages[kind]=0;render(kind);},search(kind,value){queries[kind]=value;pages[kind]=0;clearTimeout(timer);timer=setTimeout(()=>{render(kind);const input=document.getElementById('recordSearch-'+kind);if(input){input.focus();input.setSelectionRange(value.length,value.length);}},200);}};
@@ -11745,10 +11745,10 @@ function renderBusinessHome(){
     <section class="vx621-kpis"><div class="vx621-kpi"><span>Revenue</span><b>${M(revenue)}</b></div><div class="vx621-kpi"><span>Net Profit</span><b>${M(net)}</b></div><div class="vx621-kpi"><span>Expenses</span><b>${M(expenses)}</b></div><div class="vx621-kpi"><span>Assets</span><b>${M(assets)}</b></div><div class="vx621-kpi"><span>Customer Due</span><b>${M(lt.outstanding)}</b></div></section>
     <div class="business-tool-search" role="search" aria-label="Find business tools">
       <label for="businessToolSearch">Find a tool</label>
-      <div class="business-tool-search-field">
+      <label class="business-tool-search-field vy-search-control" for="businessToolSearch">
         <input id="businessToolSearch" type="search" placeholder="Try purchase, customer, GST…" autocomplete="off" aria-controls="businessToolResults" />
         <button id="businessToolSearchClear" type="button" hidden aria-label="Clear tool search">Clear</button>
-      </div>
+      </label>
       <p id="businessToolSearchStatus" role="status" aria-live="polite" aria-atomic="true"></p>
     </div>
     <div id="businessToolResults">
@@ -14661,7 +14661,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function shellMarkup() {
     return `
       <div class="vy675-settings-home">
-        <label class="vy675-settings-search">
+        <label class="vy675-settings-search vy-search-control" for="settingsSearch">
           <span>${ICONS.search}</span>
           <input id="settingsSearch" type="search" autocomplete="off" placeholder="Search settings, backup, password…" aria-label="Search settings" aria-controls="settingsSearchResults">
           <button type="button" aria-label="Clear search" hidden>×</button>

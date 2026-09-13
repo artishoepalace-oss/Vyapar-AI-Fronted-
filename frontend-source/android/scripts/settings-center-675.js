@@ -122,7 +122,7 @@
   function shellMarkup() {
     return `
       <div class="vy675-settings-home">
-        <label class="vy675-settings-search">
+        <label class="vy675-settings-search vy-search-control" for="settingsSearch">
           <span>${ICONS.search}</span>
           <input id="settingsSearch" type="search" autocomplete="off" placeholder="Search settings, backup, password…" aria-label="Search settings" aria-controls="settingsSearchResults">
           <button type="button" aria-label="Clear search" hidden>×</button>
