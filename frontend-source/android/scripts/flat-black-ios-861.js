@@ -120,7 +120,7 @@
     const overlays=visibleOverlays();
     const top=overlays[overlays.length-1];
     if(!top)return false;
-    const close=top.querySelector('.android-sheet-close,.shop-sheet-close,.production-close,[data-cancel],#closePlanSuccessPopup,#closeCancelPopup,#closeUpgradePopup,#accountDeleteCancel,[aria-label^="Close" i],[aria-label="Close" i]');
+    const close=top.querySelector('.production-close,[data-cancel],#closePlanSuccessPopup,#closeCancelPopup,#closeUpgradePopup,#accountDeleteCancel,[aria-label^="Close" i],[aria-label="Close" i]');
     if(close){close.click();return true;}
     if(top.id==='vyaparGlassDialog'&&typeof window.closeGlassDialog==='function'){window.closeGlassDialog(false);return true;}
     return false;

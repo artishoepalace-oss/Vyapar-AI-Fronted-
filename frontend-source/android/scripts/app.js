@@ -1244,7 +1244,6 @@ function renderHome(){
             <span class="home-section-kicker">QUICK ACCESS</span>
             <h3 id="homeQuickTitle">Run your shop</h3>
           </div>
-          <button type="button" class="home-text-button" onclick="setTab('business')">All tools →</button>
         </div>
         <div id="homeQuickActionsMount"></div>
       </section>
@@ -8503,8 +8502,8 @@ render();
     overlay.id = "androidMoreSheet";
     overlay.className = "android-sheet-overlay";
     overlay.innerHTML = '<div class="android-sheet" role="dialog" aria-modal="true" aria-label="More options">'+
-      '<div class="android-sheet-handle"></div>'+
-      '<div class="android-sheet-titlebar"><div><h3>More</h3><p>Tools and settings.</p></div><button type="button" class="android-sheet-close" aria-label="Close more">×</button></div>'+
+      '<button type="button" class="android-sheet-handle vy-sheet-handle" data-sheet-dismiss aria-label="Close More"></button>'+
+      '<div class="android-sheet-titlebar"><div><h3>More</h3><p>Tools and settings.</p></div></div>'+
       '<div class="android-sheet-grid">'+
         sheetItem("analytics","Insights","Reports and business performance")+
         sheetItem("upload","AI Upload","Photo and file import")+
@@ -8528,7 +8527,7 @@ render();
 
     document.body.appendChild(overlay);
     document.body.classList.add("android-sheet-open");
-    const closeButton = overlay.querySelector(".android-sheet-close");
+    const closeButton = overlay.querySelector("[data-sheet-dismiss]");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);
       setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
@@ -9729,7 +9728,6 @@ function renderBusinessHome(){
   ];
 
   el.innerHTML=`<div class="vx621-business-shell">
-    <section class="vx621-hero card"><div><span class="pill">Business Workspace</span><h1>Your business</h1><p>Manage sales, payments and stock from one place.</p></div><div class="vx621-hero-actions">${button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')}${button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business')}</div></section>
     <section class="vx621-kpis"><div class="vx621-kpi"><span>Revenue</span><b>${M(revenue)}</b></div><div class="vx621-kpi"><span>Net Profit</span><b>${M(net)}</b></div><div class="vx621-kpi"><span>Expenses</span><b>${M(expenses)}</b></div><div class="vx621-kpi"><span>Assets</span><b>${M(assets)}</b></div><div class="vx621-kpi"><span>Customer Due</span><b>${M(lt.outstanding)}</b></div></section>
     <div class="business-tool-search" role="search" aria-label="Find business tools">
       <label for="businessToolSearch">Find a tool</label>

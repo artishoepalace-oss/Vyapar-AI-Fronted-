@@ -59,7 +59,8 @@ const uiStyles = [
   'motion-20102004.css',
   'workspace-v7.css',
   'alignment-updates.css',
-  'form-sheets.css'
+  'form-sheets.css',
+  'refined-surfaces.css'
 ];
 
 const scripts = [

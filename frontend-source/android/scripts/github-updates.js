@@ -10,6 +10,10 @@
   const native = () => root.AndroidApp && typeof root.AndroidApp.checkGitHubUpdate === 'function';
   const store = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
   const read = key => { try { return localStorage.getItem(key) || ''; } catch (_) { return ''; } };
+  function settingsActive() {
+    const screen=document.getElementById('screen-settings');
+    return screen?.dataset?.vy675Page==='update' && !screen.classList?.contains('hide');
+  }
   function current() {
     let name = document.querySelector('meta[name="vyapar-ui-version"]')?.content || '';
     try { name = root.AndroidApp?.getVersionName() || name; } catch (_) {}
@@ -35,7 +39,11 @@
     document.querySelectorAll('[data-update-current]').forEach(el => { el.textContent = current(); });
     document.querySelectorAll('[data-update-latest]').forEach(el => { el.textContent = latest?.version || 'Not checked'; });
     document.querySelectorAll('[data-update-status]').forEach(el => { el.textContent = status; });
-    document.querySelectorAll('[data-update-check]').forEach(el => { el.disabled = Boolean(pending); el.textContent = pending ? 'Checking…' : 'Check for updates'; });
+    document.querySelectorAll('[data-update-notes]').forEach(el => { el.textContent=latest?.notes || 'Check for updates to see release notes.'; });
+    document.querySelectorAll('[data-update-summary]').forEach(el => {
+      el.textContent=download.status!=='idle' ? status : pending ? 'Checking for updates…' : latest ? (compare(latest.version,current())>0 ? (latest.apkUrl ? 'A new version is ready to install.' : 'The new APK is being prepared.') : 'Your app is up to date.') : status;
+    });
+    document.querySelectorAll('[data-update-check]').forEach(el => { el.disabled = Boolean(pending); el.textContent = pending ? 'Checking…' : 'Check for updates'; if(el.closest('#vyGitHubUpdate')?.id==='vyGitHubUpdate')el.hidden=Boolean(latest?.apkUrl && compare(latest.version,current())>0); });
     const busy = ['downloading','verifying'].includes(download.status);
     const ready = ['ready','permission','installer'].includes(download.status);
     document.querySelectorAll('[data-update-download]').forEach(el => {
@@ -54,7 +62,8 @@
       '<p class="update-status" data-update-status role="status" aria-live="polite"></p><progress data-update-progress hidden></progress>'+
       '<div class="update-actions"><button type="button" class="btn primary" data-update-download hidden>Download &amp; install</button><button type="button" class="btn" data-update-check>Check for updates</button></div>'+
       '<small class="update-checked" data-update-checked></small><button class="update-release-link" type="button" data-update-release>View GitHub release</button>'+
-      '<p class="update-install-note">Your records stay on this device. Android asks you to confirm installation. Never uninstall the app to update it.</p>';
+      '<details class="update-details"><summary>What’s new</summary><p class="update-release-notes" data-update-notes></p></details>'+
+      '<p class="update-install-note">Update without uninstalling to keep your records. Android will ask you to confirm installation.</p>';
   }
   function mountSettings() {
     const card = document.getElementById('fs607Settings');
@@ -65,14 +74,14 @@
   }
   function close() {
     const modal=document.getElementById('vyGitHubUpdate'); if(!modal)return;
-    modal.remove(); if(lastFocus?.isConnected)lastFocus.focus();
+    const finish=()=>{modal.remove();if(lastFocus?.isConnected)lastFocus.focus();};
+    if(root.vyaparMotion)root.vyaparMotion.closeOverlay(modal,finish);else finish();
   }
   function show() {
     if(document.getElementById('vyGitHubUpdate')) { render(); return; }
     lastFocus=document.activeElement;
     const modal=document.createElement('div'); modal.id='vyGitHubUpdate'; modal.className='github-update-overlay';
-    modal.innerHTML='<section class="github-update-dialog" role="dialog" aria-modal="true" aria-labelledby="githubUpdateTitle" tabindex="-1"><div class="update-dialog-heading"><h2 id="githubUpdateTitle">App update</h2><button type="button" data-update-close aria-label="Close update dialog">×</button></div>'+cardMarkup()+'<details><summary>What’s new</summary><p class="update-release-notes"></p></details><button type="button" class="btn update-later" data-update-close>Not now</button></section>';
-    modal.querySelector('.update-release-notes').textContent=latest?.notes || 'Release notes are available on GitHub.';
+    modal.innerHTML='<section class="github-update-dialog" role="dialog" aria-modal="true" aria-labelledby="githubUpdateTitle" tabindex="-1"><button type="button" class="vy-sheet-handle" data-sheet-dismiss data-update-close aria-label="Close update"></button><div class="update-dialog-heading"><h2 id="githubUpdateTitle">App update</h2></div><p class="update-status" data-update-summary role="status" aria-live="polite"></p><progress data-update-progress hidden></progress><div class="update-actions"><button type="button" class="btn" data-update-close>Not now</button><button type="button" class="btn primary" data-update-download hidden>Download &amp; install</button><button type="button" class="btn" data-update-check>Check for updates</button></div></section>';
     modal.addEventListener('click', e=>{if(e.target===modal)close();});
     modal.addEventListener('keydown', e=>{
       if(e.key==='Escape'){ e.stopPropagation(); close(); }
@@ -121,9 +130,10 @@
       latest=normalize(data); store(CHECK_KEY,String(Date.now()));
       const newer=compare(latest.version,current())>0;
       status=newer?(latest.apkUrl?'Version '+latest.version+' is available · '+(latest.size/1048576).toFixed(1)+' MB.':'Version '+latest.version+' is published. Its APK has not been uploaded yet.'):'You have the latest version ('+current()+').';
-      if(manualRequested || (newer && latest.apkUrl && read(LATER_KEY)!==latest.version))show();
+      const inSettings=settingsActive();
+      if((manualRequested && !inSettings) || (!manualRequested && newer && latest.apkUrl && read(LATER_KEY)!==latest.version))show();
       return latest;
-    }).catch(error=>{status=error.message || 'Update check failed. Please retry.'; if(manualRequested)show();return null;})
+    }).catch(error=>{latest=null;status=error.message || 'Update check failed. Please retry.'; if(manualRequested && !settingsActive())show();return null;})
       .finally(()=>{pending=null;manualRequested=false;render();});
     render(); return pending;
   }

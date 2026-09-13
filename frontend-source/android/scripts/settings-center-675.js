@@ -33,7 +33,7 @@
     {
       group: 'App preferences',
       items: [
-        { id: 'security', icon: 'lock', title: 'Privacy & security', subtitle: 'Password login and app protection', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
+        { id: 'security', icon: 'lock', title: 'Account password', subtitle: 'Change your sign-in password', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
         { id: 'appearance', icon: 'appearance', title: 'Motion & performance', subtitle: 'Animations and device speed', keywords: 'dark auto smooth lite animation lag fast', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
         { id: 'navigation', icon: 'navigation', title: 'Navigation', subtitle: 'Scrolling and page behaviour', keywords: 'auto scroll top remember page position', match: card => card.id === 'vy675NavigationSettings' },
         { id: 'data', icon: 'backup', title: 'Backup & restore', subtitle: 'Device backup and Google Drive', keywords: 'download upload json cloud disconnect', match: card => card.classList.contains('data-safety-section') || /backup & data safety|data safety/i.test(card.textContent || '') }
@@ -122,11 +122,6 @@
   function shellMarkup() {
     return `
       <div class="vy675-settings-home">
-        <header class="vy675-settings-intro">
-          <span class="vy675-settings-eyebrow">VYAPAR AI</span>
-          <h2>Settings</h2>
-          <p>Manage your business, account and app preferences.</p>
-        </header>
         <label class="vy675-settings-search">
           <span>${ICONS.search}</span>
           <input id="settingsSearch" type="search" autocomplete="off" placeholder="Search settings, backup, password…" aria-label="Search settings" aria-controls="settingsSearchResults">

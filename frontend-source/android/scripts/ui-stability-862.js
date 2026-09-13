@@ -42,8 +42,8 @@
       if(!text.includes('privacy & security')&&!text.includes('password login and app protection'))return;
       const title=row.querySelector('b,strong,.vy675-settings-title');
       const sub=row.querySelector('small,.vy675-settings-subtitle');
-      if(title&&/privacy|security/i.test(title.textContent||''))title.textContent='Sign-in & privacy';
-      if(sub&&sub.textContent!=='Account password, OTP and privacy options')sub.textContent='Account password, OTP and privacy options';
+      if(title&&/privacy|security/i.test(title.textContent||''))title.textContent='Account password';
+      if(sub&&sub.textContent!=='Change your sign-in password')sub.textContent='Change your sign-in password';
     });
   }
 

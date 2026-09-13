@@ -14,18 +14,18 @@
   const overlaySelector=[
     '.glass-dialog-overlay','.subscription-overlay','.shop-progress-overlay','.vx643-modal-overlay',
     '.production-overlay','.android-permission-overlay','.android-sheet-overlay','.account-delete-overlay',
-    '.upgrade-plan-popup','.upgrade-popup-overlay','.vy6601-select-overlay','.plan-success-overlay','.vy-form-overlay'
+    '.upgrade-plan-popup','.upgrade-popup-overlay','.vy6601-select-overlay','.plan-success-overlay','.vy-form-overlay','.github-update-overlay'
   ].join(',');
   const cardSelector=[
     '[role="dialog"]','.android-sheet','.shop-progress-sheet','.production-modal','.subscription-dialog',
     '.glass-dialog-card','.vx643-modal','.vy6601-select-sheet','.upgrade-popup-box','.upgrade-plan-reference-card',
-    '.account-delete-dialog','.modal-card','.sheet-content','.vy-form-sheet'
+    '.account-delete-dialog','.modal-card','.sheet-content','.vy-form-sheet','.github-update-dialog'
   ].join(',');
   const transientSelector='.glass-toast';
   const ease='cubic-bezier(.16,1,.3,1)';
   const easeSoft='cubic-bezier(.2,.8,.2,1)';
   const easeClose='cubic-bezier(.4,0,.2,1)';
-  const closeSelector='#closeShopProgress,.android-sheet-close,#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
+  const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
   const pageStyleProps=['position','top','left','right','bottom','width','height','margin','z-index','pointer-events','display','contain','isolation','transform','opacity','will-change','transition','backface-visibility','-webkit-backface-visibility'];
   let pageTransition=null,pageSequence=0;
@@ -82,7 +82,8 @@
     const end=event=>{if(event.target===node && Object.prototype.hasOwnProperty.call(to,event.propertyName))finish();};
     running.set(node,{cancel:restore});
 
-    if(typeof node.animate==='function'){
+    // Inline transitions also override legacy !important transforms in old WebViews.
+    if(typeof node.animate==='function' && !node.classList.contains('vy-unified-panel')){
       try{
         const first={},last={};
         keys.forEach(k=>{first[k]=from[k];last[k]=to[k];});
@@ -281,7 +282,20 @@
   function registerOverlay(overlay){
     const card=overlay && overlay.querySelector ? overlay.querySelector(cardSelector) : null;
     if(!overlay || !card)return null;
-    const info={card,trigger:document.activeElement,finish:null,sheet:isSheet(overlay,card)};
+    // One surface contract for all app-owned dialogs. Native system dialogs stay native.
+    overlay.classList.add('vy-unified-overlay');card.classList.add('vy-unified-panel');
+    const info={card,trigger:overlay.__vyTrigger || document.activeElement,finish:null,sheet:true};
+    const handle=card.querySelector('[data-sheet-dismiss]');
+    if(handle && !handle.__vySwipe){
+      handle.__vySwipe=true;
+      let start=null;
+      handle.addEventListener('touchstart',e=>{const t=e.touches[0];start={x:t.clientX,y:t.clientY};},{passive:true});
+      handle.addEventListener('touchend',e=>{
+        if(!start)return;const t=e.changedTouches[0],dy=t.clientY-start.y,dx=Math.abs(t.clientX-start.x);start=null;
+        if(dy>32 && dy>dx){e.preventDefault();handle.click();}
+      },{passive:false});
+      handle.addEventListener('touchcancel',()=>{start=null;},{passive:true});
+    }
     overlays.set(overlay,info);guardOverlay(overlay);return info;
   }
 
@@ -293,7 +307,7 @@
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
     tween(overlay,{opacity:'0'},{opacity:'1'},sheet?145:125,null,easeSoft);
-    const fullSheet=typeof overlay.matches==='function' && overlay.matches('.vy-form-overlay,.shop-progress-overlay');
+    const fullSheet=info.sheet;
     tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},fullSheet?280:sheet?220:185,null,ease);
     requestAnimationFrame(()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
@@ -327,7 +341,7 @@
     info.finish=finish;overlays.set(overlay,info);
     if(!duration(120)){finish();return;}
     const card=info.card,overlayOpacity=css(overlay,'opacity','1');
-    const fullSheet=typeof overlay.matches==='function' && overlay.matches('.vy-form-overlay,.shop-progress-overlay');
+    const fullSheet=info.sheet;
     if(card){
       const currentTransform=css(card,'transform','none');cancel(card);
       const rest=currentTransform==='none'?'':currentTransform+' ';
@@ -338,7 +352,7 @@
 
   function dismissTop(){
     const overlay=topOverlay();if(!overlay)return false;if(overlay.__vyClosing)return true;
-    const close=overlay.querySelector(closeSelector);if(close){close.click();return true;}return false;
+    const close=overlay.querySelector('[data-sheet-dismiss]') || overlay.querySelector(closeSelector+', [data-update-close]');if(close){close.click();return true;}return false;
   }
 
   window.vyaparMotion={enter,cancel,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition};
@@ -363,6 +377,8 @@
           }
         });
       });
+      const locked=!!topOverlay();
+      if(document.body.classList.contains('vy-popup-open')!==locked)document.body.classList.toggle('vy-popup-open',locked);
     });
     observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
     document.addEventListener('keydown',event=>{

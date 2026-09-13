@@ -45,7 +45,6 @@ html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-she
 html.vy861-flat-black.vy-motion-ready body .vy-form-handle { flex:none;width:44px;height:5px;background:#44464b;border-radius:5px;margin:12px auto 4px; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-head { flex:none;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #292b30; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-head h2 { flex:1;min-width:0;margin:0!important;font-size:18px!important;line-height:1.3!important; }
-html.vy861-flat-black.vy-motion-ready body .vy-form-close { display:flex!important;align-items:center!important;justify-content:center!important;flex:none;width:44px!important;height:44px!important;padding:0!important;border-radius:50%!important;background:#222428!important;border:1px solid #36383d!important;color:#fff!important;font-size:28px!important;line-height:1!important; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body { min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px)); }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body > :is(.card,.vx621-platform-host) { display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important;max-height:none!important; }
 html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-source-heading { display:none!important; }

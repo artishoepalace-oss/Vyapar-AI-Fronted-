@@ -384,7 +384,7 @@
       if (!compare) content += '<section class="card insight-panel"><div class="workspace-heading"><h2>Yearly goal</h2><strong>' + Math.round(progress) + '%</strong></div><progress max="100" value="' + progress + '" aria-label="Yearly goal progress"></progress><p class="muted">' + amount(f.net) + ' of ' + amount(goal) + '</p><button type="button" class="btn" onclick="VyaparInsights.selectView(\'plan\')">Edit goal & investment</button></section>';
     } else if (view === 'history') {
       page = Math.max(0, Math.min(page, Math.ceil(years.length / 8) - 1));
-      content = '<section class="card insight-panel"><div class="workspace-heading"><div><h2>All years</h2><p class="muted">' + years.length + ' years saved</p></div><button type="button" class="btn" onclick="VyaparInsights.exportHistory()">Export CSV</button></div><div class="insight-history">' + years.slice(page * 8, page * 8 + 8).map(y => '<button type="button" onclick="VyaparInsights.selectYear(\'' + y + '\');VyaparInsights.selectView(\'overview\')"><span><b>' + y + '</b><small>Revenue ' + amount(year(y).revenue) + '</small></span><strong class="' + (year(y).net < 0 ? 'is-loss' : '') + '">' + amount(year(y).net) + ' <span aria-hidden="true">›</span></strong></button>').join('') + (!years.length ? '<p class="insight-empty">Your recorded years will appear here.</p>' : '') + '</div><div class="workspace-pager"><button class="btn" ' + (page === 0 ? 'disabled' : '') + ' onclick="VyaparInsights.turnPage(-1)">Previous</button><span>' + (page + 1) + ' / ' + Math.max(1, Math.ceil(years.length / 8)) + '</span><button class="btn" ' + ((page + 1) * 8 >= years.length ? 'disabled' : '') + ' onclick="VyaparInsights.turnPage(1)">Next</button></div></section>';
+      content = '<section class="card insight-panel"><div class="workspace-heading"><div><h2>All years</h2><p class="muted">' + years.length + ' years saved</p></div><button type="button" class="btn" onclick="VyaparInsights.exportHistory()">Export CSV</button></div><div class="insight-history">' + years.slice(page * 8, page * 8 + 8).map(y => '<button type="button" onclick="VyaparInsights.selectYear(\'' + y + '\');VyaparInsights.selectView(\'overview\')"><span><b>' + y + '</b><small>Revenue ' + amount(year(y).revenue) + '</small></span><strong class="' + (year(y).net < 0 ? 'is-loss' : '') + '">' + amount(year(y).net) + ' </strong><span class="insight-history-arrow" aria-hidden="true">›</span></button>').join('') + (!years.length ? '<p class="insight-empty">Your recorded years will appear here.</p>' : '') + '</div><div class="workspace-pager"' + (years.length <= 8 ? ' hidden' : '') + '><button class="btn" ' + (page === 0 ? 'disabled' : '') + ' onclick="VyaparInsights.turnPage(-1)">Previous</button><span>' + (page + 1) + ' / ' + Math.max(1, Math.ceil(years.length / 8)) + '</span><button class="btn" ' + ((page + 1) * 8 >= years.length ? 'disabled' : '') + ' onclick="VyaparInsights.turnPage(1)">Next</button></div></section>';
     } else {
       const growth = Number.isFinite(+profile.planningGrowth) ? Math.max(0, Math.min(100, +profile.planningGrowth)) : 18;
       const projected = Array.from({length:10}, (_, i) => '<tr><th>' + (+selected + i) + '</th><td>' + amount(goal * Math.pow(1 + growth / 100, i)) + '</td></tr>').join('');
@@ -393,7 +393,7 @@
     if(view === 'overview') {
       const recorded = Object.values(f.months).filter(m => m.activity).map(m => m.profit), average = recorded.length ? f.profit / recorded.length : 0;
       const metrics = [['Gross profit', amount(f.profit)],['Monthly average · gross', amount(average)],['Highest month · gross', amount(recorded.length ? Math.max(...recorded) : 0)],['Lowest month · gross', amount(recorded.length ? Math.min(...recorded) : 0)],['Return on investment · net', invested ? (f.net / invested * 100).toFixed(1) + '%' : 'Add investment'],['Estimated payback · gross', invested && average > 0 ? (invested / average).toFixed(1) + ' months' : '—'],['Indicative value · 2× annual gross profit', amount(Math.max(0,f.profit * 2))]];
-      content += '<section class="card insight-panel"><details><summary>Performance details</summary><div class="insight-table"><table><tbody>' + metrics.map(([label,value])=>'<tr><th>'+label+'</th><td>'+value+'</td></tr>').join('') + '</tbody></table></div><p class="muted">Payback and indicative value are planning estimates.</p></details></section>';
+      content += '<section class="card insight-panel"><details><summary>Performance details</summary><div class="insight-table insight-performance"><table><tbody>' + metrics.map(([label,value])=>'<tr><th>'+label+'</th><td>'+value+'</td></tr>').join('') + '</tbody></table></div><p class="muted">Payback and indicative value are planning estimates.</p></details></section>';
     }
     if(view === 'history' && years.length) {
       const visible = years.slice(page * 8, page * 8 + 8).reverse();
@@ -786,18 +786,18 @@
   const overlaySelector=[
     '.glass-dialog-overlay','.subscription-overlay','.shop-progress-overlay','.vx643-modal-overlay',
     '.production-overlay','.android-permission-overlay','.android-sheet-overlay','.account-delete-overlay',
-    '.upgrade-plan-popup','.upgrade-popup-overlay','.vy6601-select-overlay','.plan-success-overlay','.vy-form-overlay'
+    '.upgrade-plan-popup','.upgrade-popup-overlay','.vy6601-select-overlay','.plan-success-overlay','.vy-form-overlay','.github-update-overlay'
   ].join(',');
   const cardSelector=[
     '[role="dialog"]','.android-sheet','.shop-progress-sheet','.production-modal','.subscription-dialog',
     '.glass-dialog-card','.vx643-modal','.vy6601-select-sheet','.upgrade-popup-box','.upgrade-plan-reference-card',
-    '.account-delete-dialog','.modal-card','.sheet-content','.vy-form-sheet'
+    '.account-delete-dialog','.modal-card','.sheet-content','.vy-form-sheet','.github-update-dialog'
   ].join(',');
   const transientSelector='.glass-toast';
   const ease='cubic-bezier(.16,1,.3,1)';
   const easeSoft='cubic-bezier(.2,.8,.2,1)';
   const easeClose='cubic-bezier(.4,0,.2,1)';
-  const closeSelector='#closeShopProgress,.android-sheet-close,#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
+  const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
   const pageStyleProps=['position','top','left','right','bottom','width','height','margin','z-index','pointer-events','display','contain','isolation','transform','opacity','will-change','transition','backface-visibility','-webkit-backface-visibility'];
   let pageTransition=null,pageSequence=0;
@@ -854,7 +854,8 @@
     const end=event=>{if(event.target===node && Object.prototype.hasOwnProperty.call(to,event.propertyName))finish();};
     running.set(node,{cancel:restore});
 
-    if(typeof node.animate==='function'){
+    // Inline transitions also override legacy !important transforms in old WebViews.
+    if(typeof node.animate==='function' && !node.classList.contains('vy-unified-panel')){
       try{
         const first={},last={};
         keys.forEach(k=>{first[k]=from[k];last[k]=to[k];});
@@ -1053,7 +1054,20 @@
   function registerOverlay(overlay){
     const card=overlay && overlay.querySelector ? overlay.querySelector(cardSelector) : null;
     if(!overlay || !card)return null;
-    const info={card,trigger:document.activeElement,finish:null,sheet:isSheet(overlay,card)};
+    // One surface contract for all app-owned dialogs. Native system dialogs stay native.
+    overlay.classList.add('vy-unified-overlay');card.classList.add('vy-unified-panel');
+    const info={card,trigger:overlay.__vyTrigger || document.activeElement,finish:null,sheet:true};
+    const handle=card.querySelector('[data-sheet-dismiss]');
+    if(handle && !handle.__vySwipe){
+      handle.__vySwipe=true;
+      let start=null;
+      handle.addEventListener('touchstart',e=>{const t=e.touches[0];start={x:t.clientX,y:t.clientY};},{passive:true});
+      handle.addEventListener('touchend',e=>{
+        if(!start)return;const t=e.changedTouches[0],dy=t.clientY-start.y,dx=Math.abs(t.clientX-start.x);start=null;
+        if(dy>32 && dy>dx){e.preventDefault();handle.click();}
+      },{passive:false});
+      handle.addEventListener('touchcancel',()=>{start=null;},{passive:true});
+    }
     overlays.set(overlay,info);guardOverlay(overlay);return info;
   }
 
@@ -1065,7 +1079,7 @@
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
     tween(overlay,{opacity:'0'},{opacity:'1'},sheet?145:125,null,easeSoft);
-    const fullSheet=typeof overlay.matches==='function' && overlay.matches('.vy-form-overlay,.shop-progress-overlay');
+    const fullSheet=info.sheet;
     tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},fullSheet?280:sheet?220:185,null,ease);
     requestAnimationFrame(()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
@@ -1099,7 +1113,7 @@
     info.finish=finish;overlays.set(overlay,info);
     if(!duration(120)){finish();return;}
     const card=info.card,overlayOpacity=css(overlay,'opacity','1');
-    const fullSheet=typeof overlay.matches==='function' && overlay.matches('.vy-form-overlay,.shop-progress-overlay');
+    const fullSheet=info.sheet;
     if(card){
       const currentTransform=css(card,'transform','none');cancel(card);
       const rest=currentTransform==='none'?'':currentTransform+' ';
@@ -1110,7 +1124,7 @@
 
   function dismissTop(){
     const overlay=topOverlay();if(!overlay)return false;if(overlay.__vyClosing)return true;
-    const close=overlay.querySelector(closeSelector);if(close){close.click();return true;}return false;
+    const close=overlay.querySelector('[data-sheet-dismiss]') || overlay.querySelector(closeSelector+', [data-update-close]');if(close){close.click();return true;}return false;
   }
 
   window.vyaparMotion={enter,cancel,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition};
@@ -1135,6 +1149,8 @@
           }
         });
       });
+      const locked=!!topOverlay();
+      if(document.body.classList.contains('vy-popup-open')!==locked)document.body.classList.toggle('vy-popup-open',locked);
     });
     observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
     document.addEventListener('keydown',event=>{
@@ -3242,7 +3258,6 @@ function renderHome(){
             <span class="home-section-kicker">QUICK ACCESS</span>
             <h3 id="homeQuickTitle">Run your shop</h3>
           </div>
-          <button type="button" class="home-text-button" onclick="setTab('business')">All tools →</button>
         </div>
         <div id="homeQuickActionsMount"></div>
       </section>
@@ -10501,8 +10516,8 @@ render();
     overlay.id = "androidMoreSheet";
     overlay.className = "android-sheet-overlay";
     overlay.innerHTML = '<div class="android-sheet" role="dialog" aria-modal="true" aria-label="More options">'+
-      '<div class="android-sheet-handle"></div>'+
-      '<div class="android-sheet-titlebar"><div><h3>More</h3><p>Tools and settings.</p></div><button type="button" class="android-sheet-close" aria-label="Close more">×</button></div>'+
+      '<button type="button" class="android-sheet-handle vy-sheet-handle" data-sheet-dismiss aria-label="Close More"></button>'+
+      '<div class="android-sheet-titlebar"><div><h3>More</h3><p>Tools and settings.</p></div></div>'+
       '<div class="android-sheet-grid">'+
         sheetItem("analytics","Insights","Reports and business performance")+
         sheetItem("upload","AI Upload","Photo and file import")+
@@ -10526,7 +10541,7 @@ render();
 
     document.body.appendChild(overlay);
     document.body.classList.add("android-sheet-open");
-    const closeButton = overlay.querySelector(".android-sheet-close");
+    const closeButton = overlay.querySelector("[data-sheet-dismiss]");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);
       setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
@@ -11727,7 +11742,6 @@ function renderBusinessHome(){
   ];
 
   el.innerHTML=`<div class="vx621-business-shell">
-    <section class="vx621-hero card"><div><span class="pill">Business Workspace</span><h1>Your business</h1><p>Manage sales, payments and stock from one place.</p></div><div class="vx621-hero-actions">${button('New Sale',"vx621OpenPlatform('business','transactions','business','SALE')",'business','primary')}${button('Payment In',"vx621OpenPlatform('business','transactions','business','PAYMENT_IN')",'business')}</div></section>
     <section class="vx621-kpis"><div class="vx621-kpi"><span>Revenue</span><b>${M(revenue)}</b></div><div class="vx621-kpi"><span>Net Profit</span><b>${M(net)}</b></div><div class="vx621-kpi"><span>Expenses</span><b>${M(expenses)}</b></div><div class="vx621-kpi"><span>Assets</span><b>${M(assets)}</b></div><div class="vx621-kpi"><span>Customer Due</span><b>${M(lt.outstanding)}</b></div></section>
     <div class="business-tool-search" role="search" aria-label="Find business tools">
       <label for="businessToolSearch">Find a tool</label>
@@ -12872,8 +12886,8 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
     sheet.className = 'shop-progress-overlay';
     sheet.innerHTML = `
       <div class="shop-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="shopProgressHeading">
-        <div class="shop-sheet-handle"></div>
-        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Progress from your saved business records.</p></div><button type="button" class="shop-sheet-close" id="closeShopProgress" aria-label="Close">×</button></div>
+        <button type="button" class="shop-sheet-handle vy-sheet-handle" data-sheet-dismiss aria-label="Close shop progress"></button>
+        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Progress from your saved business records.</p></div></div>
         <div class="shop-sheet-score"><div class="shop-score-ring" style="--score:${d.health.score}"><span><b>${d.health.score}</b><small>/100</small></span></div><div><h3>Business Health</h3><p>${d.health.next}</p><small>Consistency + margin + stock + record completeness</small></div></div>
         <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Milestones</h3><span>${d.unlocked}/${d.milestones.length} unlocked</span></div><div class="shop-milestone-list">${d.milestones.map(milestoneMarkup).join('')}</div></div>
         <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Next target</h3></div><div class="shop-next-target"><b>${nextLocked ? nextLocked.label : 'All current milestones complete 🎉'}</b><p>${nextLocked ? nextLocked.detail : 'Naye milestones future growth ke saath add ho sakte hain.'}</p></div></div>
@@ -12886,7 +12900,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
       const finish=()=>{ sheet.remove(); document.body.classList.remove('shop-progress-open'); };
       if(window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
     };
-    sheet.querySelector('#closeShopProgress').addEventListener('click', close);
+    sheet.querySelector('[data-sheet-dismiss]').addEventListener('click', close);
     sheet.addEventListener('click', event => { if(event.target === sheet) close(); });
   }
 
@@ -13231,7 +13245,26 @@ function footer(){document.querySelectorAll('#appLegalFooter').forEach(f=>{const
 const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];function dates(root=document){root.querySelectorAll('td,time').forEach(x=>{if(x.children.length)return;const t=x.textContent.trim(),m=t.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)x.textContent=Number(m[3])+' '+MN[Number(m[2])-1]+' '+m[1]})}
 function labels(root=document){root.querySelectorAll('.pill,.auth-help').forEach(x=>{if(/^Business Platform\s+\d/.test(x.textContent))x.textContent='Business Platform';if(/^Vyapar AI\s+6\./.test(x.textContent))x.textContent='Vyapar AI '+VER});const sale=[...document.querySelectorAll('#screen-sales .card')].find(c=>c.querySelector('h2')?.textContent==='Sales Records'),td=sale&&[...sale.querySelectorAll('tbody td')].find(x=>/No sale records yet/.test(x.textContent));if(td)td.textContent='No item-wise sales yet. Daily Quick Entry and monthly manual records are tracked separately.'}
 function otp(){const g=document.getElementById('vyaparOtpGate');if(!g||g.dataset.v6601)return;g.dataset.v6601='1';const l=document.getElementById('login-otp-code'),u=document.getElementById('signup-otp');l?.parentElement?.classList.add('vy6601-login-step');document.getElementById('login-otp-submit')?.classList.add('vy6601-login-step');u?.parentElement?.classList.add('vy6601-signup-step');const tab=document.getElementById('tab-login-otp'),sub=document.getElementById('login-otp-submit');if(tab)tab.textContent='Email OTP';if(sub)sub.textContent='Verify & Sign In';const msg=document.getElementById('auth-message');if(msg)new MutationObserver(()=>{if(msg.classList.contains('success')&&/sent|verification code/i.test(msg.textContent)){const sign=!document.getElementById('signup-section')?.classList.contains('hidden');g.classList.add(sign?'vy6601-signup-sent':'vy6601-login-sent')}}).observe(msg,{attributes:true,childList:true,characterData:true,subtree:true});const tabs=g.querySelector('.auth-method-tabs');if(tabs){let sx=null;tabs.addEventListener('touchstart',e=>sx=e.touches?.[0]?.clientX??null,{capture:true,passive:true});tabs.addEventListener('touchend',e=>{if(sx===null)return;const dx=(e.changedTouches?.[0]?.clientX??sx)-sx;sx=null;if(Math.abs(dx)>=24){e.preventDefault();e.stopImmediatePropagation()}},{capture:true,passive:false})}}
-let last=0;function closeSel(immediate){const node=document.getElementById('vy6601Select');if(!node)return;if(immediate===true){if(window.vyaparMotion)window.vyaparMotion.cancelOverlay(node);node.remove()}else if(window.vyaparMotion)window.vyaparMotion.closeOverlay(node);else node.remove()}function openSel(s){if(!s||s.disabled)return;closeSel(true);last=Date.now();const o=document.createElement('div');o.id='vy6601Select';o.className='vy6601-select-overlay';o.innerHTML='<div class="vy6601-select-sheet" role="dialog" aria-modal="true" aria-label="Choose an option"><div class="vy6601-select-head"><b>Choose an option</b><button>×</button></div><div class="vy6601-select-options"></div></div>';const list=o.querySelector('.vy6601-select-options');[...s.options].forEach(x=>{const b=document.createElement('button');b.textContent=x.textContent;b.disabled=x.disabled;b.className=x.selected?'selected':'';b.onclick=()=>{s.value=x.value;s.dispatchEvent(new Event('change',{bubbles:true}));closeSel()};list.appendChild(b)});o.querySelector('.vy6601-select-head button').onclick=closeSel;o.onclick=e=>{if(e.target===o)closeSel()};document.body.appendChild(o)}function selects(){if(!document.documentElement.classList.contains('native-android')||document.documentElement.dataset.v6601sel)return;document.documentElement.dataset.v6601sel='1';document.addEventListener('touchstart',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();openSel(s)},{capture:true,passive:false});document.addEventListener('click',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-last>600)openSel(s)},true)}
+let last=0;function closeSel(immediate){const node=document.getElementById('vy6601Select');if(!node)return;if(immediate===true){if(window.vyaparMotion)window.vyaparMotion.cancelOverlay(node);node.remove()}else if(window.vyaparMotion)window.vyaparMotion.closeOverlay(node);else node.remove()}function openSel(s){
+  if(!s||s.disabled)return;
+  closeSel(true);last=Date.now();
+  const o=document.createElement('div');o.id='vy6601Select';o.className='vy6601-select-overlay';o.__vyTrigger=s;
+  const label=s.getAttribute('aria-label') || (s.labels&&s.labels[0]?.textContent.trim()) || 'Choose an option';
+  o.innerHTML='<div class="vy6601-select-sheet" role="dialog" aria-modal="true" aria-labelledby="vySelectTitle"><button type="button" class="vy-sheet-handle" data-sheet-dismiss aria-label="Close options"></button><div class="vy6601-select-head"><h2 id="vySelectTitle"></h2></div><div class="vy6601-select-options" role="group"></div></div>';
+  o.querySelector('h2').textContent=label;
+  const list=o.querySelector('.vy6601-select-options');list.setAttribute('aria-label',label);
+  [...s.options].forEach((x,index)=>{
+    const b=document.createElement('button');b.type='button';b.textContent=x.textContent;
+    b.disabled=x.disabled || (x.parentElement.tagName==='OPTGROUP' && x.parentElement.disabled);
+    b.className=x.selected?'selected':'';b.setAttribute('aria-pressed',String(x.selected));
+    b.onclick=()=>{s.selectedIndex=index;s.dispatchEvent(new Event('input',{bubbles:true}));s.dispatchEvent(new Event('change',{bubbles:true}));closeSel();};
+    list.appendChild(b);
+  });
+  o.querySelector('[data-sheet-dismiss]').onclick=()=>closeSel();
+  o.onclick=e=>{if(e.target===o)closeSel();};
+  document.body.appendChild(o);
+}
+function selects(){if(!document.documentElement.classList.contains('native-android')||document.documentElement.dataset.v6601sel)return;document.documentElement.dataset.v6601sel='1';document.addEventListener('touchstart',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();openSel(s)},{capture:true,passive:false});document.addEventListener('click',e=>{const s=e.target.closest?.('select');if(!s)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-last>600)openSel(s)},true)}
 let lastFinanceRevision=-1,lastProfitNode=null,lastBusinessNode=null;
 function fix(root=document){S();const rev=window.__vyaparDataRevision||0,pc=document.getElementById('vy660ProfitCard'),bc=document.getElementById('screen-business')?.firstElementChild;if(rev!==lastFinanceRevision||pc!==lastProfitNode){profitCard();lastProfitNode=pc}if(rev!==lastFinanceRevision||bc!==lastBusinessNode){business();lastBusinessNode=bc}lastFinanceRevision=rev;yearFilter();footer();labels(root);dates(root);otp();selects()}
 function wrap(n,fn){const old=window[n];if(typeof old!=='function'||old.__6601)return;const w=function(){S();const r=old.apply(this,arguments);fn();return r};w.__6601=1;window[n]=w}wrap('renderSales',()=>{profitCard();yearFilter();labels();dates(document.getElementById('screen-sales')||document)});wrap('renderBusiness',()=>{business();dates(document.getElementById('screen-business')||document)});wrap('renderSettings',footer);
@@ -14539,7 +14572,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     {
       group: 'App preferences',
       items: [
-        { id: 'security', icon: 'lock', title: 'Privacy & security', subtitle: 'Password login and app protection', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
+        { id: 'security', icon: 'lock', title: 'Account password', subtitle: 'Change your sign-in password', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
         { id: 'appearance', icon: 'appearance', title: 'Motion & performance', subtitle: 'Animations and device speed', keywords: 'dark auto smooth lite animation lag fast', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
         { id: 'navigation', icon: 'navigation', title: 'Navigation', subtitle: 'Scrolling and page behaviour', keywords: 'auto scroll top remember page position', match: card => card.id === 'vy675NavigationSettings' },
         { id: 'data', icon: 'backup', title: 'Backup & restore', subtitle: 'Device backup and Google Drive', keywords: 'download upload json cloud disconnect', match: card => card.classList.contains('data-safety-section') || /backup & data safety|data safety/i.test(card.textContent || '') }
@@ -14628,11 +14661,6 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function shellMarkup() {
     return `
       <div class="vy675-settings-home">
-        <header class="vy675-settings-intro">
-          <span class="vy675-settings-eyebrow">VYAPAR AI</span>
-          <h2>Settings</h2>
-          <p>Manage your business, account and app preferences.</p>
-        </header>
         <label class="vy675-settings-search">
           <span>${ICONS.search}</span>
           <input id="settingsSearch" type="search" autocomplete="off" placeholder="Search settings, backup, password…" aria-label="Search settings" aria-controls="settingsSearchResults">
@@ -15309,7 +15337,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const overlays=visibleOverlays();
     const top=overlays[overlays.length-1];
     if(!top)return false;
-    const close=top.querySelector('.android-sheet-close,.shop-sheet-close,.production-close,[data-cancel],#closePlanSuccessPopup,#closeCancelPopup,#closeUpgradePopup,#accountDeleteCancel,[aria-label^="Close" i],[aria-label="Close" i]');
+    const close=top.querySelector('.production-close,[data-cancel],#closePlanSuccessPopup,#closeCancelPopup,#closeUpgradePopup,#accountDeleteCancel,[aria-label^="Close" i],[aria-label="Close" i]');
     if(close){close.click();return true;}
     if(top.id==='vyaparGlassDialog'&&typeof window.closeGlassDialog==='function'){window.closeGlassDialog(false);return true;}
     return false;
@@ -15429,8 +15457,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       if(!text.includes('privacy & security')&&!text.includes('password login and app protection'))return;
       const title=row.querySelector('b,strong,.vy675-settings-title');
       const sub=row.querySelector('small,.vy675-settings-subtitle');
-      if(title&&/privacy|security/i.test(title.textContent||''))title.textContent='Sign-in & privacy';
-      if(sub&&sub.textContent!=='Account password, OTP and privacy options')sub.textContent='Account password, OTP and privacy options';
+      if(title&&/privacy|security/i.test(title.textContent||''))title.textContent='Account password';
+      if(sub&&sub.textContent!=='Change your sign-in password')sub.textContent='Change your sign-in password';
     });
   }
 
@@ -15948,6 +15976,10 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   const native = () => root.AndroidApp && typeof root.AndroidApp.checkGitHubUpdate === 'function';
   const store = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
   const read = key => { try { return localStorage.getItem(key) || ''; } catch (_) { return ''; } };
+  function settingsActive() {
+    const screen=document.getElementById('screen-settings');
+    return screen?.dataset?.vy675Page==='update' && !screen.classList?.contains('hide');
+  }
   function current() {
     let name = document.querySelector('meta[name="vyapar-ui-version"]')?.content || '';
     try { name = root.AndroidApp?.getVersionName() || name; } catch (_) {}
@@ -15973,7 +16005,11 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     document.querySelectorAll('[data-update-current]').forEach(el => { el.textContent = current(); });
     document.querySelectorAll('[data-update-latest]').forEach(el => { el.textContent = latest?.version || 'Not checked'; });
     document.querySelectorAll('[data-update-status]').forEach(el => { el.textContent = status; });
-    document.querySelectorAll('[data-update-check]').forEach(el => { el.disabled = Boolean(pending); el.textContent = pending ? 'Checking…' : 'Check for updates'; });
+    document.querySelectorAll('[data-update-notes]').forEach(el => { el.textContent=latest?.notes || 'Check for updates to see release notes.'; });
+    document.querySelectorAll('[data-update-summary]').forEach(el => {
+      el.textContent=download.status!=='idle' ? status : pending ? 'Checking for updates…' : latest ? (compare(latest.version,current())>0 ? (latest.apkUrl ? 'A new version is ready to install.' : 'The new APK is being prepared.') : 'Your app is up to date.') : status;
+    });
+    document.querySelectorAll('[data-update-check]').forEach(el => { el.disabled = Boolean(pending); el.textContent = pending ? 'Checking…' : 'Check for updates'; if(el.closest('#vyGitHubUpdate')?.id==='vyGitHubUpdate')el.hidden=Boolean(latest?.apkUrl && compare(latest.version,current())>0); });
     const busy = ['downloading','verifying'].includes(download.status);
     const ready = ['ready','permission','installer'].includes(download.status);
     document.querySelectorAll('[data-update-download]').forEach(el => {
@@ -15992,7 +16028,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       '<p class="update-status" data-update-status role="status" aria-live="polite"></p><progress data-update-progress hidden></progress>'+
       '<div class="update-actions"><button type="button" class="btn primary" data-update-download hidden>Download &amp; install</button><button type="button" class="btn" data-update-check>Check for updates</button></div>'+
       '<small class="update-checked" data-update-checked></small><button class="update-release-link" type="button" data-update-release>View GitHub release</button>'+
-      '<p class="update-install-note">Your records stay on this device. Android asks you to confirm installation. Never uninstall the app to update it.</p>';
+      '<details class="update-details"><summary>What’s new</summary><p class="update-release-notes" data-update-notes></p></details>'+
+      '<p class="update-install-note">Update without uninstalling to keep your records. Android will ask you to confirm installation.</p>';
   }
   function mountSettings() {
     const card = document.getElementById('fs607Settings');
@@ -16003,14 +16040,14 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
   function close() {
     const modal=document.getElementById('vyGitHubUpdate'); if(!modal)return;
-    modal.remove(); if(lastFocus?.isConnected)lastFocus.focus();
+    const finish=()=>{modal.remove();if(lastFocus?.isConnected)lastFocus.focus();};
+    if(root.vyaparMotion)root.vyaparMotion.closeOverlay(modal,finish);else finish();
   }
   function show() {
     if(document.getElementById('vyGitHubUpdate')) { render(); return; }
     lastFocus=document.activeElement;
     const modal=document.createElement('div'); modal.id='vyGitHubUpdate'; modal.className='github-update-overlay';
-    modal.innerHTML='<section class="github-update-dialog" role="dialog" aria-modal="true" aria-labelledby="githubUpdateTitle" tabindex="-1"><div class="update-dialog-heading"><h2 id="githubUpdateTitle">App update</h2><button type="button" data-update-close aria-label="Close update dialog">×</button></div>'+cardMarkup()+'<details><summary>What’s new</summary><p class="update-release-notes"></p></details><button type="button" class="btn update-later" data-update-close>Not now</button></section>';
-    modal.querySelector('.update-release-notes').textContent=latest?.notes || 'Release notes are available on GitHub.';
+    modal.innerHTML='<section class="github-update-dialog" role="dialog" aria-modal="true" aria-labelledby="githubUpdateTitle" tabindex="-1"><button type="button" class="vy-sheet-handle" data-sheet-dismiss data-update-close aria-label="Close update"></button><div class="update-dialog-heading"><h2 id="githubUpdateTitle">App update</h2></div><p class="update-status" data-update-summary role="status" aria-live="polite"></p><progress data-update-progress hidden></progress><div class="update-actions"><button type="button" class="btn" data-update-close>Not now</button><button type="button" class="btn primary" data-update-download hidden>Download &amp; install</button><button type="button" class="btn" data-update-check>Check for updates</button></div></section>';
     modal.addEventListener('click', e=>{if(e.target===modal)close();});
     modal.addEventListener('keydown', e=>{
       if(e.key==='Escape'){ e.stopPropagation(); close(); }
@@ -16059,9 +16096,10 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
       latest=normalize(data); store(CHECK_KEY,String(Date.now()));
       const newer=compare(latest.version,current())>0;
       status=newer?(latest.apkUrl?'Version '+latest.version+' is available · '+(latest.size/1048576).toFixed(1)+' MB.':'Version '+latest.version+' is published. Its APK has not been uploaded yet.'):'You have the latest version ('+current()+').';
-      if(manualRequested || (newer && latest.apkUrl && read(LATER_KEY)!==latest.version))show();
+      const inSettings=settingsActive();
+      if((manualRequested && !inSettings) || (!manualRequested && newer && latest.apkUrl && read(LATER_KEY)!==latest.version))show();
       return latest;
-    }).catch(error=>{status=error.message || 'Update check failed. Please retry.'; if(manualRequested)show();return null;})
+    }).catch(error=>{latest=null;status=error.message || 'Update check failed. Please retry.'; if(manualRequested && !settingsActive())show();return null;})
       .finally(()=>{pending=null;manualRequested=false;render();});
     render(); return pending;
   }
@@ -16148,7 +16186,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     placeholder.hidden=true;
     node.before(placeholder);
     const overlay=document.createElement('div');overlay.className='vy-form-overlay';overlay.id='vyFormSheet';
-    overlay.innerHTML='<section class="vy-form-sheet" role="dialog" aria-modal="true" aria-labelledby="vyFormHeading" tabindex="-1"><div class="vy-form-handle" aria-hidden="true"></div><header class="vy-form-head"><h2 id="vyFormHeading"></h2><button type="button" class="vy-form-close" data-back-close aria-label="Close form">×</button></header><div class="vy-form-body"></div></section>';
+    overlay.innerHTML='<section class="vy-form-sheet" role="dialog" aria-modal="true" aria-labelledby="vyFormHeading" tabindex="-1"><button type="button" class="vy-form-handle vy-sheet-handle" data-sheet-dismiss aria-label="Close form"></button><header class="vy-form-head"><h2 id="vyFormHeading"></h2></header><div class="vy-form-body"></div></section>';
     overlay.querySelector('h2').textContent=node.querySelector('h1,h2,h3')?.textContent.trim()||'Business tools';
     active={node,placeholder,overlay,trigger,context,hidden:node.hidden,module:node.id==='businessModuleArea'||!!node.dataset.vx621Host};
     node.classList.remove('vy-form-parked');
@@ -16159,7 +16197,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     syncHeader(entry);
     entry.observer=new MutationObserver(()=>syncHeader(entry));
     entry.observer.observe(node,{childList:true,subtree:true,characterData:true});
-    overlay.querySelector('[data-back-close]').onclick=()=>close(false);
+    overlay.querySelector('[data-sheet-dismiss]').onclick=()=>close(false);
     overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
     updateViewport();
     if(root.vyaparMotion)root.vyaparMotion.openOverlay(overlay);

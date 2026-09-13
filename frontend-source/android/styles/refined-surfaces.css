@@ -1,0 +1,83 @@
+/* Shared low-outline surfaces; focus, validation and semantic accents remain visible. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,#screen-calculator,#screen-subscription,.vy-unified-overlay) :is(.card,.stat,[class*="-card"],[class*="-kpi"],[class*="-panel"],.notice,.btn,button,input,select,textarea,.workspace-tabs,.vy675-settings-list,.vy675-row-icon,.android-sheet-item-icon,.shop-milestone,.shop-sheet-score,.shop-month-grid>div,.shop-growth-stat,.shop-streak,.p611-table,.scroll,.home-metric-icon) {
+  border-color:transparent!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,.vy-unified-overlay) :is(input,select,textarea):focus {
+  outline:2px solid #828993!important;outline-offset:1px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,.vy-unified-overlay) [aria-invalid="true"] {outline:2px solid #de687d!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-overlay button:focus-visible {outline:2px solid #9fabbc!important;outline-offset:2px!important;}
+/* Same viewport attachment, side inset, shade and radius across all app popups. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay).vy-unified-overlay {
+  position:fixed!important;inset:auto 0 0!important;top:var(--vy-sheet-top,0px)!important;
+  width:100%!important;height:var(--vy-sheet-height,100%)!important;max-height:none!important;min-height:0!important;
+  display:flex!important;align-items:flex-end!important;justify-content:center!important;
+  padding:12px 12px 0!important;margin:0!important;box-sizing:border-box!important;
+  background:rgba(0,0,0,.62)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  overflow:hidden!important;z-index:2147483200!important;animation:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay) > .vy-unified-panel {
+  position:relative!important;inset:auto!important;bottom:0!important;left:auto!important;right:auto!important;
+  width:100%!important;max-width:936px!important;min-width:0!important;max-height:100%!important;min-height:0!important;
+  margin:0!important;box-sizing:border-box!important;border:0!important;border-radius:26px 26px 0 0!important;
+  background:#151619!important;background-image:none!important;color:#f5f5f6!important;box-shadow:none!important;
+  padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px))!important;
+  overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;translate:none!important;animation:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet > .vy-unified-panel,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select > .vy-unified-panel {display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel .vy-sheet-handle {
+  display:block!important;position:relative!important;flex:none!important;align-self:center!important;
+  width:72px!important;min-width:72px!important;height:32px!important;min-height:32px!important;
+  margin:0 auto!important;padding:0!important;border:0!important;border-radius:16px!important;
+  background:transparent!important;box-shadow:none!important;cursor:pointer;touch-action:none;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel .vy-sheet-handle::before {
+  content:""!important;display:block!important;position:absolute!important;left:14px!important;top:13px!important;
+  width:44px!important;height:5px!important;border-radius:4px!important;background:#45474c!important;transform:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel :is(.vy-form-head,.vy6601-select-head,.android-sheet-titlebar,.shop-sheet-head,.update-dialog-heading) {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
+  flex:none!important;margin:0 0 12px!important;padding:8px 0!important;border:0!important;background:transparent!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-head,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select .vy6601-select-head {padding:8px 16px!important;margin:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel :is(.vy-form-head,.vy6601-select-head,.android-sheet-titlebar,.shop-sheet-head,.update-dialog-heading) :is(h2,h3) {font-size:20px!important;line-height:1.3!important;margin:0!important;min-width:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel :is(.android-sheet-titlebar,.shop-sheet-head) p {font-size:13px!important;line-height:1.5!important;margin:6px 0 0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel .home-section-kicker {font-size:10px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select .vy6601-select-options {min-height:0!important;overflow-y:auto!important;padding:8px 16px calc(24px + env(safe-area-inset-bottom,0px))!important;display:grid!important;gap:6px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select .vy6601-select-options button {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
+  width:100%!important;min-height:50px!important;height:auto!important;padding:12px 14px!important;margin:0!important;
+  border:0!important;border-radius:14px!important;background:#1c1e22!important;color:#eee!important;
+  font-size:15px!important;line-height:1.4!important;text-align:left!important;white-space:normal!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select .vy6601-select-options button.selected {background:#303238!important;font-weight:600!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select .vy6601-select-options button.selected::after {content:"✓";flex:none;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy6601Select .vy6601-select-options button:disabled {opacity:.4!important;}
+/* Label-only alignment fix; keep monetary figures aligned on the right. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .insight-performance th {text-align:left!important;white-space:normal!important;line-height:1.5!important;width:65%;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .insight-performance td {text-align:right!important;white-space:normal!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .insight-history {display:grid!important;gap:8px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .insight-history > button {display:grid!important;grid-template-columns:minmax(0,1fr) auto 12px!important;gap:10px!important;padding:14px!important;border:0!important;border-radius:14px!important;background:#1b1d21!important;min-height:76px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .insight-history strong {font-size:16px!important;text-align:right!important;line-height:1.4!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .insight-history-arrow {display:block!important;font-size:20px!important;color:#9499a2!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics .workspace-pager[hidden] {display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-home .home-metric-icon {display:flex!important;align-items:center!important;justify-content:center!important;width:28px!important;height:28px!important;min-width:28px!important;flex:0 0 28px!important;padding:0!important;margin:0!important;line-height:1!important;font-style:normal!important;font-size:14px!important;box-sizing:border-box!important;border-radius:50%!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-home {padding-top:4px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-search {margin-top:0!important;}
+/* Update details belong in Settings; the prompt only offers the next action. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-dialog-heading {margin-bottom:8px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions {display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn {margin:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="update"] #fs607Settings .update-versions {grid-template-columns:1fr!important;gap:12px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="update"] #fs607Settings .update-versions > div {display:flex!important;flex-wrap:wrap!important;justify-content:space-between!important;gap:4px 12px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="update"] #fs607Settings .update-release-notes {white-space:pre-wrap!important;font-size:13px!important;line-height:1.6!important;background:transparent!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body.vy-popup-open {overflow:hidden!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel .vy-sheet-handle {height:44px!important;min-height:44px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-panel .vy-sheet-handle::before {top:19px!important;}
+/* Keep image-based plan hotspots aligned with their underlying artwork. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-overlay > .upgrade-plan-reference-card.vy-unified-panel {padding:0!important;}
+@media(max-width:350px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav > button .android-nav-label {font-size:10px!important;max-width:100%!important;letter-spacing:0!important;}
+}

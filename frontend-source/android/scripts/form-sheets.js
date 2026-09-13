@@ -44,7 +44,7 @@
     placeholder.hidden=true;
     node.before(placeholder);
     const overlay=document.createElement('div');overlay.className='vy-form-overlay';overlay.id='vyFormSheet';
-    overlay.innerHTML='<section class="vy-form-sheet" role="dialog" aria-modal="true" aria-labelledby="vyFormHeading" tabindex="-1"><div class="vy-form-handle" aria-hidden="true"></div><header class="vy-form-head"><h2 id="vyFormHeading"></h2><button type="button" class="vy-form-close" data-back-close aria-label="Close form">×</button></header><div class="vy-form-body"></div></section>';
+    overlay.innerHTML='<section class="vy-form-sheet" role="dialog" aria-modal="true" aria-labelledby="vyFormHeading" tabindex="-1"><button type="button" class="vy-form-handle vy-sheet-handle" data-sheet-dismiss aria-label="Close form"></button><header class="vy-form-head"><h2 id="vyFormHeading"></h2></header><div class="vy-form-body"></div></section>';
     overlay.querySelector('h2').textContent=node.querySelector('h1,h2,h3')?.textContent.trim()||'Business tools';
     active={node,placeholder,overlay,trigger,context,hidden:node.hidden,module:node.id==='businessModuleArea'||!!node.dataset.vx621Host};
     node.classList.remove('vy-form-parked');
@@ -55,7 +55,7 @@
     syncHeader(entry);
     entry.observer=new MutationObserver(()=>syncHeader(entry));
     entry.observer.observe(node,{childList:true,subtree:true,characterData:true});
-    overlay.querySelector('[data-back-close]').onclick=()=>close(false);
+    overlay.querySelector('[data-sheet-dismiss]').onclick=()=>close(false);
     overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
     updateViewport();
     if(root.vyaparMotion)root.vyaparMotion.openOverlay(overlay);
