@@ -1,0 +1,122 @@
+/* Vyapar AI 20.10.2004.00020.2026 — unified popup + surface pass */
+html.vy861-flat-black.workspace-v7{
+  --vy020-inset:12px;
+  --vy020-nav-space:calc(84px + env(safe-area-inset-bottom,0px));
+  --vy020-popup:#111214;
+  --vy020-line:rgba(255,255,255,.045);
+  --vy020-field-line:rgba(255,255,255,.08);
+}
+
+/* Navbar always remains visible; popups stop above it. */
+html.vy861-flat-black.workspace-v7 body #nav.nav,
+html.vy861-flat-black.workspace-v7 body .nav{
+  left:var(--vy020-inset)!important;right:var(--vy020-inset)!important;
+  width:auto!important;max-width:936px!important;margin-left:auto!important;margin-right:auto!important;
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+}
+html.vy861-flat-black.workspace-v7 body.vy-form-open #nav.nav,
+html.vy861-flat-black.workspace-v7 body.shop-progress-open #nav.nav,
+html.vy861-flat-black.workspace-v7 body.shop-progress-open .nav,
+html.vy861-flat-black.workspace-v7 body.glass-dialog-open #nav.nav,
+html.vy861-flat-black.workspace-v7 body.glass-dialog-open .nav{
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+}
+
+/* One geometry for all popup/overlay families. */
+html.vy861-flat-black.workspace-v7 body :is(
+  .glass-dialog-overlay,.subscription-overlay,.subscription-dialog-backdrop,.shop-progress-overlay,
+  .vx643-modal-overlay,.production-overlay,.android-permission-overlay,.android-sheet-overlay,
+  .account-delete-overlay,.vy6601-select-overlay,.upgrade-plan-popup,.upgrade-popup-overlay,
+  .upgrade-plan-reference-popup,.plan-success-overlay,.vy-form-overlay,
+  #vyaparDeleteConfirm,#vyaparAccountDeleteConfirm
+){
+  position:fixed!important;left:0!important;right:0!important;top:var(--vy-sheet-top,0px)!important;bottom:auto!important;
+  width:100%!important;height:calc(var(--vy-sheet-height,100vh) - var(--vy020-nav-space))!important;
+  min-height:0!important;max-height:none!important;box-sizing:border-box!important;
+  display:flex!important;align-items:flex-end!important;justify-content:center!important;
+  padding:12px var(--vy020-inset) 0!important;margin:0!important;overflow:hidden!important;
+  background:rgba(0,0,0,.62)!important;background-image:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:2147483200!important;
+}
+
+html.vy861-flat-black.workspace-v7 body :is(
+  .android-sheet,.shop-progress-sheet,.vy6601-select-sheet,.vy-form-sheet,.glass-dialog-card,
+  .subscription-dialog,.production-modal,.vx643-modal,.android-permission-card,.account-delete-dialog,
+  .upgrade-popup-box,.upgrade-plan-reference-card,.modal-card,.sheet-content
+){
+  position:relative!important;inset:auto!important;bottom:auto!important;translate:none!important;
+  width:100%!important;max-width:936px!important;max-height:100%!important;min-height:0!important;
+  box-sizing:border-box!important;margin:0!important;border:0!important;border-radius:26px 26px 0 0!important;
+  background:var(--vy020-popup)!important;background-image:none!important;color:#f5f5f6!important;
+  box-shadow:none!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+}
+
+/* Same drag handle on More, forms, Choose and other sheets. */
+html.vy861-flat-black.workspace-v7 body :is(
+  .android-sheet,.shop-progress-sheet,.vy6601-select-sheet,.vy-form-sheet,.glass-dialog-card,
+  .subscription-dialog,.production-modal,.vx643-modal,.android-permission-card,.account-delete-dialog
+)::before{
+  content:"";display:block!important;width:42px!important;height:5px!important;margin:10px auto 3px!important;
+  border:0!important;border-radius:999px!important;background:#44474d!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(.vy-form-handle,.shop-sheet-handle,.android-sheet-handle){display:none!important}
+
+/* Shared compact header + close control. */
+html.vy861-flat-black.workspace-v7 body :is(.vy-form-head,.vy6601-select-head,.android-sheet-head,.shop-sheet-head){
+  display:flex!important;align-items:center!important;gap:12px!important;min-height:56px!important;
+  padding:8px 14px 10px!important;margin:0!important;border:0!important;
+  border-bottom:1px solid var(--vy020-line)!important;background:transparent!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(.vy-form-head h2,.vy6601-select-head b,.android-sheet-head h2,.shop-sheet-head h2){
+  flex:1!important;min-width:0!important;margin:0!important;font-size:17px!important;line-height:1.25!important;font-weight:800!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(.vy-form-close,.vy6601-select-head button,.android-sheet-close,.shop-sheet-close,[data-back-close]){
+  display:flex!important;align-items:center!important;justify-content:center!important;flex:none!important;
+  width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;margin:0!important;
+  border:0!important;border-radius:50%!important;background:#23252a!important;color:#f4f5f6!important;
+  box-shadow:none!important;font-size:23px!important;line-height:1!important;
+}
+
+/* Fix Choose an option popup from the screenshot. */
+html.vy861-flat-black.workspace-v7 body .vy6601-select-sheet{overflow:hidden!important;padding:0!important}
+html.vy861-flat-black.workspace-v7 body .vy6601-select-options{
+  max-height:min(54vh,520px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+  padding:3px 0 10px!important;background:transparent!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7 body .vy6601-select-options button{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;
+  width:100%!important;min-height:48px!important;margin:0!important;padding:11px 16px!important;
+  border:0!important;border-bottom:1px solid rgba(255,255,255,.035)!important;border-radius:0!important;
+  background:transparent!important;color:#ededee!important;box-shadow:none!important;text-align:left!important;
+  font-size:14px!important;font-weight:600!important;
+}
+html.vy861-flat-black.workspace-v7 body .vy6601-select-options button:last-child{border-bottom:0!important}
+html.vy861-flat-black.workspace-v7 body .vy6601-select-options button.selected{
+  background:rgba(255,255,255,.065)!important;color:#fff!important;font-weight:800!important;
+}
+html.vy861-flat-black.workspace-v7 body .vy6601-select-options button.selected::after{content:"✓";color:#d8dade;font-size:16px;font-weight:900}
+
+/* App-wide borders become nearly invisible; shadows stay off. */
+html.vy861-flat-black.workspace-v7 body :is(
+  .card,.vx621-feature-card,.vx621-kpi,.android-quick-action,.settings-card,.settings-section,
+  .vy675-navigation-card,.p620-report-card,.p2-live-preview,.vy660-live-box,.upload-panel,
+  .shop-sheet-score,.shop-sheet-section,.shop-next-target,.import-preview,.notice,
+  .android-sheet-item,.android-sheet-row,.more-item,.android-more-item,
+  .business-module-card,.sales-card,.stock-card
+){border:1px solid var(--vy020-line)!important;box-shadow:none!important}
+html.vy861-flat-black.workspace-v7 body :is(input,select,textarea){border:1px solid var(--vy020-field-line)!important;box-shadow:none!important}
+html.vy861-flat-black.workspace-v7 body :is(.card,.settings-section,.shop-sheet-section) :is(.card,.settings-card,.notice,.shop-next-target){
+  border-color:transparent!important;box-shadow:none!important;
+}
+
+/* 00019 form/shop overrides are intentionally superseded here. */
+html.vy861-flat-black.workspace-v7 body .vy-form-overlay,
+html.vy861-flat-black.workspace-v7 body #shopProgressSheet.shop-progress-overlay{
+  height:calc(var(--vy-sheet-height,100vh) - var(--vy020-nav-space))!important;
+  padding:12px var(--vy020-inset) 0!important;
+}
+html.vy861-flat-black.workspace-v7 body #androidMoreSheet .android-sheet{
+  left:auto!important;right:auto!important;bottom:auto!important;max-width:936px!important;
+}
+
+@media(max-height:620px){html.vy861-flat-black.workspace-v7{--vy020-nav-space:calc(80px + env(safe-area-inset-bottom,0px))}}
