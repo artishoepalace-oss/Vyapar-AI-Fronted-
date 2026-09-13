@@ -3,9 +3,22 @@
   'use strict';
   let active=null, scheduled=false;
   const fields=['sproduct','dsale','mprofit','stockItem'];
+  function syncHeader(entry){
+    const heading=entry.node.querySelector('h1,h2,h3');
+    if(!heading)return;
+    const title=heading.textContent.trim();
+    const label=title==='Orders & Document Lifecycle'?'Orders & Documents':title;
+    const target=entry.overlay.querySelector('#vyFormHeading');
+    if(target.textContent!==label)target.textContent=label;
+    // Hosts can lose their .card class or wrap their header during decoration.
+    // Identify the source header by the real title, independently of its depth.
+    const header=heading.closest('.calculator-head,.vx621-context-head,.adv-module-head');
+    (header && entry.node.contains(header)?header:heading).classList.add('vy-form-source-heading');
+  }
   function close(immediate){
     const entry=active;if(!entry)return false;
     const finish=()=>{
+      if(entry.observer)entry.observer.disconnect();
       if(entry.placeholder.isConnected) entry.placeholder.replaceWith(entry.node);
       entry.node.hidden=entry.module || entry.hidden;
       if(entry.module)entry.node.classList.add('vy-form-parked');
@@ -21,8 +34,9 @@
   }
   function openHost(node,context){
     if(!node || !node.isConnected)return;
+    if(node.querySelector('.vx621-empty') && !node.querySelector('input,select,textarea,table'))return;
     if(active && active.node===node){
-      active.overlay.querySelector('#vyFormHeading').textContent=node.querySelector('h1,h2,h3')?.textContent.trim()||'Business tools';
+      syncHeader(active);
       return;
     }
     close(true);
@@ -37,6 +51,10 @@
     node.hidden=false;
     overlay.querySelector('.vy-form-body').appendChild(node);
     document.body.appendChild(overlay);document.body.classList.add('vy-form-open');
+    const entry=active;
+    syncHeader(entry);
+    entry.observer=new MutationObserver(()=>syncHeader(entry));
+    entry.observer.observe(node,{childList:true,subtree:true,characterData:true});
     overlay.querySelector('[data-back-close]').onclick=()=>close(false);
     overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
     updateViewport();
@@ -46,13 +64,6 @@
     const v=root.visualViewport;
     document.documentElement.style.setProperty('--vy-sheet-height',(v?v.height:root.innerHeight)+'px');
     document.documentElement.style.setProperty('--vy-sheet-top',(v?v.offsetTop:0)+'px');
-    const nav=document.getElementById('nav');
-    if(nav){
-      const bottom=(v?v.offsetTop+v.height:root.innerHeight),box=nav.getBoundingClientRect();
-      // Reserve only the portion of the navbar in the current visual viewport.
-      const gap=box.top<bottom && box.bottom>0 ? Math.max(8,bottom-box.top+8) : 8;
-      document.documentElement.style.setProperty('--vy-sheet-nav-space',gap+'px');
-    }
   }
   function prepare(){
     scheduled=false;
@@ -73,7 +84,13 @@
   function openField(id){prepare();const card=document.getElementById(id)?.closest('.card');if(card)openHost(card,id==='stockItem'?'stock':'sales');}
   function wrap(name,after,before){
     const original=root[name];if(typeof original!=='function')return;
-    root[name]=function(){if(before)before.apply(this,arguments);const result=original.apply(this,arguments);if(after)after.call(this,result,arguments);return result;};
+    root[name]=function(){
+      if(before)before.apply(this,arguments);
+      const run=()=>original.apply(this,arguments);
+      const context=active?.module && ['p611Open','advRenderModule','fs607OpenPOS'].includes(name)?active.context:null;
+      const result=context && root.VyaparUI621?.withHostContext?root.VyaparUI621.withHostContext(context,run):run();
+      if(after)after.call(this,result,arguments);return result;
+    };
   }
   // Return the original node before its owning page rerenders after a successful save.
   ['Sales','Stock','Business','Home'].forEach(label=>wrap('render'+label,schedule,()=>{if(active && active.context===label.toLowerCase())close(true);}));
@@ -101,7 +118,6 @@
   if(root.visualViewport){root.visualViewport.addEventListener('resize',updateViewport);root.visualViewport.addEventListener('scroll',updateViewport);}
   function boot(){
     prepare();updateViewport();
-    if(root.ResizeObserver){const nav=document.getElementById('nav');if(nav)new ResizeObserver(updateViewport).observe(nav);}
     const app=document.querySelector('main')||document.querySelector('.app');
     if(app)new MutationObserver(records=>{if(records.some(r=>r.addedNodes.length))schedule();}).observe(app,{childList:true,subtree:true});
   }

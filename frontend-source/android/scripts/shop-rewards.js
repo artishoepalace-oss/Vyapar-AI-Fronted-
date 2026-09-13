@@ -241,7 +241,7 @@
     sheet.innerHTML = `
       <div class="shop-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="shopProgressHeading">
         <div class="shop-sheet-handle"></div>
-        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Rewards sirf aapke saved business records se bante hain.</p></div><button type="button" class="shop-sheet-close" id="closeShopProgress" aria-label="Close">×</button></div>
+        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Progress from your saved business records.</p></div><button type="button" class="shop-sheet-close" id="closeShopProgress" aria-label="Close">×</button></div>
         <div class="shop-sheet-score"><div class="shop-score-ring" style="--score:${d.health.score}"><span><b>${d.health.score}</b><small>/100</small></span></div><div><h3>Business Health</h3><p>${d.health.next}</p><small>Consistency + margin + stock + record completeness</small></div></div>
         <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Milestones</h3><span>${d.unlocked}/${d.milestones.length} unlocked</span></div><div class="shop-milestone-list">${d.milestones.map(milestoneMarkup).join('')}</div></div>
         <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Next target</h3></div><div class="shop-next-target"><b>${nextLocked ? nextLocked.label : 'All current milestones complete 🎉'}</b><p>${nextLocked ? nextLocked.detail : 'Naye milestones future growth ke saath add ho sakte hain.'}</p></div></div>

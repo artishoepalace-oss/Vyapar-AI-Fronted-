@@ -11477,6 +11477,11 @@ const oldPlatformHome=window.p611Home;
 const oldAdvancedHome=window.renderAdvancedHome;
 const oldAdvancedOpen=window.advRenderModule;
 let activeHostContext='business';
+let routingHostContext=null;
+function withHostContext(context,run){
+  const previous=routingHostContext;routingHostContext=context;
+  try{return run();}finally{routingHostContext=previous;}
+}
 let tableSeq=0;
 
 window.vx621LegacyBusinessRenderer=oldRenderBusiness;
@@ -11578,9 +11583,9 @@ window.vx621OpenPlatform=function(context,module,tier='business',preset=''){
   const openNow=()=>{
     const host=activateHost(context);
     if(!host) return;
-    if(typeof oldPlatformOpen==='function') oldPlatformOpen(module);
+    if(typeof oldPlatformOpen==='function') withHostContext(context,()=>oldPlatformOpen(module));
     if(module==='transactions' && preset) setTransactionPreset(preset);
-    setTimeout(()=>{ decorateCurrentPlatform(module); observeHost(host); },40);
+    setTimeout(()=>{ decorateCurrentPlatform(module); observeHost(findHost(context)); },40);
     scrollToHost(context);
   };
   if(typeof currentTab!=='undefined' && currentTab!==context && typeof setTab==='function'){
@@ -11600,8 +11605,8 @@ window.vx621OpenAdvanced=function(context,module,tier='business'){
   const openNow=()=>{
     const host=activateHost(context);
     if(!host) return;
-    if(typeof oldAdvancedOpen==='function') oldAdvancedOpen(module);
-    setTimeout(()=>{ decorateGenericDeleteTables(host); observeHost(host); },40);
+    if(typeof oldAdvancedOpen==='function') withHostContext(context,()=>oldAdvancedOpen(module));
+    setTimeout(()=>{ const current=findHost(context);if(current){decorateGenericDeleteTables(current); observeHost(current);} },40);
     scrollToHost(context);
   };
   if(typeof currentTab!=='undefined' && currentTab!==context && typeof setTab==='function'){
@@ -11747,6 +11752,9 @@ function renderBusinessHome(){
   observeHost(findHost('business'));
   findHost('business').hidden=true;
   if (window.VyaparBusinessTools) window.VyaparBusinessTools.bind(el);
+  // Schema setup can save and rebuild every page while a tool is opening.
+  // Restore that tool's destination before its form renderer looks up the host.
+  if(routingHostContext)activateHost(routingHostContext);
 }
 window.renderBusiness=renderBusinessHome;
 
@@ -12014,7 +12022,7 @@ function observeHost(host){
 window.p611Open=function(mod){const r=oldPlatformOpen?.(mod);setTimeout(()=>{decorateCurrentPlatform(mod);const h=document.getElementById('businessModuleArea');observeHost(h);},35);return r;};
 
 // Expose release marker for diagnostics.
-window.VyaparUI621={version:VERSION,renderBusiness:renderBusinessHome,openPlatform:window.vx621OpenPlatform};
+window.VyaparUI621={version:VERSION,renderBusiness:renderBusinessHome,openPlatform:window.vx621OpenPlatform,withHostContext};
 ensure621();
 })();
 
@@ -12865,7 +12873,7 @@ new MutationObserver(refresh).observe(document.documentElement,{childList:true,s
     sheet.innerHTML = `
       <div class="shop-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="shopProgressHeading">
         <div class="shop-sheet-handle"></div>
-        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Rewards sirf aapke saved business records se bante hain.</p></div><button type="button" class="shop-sheet-close" id="closeShopProgress" aria-label="Close">×</button></div>
+        <div class="shop-sheet-head"><div><span class="home-section-kicker">SMALL SHOP GROWTH</span><h2 id="shopProgressHeading">Your Shop Journey</h2><p>Progress from your saved business records.</p></div><button type="button" class="shop-sheet-close" id="closeShopProgress" aria-label="Close">×</button></div>
         <div class="shop-sheet-score"><div class="shop-score-ring" style="--score:${d.health.score}"><span><b>${d.health.score}</b><small>/100</small></span></div><div><h3>Business Health</h3><p>${d.health.next}</p><small>Consistency + margin + stock + record completeness</small></div></div>
         <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Milestones</h3><span>${d.unlocked}/${d.milestones.length} unlocked</span></div><div class="shop-milestone-list">${d.milestones.map(milestoneMarkup).join('')}</div></div>
         <div class="shop-sheet-section"><div class="shop-sheet-title"><h3>Next target</h3></div><div class="shop-next-target"><b>${nextLocked ? nextLocked.label : 'All current milestones complete 🎉'}</b><p>${nextLocked ? nextLocked.detail : 'Naye milestones future growth ke saath add ho sakte hain.'}</p></div></div>
@@ -16099,9 +16107,22 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   'use strict';
   let active=null, scheduled=false;
   const fields=['sproduct','dsale','mprofit','stockItem'];
+  function syncHeader(entry){
+    const heading=entry.node.querySelector('h1,h2,h3');
+    if(!heading)return;
+    const title=heading.textContent.trim();
+    const label=title==='Orders & Document Lifecycle'?'Orders & Documents':title;
+    const target=entry.overlay.querySelector('#vyFormHeading');
+    if(target.textContent!==label)target.textContent=label;
+    // Hosts can lose their .card class or wrap their header during decoration.
+    // Identify the source header by the real title, independently of its depth.
+    const header=heading.closest('.calculator-head,.vx621-context-head,.adv-module-head');
+    (header && entry.node.contains(header)?header:heading).classList.add('vy-form-source-heading');
+  }
   function close(immediate){
     const entry=active;if(!entry)return false;
     const finish=()=>{
+      if(entry.observer)entry.observer.disconnect();
       if(entry.placeholder.isConnected) entry.placeholder.replaceWith(entry.node);
       entry.node.hidden=entry.module || entry.hidden;
       if(entry.module)entry.node.classList.add('vy-form-parked');
@@ -16117,8 +16138,9 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
   function openHost(node,context){
     if(!node || !node.isConnected)return;
+    if(node.querySelector('.vx621-empty') && !node.querySelector('input,select,textarea,table'))return;
     if(active && active.node===node){
-      active.overlay.querySelector('#vyFormHeading').textContent=node.querySelector('h1,h2,h3')?.textContent.trim()||'Business tools';
+      syncHeader(active);
       return;
     }
     close(true);
@@ -16133,6 +16155,10 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     node.hidden=false;
     overlay.querySelector('.vy-form-body').appendChild(node);
     document.body.appendChild(overlay);document.body.classList.add('vy-form-open');
+    const entry=active;
+    syncHeader(entry);
+    entry.observer=new MutationObserver(()=>syncHeader(entry));
+    entry.observer.observe(node,{childList:true,subtree:true,characterData:true});
     overlay.querySelector('[data-back-close]').onclick=()=>close(false);
     overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
     updateViewport();
@@ -16142,13 +16168,6 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const v=root.visualViewport;
     document.documentElement.style.setProperty('--vy-sheet-height',(v?v.height:root.innerHeight)+'px');
     document.documentElement.style.setProperty('--vy-sheet-top',(v?v.offsetTop:0)+'px');
-    const nav=document.getElementById('nav');
-    if(nav){
-      const bottom=(v?v.offsetTop+v.height:root.innerHeight),box=nav.getBoundingClientRect();
-      // Reserve only the portion of the navbar in the current visual viewport.
-      const gap=box.top<bottom && box.bottom>0 ? Math.max(8,bottom-box.top+8) : 8;
-      document.documentElement.style.setProperty('--vy-sheet-nav-space',gap+'px');
-    }
   }
   function prepare(){
     scheduled=false;
@@ -16169,7 +16188,13 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   function openField(id){prepare();const card=document.getElementById(id)?.closest('.card');if(card)openHost(card,id==='stockItem'?'stock':'sales');}
   function wrap(name,after,before){
     const original=root[name];if(typeof original!=='function')return;
-    root[name]=function(){if(before)before.apply(this,arguments);const result=original.apply(this,arguments);if(after)after.call(this,result,arguments);return result;};
+    root[name]=function(){
+      if(before)before.apply(this,arguments);
+      const run=()=>original.apply(this,arguments);
+      const context=active?.module && ['p611Open','advRenderModule','fs607OpenPOS'].includes(name)?active.context:null;
+      const result=context && root.VyaparUI621?.withHostContext?root.VyaparUI621.withHostContext(context,run):run();
+      if(after)after.call(this,result,arguments);return result;
+    };
   }
   // Return the original node before its owning page rerenders after a successful save.
   ['Sales','Stock','Business','Home'].forEach(label=>wrap('render'+label,schedule,()=>{if(active && active.context===label.toLowerCase())close(true);}));
@@ -16197,7 +16222,6 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   if(root.visualViewport){root.visualViewport.addEventListener('resize',updateViewport);root.visualViewport.addEventListener('scroll',updateViewport);}
   function boot(){
     prepare();updateViewport();
-    if(root.ResizeObserver){const nav=document.getElementById('nav');if(nav)new ResizeObserver(updateViewport).observe(nav);}
     const app=document.querySelector('main')||document.querySelector('.app');
     if(app)new MutationObserver(records=>{if(records.some(r=>r.addedNodes.length))schedule();}).observe(app,{childList:true,subtree:true});
   }

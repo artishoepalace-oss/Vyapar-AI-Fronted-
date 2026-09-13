@@ -9479,6 +9479,11 @@ const oldPlatformHome=window.p611Home;
 const oldAdvancedHome=window.renderAdvancedHome;
 const oldAdvancedOpen=window.advRenderModule;
 let activeHostContext='business';
+let routingHostContext=null;
+function withHostContext(context,run){
+  const previous=routingHostContext;routingHostContext=context;
+  try{return run();}finally{routingHostContext=previous;}
+}
 let tableSeq=0;
 
 window.vx621LegacyBusinessRenderer=oldRenderBusiness;
@@ -9580,9 +9585,9 @@ window.vx621OpenPlatform=function(context,module,tier='business',preset=''){
   const openNow=()=>{
     const host=activateHost(context);
     if(!host) return;
-    if(typeof oldPlatformOpen==='function') oldPlatformOpen(module);
+    if(typeof oldPlatformOpen==='function') withHostContext(context,()=>oldPlatformOpen(module));
     if(module==='transactions' && preset) setTransactionPreset(preset);
-    setTimeout(()=>{ decorateCurrentPlatform(module); observeHost(host); },40);
+    setTimeout(()=>{ decorateCurrentPlatform(module); observeHost(findHost(context)); },40);
     scrollToHost(context);
   };
   if(typeof currentTab!=='undefined' && currentTab!==context && typeof setTab==='function'){
@@ -9602,8 +9607,8 @@ window.vx621OpenAdvanced=function(context,module,tier='business'){
   const openNow=()=>{
     const host=activateHost(context);
     if(!host) return;
-    if(typeof oldAdvancedOpen==='function') oldAdvancedOpen(module);
-    setTimeout(()=>{ decorateGenericDeleteTables(host); observeHost(host); },40);
+    if(typeof oldAdvancedOpen==='function') withHostContext(context,()=>oldAdvancedOpen(module));
+    setTimeout(()=>{ const current=findHost(context);if(current){decorateGenericDeleteTables(current); observeHost(current);} },40);
     scrollToHost(context);
   };
   if(typeof currentTab!=='undefined' && currentTab!==context && typeof setTab==='function'){
@@ -9749,6 +9754,9 @@ function renderBusinessHome(){
   observeHost(findHost('business'));
   findHost('business').hidden=true;
   if (window.VyaparBusinessTools) window.VyaparBusinessTools.bind(el);
+  // Schema setup can save and rebuild every page while a tool is opening.
+  // Restore that tool's destination before its form renderer looks up the host.
+  if(routingHostContext)activateHost(routingHostContext);
 }
 window.renderBusiness=renderBusinessHome;
 
@@ -10016,7 +10024,7 @@ function observeHost(host){
 window.p611Open=function(mod){const r=oldPlatformOpen?.(mod);setTimeout(()=>{decorateCurrentPlatform(mod);const h=document.getElementById('businessModuleArea');observeHost(h);},35);return r;};
 
 // Expose release marker for diagnostics.
-window.VyaparUI621={version:VERSION,renderBusiness:renderBusinessHome,openPlatform:window.vx621OpenPlatform};
+window.VyaparUI621={version:VERSION,renderBusiness:renderBusinessHome,openPlatform:window.vx621OpenPlatform,withHostContext};
 ensure621();
 })();
 

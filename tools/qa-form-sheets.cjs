@@ -50,15 +50,31 @@ const remote='20.10.2004.00016.2026';
   async function settled(){await page.waitForTimeout(650);}
   async function checkSheet(label){
     await settled();
+    if(label==='sales-platform')assert.equal(await page.locator('#vyFormSheet #pType').inputValue(),'SALE_RETURN','Return form stays inside Sales popup after schema save');
+    if(label==='business-platform')assert.equal(await page.locator('#vyFormSheet #pType').inputValue(),'SALE','Sale form stays inside Business popup');
+    assert.equal(await page.locator('#vyFormSheet .vx621-empty').count(),0,'Never open a placeholder as a form');
     const shape=await page.locator('.vy-form-sheet,.shop-progress-sheet').evaluate(el=>{
       const b=el.getBoundingClientRect(),o=el.parentElement.getBoundingClientRect(),n=document.getElementById('nav').getBoundingClientRect();
       return {bottom:b.bottom,top:b.top,left:b.left,right:b.right,height:b.height,vh:innerHeight,ow:o.width,navTop:n.top,navLeft:n.left,navRight:n.right,radius:getComputedStyle(el).borderBottomLeftRadius,nav:getComputedStyle(document.getElementById('nav')).visibility};
     });
-    assert(Math.abs(shape.navTop-shape.bottom-8)<2,label+': sheet sits 8px above navbar '+JSON.stringify(shape));
+    assert(Math.abs(shape.vh-shape.bottom)<2,label+': sheet reaches viewport bottom '+JSON.stringify(shape));
     assert(Math.abs(shape.left-shape.navLeft)<1 && Math.abs(shape.right-shape.navRight)<1,label+': popup and navbar side edges match');
-    assert.equal(shape.radius,'26px',label+': bottom corners rounded');
+    assert.equal(shape.radius,'0px',label+': bottom attached to viewport');
     assert(shape.top>=10,label+': top clearance');assert(shape.left>=-1 && shape.right<=width+1,label+': no overflow');
-    assert.equal(shape.nav,'visible',label+': navbar stays visible');
+    assert.equal(shape.nav,'visible',label+': navbar is not hidden with CSS');
+    const overlayOwnsNav=await page.evaluate(()=>{
+      const n=document.getElementById('nav').getBoundingClientRect();
+      return !!document.elementFromPoint(n.left+n.width/2,n.top+n.height/2)?.closest('#vyFormSheet,#shopProgressSheet');
+    });
+    assert(overlayOwnsNav,label+': popup overlays navbar and blocks background taps');
+    if(await page.locator('#vyFormSheet').count()){
+      const source=page.locator('#vyFormSheet .vy-form-source-heading');
+      const header=await page.locator('#vyFormHeading').innerText();
+      const repeated=await page.locator('#vyFormSheet .vy-form-body h1,#vyFormSheet .vy-form-body h2,#vyFormSheet .vy-form-body h3').evaluateAll((els,title)=>els.filter(el=>el.getClientRects().length && (el.textContent.trim()===title || el.textContent.trim()==='Orders & Document Lifecycle')).length,header);
+      assert.equal(repeated,0,label+': no repeated visible title');
+      for(const item of await source.all())assert.equal(await item.isVisible(),false,label+': no repeated legacy header');
+      assert.equal(await page.locator('#vyFormHeading').count(),1,label+': one popup title');
+    }
     await page.screenshot({path:path.join(out,label+'-'+width+'.png')});
     await page.evaluate(()=>window.handleNativeBackPress());await settled();
     assert.equal(await page.locator('#vyFormSheet,#shopProgressSheet').count(),0,label+': back closes');
@@ -73,7 +89,7 @@ const remote='20.10.2004.00016.2026';
   const more=await page.locator('#androidMoreSheet .android-sheet').boundingBox();
   const navBox=await page.locator('#nav').boundingBox();
   assert(Math.abs(more.x-navBox.x)<1 && Math.abs(more.width-navBox.width)<1,'More menu matches navbar side edges');
-  assert(Math.abs(navBox.y-more.y-more.height-8)<2,'More menu sits above navbar');
+  assert(Math.abs(more.y+more.height-760)<2,'More menu overlays navbar to viewport bottom');
   await page.screenshot({path:path.join(out,'more-'+width+'.png')});
   await page.evaluate(()=>window.handleNativeBackPress());await settled();
   await page.evaluate(()=>window.setTab('sales',false));await settled();
@@ -100,6 +116,17 @@ const remote='20.10.2004.00016.2026';
   await page.evaluate(()=>{window.setTab('business',false);window.advRenderModule('customers');});await checkSheet('customers');
   await page.evaluate(()=>window.fs607OpenPOS());await checkSheet('pos');
   if(width===360){
+    await page.evaluate(()=>window.vx621OpenPlatform('sales','documents620','business'));await settled();
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'Orders & Documents');
+    await page.evaluate(()=>{
+      const host=document.getElementById('businessModuleArea'),head=host.querySelector('.calculator-head');
+      host.classList.remove('card');const wrap=document.createElement('div');head.before(wrap);wrap.appendChild(head);
+      head.outerHTML=head.outerHTML.replace('vy-form-source-heading','');
+    });await settled();
+    assert.equal(await page.locator('#vyFormSheet .calculator-head').isVisible(),false,'Decorated nested platform header stays hidden');
+    await page.evaluate(()=>window.p611Open('messages620'));await settled();
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'Messaging & Reminders','Header follows module replacement');
+    await checkSheet('dynamic-header');
     for(const m of ['cashbank','finance620','tax620','currency620','businesses','staff620','inventory','documents620','print620','messages620','ledger','reports620']){
       await page.evaluate(m=>window.vx621OpenPlatform('business',m,'business'),m);await checkSheet(m);
     }

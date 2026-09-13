@@ -9776,8 +9776,8 @@ html.vy861-flat-black.workspace-v7 body #screen-settings[data-vy675-page="update
 
 /* ===== STYLE SOURCE: form-sheets.css ===== */
 
-/* Shared side edges; floating sheets finish just above the visible app navbar. */
-html.vy861-flat-black.workspace-v7 { --vy-shell-inset:12px; --vy-sheet-nav-space:calc(76px + env(safe-area-inset-bottom,0px)); }
+/* Navbar stays mounted in place; the full-screen popup layer covers it. */
+html.vy861-flat-black.workspace-v7 { --vy-shell-inset:12px; }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav {
   left:var(--vy-shell-inset)!important;right:var(--vy-shell-inset)!important;
   width:auto!important;max-width:936px!important;margin:0 auto!important;
@@ -9792,8 +9792,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready .app > .top {
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet {
   left:var(--vy-shell-inset)!important;right:var(--vy-shell-inset)!important;
-  max-width:936px!important;bottom:var(--vy-sheet-nav-space)!important;
-  border-radius:26px!important;
+  max-width:936px!important;bottom:0!important;
+  border-radius:26px 26px 0 0!important;
 }
 html.vy861-flat-black.vy-motion-ready body .vy-form-storage,
 html.vy861-flat-black.vy-motion-ready body .vy-form-parked { display:none!important; }
@@ -9803,8 +9803,8 @@ html.vy861-flat-black.vy-motion-ready body #shopProgressSheet.shop-progress-over
   position:fixed!important;inset:auto 0 0!important;top:var(--vy-sheet-top,0px)!important;
   display:flex!important;align-items:flex-end!important;justify-content:center!important;
   width:100%!important;height:var(--vy-sheet-height,100%)!important;min-height:0!important;max-height:none!important;
-  padding:12px var(--vy-shell-inset,12px) var(--vy-sheet-nav-space)!important;margin:0!important;box-sizing:border-box!important;
-  background:linear-gradient(to bottom,rgba(0,0,0,.62) 0,rgba(0,0,0,.62) calc(100% - var(--vy-sheet-nav-space)),transparent calc(100% - var(--vy-sheet-nav-space)))!important;
+  padding:12px var(--vy-shell-inset,12px) 0!important;margin:0!important;box-sizing:border-box!important;
+  background:rgba(0,0,0,.62)!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:2147483200!important;
   overflow:hidden!important;overscroll-behavior:contain;animation:none!important;
 }
@@ -9812,7 +9812,7 @@ html.vy861-flat-black.vy-motion-ready body .vy-form-sheet,
 html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-sheet {
   position:relative!important;inset:auto!important;bottom:0!important;
   width:100%!important;max-width:936px!important;max-height:100%!important;min-height:0!important;
-  box-sizing:border-box!important;margin:0!important;border-radius:26px!important;
+  box-sizing:border-box!important;margin:0!important;border-radius:26px 26px 0 0!important;
   border:1px solid #2a2c30!important;
   background:#151619!important;color:#f5f5f6!important;
   padding:0!important;box-shadow:none!important;overflow-x:hidden!important;
@@ -9821,14 +9821,12 @@ html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-she
 html.vy861-flat-black.vy-motion-ready body .vy-form-sheet { display:flex!important;flex-direction:column!important;overflow:hidden!important; }
 html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-sheet { overflow-y:auto!important;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px))!important; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-handle { flex:none;width:44px;height:5px;background:#44464b;border-radius:5px;margin:12px auto 4px; }
-html.vy861-flat-black.vy-motion-ready body .vy-form-head { flex:none;display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #292b30; }
-html.vy861-flat-black.vy-motion-ready body .vy-form-head h2 { flex:1;min-width:0;margin:0!important;font-size:20px!important;line-height:1.3!important; }
+html.vy861-flat-black.vy-motion-ready body .vy-form-head { flex:none;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #292b30; }
+html.vy861-flat-black.vy-motion-ready body .vy-form-head h2 { flex:1;min-width:0;margin:0!important;font-size:18px!important;line-height:1.3!important; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-close { display:flex!important;align-items:center!important;justify-content:center!important;flex:none;width:44px!important;height:44px!important;padding:0!important;border-radius:50%!important;background:#222428!important;border:1px solid #36383d!important;color:#fff!important;font-size:28px!important;line-height:1!important; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body { min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px)); }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body > :is(.card,.vx621-platform-host) { display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important;max-height:none!important; }
-html.vy861-flat-black.vy-motion-ready body .vy-form-body > .card > h2,
-html.vy861-flat-black.vy-motion-ready body .vy-form-body > .card > .calculator-head,
-html.vy861-flat-black.vy-motion-ready body .vy-form-body .fs607-pos > .calculator-head { display:none!important; }
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-source-heading { display:none!important; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(input,select,textarea) { box-sizing:border-box;max-width:100%;scroll-margin:16px; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(.p611-form,.p620-filter,.grid3,.row) { min-width:0; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(.p611-table,.vx621-table-wrap,.scroll) { max-width:100%;overflow-x:auto; }
