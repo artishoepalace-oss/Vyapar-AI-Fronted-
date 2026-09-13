@@ -46,6 +46,13 @@
     const v=root.visualViewport;
     document.documentElement.style.setProperty('--vy-sheet-height',(v?v.height:root.innerHeight)+'px');
     document.documentElement.style.setProperty('--vy-sheet-top',(v?v.offsetTop:0)+'px');
+    const nav=document.getElementById('nav');
+    if(nav){
+      const bottom=(v?v.offsetTop+v.height:root.innerHeight),box=nav.getBoundingClientRect();
+      // Reserve only the portion of the navbar in the current visual viewport.
+      const gap=box.top<bottom && box.bottom>0 ? Math.max(8,bottom-box.top+8) : 8;
+      document.documentElement.style.setProperty('--vy-sheet-nav-space',gap+'px');
+    }
   }
   function prepare(){
     scheduled=false;
@@ -94,6 +101,7 @@
   if(root.visualViewport){root.visualViewport.addEventListener('resize',updateViewport);root.visualViewport.addEventListener('scroll',updateViewport);}
   function boot(){
     prepare();updateViewport();
+    if(root.ResizeObserver){const nav=document.getElementById('nav');if(nav)new ResizeObserver(updateViewport).observe(nav);}
     const app=document.querySelector('main')||document.querySelector('.app');
     if(app)new MutationObserver(records=>{if(records.some(r=>r.addedNodes.length))schedule();}).observe(app,{childList:true,subtree:true});
   }

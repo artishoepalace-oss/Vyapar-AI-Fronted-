@@ -39,16 +39,26 @@ const remote='20.10.2004.00016.2026';
   await page.waitForTimeout(900);
   await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());window.setTab('home',false);});
   await page.waitForTimeout(350);
+  const edges=await page.evaluate(()=>{
+    const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom};};
+    const nav=document.getElementById('nav');
+    return {nav:rect(nav),top:rect(document.querySelector('.top')),card:rect(document.querySelector('#screen-home .home-overview')),buttons:[...nav.querySelectorAll('button')].map(el=>({box:rect(el),icon:rect(el.querySelector('.android-nav-icon')),label:rect(el.querySelector('.android-nav-label'))}))};
+  });
+  for(const r of [edges.top,edges.card]){assert(Math.abs(r.left-edges.nav.left)<1,'Shared left edge '+JSON.stringify(edges));assert(Math.abs(r.right-edges.nav.right)<1,'Shared right edge '+JSON.stringify(edges));}
+  for(const b of edges.buttons){assert(b.box.left>=edges.nav.left && b.box.right<=edges.nav.right,'Nav item inside rounded container');assert(Math.abs((b.icon.left+b.icon.right)-(b.box.left+b.box.right))<2,'Icon centered');assert(Math.abs((b.label.left+b.label.right)-(b.box.left+b.box.right))<2,'Label centered');}
+  await page.screenshot({path:path.join(out,'shell-'+width+'.png')});
   async function settled(){await page.waitForTimeout(650);}
   async function checkSheet(label){
     await settled();
     const shape=await page.locator('.vy-form-sheet,.shop-progress-sheet').evaluate(el=>{
-      const b=el.getBoundingClientRect(),o=el.parentElement.getBoundingClientRect();
-      return {bottom:b.bottom,top:b.top,left:b.left,right:b.right,height:b.height,vh:innerHeight,ow:o.width,nav:getComputedStyle(document.getElementById('nav')).visibility};
+      const b=el.getBoundingClientRect(),o=el.parentElement.getBoundingClientRect(),n=document.getElementById('nav').getBoundingClientRect();
+      return {bottom:b.bottom,top:b.top,left:b.left,right:b.right,height:b.height,vh:innerHeight,ow:o.width,navTop:n.top,navLeft:n.left,navRight:n.right,radius:getComputedStyle(el).borderBottomLeftRadius,nav:getComputedStyle(document.getElementById('nav')).visibility};
     });
-    assert(Math.abs(shape.bottom-shape.vh)<2,label+': sheet reaches bottom '+JSON.stringify(shape));
+    assert(Math.abs(shape.navTop-shape.bottom-8)<2,label+': sheet sits 8px above navbar '+JSON.stringify(shape));
+    assert(Math.abs(shape.left-shape.navLeft)<1 && Math.abs(shape.right-shape.navRight)<1,label+': popup and navbar side edges match');
+    assert.equal(shape.radius,'26px',label+': bottom corners rounded');
     assert(shape.top>=10,label+': top clearance');assert(shape.left>=-1 && shape.right<=width+1,label+': no overflow');
-    assert.equal(shape.nav,'hidden',label+': navbar hidden');
+    assert.equal(shape.nav,'visible',label+': navbar stays visible');
     await page.screenshot({path:path.join(out,label+'-'+width+'.png')});
     await page.evaluate(()=>window.handleNativeBackPress());await settled();
     assert.equal(await page.locator('#vyFormSheet,#shopProgressSheet').count(),0,label+': back closes');
@@ -59,6 +69,13 @@ const remote='20.10.2004.00016.2026';
   assert.notEqual(moving,'none','Home sheet animates upward');
   assert(Number(moving.split(',')[5]?.replace(')',''))>0,'Home sheet begins below final position');
   await checkSheet('home-progress');
+  await page.locator('#nav [data-android-tab="more"]').click();await settled();
+  const more=await page.locator('#androidMoreSheet .android-sheet').boundingBox();
+  const navBox=await page.locator('#nav').boundingBox();
+  assert(Math.abs(more.x-navBox.x)<1 && Math.abs(more.width-navBox.width)<1,'More menu matches navbar side edges');
+  assert(Math.abs(navBox.y-more.y-more.height-8)<2,'More menu sits above navbar');
+  await page.screenshot({path:path.join(out,'more-'+width+'.png')});
+  await page.evaluate(()=>window.handleNativeBackPress());await settled();
   await page.evaluate(()=>window.setTab('sales',false));await settled();
   assert.equal(await page.locator('#sproduct').isVisible(),false,'Manual form starts collapsed');
   await page.locator('[data-form-field="sproduct"] > button').click();

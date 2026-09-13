@@ -1,4 +1,22 @@
-/* Bottom sheets cover the app navbar and finish at the viewport bottom. */
+/* Shared side edges; floating sheets finish just above the visible app navbar. */
+html.vy861-flat-black.workspace-v7 { --vy-shell-inset:12px; --vy-sheet-nav-space:calc(76px + env(safe-area-inset-bottom,0px)); }
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav {
+  left:var(--vy-shell-inset)!important;right:var(--vy-shell-inset)!important;
+  width:auto!important;max-width:936px!important;margin:0 auto!important;
+  transform:none!important;translate:none!important;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  border-radius:30px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav > button { width:100%!important;min-width:0!important; }
+html.vy861-flat-black.workspace-v7.vy-motion-ready .app > .top {
+  margin-left:var(--vy-shell-inset)!important;margin-right:var(--vy-shell-inset)!important;
+  width:calc(100% - 24px)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet {
+  left:var(--vy-shell-inset)!important;right:var(--vy-shell-inset)!important;
+  max-width:936px!important;bottom:var(--vy-sheet-nav-space)!important;
+  border-radius:26px!important;
+}
 html.vy861-flat-black.vy-motion-ready body .vy-form-storage,
 html.vy861-flat-black.vy-motion-ready body .vy-form-parked { display:none!important; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-launcher { min-width:0; }
@@ -7,16 +25,17 @@ html.vy861-flat-black.vy-motion-ready body #shopProgressSheet.shop-progress-over
   position:fixed!important;inset:auto 0 0!important;top:var(--vy-sheet-top,0px)!important;
   display:flex!important;align-items:flex-end!important;justify-content:center!important;
   width:100%!important;height:var(--vy-sheet-height,100%)!important;min-height:0!important;max-height:none!important;
-  padding:12px 0 0!important;margin:0!important;box-sizing:border-box!important;
-  background:rgba(0,0,0,.62)!important;z-index:2147483200!important;
+  padding:12px var(--vy-shell-inset,12px) var(--vy-sheet-nav-space)!important;margin:0!important;box-sizing:border-box!important;
+  background:linear-gradient(to bottom,rgba(0,0,0,.62) 0,rgba(0,0,0,.62) calc(100% - var(--vy-sheet-nav-space)),transparent calc(100% - var(--vy-sheet-nav-space)))!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:2147483200!important;
   overflow:hidden!important;overscroll-behavior:contain;animation:none!important;
 }
 html.vy861-flat-black.vy-motion-ready body .vy-form-sheet,
 html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-sheet {
   position:relative!important;inset:auto!important;bottom:0!important;
-  width:100%!important;max-width:640px!important;max-height:100%!important;min-height:0!important;
-  box-sizing:border-box!important;margin:0!important;border-radius:26px 26px 0 0!important;
-  border:1px solid #2a2c30!important;border-bottom:0!important;
+  width:100%!important;max-width:936px!important;max-height:100%!important;min-height:0!important;
+  box-sizing:border-box!important;margin:0!important;border-radius:26px!important;
+  border:1px solid #2a2c30!important;
   background:#151619!important;color:#f5f5f6!important;
   padding:0!important;box-shadow:none!important;overflow-x:hidden!important;
   animation:none!important;translate:none!important;
@@ -36,7 +55,7 @@ html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(input,select,textar
 html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(.p611-form,.p620-filter,.grid3,.row) { min-width:0; }
 html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(.p611-table,.vx621-table-wrap,.scroll) { max-width:100%;overflow-x:auto; }
 html.vy861-flat-black.vy-motion-ready body.vy-form-open,html.vy861-flat-black.vy-motion-ready body.shop-progress-open { overflow:hidden!important; }
-html.vy861-flat-black.vy-motion-ready body.vy-form-open #nav.nav,html.vy861-flat-black.vy-motion-ready body.shop-progress-open #nav.nav { visibility:hidden!important;pointer-events:none!important; }
+html.vy861-flat-black.vy-motion-ready body.vy-form-open #nav.nav,html.vy861-flat-black.vy-motion-ready body.shop-progress-open #nav.nav { visibility:visible!important;pointer-events:none!important; }
 @media(max-width:600px){
   html.vy861-flat-black.vy-motion-ready body .vy-form-body :is(.p611-form,.grid3) { grid-template-columns:minmax(0,1fr)!important; }
 }
