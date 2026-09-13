@@ -14,6 +14,13 @@ html.vy861-flat-black.workspace-v7 body .nav{
   width:auto!important;max-width:936px!important;margin-left:auto!important;margin-right:auto!important;
   visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
+html.vy861-flat-black.workspace-v7 body.vy-form-open #nav.nav,
+html.vy861-flat-black.workspace-v7 body.shop-progress-open #nav.nav,
+html.vy861-flat-black.workspace-v7 body.shop-progress-open .nav,
+html.vy861-flat-black.workspace-v7 body.glass-dialog-open #nav.nav,
+html.vy861-flat-black.workspace-v7 body.glass-dialog-open .nav{
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+}
 
 /* One geometry for all popup/overlay families. */
 html.vy861-flat-black.workspace-v7 body :is(
