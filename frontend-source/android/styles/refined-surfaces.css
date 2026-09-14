@@ -1,5 +1,5 @@
 /* Shared low-outline surfaces; focus, validation and semantic accents remain visible. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,#screen-calculator,#screen-subscription,.vy-unified-overlay) :is(.card,.stat,[class*="-card"],[class*="-kpi"],[class*="-panel"],.notice,.btn,button,input,select,textarea,.workspace-tabs,.vy675-settings-list,.vy675-row-icon,.android-sheet-item-icon,.shop-milestone,.shop-sheet-score,.shop-month-grid>div,.shop-growth-stat,.shop-streak,.p611-table,.scroll,.home-metric-icon) {
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,#screen-calculator,#screen-subscription,.vy-unified-overlay) :is(.card,.stat,[class*="-card"],[class*="-kpi"],[class*="-panel"],.notice,.btn,button,input,select,textarea,.workspace-tabs,.vy675-settings-list,.vy675-row-icon,.android-sheet-item-icon,.shop-milestone,.shop-sheet-score,.shop-month-grid>div,.shop-growth-stat,.shop-streak,.p611-table,.scroll,.home-metric-icon):not(:where(.vx621-kpis)) {
   border-color:transparent!important;box-shadow:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,.vy-unified-overlay) :is(input,select,textarea):focus {
@@ -7,18 +7,18 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,.vy-unified-overlay) [aria-invalid="true"] {outline:2px solid #de687d!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-overlay button:focus-visible {outline:2px solid #9fabbc!important;outline-offset:2px!important;}
-/* Same viewport attachment, side inset, shade and radius across all app popups. */
+/* Same edge-to-edge viewport attachment, shade and radius across all app popups. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay).vy-unified-overlay {
   position:fixed!important;inset:auto 0 0!important;top:var(--vy-sheet-top,0px)!important;
   width:100%!important;height:var(--vy-sheet-height,100%)!important;max-height:none!important;min-height:0!important;
   display:flex!important;align-items:flex-end!important;justify-content:center!important;
-  padding:12px 12px 0!important;margin:0!important;box-sizing:border-box!important;
+  padding:12px 0 0!important;margin:0!important;box-sizing:border-box!important;
   background:rgba(0,0,0,.62)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
   overflow:hidden!important;z-index:2147483200!important;animation:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay) > .vy-unified-panel {
   position:relative!important;inset:auto!important;bottom:0!important;left:auto!important;right:auto!important;
-  width:100%!important;max-width:936px!important;min-width:0!important;max-height:100%!important;min-height:0!important;
+  width:100%!important;max-width:none!important;min-width:0!important;max-height:100%!important;min-height:0!important;
   margin:0!important;box-sizing:border-box!important;border:0!important;border-radius:26px 26px 0 0!important;
   background:#151619!important;background-image:none!important;color:#f5f5f6!important;box-shadow:none!important;
   padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px))!important;
@@ -198,3 +198,14 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records 
 @media(max-width:359px){
   html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings) :is(.p1-modebar,.workspace-tabs) > button {font-size:11px!important;padding-left:3px!important;padding-right:3px!important;}
 }
+
+/* One visible frame around the Business and Stock summary groups. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock > .stats {
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;
+  padding:10px!important;margin:0 0 16px!important;gap:10px!important;
+  border:1px solid #3a3d43!important;border-radius:22px!important;
+  background:#0b0c0e!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock > .stats > .stat {min-width:0!important;width:100%!important;box-sizing:border-box!important;}

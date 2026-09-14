@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES ? process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright' : 'playwright');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'docs/qa-refined-ui');
 const version=require('../version.json').versionName;
-const remote='20.10.2004.00023.2026';
+const remote='20.10.2004.00025.2026';
 (async()=>{
  fs.mkdirSync(out,{recursive:true});
  const server=require('node:http').createServer((req,res)=>{
@@ -53,6 +53,12 @@ const remote='20.10.2004.00023.2026';
   await page.evaluate(()=>setTab('business',false));await settle();
   assert.equal(await page.locator('.vx621-hero').count(),0,'Business intro removed');
   assert(await page.locator('.vx621-kpis').isVisible(),'Business figures retained');
+  for(const [tab,selector] of [['business','.vx621-kpis'],['stock','#screen-stock > .stats']]){
+    await page.evaluate(t=>setTab(t,false),tab);await settle();
+    const frame=page.locator(selector),style=await frame.evaluate(el=>{const s=getComputedStyle(el);return {border:s.borderTopWidth,color:s.borderTopColor,overflow:el.scrollWidth>el.clientWidth};});
+    assert.equal(style.border,'1px');assert.equal(style.color,'rgb(58, 61, 67)');assert.equal(style.overflow,false);
+    await page.screenshot({path:path.join(out,tab+'-summary-'+width+'.png')});
+  }
   await page.evaluate(()=>setTab('analytics',false));await settle();
   await page.locator('summary').filter({hasText:'Performance details'}).click();
   assert.equal(await page.locator('.insight-performance th').first().evaluate(el=>getComputedStyle(el).textAlign),'left');
@@ -68,7 +74,7 @@ const remote='20.10.2004.00023.2026';
   await page.locator('.insight-history > button').last().click();await settle();
   assert.equal(await page.locator('select[aria-label="Profit year"]').inputValue(),'2023','History opens correct year');
   await page.locator('select[aria-label="Profit year"]').dispatchEvent('click');await settle();
-  async function geometry(selector){const r=await page.locator(selector).boundingBox();assert(Math.abs(r.y+r.height-760)<1,'Popup attaches at bottom '+JSON.stringify(r));assert(Math.abs(r.x-12)<1 && Math.abs(r.width-(width-24))<1,'Popup side inset');}
+  async function geometry(selector){const r=await page.locator(selector).boundingBox();assert(Math.abs(r.y+r.height-760)<1,'Popup attaches at bottom '+JSON.stringify(r));assert(Math.abs(r.x)<1 && Math.abs(r.width-width)<1,'Popup fills both screen edges');}
   await geometry('.vy6601-select-sheet');
   assert.equal(await page.locator('#vy6601Select .vy6601-select-head').innerText(),'Profit year');
   assert.equal(await page.locator('#vy6601Select').getByRole('button',{name:'×',exact:true}).count(),0);
@@ -76,7 +82,7 @@ const remote='20.10.2004.00023.2026';
   await page.locator('#vy6601Select .vy6601-select-options button').filter({hasText:'2025'}).click();await settle();
   assert.equal(await page.locator('select[aria-label="Profit year"]').inputValue(),'2025','Chooser dispatches actual change');
   await page.evaluate(()=>vx621OpenPlatform('business','transactions','business','SALE'));await settle();
-  await page.locator('#pType').dispatchEvent('click');await settle();await geometry('.vy6601-select-sheet');
+  await geometry('#vyFormSheet > .vy-unified-panel');await page.locator('#pType').dispatchEvent('click');await settle();await geometry('.vy6601-select-sheet');
   const hit=await page.evaluate(()=>document.elementFromPoint(innerWidth/2,innerHeight-30)?.closest('#vy6601Select')?.id);
   assert.equal(hit,'vy6601Select','Nested chooser above form');
   await page.evaluate(()=>handleNativeBackPress());await settle();
