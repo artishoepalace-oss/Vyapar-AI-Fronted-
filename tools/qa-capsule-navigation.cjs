@@ -47,12 +47,13 @@ const remote='20.10.2004.00016.2026';
       return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,nav:rect(nav),cap:rect(cap),
        active:nav.querySelector('button.active')?.dataset.androidTab,
        before:getComputedStyle(nav,'::before').display,color:getComputedStyle(nav).backgroundColor,
-       transition:getComputedStyle(cap).transitionDuration,
+       transition:getComputedStyle(cap).transitionDuration,topColor:getComputedStyle(document.querySelector('.top')).backgroundColor,rim:getComputedStyle(nav).boxShadow,selectedColor:getComputedStyle(nav.querySelector('button.active .android-nav-label')).color,selectedGlow:getComputedStyle(nav.querySelector('button.active .android-nav-label')).textShadow,
        buttons:[...nav.querySelectorAll('button')].map(el=>({id:el.dataset.androidTab,box:rect(el),icon:rect(el.querySelector('.android-nav-icon')),label:rect(el.querySelector('.android-nav-label'))}))};
     });
     assert.equal(g.active,expected);assert.equal(g.buttons.length,5);assert.equal(g.nav.h,50);
     assert.equal(g.nav.w,Math.min(367,g.viewport-16));assert.equal(g.cap.w,68);assert.equal(g.cap.h,42);
-    assert.equal(g.before,'none');assert.equal(g.color,'rgb(17, 19, 17)');assert(g.scrollWidth<=g.viewport,'No page overflow');
+    assert.equal(g.before,'none');assert.equal(g.color,'rgb(17, 18, 20)');assert(g.scrollWidth<=g.viewport,'No page overflow');
+    assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(128, 1, 31)');assert.notEqual(g.selectedGlow,'none');assert(g.rim.includes('inset'),'Glossy rim is inset and preserves geometry');
     const active=g.buttons.find(b=>b.id===expected);
     assert(Math.abs(g.cap.cx-active.box.cx)<0.1,'Capsule follows exact tab center');
     assert.equal(g.cap.y-g.nav.y,4);assert(g.cap.x-g.nav.x>=5.99);assert(g.nav.x+g.nav.w-g.cap.x-g.cap.w>=5.99);
