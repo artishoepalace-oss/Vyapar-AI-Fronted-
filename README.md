@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00008.2026** (`2010200408`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00026.2026** (`2010200426`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 
@@ -26,6 +26,7 @@ Build the Android app using the existing GitHub Actions workflow or Android SDK/
 | Login and session restoration | `frontend-source/android/scripts/auth.js`, `android-session-flow-647.js` |
 | Settings navigation and search | `frontend-source/android/scripts/settings-center-675.js` |
 | Final surfaces, readable controls and business layout | `frontend-source/android/styles/surface-hierarchy-20102004.css` |
+| Fixed bottom navbar layout and capsule centering | `frontend-source/android/styles/capsule-navigation.css` and the Android UI section of `scripts/app.js` |
 | Navigation and popup motion | `frontend-source/android/scripts/motion-20102004.js` and matching stylesheet |
 | Ordered bundle build | `tools/build-frontend-bundles.mjs` |
 | Entry HTML | `web/index.html` and `android-app/app/src/main/assets/index.html` |
@@ -40,7 +41,7 @@ The original financial engines and feature modules remain in place. Do not remov
 ## Current improvements
 
 - Business, Sales and Stock share compact tool cards with shorter descriptions and consistent actions. Business categories and cross-category search remain available.
-- Telegram-inspired compact top/bottom bar proportions, five navigation destinations, visible active icons and one bottom content inset.
+- Fixed 367×50px black bottom navbar with a 68×42px sliding grey capsule, five equal tab cells, measured centering and responsive end padding. See `RELEASE_20.10.2004.00026.2026.md`.
 - Dark-only Settings with search, multiword matching, clear/Escape and empty results.
 - Profit dashboard with a year selector, Overview / Compare / History / Plan, signed profit charts, annual history pages, monthly details, CSV export, goals and investment metrics.
 - IndexedDB is the primary device store. Record arrays are saved in chunks inside atomic snapshot transactions; startup waits for hydration. Legacy local data migrates after a successful commit. Save failures remain visible.

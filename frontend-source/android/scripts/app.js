@@ -8311,6 +8311,55 @@ render();
   }
 
 
+  // Capsule and buttons share one coordinate space. Keep one observer per track.
+  function syncNavCapsule(nav, animate){
+    const track=nav.querySelector('#navTrack');
+    const capsule=nav.querySelector('#activeCapsule');
+    const tab=track && track.querySelector('button.active');
+    if(!track || !capsule || !tab) return;
+    const trackRect=track.getBoundingClientRect();
+    const tabRect=tab.getBoundingClientRect();
+    if(!trackRect.width || !tabRect.width) return;
+    const x=tabRect.left-trackRect.left+tabRect.width/2-68/2;
+    const transform='translate3d('+x+'px,0,0)';
+    if(capsule.style.transform===transform) return;
+    if(!animate || !track.__capsuleReady){
+      const oldTransition=capsule.style.transition;
+      capsule.style.transition='none';
+      capsule.style.transform=transform;
+      capsule.getBoundingClientRect();
+      capsule.style.transition=oldTransition;
+    }else{
+      capsule.style.transform=transform;
+    }
+    track.__capsuleReady=true;
+  }
+
+  function observeNavTrack(nav){
+    const track=nav.querySelector('#navTrack');
+    if(nav.__capsuleTrack===track) return;
+    if(nav.__capsuleObserver) nav.__capsuleObserver.disconnect();
+    nav.__capsuleTrack=track;
+    if('ResizeObserver' in window){
+      nav.__capsuleObserver=new ResizeObserver(function(){syncNavCapsule(nav,false);});
+      nav.__capsuleObserver.observe(track);
+    }
+    if(!nav.__capsuleResizeBound){
+      nav.__capsuleResizeBound=true;
+      window.addEventListener('resize',function(){syncNavCapsule(nav,false);},{passive:true});
+      window.addEventListener('orientationchange',function(){
+        requestAnimationFrame(function(){syncNavCapsule(nav,false);});
+      },{passive:true});
+    }
+    requestAnimationFrame(function(){syncNavCapsule(nav,false);});
+  }
+
+  function navItemContent(id,label,locked){
+    return '<span class="nav-content"><span class="android-nav-icon nav-icon">'+navIcons[id]+'</span>'+
+      '<span class="android-nav-label nav-label">'+label+'</span></span>'+(locked?navLockSvg:'');
+  }
+
+
   function renderNav(){
     const nav = document.getElementById("nav");
     if(!nav) return;
@@ -8325,43 +8374,40 @@ render();
       ["stock","Stock"],
       ["more","More"]
     ];
-    let activeIndex = 0;
     const existing=nav.querySelectorAll('button[data-android-tab]');
-    if(existing.length===5){
-      existing.forEach(function(button, index){
+    if(existing.length===5 && nav.querySelector('#navTrack')){
+      existing.forEach(function(button){
         const id=button.dataset.androidTab;
         const active=id==='more'?moreActive:!moreOpen && current===id;
         const locked=id!=='more' && tabIsLocked(id);
-        if(active) activeIndex = index;
         button.classList.toggle('active',active);
         button.setAttribute('aria-pressed',String(active));
         if(active) button.setAttribute('aria-current','page'); else button.removeAttribute('aria-current');
         if(button.classList.contains('is-locked')!==locked){
           button.classList.toggle('is-locked',locked);
-          button.innerHTML='<span class="android-nav-icon">'+navIcons[id]+'</span><span class="android-nav-label">'+items.find(item=>item[0]===id)[1]+'</span>'+(locked?navLockSvg:'');
+          button.innerHTML=navItemContent(id,items.find(item=>item[0]===id)[1],locked);
         }
         button.setAttribute('aria-label',items.find(item=>item[0]===id)[1]+(locked?' — Business plan required':''));
       });
-      nav.style.setProperty('--vy-nav-index', String(activeIndex));
+      syncNavCapsule(nav,true);
       const moreButton = nav.querySelector('[data-android-tab="more"]');
       moreButton.setAttribute('aria-expanded', String(moreOpen));
       return;
     }
 
-    nav.innerHTML = items.map(function(item, index){
+    nav.classList.add("bottom-nav");
+    nav.innerHTML = '<div class="nav-track" id="navTrack"><div class="active-capsule" id="activeCapsule" aria-hidden="true"></div>'+items.map(function(item, index){
       const id = item[0];
       const active = id === "more" ? moreActive : !moreOpen && current === id;
-      if(active) activeIndex = index;
       const locked = id !== "more" && tabIsLocked(id);
-      return '<button type="button" data-android-tab="'+id+'" class="'+(active?'active ':'')+(locked?'is-locked':'')+'" aria-pressed="'+String(active)+'"'+(id==='more'?' aria-haspopup="dialog" aria-expanded="'+String(moreOpen)+'"':'')+' aria-label="'+item[1]+(locked?' — Business plan required':'')+'"'+(active?' aria-current="page"':'')+'>'+
-        '<span class="android-nav-icon">'+navIcons[id]+'</span>'+
-        '<span class="android-nav-label">'+item[1]+'</span>'+
-        (locked?navLockSvg:'')+
+      return '<button type="button" data-android-tab="'+id+'" data-index="'+index+'" class="nav-item '+(active?'active ':'')+(locked?'is-locked':'')+'" aria-pressed="'+String(active)+'"'+(id==='more'?' aria-haspopup="dialog" aria-expanded="'+String(moreOpen)+'"':'')+' aria-label="'+item[1]+(locked?' — Business plan required':'')+'"'+(active?' aria-current="page"':'')+'>'+
+        navItemContent(id,item[1],locked)+
       '</button>';
-    }).join("");
+    }).join("")+'</div>';
 
-    nav.style.setProperty('--vy-nav-index', String(activeIndex));
-    installNavGlassInteraction(nav, Array.from(nav.querySelectorAll("button[data-android-tab]")), activeIndex);
+    syncNavCapsule(nav,false);
+    observeNavTrack(nav);
+    installNavGlassInteraction(nav);
   }
 
   function updateHeader(){
