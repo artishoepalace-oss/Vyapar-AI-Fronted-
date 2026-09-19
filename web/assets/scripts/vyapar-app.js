@@ -10234,6 +10234,14 @@ render();
     settings:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>',
     theme:'<svg viewBox="0 0 24 24"><path d="M20 15.5A8 8 0 1 1 8.5 4 6.5 6.5 0 0 0 20 15.5Z"/></svg>'
   };
+  // Reference-inspired solid icons belong only to the bottom navigation.
+  const navIcons = {
+    home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.7 10.2 10.5 3.5a2.3 2.3 0 0 1 3 0l7.8 6.7a2 2 0 0 1 .7 1.5V20a1.5 1.5 0 0 1-1.5 1.5H15V15H9v6.5H3.5A1.5 1.5 0 0 1 2 20v-8.3a2 2 0 0 1 .7-1.5Z"/></svg>',
+    business:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M8 2h8a2 2 0 0 1 2 2v2h3a2 2 0 0 1 2 2v4H1V8a2 2 0 0 1 2-2h3V4a2 2 0 0 1 2-2Zm1 4h6V5H9v1ZM1 14h9v2h4v-2h9v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-6Z"/></svg>',
+    sales:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5 2h14a1 1 0 0 1 1 1v19l-4-2-4 2-4-2-4 2V3a1 1 0 0 1 1-1Zm3 4v1.6h8V6H8Zm0 4v1.6h8V10H8Zm0 4v1.6h5V14H8Z"/></svg>',
+    stock:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1.8 9.6 4.8L12 11.4 2.4 6.6 12 1.8ZM2 8.7l9 4.5v9L2 17.7v-9Zm11 13.5v-9l9-4.5v9l-9 4.5Z"/></svg>',
+    more:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="4" cy="12" r="2.6"/><circle cx="12" cy="12" r="2.6"/><circle cx="20" cy="12" r="2.6"/></svg>'
+  };
   const lockSvg='<svg class="android-lock-icon premium-lock-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>';
   const navLockSvg='<svg class="android-nav-lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>';
 
@@ -10322,7 +10330,8 @@ render();
     if(!nav) return;
 
     const current = visibleTab();
-    const moreActive = ["upload","calculator","analytics","subscription","settings"].includes(current);
+    const moreOpen = Boolean(document.getElementById("androidMoreSheet"));
+    const moreActive = moreOpen || ["upload","calculator","analytics","subscription","settings"].includes(current);
     const items = [
       ["home","Home"],
       ["business","Business"],
@@ -10333,34 +10342,39 @@ render();
     let activeIndex = 0;
     const existing=nav.querySelectorAll('button[data-android-tab]');
     if(existing.length===5){
-      existing.forEach(function(button){
+      existing.forEach(function(button, index){
         const id=button.dataset.androidTab;
-        const active=id==='more'?moreActive:current===id;
+        const active=id==='more'?moreActive:!moreOpen && current===id;
         const locked=id!=='more' && tabIsLocked(id);
+        if(active) activeIndex = index;
         button.classList.toggle('active',active);
         button.setAttribute('aria-pressed',String(active));
         if(active) button.setAttribute('aria-current','page'); else button.removeAttribute('aria-current');
         if(button.classList.contains('is-locked')!==locked){
           button.classList.toggle('is-locked',locked);
-          button.innerHTML='<span class="android-nav-icon">'+icons[id]+'</span><span class="android-nav-label">'+items.find(item=>item[0]===id)[1]+'</span>'+(locked?navLockSvg:'');
+          button.innerHTML='<span class="android-nav-icon">'+navIcons[id]+'</span><span class="android-nav-label">'+items.find(item=>item[0]===id)[1]+'</span>'+(locked?navLockSvg:'');
         }
         button.setAttribute('aria-label',items.find(item=>item[0]===id)[1]+(locked?' — Business plan required':''));
       });
+      nav.style.setProperty('--vy-nav-index', String(activeIndex));
+      const moreButton = nav.querySelector('[data-android-tab="more"]');
+      moreButton.setAttribute('aria-expanded', String(moreOpen));
       return;
     }
 
     nav.innerHTML = items.map(function(item, index){
       const id = item[0];
-      const active = id === "more" ? moreActive : current === id;
+      const active = id === "more" ? moreActive : !moreOpen && current === id;
       if(active) activeIndex = index;
       const locked = id !== "more" && tabIsLocked(id);
-      return '<button type="button" data-android-tab="'+id+'" class="'+(active?'active ':'')+(locked?'is-locked':'')+'" aria-label="'+item[1]+(locked?' — Business plan required':'')+'"'+(active?' aria-current="page"':'')+'>'+
-        '<span class="android-nav-icon">'+icons[id]+'</span>'+
+      return '<button type="button" data-android-tab="'+id+'" class="'+(active?'active ':'')+(locked?'is-locked':'')+'" aria-pressed="'+String(active)+'"'+(id==='more'?' aria-haspopup="dialog" aria-expanded="'+String(moreOpen)+'"':'')+' aria-label="'+item[1]+(locked?' — Business plan required':'')+'"'+(active?' aria-current="page"':'')+'>'+
+        '<span class="android-nav-icon">'+navIcons[id]+'</span>'+
         '<span class="android-nav-label">'+item[1]+'</span>'+
         (locked?navLockSvg:'')+
       '</button>';
     }).join("");
 
+    nav.style.setProperty('--vy-nav-index', String(activeIndex));
     installNavGlassInteraction(nav, Array.from(nav.querySelectorAll("button[data-android-tab]")), activeIndex);
   }
 
@@ -10541,6 +10555,7 @@ render();
 
     document.body.appendChild(overlay);
     document.body.classList.add("android-sheet-open");
+    renderNav();
     const closeButton = overlay.querySelector("[data-sheet-dismiss]");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);

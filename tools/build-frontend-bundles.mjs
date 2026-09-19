@@ -60,7 +60,8 @@ const uiStyles = [
   'workspace-v7.css',
   'alignment-updates.css',
   'form-sheets.css',
-  'refined-surfaces.css'
+  'refined-surfaces.css',
+  'capsule-navigation.css'
 ];
 
 const scripts = [
