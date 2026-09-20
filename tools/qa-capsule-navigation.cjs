@@ -41,6 +41,17 @@ const remote='20.10.2004.00016.2026';
   await page.waitForTimeout(350);
   const settle=()=>page.waitForTimeout(450);
   async function geometry(expected){
+    // More closes first, then the 390ms capsule transition starts. Wait for
+    // the observed end position instead of measuring mid-animation at 450ms.
+    await page.waitForFunction(expected=>{
+      const nav=document.getElementById('nav'),active=nav?.querySelector('button.active'),cap=document.getElementById('activeCapsule');
+      if(!active || active.dataset.androidTab!==expected || !cap)return false;
+      const a=active.getBoundingClientRect(),c=cap.getBoundingClientRect();
+      return Math.abs(a.x+a.width/2-c.x-c.width/2)<0.1;
+    },expected,{timeout:1500}).catch(async error=>{
+      await page.screenshot({path:path.join(out,'failure-'+width+'-'+expected+'.png')});
+      throw error;
+    });
     const g=await page.evaluate(()=>{
       const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,cx:r.x+r.width/2,cy:r.y+r.height/2};};
       const nav=document.getElementById('nav'),cap=document.getElementById('activeCapsule'),top=document.querySelector('.top'),logo=top.querySelector('.vy-logo-frame'),avatar=top.querySelector('#vy863ProfileChip');
@@ -72,6 +83,7 @@ const remote='20.10.2004.00016.2026';
     }
     return g;
   }
+  await page.screenshot({path:path.join(out,'initial-'+width+'.png')});
   const positions=[];
   for(const tab of ['home','business','sales','stock','more']){
     await page.locator('#nav [data-android-tab="'+tab+'"]').click();await settle();
