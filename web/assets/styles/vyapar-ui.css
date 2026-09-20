@@ -10249,3 +10249,6 @@ html.android-ui body .vx622-menu-card.vx622-selection-open .vx622-check-col inpu
   width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;
   margin:0!important;padding:0!important;accent-color:#80011f!important;cursor:pointer!important;
 }
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-menu-card {overflow:visible!important;}
+html.android-ui body .vx622-bulk-menu .vx622-menu-panel {overscroll-behavior:contain!important;}
