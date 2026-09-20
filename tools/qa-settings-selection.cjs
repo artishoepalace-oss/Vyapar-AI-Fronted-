@@ -15,6 +15,7 @@ module.exports=async function(page,out,width){
     state.daily=[{id:'qa-unrelated',date:'2026-09-20',revenue:100,cost:40}];
     VyaparRecords.invalidate();setTab('stock',false);renderStock();vx622ConvertBulkRows(document);
   });
+  await page.locator('#screen-stock .p1-modebar [data-mode="records"]').click();
   const card=page.locator('.vx621-stock-records'),trigger=card.locator('.vx622-menu-trigger'),checks=card.locator('.vx621-stock-check');
   assert.equal(await checks.count(),3);
   assert.equal(await checks.first().isVisible(),false,'Normal list hides selection columns');
