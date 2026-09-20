@@ -40,6 +40,7 @@ const remote='20.10.2004.00016.2026';
   await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());window.setTab('home',false);});
   await page.waitForTimeout(350);
   const settle=()=>page.waitForTimeout(450);
+  const near=(actual,expected)=>assert(Math.abs(actual-expected)<0.02,'Subpixel geometry: '+actual+' expected '+expected);
   async function geometry(expected){
     // More closes first, then the 390ms capsule transition starts. Wait for
     // the observed end position instead of measuring mid-animation at 450ms.
@@ -62,22 +63,22 @@ const remote='20.10.2004.00016.2026';
        transition:getComputedStyle(cap).transitionDuration,topColor:getComputedStyle(document.querySelector('.top')).backgroundColor,rim:getComputedStyle(nav).boxShadow,selectedColor:getComputedStyle(nav.querySelector('button.active .android-nav-label')).color,selectedGlow:getComputedStyle(nav.querySelector('button.active .android-nav-label')).textShadow,
        buttons:[...nav.querySelectorAll('button')].map(el=>({id:el.dataset.androidTab,box:rect(el),icon:rect(el.querySelector('.android-nav-icon')),label:rect(el.querySelector('.android-nav-label'))}))};
     });
-    assert.equal(g.active,expected);assert.equal(g.buttons.length,5);assert.equal(g.nav.h,50);
-    assert.equal(g.nav.w,Math.min(367,g.viewport-16));assert.equal(g.cap.w,68);assert.equal(g.cap.h,42);
+    assert.equal(g.active,expected);assert.equal(g.buttons.length,5);near(g.nav.h,50);
+    near(g.nav.w,Math.min(367,g.viewport-16));near(g.cap.w,68);near(g.cap.h,42);
     assert.equal(g.before,'none');assert.equal(g.color,'rgb(17, 18, 20)');assert(g.scrollWidth<=g.viewport,'No page overflow');
     assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(128, 1, 31)');assert.notEqual(g.selectedGlow,'none');assert(g.rim.includes('inset'),'Glossy rim is inset and preserves geometry');
     assert.equal(g.selectedIcon,'rgb(128, 1, 31)','Selected icon matches label');assert.notEqual(g.iconGlow,'none');
     assert.equal(g.topRim,g.rim,'Both bars have the same glossy rim');
     assert(Math.abs(g.top.x-g.nav.x)<0.1,'Top and bottom left edges align '+JSON.stringify(g));
     assert(Math.abs(g.top.w-g.nav.w)<0.1,'Both bar widths match');
-    assert.equal(g.logo.w,44);assert.equal(g.logo.h,44);assert.equal(g.avatar.w,44);assert.equal(g.avatar.h,44);
+    near(g.logo.w,44);near(g.logo.h,44);near(g.avatar.w,44);near(g.avatar.h,44);
     assert.equal(g.logoRadius,'50%');assert.equal(g.avatarRadius,'50%');
     for(const item of [g.logo,g.avatar]){assert(Math.abs(item.cy-g.top.cy)<0.1,'Logo/avatar vertically centered');assert(item.x>=g.top.x && item.x+item.w<=g.top.x+g.top.w,'Logo/avatar fits header');}
     const active=g.buttons.find(b=>b.id===expected);
     assert(Math.abs(g.cap.cx-active.box.cx)<0.1,'Capsule follows exact tab center');
-    assert.equal(g.cap.y-g.nav.y,4);assert(g.cap.x-g.nav.x>=5.99);assert(g.nav.x+g.nav.w-g.cap.x-g.cap.w>=5.99);
+    near(g.cap.y-g.nav.y,4);assert(g.cap.x-g.nav.x>=5.99);assert(g.nav.x+g.nav.w-g.cap.x-g.cap.w>=5.99);
     for(const b of g.buttons){
-      assert.equal(b.box.h,50);assert.equal(b.icon.w,21);assert.equal(b.icon.h,20);assert.equal(b.label.h,10);
+      near(b.box.h,50);near(b.icon.w,21);near(b.icon.h,20);near(b.label.h,10);
       assert(Math.abs(b.icon.cx-b.box.cx)<0.1);assert(Math.abs(b.label.cx-b.box.cx)<0.1);
       assert(Math.abs(b.icon.cy-g.buttons[0].icon.cy)<0.1);assert(Math.abs(b.label.cy-g.buttons[0].label.cy)<0.1);
     }
