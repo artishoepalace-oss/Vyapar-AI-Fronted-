@@ -4,24 +4,67 @@
 html.vy861-flat-black {
   --vy-chrome-black:#111214;
   --vy-logo-burgundy:#80011f;
+  --vy-chrome-width:367px;
+  --vy-chrome-left:8px;
+  --vy-chrome-right:8px;
+  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.20),inset 0 0 0 1px rgba(255,255,255,.08);
 }
+@supports (left:max(8px,1px)) {
+  html.vy861-flat-black {
+    --vy-chrome-left:max(8px,env(safe-area-inset-left,0px));
+    --vy-chrome-right:max(8px,env(safe-area-inset-right,0px));
+  }
+}
+/* Center the sticky header on the same viewport track as the fixed navbar.
+   Percentage margin is measured from the app content box; translation uses
+   the header's own width, including when it is wider than the padded content. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top {
+  width:var(--vy-chrome-width)!important;
+  min-width:0!important;
+  max-width:calc(100vw - var(--vy-chrome-left) - var(--vy-chrome-right))!important;
+  margin-left:calc(50% + (var(--vy-chrome-left) - var(--vy-chrome-right)) / 2)!important;
+  margin-right:0!important;left:auto!important;right:auto!important;
+  transform:translateX(-50%)!important;
+  height:56px!important;min-height:56px!important;padding:6px 10px!important;
+  box-sizing:border-box!important;border:0!important;border-radius:28px!important;
   background:var(--vy-chrome-black)!important;background-image:none!important;
+  box-shadow:var(--vy-chrome-rim)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .top .brand .vy-logo-frame {
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;
+  flex:0 0 44px!important;padding:0!important;margin:0!important;box-sizing:border-box!important;
+  border:0!important;border-radius:50%!important;overflow:hidden!important;background:#fff!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .top .brand .vy-logo-frame .logo {
+  width:100%!important;height:100%!important;min-width:0!important;max-width:100%!important;
+  flex:none!important;padding:3px!important;margin:0!important;box-sizing:border-box!important;
+  object-fit:contain!important;object-position:center!important;border:0!important;
+  border-radius:50%!important;clip-path:none!important;-webkit-clip-path:none!important;
+  transform:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .top #vy863ProfileChip {
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  flex:0 0 44px!important;padding:3px!important;margin:0!important;box-sizing:border-box!important;
+  border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .top #vy863ProfileChip .vy863-profile-avatar {
+  width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;
+  border-radius:50%!important;box-sizing:border-box!important;margin:0!important;padding:0!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav {
   position:fixed!important;
-  left:8px!important;right:8px!important;
-  left:max(8px,env(safe-area-inset-left,0px))!important;
-  right:max(8px,env(safe-area-inset-right,0px))!important;
+  left:var(--vy-chrome-left)!important;right:var(--vy-chrome-right)!important;
   bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
   display:block!important;
-  width:367px!important;max-width:calc(100% - 16px)!important;min-width:0!important;
+  width:var(--vy-chrome-width)!important;max-width:calc(100vw - var(--vy-chrome-left) - var(--vy-chrome-right))!important;min-width:0!important;
   height:50px!important;min-height:50px!important;max-height:50px!important;
   padding:0!important;gap:0!important;margin:0 auto!important;
   box-sizing:border-box!important;border:0!important;border-radius:25px!important;
   background:var(--vy-chrome-black)!important;background-image:none!important;
   /* Inset hairline follows the rounded shell without changing its measured bounds. */
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),inset 0 0 0 1px rgba(255,255,255,.08)!important;
+  box-shadow:var(--vy-chrome-rim)!important;
   overflow:hidden!important;isolation:isolate;
   transform:none!important;translate:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
@@ -64,7 +107,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active {
-  color:#fff!important;background:transparent!important;box-shadow:none!important;
+  color:var(--vy-logo-burgundy)!important;background:transparent!important;box-shadow:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button:focus-visible {
   outline:2px solid #fff!important;outline-offset:-3px!important;
@@ -94,7 +137,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
   font-weight:650!important;letter-spacing:-.1px!important;text-align:center!important;white-space:nowrap!important;
   color:inherit!important;background:transparent!important;filter:none!important;transform:none!important;animation:none!important;
 }
-/* Keep the glyph white; illuminate only the selected label in the logo's burgundy. */
+/* Every destination illuminates both its selected icon and label. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon {
+  color:var(--vy-logo-burgundy)!important;
+  filter:drop-shadow(0 0 3px rgba(128,1,31,.48))!important;
+}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-label {
   color:var(--vy-logo-burgundy)!important;
   text-shadow:0 0 3px rgba(128,1,31,.48),0 0 8px rgba(128,1,31,.28)!important;

@@ -1,7 +1,7 @@
 /* Local-browser QA only: all external requests are mocked, no real accounts used. */
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright');
-const root=path.resolve(__dirname,'..'),out=path.join(root,'docs/qa-capsule-navigation');
+const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES ? process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright' : 'playwright');
+const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT_DIR || path.join(root,'docs/qa-capsule-navigation');
 const version=require('../version.json').versionName;
 const remote='20.10.2004.00016.2026';
 (async()=>{
@@ -17,7 +17,7 @@ const remote='20.10.2004.00016.2026';
  const browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_PATH,args:['--no-sandbox']}).catch(error=>{server.close();throw error;});
  const results=[];
  try{
- for(const width of [320,360,383,412]){
+ for(const width of [320,360,383,412,768]){
   const context=await browser.newContext({viewport:{width,height:760},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   await context.addInitScript(()=>{
     localStorage.setItem('vyapar_ai_auth_token_v1','qa-only-token');
@@ -43,8 +43,9 @@ const remote='20.10.2004.00016.2026';
   async function geometry(expected){
     const g=await page.evaluate(()=>{
       const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,cx:r.x+r.width/2,cy:r.y+r.height/2};};
-      const nav=document.getElementById('nav'),cap=document.getElementById('activeCapsule');
+      const nav=document.getElementById('nav'),cap=document.getElementById('activeCapsule'),top=document.querySelector('.top'),logo=top.querySelector('.vy-logo-frame'),avatar=top.querySelector('#vy863ProfileChip');
       return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,nav:rect(nav),cap:rect(cap),
+       top:rect(top),logo:rect(logo),avatar:rect(avatar),logoRadius:getComputedStyle(logo).borderRadius,avatarRadius:getComputedStyle(avatar).borderRadius,topRim:getComputedStyle(top).boxShadow,selectedIcon:getComputedStyle(nav.querySelector('button.active .android-nav-icon svg')).color,iconGlow:getComputedStyle(nav.querySelector('button.active .android-nav-icon')).filter,
        active:nav.querySelector('button.active')?.dataset.androidTab,
        before:getComputedStyle(nav,'::before').display,color:getComputedStyle(nav).backgroundColor,
        transition:getComputedStyle(cap).transitionDuration,topColor:getComputedStyle(document.querySelector('.top')).backgroundColor,rim:getComputedStyle(nav).boxShadow,selectedColor:getComputedStyle(nav.querySelector('button.active .android-nav-label')).color,selectedGlow:getComputedStyle(nav.querySelector('button.active .android-nav-label')).textShadow,
@@ -54,6 +55,13 @@ const remote='20.10.2004.00016.2026';
     assert.equal(g.nav.w,Math.min(367,g.viewport-16));assert.equal(g.cap.w,68);assert.equal(g.cap.h,42);
     assert.equal(g.before,'none');assert.equal(g.color,'rgb(17, 18, 20)');assert(g.scrollWidth<=g.viewport,'No page overflow');
     assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(128, 1, 31)');assert.notEqual(g.selectedGlow,'none');assert(g.rim.includes('inset'),'Glossy rim is inset and preserves geometry');
+    assert.equal(g.selectedIcon,'rgb(128, 1, 31)','Selected icon matches label');assert.notEqual(g.iconGlow,'none');
+    assert.equal(g.topRim,g.rim,'Both bars have the same glossy rim');
+    assert(Math.abs(g.top.x-g.nav.x)<0.1,'Top and bottom left edges align '+JSON.stringify(g));
+    assert(Math.abs(g.top.w-g.nav.w)<0.1,'Both bar widths match');
+    assert.equal(g.logo.w,44);assert.equal(g.logo.h,44);assert.equal(g.avatar.w,44);assert.equal(g.avatar.h,44);
+    assert.equal(g.logoRadius,'50%');assert.equal(g.avatarRadius,'50%');
+    for(const item of [g.logo,g.avatar]){assert(Math.abs(item.cy-g.top.cy)<0.1,'Logo/avatar vertically centered');assert(item.x>=g.top.x && item.x+item.w<=g.top.x+g.top.w,'Logo/avatar fits header');}
     const active=g.buttons.find(b=>b.id===expected);
     assert(Math.abs(g.cap.cx-active.box.cx)<0.1,'Capsule follows exact tab center');
     assert.equal(g.cap.y-g.nav.y,4);assert(g.cap.x-g.nav.x>=5.99);assert(g.nav.x+g.nav.w-g.cap.x-g.cap.w>=5.99);

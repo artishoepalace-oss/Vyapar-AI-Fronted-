@@ -128,6 +128,25 @@ jobs:
       - name: Verify frontend bundles and runtime
         run: npm run verify
 
+      - name: Install browser verification tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/vyapar-browser-qa" --no-save --package-lock=false playwright@1.56.1
+          "$RUNNER_TEMP/vyapar-browser-qa/node_modules/.bin/playwright" install --with-deps chromium
+
+      - name: Verify header and navbar in Chromium
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ runner.temp }}/vyapar-browser-qa/node_modules
+          QA_OUTPUT_DIR: ${{ runner.temp }}/vyapar-chrome-results
+        run: node tools/qa-capsule-navigation.cjs
+
+      - name: Upload browser verification screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: navbar-header-browser-checks
+          path: ${{ runner.temp }}/vyapar-chrome-results
+          if-no-files-found: ignore
+
       - name: Persist synchronized generated release files to main
         shell: bash
         run: |
