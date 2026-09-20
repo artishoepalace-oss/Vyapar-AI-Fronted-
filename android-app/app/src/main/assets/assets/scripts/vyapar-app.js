@@ -12152,95 +12152,106 @@ if(typeof oldRenderBusiness==='function'){
 }
 
 /* ---------- Compact three-dot bulk action menus ---------- */
+const bulkCheckSelector='.vx621-recent-check,.vx621-stock-check,.vx621-data-check,.vx621-platform-tx-check,.vx621-generic-check,.vx621-legacy-check';
+let bulkMenuId=0;
+function bulkScope(menu){return menu.closest('.card')||menu.parentElement;}
+function bulkChecks(menu){return [...bulkScope(menu).querySelectorAll(bulkCheckSelector)].filter(input=>!input.disabled);}
+function updateBulkSelection(menu){
+  const scope=bulkScope(menu),checks=bulkChecks(menu),selected=checks.filter(input=>input.checked).length;
+  const count=menu.querySelector('.vx622-selection-count'),text=selected+' selected';
+  if(count&&count.textContent!==text)count.textContent=text;
+  const action=menu.querySelector('[data-bulk-destructive]');
+  if(action)action.disabled=selected===0;
+  scope.querySelectorAll('thead .vx622-check-col input[type="checkbox"]').forEach(input=>{
+    input.checked=checks.length>0&&selected===checks.length;
+    input.indeterminate=selected>0&&selected<checks.length;
+    input.disabled=checks.length===0;
+    input.setAttribute('aria-label','Select all shown records');
+  });
+}
 function setBulkSelectionMode(menu,open){
-  if(!menu) return;
-  const scope=menu.closest('.card')||menu.parentElement;
-  if(scope) scope.classList.toggle('vx622-selection-open',!!open);
+  const scope=bulkScope(menu);
+  scope.classList.toggle('vx622-selection-open',!!open);
+  if(!open)bulkChecks(menu).forEach(input=>{input.checked=false;});
+  updateBulkSelection(menu);
 }
 function prepareBulkSelectionColumns(menu){
-  const scope=menu?.closest('.card')||menu?.parentElement;
-  if(!scope) return;
-  const selector='.vx621-recent-check,.vx621-stock-check,.vx621-data-check,.vx621-platform-tx-check,.vx621-generic-check,.vx621-legacy-check';
-  scope.querySelectorAll(selector).forEach(input=>input.closest('td')?.classList.add('vx622-check-col'));
-  scope.querySelectorAll('thead th').forEach(th=>{if(th.querySelector(':scope > input[type="checkbox"]'))th.classList.add('vx622-check-col')});
+  const scope=bulkScope(menu);
+  scope.classList.add('vx622-menu-card');
+  scope.querySelectorAll(bulkCheckSelector).forEach(input=>{
+    input.closest('td')?.classList.add('vx622-check-col');
+    if(!input.hasAttribute('aria-label')){
+      const row=input.closest('tr');
+      input.setAttribute('aria-label','Select record '+(row?.innerText||input.value||'').trim().slice(0,100));
+    }
+  });
+  scope.querySelectorAll('thead th').forEach(th=>{if(th.querySelector(':scope > input[type="checkbox"]'))th.classList.add('vx622-check-col');});
 }
 function closeBulkMenus(except){
-  document.querySelectorAll('.vx622-bulk-menu').forEach(menu=>{
-    if(menu!==except){
-      menu.classList.remove('is-open');
-      menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');
-      setBulkSelectionMode(menu,false);
-    }
+  document.querySelectorAll('.vx622-bulk-menu.is-open').forEach(menu=>{
+    if(menu!==except){menu.classList.remove('is-open');menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');}
   });
 }
 function convertBulkRows(root){
-  if(!root) return;
+  if(!root)return;
   root.querySelectorAll('.vx621-bulk-actions').forEach(row=>{
-    if(row.dataset.vx622Menu==='1') return;
-    let buttons=[...row.querySelectorAll(':scope > button')];
-    if(buttons.length<2) return;
+    if(row.dataset.vx622Menu==='1'){prepareBulkSelectionColumns(row);updateBulkSelection(row);return;}
+    const buttons=[...row.querySelectorAll(':scope > button')];
     const selectBtn=buttons.find(button=>/select all/i.test(button.textContent||''));
-    const clearBtn=buttons.find(button=>/^clear$/i.test((button.textContent||'').trim()) || /clear/i.test(button.textContent||''));
-    const destructiveBtn=buttons.find(button=>/(delete|cancel).*selected/i.test(button.textContent||'')) || buttons.find(button=>/(delete|cancel)/i.test(button.textContent||''));
-    const preferred=[selectBtn,clearBtn,destructiveBtn].filter(Boolean);
-    if(preferred.length===3){
-      buttons.forEach(button=>{ if(!preferred.includes(button)) button.remove(); });
-      buttons=preferred;
-      selectBtn.textContent='Select All';
-      clearBtn.textContent='Clear Selected';
-      if(/delete/i.test(destructiveBtn.textContent||'')) destructiveBtn.textContent='Delete';
-      else if(/cancel/i.test(destructiveBtn.textContent||'')) destructiveBtn.textContent='Cancel';
+    const clearBtn=buttons.find(button=>/clear/i.test(button.textContent||''));
+    const destructiveBtn=buttons.find(button=>/(delete|cancel).*selected/i.test(button.textContent||''));
+    if(!selectBtn||!clearBtn||!destructiveBtn)return;
+    const preferred=[selectBtn,clearBtn,destructiveBtn];
+    buttons.forEach(button=>{if(!preferred.includes(button))button.remove();});
+    selectBtn.textContent='Select All';selectBtn.title='Select all records shown in this list';
+    clearBtn.textContent='Clear Selected';
+    destructiveBtn.textContent=/delete/i.test(destructiveBtn.textContent)?'Delete Selected':'Cancel Selected';
+    destructiveBtn.dataset.bulkDestructive='1';
+    // Select only enabled rows in this list; the existing delete/cancel handler
+    // retains its confirmation and accounting validation.
+    for(const [button,checked] of [[selectBtn,true],[clearBtn,false]]){
+      button.removeAttribute('onclick');
+      button.addEventListener('click',()=>{bulkChecks(row).forEach(input=>{input.checked=checked;});updateBulkSelection(row);});
     }
-    row.dataset.vx622Menu='1';
-    row.classList.add('vx622-bulk-menu');
-    const trigger=document.createElement('button');
-    trigger.type='button';
-    trigger.className='btn mini vx622-menu-trigger';
-    trigger.setAttribute('aria-label','Bulk actions');
-    trigger.setAttribute('aria-expanded','false');
-    trigger.textContent='⋮';
-    const panel=document.createElement('div');
-    panel.className='vx622-menu-panel';
-    panel.setAttribute('role','menu');
-    buttons.forEach(button=>{
-      button.classList.add('vx622-menu-item');
-      button.setAttribute('role','menuitem');
-      panel.appendChild(button);
-    });
-    row.append(trigger,panel);
-    row.closest('.card')?.classList.add('vx622-menu-card');
-    prepareBulkSelectionColumns(row);
+    row.dataset.vx622Menu='1';row.classList.add('vx622-bulk-menu');
+    const trigger=document.createElement('button');trigger.type='button';trigger.className='btn mini vx622-menu-trigger';
+    trigger.setAttribute('aria-label','Select records and bulk actions');trigger.setAttribute('aria-expanded','false');trigger.textContent='⋮';
+    const panel=document.createElement('div');panel.className='vx622-menu-panel';panel.id='vx622-bulk-panel-'+(++bulkMenuId);
+    panel.setAttribute('role','group');panel.setAttribute('aria-label','Record selection actions');trigger.setAttribute('aria-controls',panel.id);
+    const count=document.createElement('span');count.className='vx622-selection-count';count.setAttribute('role','status');
+    const done=document.createElement('button');done.type='button';done.className='btn mini vx622-selection-done';done.textContent='Done';
+    done.setAttribute('aria-label','Finish selection and clear checked records');
+    preferred.forEach(button=>{button.type='button';button.classList.add('vx622-menu-item');panel.appendChild(button);});
+    row.append(count,done,trigger,panel);prepareBulkSelectionColumns(row);updateBulkSelection(row);
     trigger.addEventListener('click',event=>{
-      event.stopPropagation();
-      const open=!row.classList.contains('is-open');
-      closeBulkMenus(row);
-      row.classList.toggle('is-open',open);
-      setBulkSelectionMode(row,open);
-      prepareBulkSelectionColumns(row);
-      trigger.setAttribute('aria-expanded',String(open));
+      event.stopPropagation();const open=!row.classList.contains('is-open');closeBulkMenus(row);
+      row.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));
+      if(open){prepareBulkSelectionColumns(row);setBulkSelectionMode(row,true);if(event.detail===0)selectBtn.focus();}
     });
+    done.addEventListener('click',()=>{closeBulkMenus();setBulkSelectionMode(row,false);trigger.focus();});
     panel.addEventListener('click',event=>{
-      const item=event.target.closest('.vx622-menu-item');
-      if(!item) return;
-      row.classList.remove('is-open');
-      trigger.setAttribute('aria-expanded','false');
-      /* Keep checkbox selection mode visible after a bulk command so the user can review it. */
-      setBulkSelectionMode(row,true);
+      if(!event.target.closest('.vx622-menu-item'))return;
+      closeBulkMenus();updateBulkSelection(row);trigger.focus();
     });
   });
 }
 window.vx622ConvertBulkRows=convertBulkRows;
-
-document.addEventListener('click',event=>{
-  if(event.target.closest('.vx622-menu-card') && event.target.closest('input[type="checkbox"]')) return;
-  closeBulkMenus();
+document.addEventListener('change',event=>{
+  if(!event.target.matches(bulkCheckSelector+',thead .vx622-check-col input[type="checkbox"]'))return;
+  const scope=event.target.closest('.vx622-menu-card');
+  scope?.querySelectorAll('.vx622-bulk-menu').forEach(updateBulkSelection);
 });
-document.addEventListener('keydown',event=>{ if(event.key==='Escape') closeBulkMenus(); });
-
+document.addEventListener('click',event=>{if(!event.target.closest('.vx622-bulk-menu'))closeBulkMenus();});
+document.addEventListener('keydown',event=>{
+  if(event.key!=='Escape')return;
+  const open=document.querySelector('.vx622-bulk-menu.is-open');
+  if(open){closeBulkMenus();open.querySelector('.vx622-menu-trigger')?.focus();}
+});
+window.addEventListener('scroll',()=>closeBulkMenus(),{passive:true});
+let bulkRefreshPending=false;
 const bulkObserver=new MutationObserver(mutations=>{
-  let shouldRun=false;
-  for(const m of mutations){ if(m.addedNodes.length){ shouldRun=true; break; } }
-  if(shouldRun) requestAnimationFrame(()=>convertBulkRows(document));
+  if(bulkRefreshPending||!mutations.some(m=>m.addedNodes.length))return;
+  bulkRefreshPending=true;requestAnimationFrame(()=>{bulkRefreshPending=false;convertBulkRows(document);});
 });
 bulkObserver.observe(document.documentElement,{childList:true,subtree:true});
 
@@ -12694,11 +12705,7 @@ function normalizePlan(v){const p=String(v||'').trim().toLowerCase();if(p.includ
 function resolvedPlan(){const a=readJson(ACCOUNT_KEY),s=readJson(STATE_KEY),token=String(localStorage.getItem('vyapar_ai_auth_token_v1')||'').trim();const statePlan=(s?.subscription?.verified===true&&String(s?.subscription?.token||token).trim())?normalizePlan(s?.subscription?.plan):'';if(statePlan)return statePlan;const accountPlan=normalizePlan(a?.subscription?.plan),status=String(a?.subscription?.status||'').trim().toLowerCase();const inactive=/^(cancelled|canceled|expired|failed|none|inactive)$/.test(status);if(token&&accountPlan&&!inactive)return accountPlan;return''}
 function decorateAccount(){const card=document.getElementById('productionAccountCard');if(!card)return;const title=card.querySelector('.production-account-head h3');if(!title)return;const plan=resolvedPlan();card.querySelectorAll('.vy647-plan-mark').forEach(el=>el.remove());let badge=title.querySelector('.vy645-plan-tick');if(!plan){if(badge)badge.remove()}else{if(!badge){badge=document.createElement('span');badge.className='vy645-plan-tick';badge.innerHTML=tickSvg;title.appendChild(badge)}badge.className='vy645-plan-tick '+plan;badge.setAttribute('role','img');badge.setAttribute('aria-label',plan==='business'?'Business verified':'Pro verified');badge.title=plan==='business'?'Business verified':'Pro verified'}const avatar=card.querySelector('.production-avatar, .account-avatar, .profile-avatar, .avatar');if(avatar){const wanted=plan||'';if(avatar.dataset.plan!==wanted){avatar.classList.remove('vy648-plan-avatar','pro','business');avatar.removeAttribute('data-plan');if(plan){avatar.classList.add('vy648-plan-avatar',plan);avatar.setAttribute('data-plan',plan)}}}}
 function decoratePlanCards(){document.querySelectorAll('.subscription-plan-grid .subscription-plan-card').forEach(card=>{card.classList.remove('vy649-pro-card','vy649-business-card');const name=String(card.querySelector('h2')?.textContent||'').trim().toLowerCase();if(name==='pro')card.classList.add('vy649-pro-card');if(name==='business')card.classList.add('vy649-business-card')})}
-function setMenu(m,o){if(!m)return;m.classList.toggle('is-open',!!o);const t=m.querySelector(':scope > .vx622-menu-trigger');if(t)t.setAttribute('aria-expanded',o?'true':'false')}
-function closeAll(ex){document.querySelectorAll('.vx622-bulk-menu.is-open').forEach(m=>{if(m!==ex)setMenu(m,false)})}
-document.addEventListener('click',e=>{const t=e.target.closest('.vx622-menu-trigger');if(!t)return;const m=t.closest('.vx622-bulk-menu');if(!m)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const o=!m.classList.contains('is-open');closeAll(m);setMenu(m,o)},true);
-document.addEventListener('click',e=>{const i=e.target.closest('.vx622-menu-item');if(i){setTimeout(()=>setMenu(i.closest('.vx622-bulk-menu'),false),0);return}if(!e.target.closest('.vx622-bulk-menu'))closeAll(null)},false);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll(null)},true);window.addEventListener('scroll',()=>closeAll(null),{passive:true});
+/* Bulk selection is owned by app.js; do not intercept its trigger clicks. */
 let q=false;function refresh(){if(q)return;q=true;requestAnimationFrame(()=>{q=false;decorateAccount();decoratePlanCards()})}
 new MutationObserver(refresh).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('storage',refresh);window.addEventListener('load',refresh,{once:true});setTimeout(refresh,120);setTimeout(refresh,500);setTimeout(refresh,1200);
 })();

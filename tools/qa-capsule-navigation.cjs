@@ -106,6 +106,7 @@ const remote='20.10.2004.00016.2026';
   assert.equal((await geometry('home')).transition,'0s','Reduced motion honored');
   await page.emulateMedia({reducedMotion:'no-preference'});
   await page.screenshot({path:path.join(out,'home-'+width+'.png')});
+  if([320,412].includes(width))await require('./qa-settings-selection.cjs')(page,out,width);
   assert.equal(errors.length,0,errors.join('\n'));results.push({width,positions,errors});await context.close();
  }
  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));

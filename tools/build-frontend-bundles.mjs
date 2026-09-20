@@ -61,7 +61,8 @@ const uiStyles = [
   'alignment-updates.css',
   'form-sheets.css',
   'refined-surfaces.css',
-  'capsule-navigation.css'
+  'capsule-navigation.css',
+  'settings-selection.css'
 ];
 
 const scripts = [

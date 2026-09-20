@@ -10216,3 +10216,36 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .app {
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {transition:none!important;}
 }
+
+/* ===== STYLE SOURCE: settings-selection.css ===== */
+
+/* Settings subpages share the page black; controls keep their own contrast. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is([data-vy675-page="account"],[data-vy675-page="profile"],[data-vy675-page="business"],[data-vy675-page="security"],[data-vy675-page="appearance"],[data-vy675-page="navigation"],[data-vy675-page="data"]) .vy675-page-body :is(.card,.settings-section,.production-account-card,.production-account-grid > div,.vx622-settings-list,.vx622-settings-row,.vx622-lock-status,.notice,.vy675-option-row,[class*="-panel"]) {
+  background:var(--vy20-page,#000)!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  border-color:transparent!important;
+}
+/* A consistent touch target and explicit selection lifecycle for record menus. */
+html.android-ui body .vx621-bulk-actions.vx622-bulk-menu > .vx622-menu-trigger {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+  margin:0!important;padding:0!important;border-radius:50%!important;font-size:24px!important;line-height:1!important;
+}
+html.android-ui body .vx622-bulk-menu {display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:wrap!important;}
+html.android-ui body .vx622-bulk-menu > :is(.vx622-selection-count,.vx622-selection-done) {display:none!important;}
+html.android-ui body .vx622-selection-open .vx622-bulk-menu > .vx622-selection-count {display:inline!important;font-size:12px!important;color:#c9cbd0!important;}
+html.android-ui body .vx622-selection-open .vx622-bulk-menu > .vx622-selection-done {display:inline-flex!important;min-height:44px!important;align-items:center!important;}
+html.android-ui body .vx622-bulk-menu .vx622-menu-panel {background:#17191d!important;max-width:calc(100vw - 32px)!important;}
+html.android-ui body .vx622-bulk-menu .vx622-menu-item {min-height:44px!important;}
+html.android-ui body .vx622-bulk-menu button:focus-visible {outline:2px solid #e3a9b7!important;outline-offset:2px!important;}
+html.android-ui body .vx622-bulk-menu button:disabled {opacity:.4!important;cursor:default!important;}
+html.android-ui body .vx622-menu-card.vx622-selection-open .vx622-check-col {
+  position:sticky!important;left:0!important;z-index:2!important;background:#111214!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;padding:10px!important;text-align:center!important;
+}
+html.android-ui body .vx622-menu-card.vx622-selection-open .vx622-check-col input[type="checkbox"] {
+  appearance:auto!important;-webkit-appearance:checkbox!important;display:inline-block!important;
+  width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;
+  margin:0!important;padding:0!important;accent-color:#80011f!important;cursor:pointer!important;
+}
