@@ -10071,7 +10071,7 @@ window.vx621GenericDelete=async function(id,mode){
   const all=[...document.querySelectorAll(`.vx621-generic-check[data-table="${id}"]`)],chosen=mode==='all'?all:all.filter(x=>x.checked);if(!chosen.length)return alert('No records selected.');
   const ok=await confirmAction(`Delete ${chosen.length} selected record(s)? Existing module validation will still run.`,'Delete');if(!ok)return;
   const actions=chosen.map(x=>({fn:x.dataset.fn,arg:x.dataset.arg}));
-  for(const a of actions){try{if(typeof window[a.fn]==='function')window[a.fn](a.arg);}catch(e){console.warn(a.fn,e);}}
+  for(const a of actions){try{if(typeof window[a.fn]==='function')await window[a.fn](a.arg);}catch(e){console.warn(a.fn,e);}}
 };
 function observeHost(host){
   if(!host||host.dataset.vx621Observed==='1')return;host.dataset.vx621Observed='1';let pending=false;
