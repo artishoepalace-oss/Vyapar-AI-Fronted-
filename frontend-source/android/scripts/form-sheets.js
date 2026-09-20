@@ -111,7 +111,7 @@
     if(button)setTimeout(()=>{if(typeof currentTab!=='undefined'&&currentTab==='sales')openField('sproduct');},0);
   });
   document.addEventListener('focusin',event=>{
-    if(!event.target.matches('input,textarea,select') || !event.target.closest('.vy-form-overlay'))return;
+    if(!event.target.matches('input:not([type="checkbox"]):not([type="radio"]):not([type="button"]),textarea,select') || !event.target.closest('.vy-form-overlay'))return;
     setTimeout(()=>{if(event.target.isConnected)event.target.scrollIntoView({block:'nearest',behavior:'auto'});},180);
   });
   root.addEventListener('resize',updateViewport);

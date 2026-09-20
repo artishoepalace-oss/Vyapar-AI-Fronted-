@@ -54,6 +54,7 @@ module.exports=async function(page,out,width){
   await page.evaluate(()=>{renderStock();vx622ConvertBulkRows(document);});
   await trigger.click();assert.equal(await card.locator('[data-bulk-destructive]').isDisabled(),true,'Empty list disables deletion');
   await page.keyboard.press('Escape');assert.equal(await trigger.getAttribute('aria-expanded'),'false');
+  await require('./qa-bulk-selection-regressions.cjs')(page,out,width);
   await page.evaluate(()=>setTab('home',false));
   console.log('Settings black + manual/select-all/cancel/confirm/delete/Done passed at '+width+'px');
 };

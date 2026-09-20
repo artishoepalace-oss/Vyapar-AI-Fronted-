@@ -13,8 +13,8 @@ html.android-ui body .vx621-bulk-actions.vx622-bulk-menu > .vx622-menu-trigger {
 }
 html.android-ui body .vx622-bulk-menu {display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:wrap!important;}
 html.android-ui body .vx622-bulk-menu > :is(.vx622-selection-count,.vx622-selection-done) {display:none!important;}
-html.android-ui body .vx622-selection-open .vx622-bulk-menu > .vx622-selection-count {display:inline!important;font-size:12px!important;color:#c9cbd0!important;}
-html.android-ui body .vx622-selection-open .vx622-bulk-menu > .vx622-selection-done {display:inline-flex!important;min-height:44px!important;align-items:center!important;}
+html.android-ui body .vx622-bulk-menu.is-selecting > .vx622-selection-count {display:inline!important;font-size:12px!important;color:#c9cbd0!important;}
+html.android-ui body .vx622-bulk-menu.is-selecting > .vx622-selection-done {display:inline-flex!important;min-height:44px!important;align-items:center!important;}
 html.android-ui body .vx622-bulk-menu .vx622-menu-panel {background:#17191d!important;max-width:calc(100vw - 32px)!important;}
 html.android-ui body .vx622-bulk-menu .vx622-menu-item {min-height:44px!important;}
 html.android-ui body .vx622-bulk-menu button:focus-visible {outline:2px solid #e3a9b7!important;outline-offset:2px!important;}
@@ -31,3 +31,32 @@ html.android-ui body .vx622-menu-card.vx622-selection-open .vx622-check-col inpu
 
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-menu-card {overflow:visible!important;}
 html.android-ui body .vx622-bulk-menu .vx622-menu-panel {overscroll-behavior:contain!important;}
+
+/* Stable one-line toolbar: count and Done never displace the trigger or filters. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-selection-heading {display:block!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx621-bulk-actions.vx622-bulk-menu,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records > .vx622-bulk-menu {
+  position:relative!important;top:auto!important;right:auto!important;left:auto!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto 44px!important;
+  align-items:center!important;gap:8px!important;flex:none!important;
+  width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;
+  margin:8px 0!important;padding:0!important;box-sizing:border-box!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records > h2 {padding-right:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records .vx622-menu-trigger {width:44px!important;min-width:44px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger {grid-column:3!important;grid-row:1!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-selection-count {
+  display:block!important;grid-column:1!important;grid-row:1!important;min-width:0!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-variant-numeric:tabular-nums;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-selection-done {
+  display:inline-flex!important;grid-column:2!important;grid-row:1!important;
+  align-items:center!important;justify-content:center!important;width:auto!important;min-width:56px!important;
+  height:44px!important;min-height:44px!important;margin:0!important;padding:0 12px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu:not(.is-selecting) > :is(.vx622-selection-count,.vx622-selection-done) {
+  visibility:hidden!important;pointer-events:none!important;
+}
+/* Each list owns its checkboxes, including multiple tables inside one card. */
+html.android-ui body .vx622-menu-card table.vx622-selection-table:not(.vx622-selection-open) .vx622-check-col {display:none!important;}
+html.android-ui body .vx622-menu-card table.vx622-selection-table.vx622-selection-open .vx622-check-col {display:table-cell!important;}

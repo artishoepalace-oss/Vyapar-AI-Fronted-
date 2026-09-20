@@ -14,3 +14,13 @@ test('Generic bulk deletion waits for each record validation and excludes unsele
 test('Cancelling bulk confirmation never invokes a record deletion',async()=>{
  const f=fixture(false);await f.remove('records','selected');assert.deepEqual(f.calls,[]);
 });
+test('Menu repositioning does not expand its box and reset scrollTop',()=>{
+ const start=app.indexOf('function positionBulkMenu(menu)');
+ const source=app.slice(start,app.indexOf('function closeBulkMenus',start));
+ let scrollTop=37;const writes=[];
+ const panel={scrollHeight:240,style:{setProperty:(key,value)=>{writes.push([key,value]);if(key==='max-height'&&value==='none')scrollTop=0;}}};
+ const menu={classList:{contains:()=>true},querySelector:()=>panel,getBoundingClientRect:()=>({top:180,bottom:224})};
+ const context={window:{visualViewport:{offsetTop:0,height:340}},innerHeight:340,document:{getElementById:()=>({getBoundingClientRect:()=>({top:280,height:50})})}};
+ vm.runInNewContext(source,context);context.positionBulkMenu(menu);
+ assert.equal(scrollTop,37);assert(writes.some(([key,value])=>key==='bottom'&&value==='calc(100% + 8px)'));
+});

@@ -1,0 +1,64 @@
+const assert=require('node:assert/strict'),path=require('node:path');
+module.exports=async function(page,out,width){
+  console.log('Checking monthly toolbar and selection isolation at '+width+'px');
+  await page.evaluate(()=>{
+    state.monthly=Array.from({length:12},(_,i)=>({id:'qa-month-'+i,month:'2026-'+String(i+1).padStart(2,'0'),profit:100+i}));
+    VyaparRecords.invalidate();setTab('sales',false);renderSales();vx622ConvertBulkRows(document);
+  });
+  await page.locator('#screen-sales .p1-modebar [data-mode="monthly"]').click();
+  const card=page.locator('#monthly-profit-records'),bar=card.locator('.vx622-bulk-menu'),trigger=bar.locator('.vx622-menu-trigger');
+  await trigger.scrollIntoViewIfNeeded();await page.waitForTimeout(250);
+  const measure=()=>card.evaluate(card=>{
+    const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,right:r.right};};
+    return {bar:rect(card.querySelector('.vx622-bulk-menu')),trigger:rect(card.querySelector('.vx622-menu-trigger')),done:rect(card.querySelector('.vx622-selection-done')),count:rect(card.querySelector('.vx622-selection-count')),filter:rect(card.querySelector('.record-controls')),scroll:scrollY,viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth};
+  });
+  const before=await measure();await trigger.click();
+  await bar.getByRole('button',{name:'Select All',exact:true}).click();
+  const selected=await measure();
+  assert(selected.bar.w>200,'Monthly selection uses the full toolbar, never the old 40px slot');
+  assert(Math.abs(selected.bar.h-44)<1,'Toolbar stays one row');
+  assert(Math.abs(before.filter.y-selected.filter.y)<1,'Selection does not shift the record filters');
+  assert(Math.abs(before.trigger.x-selected.trigger.x)<1,'Trigger stays horizontally anchored');
+  assert(Math.abs(before.trigger.y-selected.trigger.y)<1,'Trigger stays vertically anchored');
+  assert(Math.abs(before.scroll-selected.scroll)<1,'Select All does not jump page scroll');
+  assert(selected.count.right<=selected.done.x+1&&selected.done.right<=selected.trigger.x+1,'Count, Done and menu do not overlap');
+  assert(selected.scrollWidth<=selected.viewport,'Selection causes no page overflow');
+  assert.equal(await bar.locator('.vx622-selection-count').innerText(),'12 selected');
+  await page.screenshot({path:path.join(out,'monthly-selection-'+width+'.png')});
+  await trigger.click();await bar.getByRole('button',{name:'Clear Selected',exact:true}).click();
+  const cleared=await measure();assert(Math.abs(cleared.scroll-selected.scroll)<1,'Clear does not jump page scroll');
+  await bar.locator('.vx622-selection-done').click();
+  const done=await measure();assert(Math.abs(done.filter.y-before.filter.y)<1,'Done does not shift the filters');
+  await page.evaluate(()=>{
+    setTab('stock',false);
+    const fixture=document.createElement('section');fixture.id='qaSelectionCard';fixture.className='card';
+    fixture.innerHTML='<h2>Selection regression fixture</h2>'+['a','b'].map(key=>{
+      const id='qa-list-'+key;
+      return '<div class="vx621-bulk-actions" data-qa-list="'+key+'"><button onclick="vx621GenericSelectAll(\''+id+'\',true)">Select All</button><button onclick="vx621GenericSelectAll(\''+id+'\',false)">Clear</button><button onclick="vx621GenericDelete(\''+id+'\',\'selected\')">Delete Selected</button></div><div class="p611-table"><table data-vx621-table-id="'+id+'"><thead><tr><th><input type="checkbox"></th><th>Record</th></tr></thead><tbody>'+[1,2,3].map(n=>'<tr><td><input type="checkbox" class="vx621-generic-check" data-table="'+id+'" value="'+key+n+'" '+(n===3?'disabled':'')+'></td><td>Record '+key+n+'</td></tr>').join('')+'</tbody></table></div>';
+    }).join('');
+    document.getElementById('screen-stock').appendChild(fixture);vx622ConvertBulkRows(document);
+    VyaparFormSheets.openHost(fixture,'stock');
+    window.qaCheckboxScrolls=0;window.qaOriginalScrollIntoView=HTMLElement.prototype.scrollIntoView;
+    HTMLElement.prototype.scrollIntoView=function(...args){if(this.matches('input[type="checkbox"]'))window.qaCheckboxScrolls++;return window.qaOriginalScrollIntoView.apply(this,args);};
+  });
+  const fixture=page.locator('#qaSelectionCard'),a=fixture.locator('[data-qa-list="a"]'),b=fixture.locator('[data-qa-list="b"]');
+  const tableA=fixture.locator('table[data-vx621-table-id="qa-list-a"]'),tableB=fixture.locator('table[data-vx621-table-id="qa-list-b"]');
+  await a.locator('.vx622-menu-trigger').click();
+  assert.equal(await tableA.locator('input[value="a1"]').isVisible(),true);
+  assert.equal(await tableB.locator('input[value="b1"]').isVisible(),false,'Only the active list reveals its checkbox column');
+  await tableA.locator('input[value="a1"]').check();await page.waitForTimeout(250);
+  assert.equal(await page.evaluate(()=>window.qaCheckboxScrolls),0,'Checkbox focus never starts keyboard-style auto-scrolling');
+  assert.equal(await tableA.locator('thead input').evaluate(el=>el.indeterminate),true);
+  await a.locator('.vx622-menu-trigger').click();await a.getByRole('button',{name:'Select All',exact:true}).click();
+  assert.equal(await tableA.locator('tbody input:checked').count(),2,'Disabled rows stay unselected');
+  assert.equal(await tableB.locator('tbody input:checked').count(),0,'Select All does not select a neighboring table');
+  await b.locator('.vx622-menu-trigger').click();assert.equal(await b.locator('.vx622-selection-count').innerText(),'0 selected');
+  await b.getByRole('button',{name:'Select All',exact:true}).click();
+  await b.locator('.vx622-selection-done').click();
+  assert.equal(await tableA.locator('tbody input:checked').count(),2,'Done in list B preserves list A');
+  assert.equal(await tableB.locator('tbody input:checked').count(),0);
+  assert.equal(await tableA.locator('thead input').isChecked(),true,'Each header reflects only its own table');
+  await tableA.locator('thead input').uncheck();assert.equal(await a.locator('.vx622-selection-count').innerText(),'0 selected');
+  await page.evaluate(()=>{HTMLElement.prototype.scrollIntoView=window.qaOriginalScrollIntoView;VyaparFormSheets.close(true);document.getElementById('qaSelectionCard').remove();setTab('home',false);});
+  console.log('Monthly toolbar stability, independent selection and sheet checkbox scrolling passed at '+width+'px');
+};
