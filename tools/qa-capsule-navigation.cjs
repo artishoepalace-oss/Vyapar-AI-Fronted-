@@ -58,6 +58,7 @@ const remote='20.10.2004.00016.2026';
       const nav=document.getElementById('nav'),cap=document.getElementById('activeCapsule'),top=document.querySelector('.top'),logo=top.querySelector('.vy-logo-frame'),avatar=top.querySelector('#vy863ProfileChip');
       return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,nav:rect(nav),cap:rect(cap),
        top:rect(top),logo:rect(logo),avatar:rect(avatar),logoRadius:getComputedStyle(logo).borderRadius,avatarRadius:getComputedStyle(avatar).borderRadius,topRim:getComputedStyle(top).boxShadow,selectedIcon:getComputedStyle(nav.querySelector('button.active .android-nav-icon svg')).color,iconGlow:getComputedStyle(nav.querySelector('button.active .android-nav-icon')).filter,
+       iconFills:[...nav.querySelectorAll('button.active .android-nav-icon svg :is(path,circle,rect,polygon)')].map(shape=>getComputedStyle(shape).fill),
        active:nav.querySelector('button.active')?.dataset.androidTab,
        before:getComputedStyle(nav,'::before').display,color:getComputedStyle(nav).backgroundColor,
        transition:getComputedStyle(cap).transitionDuration,topColor:getComputedStyle(document.querySelector('.top')).backgroundColor,rim:getComputedStyle(nav).boxShadow,selectedColor:getComputedStyle(nav.querySelector('button.active .android-nav-label')).color,selectedGlow:getComputedStyle(nav.querySelector('button.active .android-nav-label')).textShadow,
@@ -68,6 +69,8 @@ const remote='20.10.2004.00016.2026';
     assert.equal(g.before,'none');assert.equal(g.color,'rgb(17, 18, 20)');assert(g.scrollWidth<=g.viewport,'No page overflow');
     assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(128, 1, 31)');assert.notEqual(g.selectedGlow,'none');assert(g.rim.includes('inset'),'Glossy rim is inset and preserves geometry');
     assert.equal(g.selectedIcon,'rgb(128, 1, 31)','Selected icon matches label');assert.notEqual(g.iconGlow,'none');
+    assert(g.iconFills.length>0,'Active destination has a real SVG icon');
+    g.iconFills.forEach(fill=>assert.equal(fill,'rgb(128, 1, 31)','Actual SVG shapes render burgundy'));
     assert.equal(g.topRim,g.rim,'Both bars have the same glossy rim');
     assert(Math.abs(g.top.x-g.nav.x)<0.1,'Top and bottom left edges align '+JSON.stringify(g));
     assert(Math.abs(g.top.w-g.nav.w)<0.1,'Both bar widths match');

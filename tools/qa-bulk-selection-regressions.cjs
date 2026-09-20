@@ -7,14 +7,15 @@ module.exports=async function(page,out,width){
   });
   await page.locator('#screen-sales .p1-modebar [data-mode="monthly"]').click();
   const card=page.locator('#monthly-profit-records'),bar=card.locator('.vx622-bulk-menu'),trigger=bar.locator('.vx622-menu-trigger');
-  await trigger.scrollIntoViewIfNeeded();await page.waitForTimeout(250);
+  await trigger.evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));await page.waitForTimeout(350);
   const measure=()=>card.evaluate(card=>{
     const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,right:r.right};};
     return {bar:rect(card.querySelector('.vx622-bulk-menu')),trigger:rect(card.querySelector('.vx622-menu-trigger')),done:rect(card.querySelector('.vx622-selection-done')),count:rect(card.querySelector('.vx622-selection-count')),filter:rect(card.querySelector('.record-controls')),scroll:scrollY,viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth};
   });
   const before=await measure();await trigger.click();
   await bar.getByRole('button',{name:'Select All',exact:true}).click();
-  const selected=await measure();
+  await page.waitForTimeout(100);
+  const selected=await measure();console.log('Monthly toolbar geometry',JSON.stringify({before,selected}));
   assert(selected.bar.w>200,'Monthly selection uses the full toolbar, never the old 40px slot');
   assert(Math.abs(selected.bar.h-44)<1,'Toolbar stays one row');
   assert(Math.abs(before.filter.y-selected.filter.y)<1,'Selection does not shift the record filters');
@@ -26,8 +27,10 @@ module.exports=async function(page,out,width){
   assert.equal(await bar.locator('.vx622-selection-count').innerText(),'12 selected');
   await page.screenshot({path:path.join(out,'monthly-selection-'+width+'.png')});
   await trigger.click();await bar.getByRole('button',{name:'Clear Selected',exact:true}).click();
+  await page.waitForTimeout(100);
   const cleared=await measure();assert(Math.abs(cleared.scroll-selected.scroll)<1,'Clear does not jump page scroll');
   await bar.locator('.vx622-selection-done').click();
+  await page.waitForTimeout(100);
   const done=await measure();assert(Math.abs(done.filter.y-before.filter.y)<1,'Done does not shift the filters');
   await page.evaluate(()=>{
     setTab('stock',false);

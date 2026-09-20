@@ -7,7 +7,7 @@ html.vy861-flat-black {
   --vy-chrome-width:367px;
   --vy-chrome-left:8px;
   --vy-chrome-right:8px;
-  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.20),inset 0 0 0 1px rgba(255,255,255,.08);
+  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.30),inset 0 0 0 1px rgba(255,255,255,.12);
 }
 @supports (left:max(8px,1px)) {
   html.vy861-flat-black {
@@ -138,6 +138,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
   color:inherit!important;background:transparent!important;filter:none!important;transform:none!important;animation:none!important;
 }
 /* Every destination illuminates both its selected icon and label. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon svg,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon svg * {
+  color:var(--vy-logo-burgundy)!important;fill:var(--vy-logo-burgundy)!important;
+}
+
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon {
   color:var(--vy-logo-burgundy)!important;
   filter:drop-shadow(0 0 3px rgba(128,1,31,.48))!important;
