@@ -215,13 +215,13 @@
         </div>
         <div class="shop-reward-grid">
           <div class="shop-reward-stat"><span>Sales today</span><b>${moneyText(d.today.sale)}</b><small>${d.yesterday.sale > 0 ? direction + ' vs yesterday' : 'Real saved sales only'}</small></div>
-          <div class="shop-reward-stat"><span>Health score</span><b>${d.health.score}<em>/100</em></b><small>${d.health.next}</small></div>
+          <div class="shop-reward-stat"><span>Health score</span><b>${d.health.score}<em>/100</em></b><small>${d.health.next}</small><small>Consistency, margin, stock &amp; records · details below</small></div>
           <div class="shop-reward-stat wide"><span>Monthly pace goal</span><b>${moneyText(d.monthData.sale)} <em>/ ${moneyText(d.monthlyPaceGoal)}</em></b><div class="shop-mini-track"><i style="width:${progress}%"></i></div><small>${progress}% of monthly pace derived from yearly goal</small></div>
         </div>
         <div class="shop-growth-foot">
           <div><b>${d.level}</b><small>Shop level · real activity based</small></div>
           <div><b>${unlockedText}</b><small>Milestones unlocked</small></div>
-          <button type="button" class="btn primary shop-progress-btn" id="openShopProgress">View Progress</button>
+          <button type="button" class="btn primary shop-progress-btn" id="openShopProgress">View progress &amp; score details</button>
         </div>
       </section>`;
   }

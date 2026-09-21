@@ -9927,20 +9927,20 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready {
   --vy-control-height:48px;--vy-panel-bg:#101114;--vy-card-bg:#1a1c20;
   --vy-row-divider:rgba(190,195,205,.13);
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings) :is(.p1-modebar,.workspace-tabs) {
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings,#screen-calculator) :is(.p1-modebar,.workspace-tabs) {
   display:flex!important;align-items:stretch!important;gap:4px!important;padding:4px!important;
   width:100%!important;min-width:0!important;min-height:52px!important;height:auto!important;
   box-sizing:border-box!important;margin:0 0 16px!important;border:0!important;border-radius:18px!important;
   background:#16181b!important;background-image:none!important;box-shadow:none!important;overflow:hidden!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings) :is(.p1-modebar,.workspace-tabs) > button {
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings,#screen-calculator) :is(.p1-modebar,.workspace-tabs) > button {
   display:flex!important;align-items:center!important;justify-content:center!important;flex:1 1 0!important;
   width:0!important;min-width:0!important;min-height:44px!important;height:auto!important;padding:10px 4px!important;margin:0!important;
   border:0!important;border-radius:var(--vy-control-radius)!important;background:#101215!important;background-image:none!important;
   color:#aeb3bc!important;font-size:12px!important;font-weight:650!important;line-height:1.3!important;
   box-shadow:none!important;white-space:normal!important;overflow-wrap:normal!important;text-align:center!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings) :is(.p1-modebar,.workspace-tabs) > button[aria-selected="true"] {
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings,#screen-calculator) :is(.p1-modebar,.workspace-tabs) > button[aria-selected="true"] {
   background:var(--vy-control-active)!important;color:#fff!important;
 }
 /* The four Home shortcuts are peers, including New Bill. Text is never a nested surface. */
@@ -10035,7 +10035,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-action * {background:transparent!important;background-image:none!important;box-shadow:none!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records .record-controls > select {padding-right:20px!important;}
 @media(max-width:359px){
-  html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings) :is(.p1-modebar,.workspace-tabs) > button {font-size:11px!important;padding-left:3px!important;padding-right:3px!important;}
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings,#screen-calculator) :is(.p1-modebar,.workspace-tabs) > button {font-size:11px!important;padding-left:3px!important;padding-right:3px!important;}
 }
 
 /* One visible frame around the Business and Stock summary groups. */
@@ -10048,6 +10048,94 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock > .stats {
   background:#0b0c0e!important;box-shadow:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock > .stats > .stat {min-width:0!important;width:100%!important;box-sizing:border-box!important;}
+
+/* 00031: one measured hierarchy across the existing screens. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready {
+  --vy-panel-bg:#111214;--vy-card-bg:#1b1d20;--vy-panel-line:#303237;
+  --vy-popup-clearance:calc(72px + env(safe-area-inset-bottom,0px));
+}
+/* The app owns bottom clearance once; stacked page/main padding caused the long empty tails. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app main {padding-bottom:0!important;min-height:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings.vy675-settings-ready {padding-bottom:16px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen {min-height:0!important;contain:none!important;content-visibility:visible!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.home-shell,.vx621-business-shell,.insights-workspace,.upload-workspace,.calculator-page) {
+  display:flex!important;flex-direction:column!important;gap:16px!important;min-width:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.home-shell,.vx621-business-shell,.insights-workspace,.upload-workspace,.calculator-page) > * {margin-top:0!important;margin-bottom:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator) :is(.card,.vx621-group,.vx621-kpis) {
+  border:1px solid var(--vy-panel-line)!important;border-radius:22px!important;
+  background-color:var(--vy-panel-bg)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator) h2 {font-size:18px!important;line-height:1.35!important;letter-spacing:-.025em!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) :is(.vx621-group-head,.vx621-context-head,.vx621-recent-head) {
+  background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;margin:0 0 14px!important;padding:0!important;min-width:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) :is(.vx621-group-head,.vx621-context-head,.vx621-recent-head) p {font-size:13px!important;line-height:1.5!important;color:#adb2ba!important;margin:6px 0 0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis {margin:0!important;padding:12px!important;gap:10px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi {padding:12px!important;min-height:72px!important;background:#1b1d20!important;border-radius:16px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi:last-child {grid-column:1 / -1!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:52px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi:last-child b {margin:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-feature-card {
+  display:flex!important;flex-direction:column!important;align-self:stretch!important;
+  border:1px solid #303237!important;border-radius:18px!important;background:#1b1d20!important;padding:14px!important;gap:10px!important;min-width:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-feature-copy {flex:1!important;display:flex!important;flex-direction:column!important;min-width:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-feature-icon {width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;color:#d4d6dc!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.vx621-feature-icon,.android-quick-action-icon,.android-sheet-item-icon,.vy675-row-icon) svg {width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round;stroke-linejoin:round;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-card-actions {margin-top:auto!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-action {min-height:48px!important;background:#303239!important;}
+/* Consistent actions without changing destructive button meaning. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-sales,#screen-stock) .vy-form-launcher {padding:16px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-sales,#screen-stock) .vy-form-launcher h2 {margin:0 0 14px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-sales,#screen-stock) .vy-form-launcher > button {display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:48px!important;border-radius:14px!important;background:#e3e1e4!important;color:#19171a!important;font-size:14px!important;padding:12px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-analytics,#screen-upload,#screen-calculator) .btn {min-height:44px!important;border-radius:14px!important;font-size:13px!important;line-height:1.4!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-analytics,#screen-upload,#screen-calculator) .btn.primary {background:#e3e1e4!important;color:#19171a!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-analytics,#screen-upload,#screen-calculator) .btn.danger {background:#64142a!important;color:#fff1f4!important;}
+/* Selected scan modes use the same state contrast as page tabs. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-settings,#screen-calculator) .workspace-tabs > button[aria-pressed="true"] {background:var(--vy-control-active)!important;color:#fff!important;box-shadow:inset 0 0 0 1px #6f737d!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-upload .file-drop {min-height:136px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-upload #uploadFileActions {display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin:0 0 16px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-upload #uploadFileActions[hidden] {display:none!important;}
+/* Table scrolling is explicit. Neutral rows and bounded padding replace blue zebra blocks. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) :is(.scroll,.vx621-table-wrap,.p611-table,.insight-table) {max-width:100%!important;overflow-x:auto!important;scrollbar-width:thin;scrollbar-color:#656971 #17181b;touch-action:pan-x pan-y!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) .table {border-collapse:collapse!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) .table :is(th,td) {height:auto!important;padding:12px 10px!important;font-size:13px!important;line-height:1.5!important;border-bottom:1px solid #303237!important;font-variant-numeric:tabular-nums;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) .table thead th {background:#17191c!important;color:#c6c9cf!important;font-weight:650!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) .table tbody tr:nth-child(odd) :is(th,td) {background:#121315!important;color:#f0f0f2!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) .table tbody tr:nth-child(even) :is(th,td) {background:#1b1d20!important;color:#f0f0f2!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .table-scroll-hint {display:block;font-size:12px;color:#adb2ba;margin:8px 0;line-height:1.5;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .table-scroll-hint[hidden] {display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .workspace-pager[data-single-page] > button {display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .workspace-pager[data-single-page] {justify-content:flex-end!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .chart-axis {font-size:11px;fill:#b7bdc6;}
+/* Calculator tab panels retain state and use comfortable keys. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator [data-calc-panel][hidden] {display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calculator-card {padding:16px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calc-display-wrap {position:static!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calc-result {color:#f0c7d2!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calc-key {min-height:44px!important;font-size:17px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calc-key.equal {grid-column:span 2!important;background:#e3e1e4!important;color:#241c20!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator :is(.calc-memory-row,.quick-row) {display:flex!important;flex-wrap:wrap!important;gap:6px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator :is(.calc-memory-row,.quick-row) .btn {min-height:44px!important;font-size:12px!important;flex:1 0 auto!important;padding:8px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calculator-history {padding:0 16px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calculator-history > summary {padding:16px 0!important;min-height:48px!important;font-size:15px!important;font-weight:650!important;cursor:pointer;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator #businessCalculator .actions button {width:100%!important;}
+/* Plan surfaces are neutral silver and warm gold with an explicit current-plan state. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-plan-card {min-height:0!important;border:1px solid #393b40!important;padding:20px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-plan-card:nth-child(2) {background:linear-gradient(135deg,#434449,#242529 70%)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-business-card {background:linear-gradient(135deg,#4b3714,#211a0d 80%)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-plan-card.active-plan {border:1px solid #d5b56c!important;box-shadow:inset 0 0 0 1px #d5b56c!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-features {flex:0 1 auto!important;margin:16px 0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-cta {margin-top:12px!important;min-height:48px!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .active-plan .subscription-cta:disabled {opacity:1!important;color:#f5e1ac!important;background:#332810!important;}
+/* Keep the fixed navbar visible below modal sheets; its actions remain locked until dismissal. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay).vy-unified-overlay {padding-bottom:var(--vy-popup-clearance)!important;min-height:0!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body.vy-popup-open #nav.nav.bottom-nav {z-index:2147483201!important;visibility:visible!important;pointer-events:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body.vy-popup-open #nav.nav.bottom-nav button {pointer-events:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready.vy-keyboard-open {--vy-popup-clearance:12px;}
+
+/* Feedback clears the persistent navigation controls. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .glass-toast {bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;background:#25272b!important;}
 
 /* ===== STYLE SOURCE: capsule-navigation.css ===== */
 
@@ -10132,7 +10220,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
   width:68px;min-width:68px;max-width:68px;
   height:42px;min-height:42px;max-height:42px;
   box-sizing:border-box;border:0;border-radius:21px;
-  background:linear-gradient(135deg,#676967 0%,#505250 100%);
+  background:linear-gradient(135deg,#d1cdd0 0%,#b8b4b8 100%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.13);
   pointer-events:none;z-index:0;
   transform:translate3d(0,0,0);

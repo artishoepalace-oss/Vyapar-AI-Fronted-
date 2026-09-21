@@ -62,6 +62,7 @@
   }
   function updateViewport(){
     const v=root.visualViewport;
+    document.documentElement.classList.toggle('vy-keyboard-open',!!(v && v.height < root.innerHeight - 100));
     document.documentElement.style.setProperty('--vy-sheet-height',(v?v.height:root.innerHeight)+'px');
     document.documentElement.style.setProperty('--vy-sheet-top',(v?v.offsetTop:0)+'px');
   }
@@ -74,7 +75,9 @@
       const title=card.querySelector('h2,h3')?.textContent.trim()||'Add record';
       const launcher=document.createElement('section');launcher.className='card vy-form-launcher';
       launcher.dataset.formField=id;
-      launcher.innerHTML='<h2></h2><p class="muted">Open the form to add or update your records.</p><button type="button" class="btn primary">Open form</button><div class="vy-form-storage" hidden></div>';
+      launcher.innerHTML='<h2></h2><button type="button" class="btn primary"></button><div class="vy-form-storage" hidden></div>';
+      const labels={sproduct:'Add Item Sale',dsale:'Add Daily Entry',mprofit:'Add Monthly Profit',stockItem:'Add Stock Item'};
+      launcher.querySelector('button').textContent=/^edit/i.test(title)?'Edit Record':labels[id];
       launcher.querySelector('h2').textContent=title;
       card.before(launcher);launcher.querySelector('.vy-form-storage').appendChild(card);
       launcher.querySelector('button').onclick=()=>openHost(card,screen.id.replace('screen-',''));

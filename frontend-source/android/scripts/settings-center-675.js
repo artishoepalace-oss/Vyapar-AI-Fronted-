@@ -20,7 +20,8 @@
     {
       group: 'Your account',
       items: [
-        { id: 'account', icon: 'account', title: 'Account & plan', subtitle: 'Profile, subscription and sign-in', keywords: 'email login logout cloud session upgrade plan', match: card => card.classList.contains('settings-account-section') }
+        { id: 'account', icon: 'account', title: 'Account & plan', subtitle: 'Profile, subscription and sign-in', keywords: 'email login logout cloud session upgrade plan', match: card => card.classList.contains('settings-account-section') },
+        { id: 'security', icon: 'lock', title: 'Account password', subtitle: 'Change your sign-in password', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' }
       ]
     },
     {
@@ -33,7 +34,6 @@
     {
       group: 'App preferences',
       items: [
-        { id: 'security', icon: 'lock', title: 'Account password', subtitle: 'Change your sign-in password', keywords: 'pin otp password lock safety', match: card => card.id === 'vx622AppLockSection' },
         { id: 'appearance', icon: 'appearance', title: 'Motion & performance', subtitle: 'Animations and device speed', keywords: 'dark auto smooth lite animation lag fast', match: card => /appearance|motion & performance|performance/i.test(card.textContent || '') && !/app update/i.test(card.textContent || '') },
         { id: 'navigation', icon: 'navigation', title: 'Navigation', subtitle: 'Scrolling and page behaviour', keywords: 'auto scroll top remember page position', match: card => card.id === 'vy675NavigationSettings' },
         { id: 'data', icon: 'backup', title: 'Backup & restore', subtitle: 'Device backup and Google Drive', keywords: 'download upload json cloud disconnect', match: card => card.classList.contains('data-safety-section') || /backup & data safety|data safety/i.test(card.textContent || '') }

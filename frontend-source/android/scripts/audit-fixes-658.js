@@ -121,7 +121,7 @@
     if(empty){
       empty.className='vy658-empty-state';
       empty.innerHTML='<b>No stock added yet</b><span>Add your first item to start quantity and low-stock tracking.</span><button type="button" class="btn primary">+ Add Stock Item</button>';
-      empty.querySelector('button').addEventListener('click',()=>{ const i=document.getElementById('stockItem'); if(i){i.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>i.focus(),250);} });
+      empty.querySelector('button').addEventListener('click',()=>{ if(window.VyaparFormSheets){window.VyaparFormSheets.openField('stockItem');return;} const i=document.getElementById('stockItem'); if(i){i.scrollIntoView({behavior:'auto',block:'nearest'});i.focus();} });
     }
   }
 

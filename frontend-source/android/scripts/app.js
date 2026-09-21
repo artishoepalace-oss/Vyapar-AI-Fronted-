@@ -1219,6 +1219,8 @@ function renderHome(){
     month: 'short'
   }).format(new Date());
   const recommendation = cleanText(nextAction(t), 320);
+  const thisMonth = String(t.year) + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
+  const monthProfit = (resolvedMonthlyProfitSeries().find(row => row[0] === thisMonth) || [null, 0])[1];
 
   el.innerHTML = `
     <div class="home-shell">
@@ -1262,9 +1264,9 @@ function renderHome(){
             <small>Recorded sales this year</small>
           </div>
           <div class="stat">
-            <div class="home-metric-head"><span>Yearly profit</span><i class="home-metric-icon">↗</i></div>
-            <b>${money(t.profit)}</b>
-            <small>Jan–Dec ${esc(t.year)}</small>
+            <div class="home-metric-head"><span>This month</span><i class="home-metric-icon">↗</i></div>
+            <b>${money(monthProfit)}</b>
+            <small>Recorded profit · ${esc(monthLabel(thisMonth))}</small>
           </div>
           <div class="stat">
             <div class="home-metric-head"><span>Monthly average</span><i class="home-metric-icon">≈</i></div>
@@ -3642,12 +3644,24 @@ function plan10(t){
     return `Year ${i + 1}: target annual net profit ${money(base * Math.pow(1.18, i))}.`;
   });
 }
+let calculatorView = 'standard';
+function setCalculatorView(view){
+  calculatorView = view === 'business' ? 'business' : 'standard';
+  const screen = document.getElementById('screen-calculator');
+  if(!screen) return;
+  screen.querySelectorAll('[data-calc-view]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.calcView === calculatorView)));
+  screen.querySelectorAll('[data-calc-panel]').forEach(panel => { panel.hidden = panel.dataset.calcPanel !== calculatorView; });
+}
 function renderCalculator(){
   const el = document.getElementById('screen-calculator');
   if(!el) return;
   el.innerHTML = `
     <div class="calculator-page">
-      <div class="card calculator-card">
+      <div class="workspace-tabs" role="tablist" aria-label="Calculator type">
+        <button type="button" role="tab" data-calc-view="standard" aria-controls="standardCalculator" onclick="setCalculatorView('standard')">Calculator</button>
+        <button type="button" role="tab" data-calc-view="business" aria-controls="businessCalculator" onclick="setCalculatorView('business')">Business</button>
+      </div>
+      <div id="standardCalculator" data-calc-panel="standard" role="tabpanel" class="card calculator-card">
         <div class="calculator-head">
           <div>
             <h2>Full Calculator</h2>
@@ -3717,11 +3731,12 @@ function renderCalculator(){
           <button class="btn mini" onclick="calcBusiness('profit')">Profit</button>
         </div>
       </div>
-      <div class="card">
-        <div class="calculator-head"><div><h2>Calculation History</h2><p class="muted">Tap a result to reuse it.</p></div><button class="btn mini danger" onclick="calcClearHistory()">Clear</button></div>
+      <details class="card calculator-history" data-calc-panel="standard">
+        <summary>Calculation history</summary>
+        <div class="calculator-head"><p class="muted">Tap a result to reuse it.</p><button class="btn mini danger" onclick="calcClearHistory()">Clear history</button></div>
         <div id="calcHistory" class="calc-history"></div>
-      </div>
-      <div class="card">
+      </details>
+      <div id="businessCalculator" data-calc-panel="business" role="tabpanel" class="card" hidden>
         <h2>Business Calculator</h2>
         <div class="business-calc-grid">
           <div><label>Purchase Price</label><input id="bcBuy" type="number" inputmode="decimal" placeholder="600"></div>
@@ -3736,6 +3751,7 @@ function renderCalculator(){
       </div>
     </div>`;
   renderCalcHistory();
+  setCalculatorView(calculatorView);
 }
 
 function calcSafeEval(raw){
@@ -3790,15 +3806,17 @@ function calcToggleScientific(){const el=document.getElementById('scientificKeys
 function calcFunc(name){
   const input=document.getElementById('normalCalc');if(!input)return; let n;
   try{n=calcSafeEval(input.value); }catch(e){n=0;}
+  try {
   let out;
-  if(name==='sqrt') out=Math.sqrt(n); else if(name==='square')out=n*n; else if(name==='reciprocal')out=1/n; else if(name==='pow'){ const p=Number(prompt('Power (y)','2')); if(!Number.isFinite(p))return; out=Math.pow(n,p); } else if(name==='sin')out=Math.sin(n*Math.PI/180); else if(name==='cos')out=Math.cos(n*Math.PI/180); else if(name==='tan')out=Math.tan(n*Math.PI/180); else if(name==='log')out=Math.log10(n); else if(name==='ln')out=Math.log(n); else if(name==='pi')out=Math.PI; else if(name==='e')out=Math.E; else if(name==='factorial'){if(n<0||n>170||Math.floor(n)!==n)throw new Error('Factorial needs an integer 0–170');out=1;for(let i=2;i<=n;i++)out*=i;} if(!Number.isFinite(out))throw new Error('Invalid result'); input.value=String(out);calcKeepDisplayVisible(input);const r=document.getElementById('normalResult');if(r)r.textContent='Total: '+money(out);calcHistoryAdd(name,out);
+  if(name==='sqrt') out=Math.sqrt(n); else if(name==='square')out=n*n; else if(name==='reciprocal')out=1/n; else if(name==='pow'){ const answer=prompt('Power (y)','2'); if(answer===null)return; const p=Number(answer); if(!Number.isFinite(p))return; out=Math.pow(n,p); } else if(name==='sin')out=Math.sin(n*Math.PI/180); else if(name==='cos')out=Math.cos(n*Math.PI/180); else if(name==='tan')out=Math.tan(n*Math.PI/180); else if(name==='log')out=Math.log10(n); else if(name==='ln')out=Math.log(n); else if(name==='pi')out=Math.PI; else if(name==='e')out=Math.E; else if(name==='factorial'){if(n<0||n>170||Math.floor(n)!==n)throw new Error('Factorial needs an integer 0–170');out=1;for(let i=2;i<=n;i++)out*=i;} if(!Number.isFinite(out))throw new Error('Invalid result'); input.value=String(out);calcKeepDisplayVisible(input);const r=document.getElementById('normalResult');if(r)r.textContent='Total: '+money(out);calcHistoryAdd(name,out);
+  } catch(error) { const result=document.getElementById('normalResult'); if(result)result.textContent=error.message || 'Invalid calculation'; }
 }
 function getCalcHistory(){try{return JSON.parse(localStorage.getItem('vyapar_ai_calc_history_v1')||'[]')||[]}catch(e){return[];}}
 function calcHistoryAdd(expression,result){let h=getCalcHistory();h.unshift({id:uid(),expression:String(expression),result:Number(result),at:new Date().toISOString()});h=h.slice(0,50);localStorage.setItem('vyapar_ai_calc_history_v1',JSON.stringify(h));renderCalcHistory();}
 function calcClearHistory(){localStorage.removeItem('vyapar_ai_calc_history_v1');renderCalcHistory();}
 function renderCalcHistory(){const el=document.getElementById('calcHistory');if(!el)return;const h=getCalcHistory();el.innerHTML=h.length?h.map(x=>`<button type="button" class="calc-history-item" onclick="calcUseHistory(${Number(x.result)})"><span>${esc(x.expression)}</span><b>${esc(x.result)}</b></button>`).join(''):'<div class="muted">No calculations yet.</div>';}
 function calcUseHistory(n){const i=document.getElementById('normalCalc');if(i){i.value=String(n);calcKeepDisplayVisible(i);}}
-function calcBusiness(kind){setTab('calculator'); const buy=document.getElementById('bcBuy'),sell=document.getElementById('bcSell'); if(!buy||!sell)return; const b=Number(buy.value)||0,s=Number(sell.value)||0; if(kind==='profit') { const p=s-b; showGlassToast('Profit: '+money(p)); } else if(kind==='margin'){ const m=s?((s-b)/s*100):0; showGlassToast('Margin: '+pct(m)); } else if(kind==='discount'){ const d=Number(document.getElementById('bcDisc')?.value)||0; showGlassToast('Price after discount: '+money(s*(1-d/100))); } else if(kind==='gst'){ const g=Number(document.getElementById('bcGst')?.value)||0; showGlassToast('GST inclusive: '+money(s*(1+g/100))); }}
+function calcBusiness(kind){setCalculatorView('business'); const buy=document.getElementById('bcBuy'),sell=document.getElementById('bcSell'); if(!buy||!sell)return; const b=Number(buy.value)||0,s=Number(sell.value)||0; if(kind==='profit') { const p=s-b; showGlassToast('Profit: '+money(p)); } else if(kind==='margin'){ const m=s?((s-b)/s*100):0; showGlassToast('Margin: '+pct(m)); } else if(kind==='discount'){ const d=Number(document.getElementById('bcDisc')?.value)||0; showGlassToast('Price after discount: '+money(s*(1-d/100))); } else if(kind==='gst'){ const g=Number(document.getElementById('bcGst')?.value)||0; showGlassToast('GST inclusive: '+money(s*(1+g/100))); }}
 function runBusinessCalculator(){const b=Number(v('bcBuy'))||0,s=Number(v('bcSell'))||0,g=Number(v('bcGst'))||0,d=Number(v('bcDisc'))||0;const net=s*(1-d/100);const profit=net-b;const margin=net?profit/net*100:0;const gst=net*g/100;const inc=net+gst;const el=document.getElementById('businessCalcResult');if(el)el.innerHTML=`Net selling: <b>${money(net)}</b><br>Profit: <b>${money(profit)}</b><br>Margin: <b>${pct(margin)}</b><br>GST: <b>${money(gst)}</b><br>GST inclusive: <b>${money(inc)}</b>`;}
 
 
@@ -3813,8 +3831,8 @@ function renderSubscription(){
   el.innerHTML = `
     <section class="subscription-intro card">
       <span class="subscription-kicker">VYAPAR AI PLANS</span>
-      <h2>Choose what your business needs</h2>
-      <p class="muted">Business workspace stays locked until the Business subscription is verified on your account.</p>
+      <h2>${businessActive ? 'Your Business plan is active' : proIncluded ? 'Your Pro plan is active' : 'Choose what your business needs'}</h2>
+      <p class="muted">${businessActive ? 'All Business tools are available on your verified account.' : proIncluded ? 'Pro tools are ready. Upgrade for the complete Business workspace.' : 'Start with Free, or choose a plan for more business tools.'}</p>
     </section>
 
     <div class="grid3 subscription-plan-grid">
@@ -3864,7 +3882,7 @@ function renderSubscription(){
     </div>
 
     <div class="notice success subscription-status" style="margin-top:14px">
-      Current Plan: <b>${currentPlan.toUpperCase()}</b> · Paid access unlocks only after secure server verification.
+      Current plan: <b>${currentPlan.toUpperCase()}</b> · ${proIncluded ? 'Verified access is active.' : 'Free tools are ready to use.'}
     </div>
   `;
 }
@@ -9192,7 +9210,7 @@ function shell(title,body){return `<div class="calculator-head"><div><span class
 function home(){ensure();const el=$('businessModuleArea');if(!el)return;el.innerHTML=shell('Accounting & Business Platform',dashboardHTML()+`<div class="p611-modules">
 <button onclick="p611Open('transactions')"><b>Transactions</b><span>Sale, purchase, returns, payments, orders & documents</span></button><button onclick="p611Open('cashbank')"><b>Cash & Bank</b><span>Accounts, balances, deposits, withdrawals & transfers</span></button><button onclick="p611Open('ledger')"><b>Ledgers</b><span>Customer, supplier and accounting movements</span></button><button onclick="p611Open('inventory')"><b>Inventory / Godowns</b><span>Stock ledger, valuation and transfers</span></button><button onclick="p611Open('reports')"><b>Reports</b><span>P&L, balance sheet, stock and tax exports</span></button><button onclick="p611Open('settings')"><b>Transaction Settings</b><span>Prefixes, tax, printing and optional features</span></button><button onclick="p611Open('businesses')"><b>Multi-company</b><span>Create and switch businesses safely</span></button><button onclick="p611Open('audit')"><b>Audit & Notifications</b><span>Important actions and business activity</span></button></div>`)}
 function txForm(type){const itemOptions=(S().products||[]).slice(0,1000).map(p=>`<option value="${safe(p.sku||p.barcode||p.name)}">${safe(p.name)}</option>`).join('');return `<div class="p611-form"><select id="pType">${TYPES.map(t=>`<option ${t===type?'selected':''}>${t}</option>`).join('')}</select><input id="pParty" placeholder="Customer / Supplier"><input id="pItem" list="pItems" placeholder="Item / SKU / barcode"><datalist id="pItems">${itemOptions}</datalist><input id="pQty" type="number" min="0.01" step="0.01" value="1" placeholder="Qty"><input id="pRate" type="number" min="0" step="0.01" placeholder="Rate"><input id="pTax" type="number" min="0" value="0" placeholder="GST %"><input id="pDisc" type="number" min="0" value="0" placeholder="Discount %"><input id="pPaid" type="number" min="0" value="0" placeholder="Received/Paid"><select id="pMode">${PAYMENT_MODES.map(x=>`<option>${x}</option>`).join('')}</select><input id="pState" placeholder="State of supply"><input id="pNotes" placeholder="Notes"></div><div class="actions"><button class="btn primary" onclick="p611CreateFromForm()">Save Transaction</button></div>`}
-function open(mod){ensure();const el=$('businessModuleArea');if(!el)return;if(mod==='transactions'){const rows=S().transactions611.filter(t=>t.businessId===biz()).slice().reverse().slice(0,150);el.innerHTML=shell('Unified Transactions',txForm('SALE')+`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Balance</th><th></th></tr></thead><tbody>${rows.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${safe(t.number)}</td><td>${safe(t.partyName)}</td><td>${cash(t.total)}</td><td>${cash(t.balance)}</td><td>${t.status!=='cancelled'?`<button class="btn mini" onclick="p611Share('${t.id}')">Share</button> <button class="btn mini danger" onclick="p611Cancel('${t.id}')">Cancel</button>`:'Cancelled'}</td></tr>`).join('')||'<tr><td colspan="7">No transactions yet.</td></tr>'}</tbody></table></div>`)}
+function open(mod){ensure();const el=$('businessModuleArea');if(!el)return;if(mod==='transactions'){const rows=S().transactions611.filter(t=>t.businessId===biz()).slice().reverse().slice(0,150);el.innerHTML=shell('Unified Transactions',txForm('SALE')+`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>Party</th><th>No.</th><th>Balance</th><th></th></tr></thead><tbody>${rows.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${cash(t.total)}</td><td>${safe(t.partyName)}</td><td>${safe(t.number)}</td><td>${cash(t.balance)}</td><td>${t.status!=='cancelled'?`<button class="btn mini" onclick="p611Share('${t.id}')">Share</button> <button class="btn mini danger" onclick="p611Cancel('${t.id}')">Cancel</button>`:'Cancelled'}</td></tr>`).join('')||'<tr><td colspan="7">No transactions yet.</td></tr>'}</tbody></table></div>`)}
 else if(mod==='cashbank'){const ac=S().accounts611.filter(a=>a.businessId===biz()&&['asset','liability'].includes(a.category));el.innerHTML=shell('Cash & Bank',`<div class="p611-form"><input id="pAccName" placeholder="New bank / UPI / loan account"><select id="pAccCat"><option value="asset">Asset / Bank</option><option value="liability">Loan / Liability</option></select><input id="pAccOpen" type="number" placeholder="Opening balance"></div><button class="btn primary" onclick="p611AddAccount()">Add Account</button><div class="p611-table"><table class="table"><thead><tr><th>Account</th><th>Category</th><th>Balance</th></tr></thead><tbody>${ac.map(a=>`<tr><td>${safe(a.name)}</td><td>${safe(a.category)}</td><td>${cash(balance(a.id))}</td></tr>`).join('')}</tbody></table></div><h3>Payment / Deposit / Withdrawal</h3>${txForm('PAYMENT_IN')}`)}
 else if(mod==='ledger'){const es=S().ledgerEntries611.filter(e=>e.businessId===biz()).slice().reverse().slice(0,300);el.innerHTML=shell('Central Accounting Ledger',`<div class="actions"><button class="btn" onclick="p611Report('ledger')">Export Ledger CSV</button></div><div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Account</th><th>Debit</th><th>Credit</th><th>Narration</th></tr></thead><tbody>${es.map(e=>`<tr><td>${e.date}</td><td>${safe(S().accounts611.find(a=>a.id===e.accountId)?.name||'')}</td><td>${cash(e.debit)}</td><td>${cash(e.credit)}</td><td>${safe(e.narration)}</td></tr>`).join('')||'<tr><td colspan="5">No ledger entries.</td></tr>'}</tbody></table></div>`)}
 else if(mod==='inventory'){const gs=S().godowns611.filter(g=>g.businessId===biz());const ps=(S().products||[]).slice(0,500);el.innerHTML=shell('Inventory & Godowns',`<div class="p611-form"><input id="pGodownName" placeholder="Godown name"><button class="btn primary" onclick="p611AddGodown()">Create Godown</button></div><div class="p611-form"><input id="pTransferItem" placeholder="Item / SKU"><select id="pFrom">${gs.map(g=>`<option value="${g.id}">${safe(g.name)}</option>`)}</select><select id="pTo">${gs.map(g=>`<option value="${g.id}">${safe(g.name)}</option>`)}</select><input id="pTransferQty" type="number" min="0.01" step="0.01" placeholder="Qty"><button class="btn" onclick="p611Transfer()">Transfer Stock</button></div><div class="p611-table"><table class="table"><thead><tr><th>Item</th><th>SKU</th><th>Total Stock</th>${gs.map(g=>`<th>${safe(g.name)}</th>`).join('')}</tr></thead><tbody>${ps.map(p=>`<tr><td>${safe(p.name)}</td><td>${safe(p.sku||'')}</td><td>${stock(p.id)}</td>${gs.map(g=>`<td>${stock(p.id,g.id)}</td>`).join('')}</tr>`).join('')||'<tr><td>No products.</td></tr>'}</tbody></table></div>`)}
@@ -9330,7 +9348,7 @@ function linkedOptions(){return activeTx().filter(t=>['SALE','PURCHASE'].include
 function enhancedTxForm(type){const items=(S().products||[]).slice(0,1000).map(p=>`<option value="${safe(p.sku||p.barcode||p.name)}">${safe(p.name)}</option>`).join(''),currency=defaultCurrency();return `<div class="p611-form"><select id="pType">${['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN','PAYMENT_IN','PAYMENT_OUT','ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN','OTHER_INCOME','FIXED_ASSET'].map(t=>`<option ${t===type?'selected':''}>${t}</option>`).join('')}</select><input id="pParty" placeholder="Customer / Supplier"><input id="pItem" list="pItems" placeholder="Item / SKU / barcode"><datalist id="pItems">${items}</datalist><input id="pQty" type="number" min="0.01" step="0.01" value="1" placeholder="Qty"><input id="pRate" type="number" min="0" step="0.01" placeholder="Rate / Amount"><input id="pTax" type="number" min="0" value="0" placeholder="GST %"><input id="pCess" type="number" min="0" value="0" placeholder="CESS %"><input id="pDisc" type="number" min="0" value="0" placeholder="Discount %"><input id="pPaid" type="number" min="0" value="0" placeholder="Received / Paid / Refund"><select id="pMode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Card</option><option>Cheque</option><option>Credit</option><option>Other</option></select><select id="pAccount"><option value="">Auto payment account</option>${accountOptions('')}</select><select id="pLinked"><option value="">Link original invoice/purchase (returns/payments)</option>${linkedOptions()}</select><input id="pState" placeholder="State of supply"><input id="pCurrency" value="${safe(currency)}" placeholder="Currency"><input id="pFx" type="number" min="0.000001" step="0.000001" value="1" placeholder="1 transaction currency = base currency"><input id="pNotes" placeholder="Notes"></div><div class="actions"><button class="btn primary" onclick="p611CreateFromForm()">Save Transaction</button></div><p class="muted">Returns are linked to the original document to prevent over-return/double stock. Linked payments update invoice outstanding automatically.</p>`}
 function shell(title,body){return `<div class="calculator-head"><div><span class="pill">Business Platform 6.1.2</span><h2>${safe(title)}</h2><p class="muted">Accounting correctness hotfix · linked returns/payments · reports · multi-currency base posting</p></div><button class="btn mini" onclick="p611Home()">Platform Home</button></div>${body}`}
 const originalOpen=window.p611Open;
-function renderTransactions(){const el=$('businessModuleArea');if(!el)return;const rows=activeTx().slice().reverse().slice(0,200);el.innerHTML=shell('Unified Transactions',enhancedTxForm('SALE')+`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Balance</th><th>Linked</th><th></th></tr></thead><tbody>${rows.map(t=>`<tr><td>${safe(t.date)}</td><td>${safe(t.type)}</td><td>${safe(t.number)}</td><td>${safe(t.partyName)}</td><td>${cash(t.total)}</td><td>${cash(t.balance)}</td><td>${safe(txById(t.linkedTransactionId)?.number||'')}</td><td><button class="btn mini" onclick="p611Share('${t.id}')">Share</button> <button class="btn mini danger" onclick="p611Cancel('${t.id}')">Cancel</button></td></tr>`).join('')||'<tr><td colspan="8">No transactions yet.</td></tr>'}</tbody></table></div>`)}
+function renderTransactions(){const el=$('businessModuleArea');if(!el)return;const rows=activeTx().slice().reverse().slice(0,200);el.innerHTML=shell('Unified Transactions',enhancedTxForm('SALE')+`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>Party</th><th>No.</th><th>Balance</th><th>Linked</th><th></th></tr></thead><tbody>${rows.map(t=>`<tr><td>${safe(t.date)}</td><td>${safe(t.type)}</td><td>${cash(t.total)}</td><td>${safe(t.partyName)}</td><td>${safe(t.number)}</td><td>${cash(t.balance)}</td><td>${safe(txById(t.linkedTransactionId)?.number||'')}</td><td><button class="btn mini" onclick="p611Share('${t.id}')">Share</button> <button class="btn mini danger" onclick="p611Cancel('${t.id}')">Cancel</button></td></tr>`).join('')||'<tr><td colspan="8">No transactions yet.</td></tr>'}</tbody></table></div>`)}
 function renderCashBank(){const el=$('businessModuleArea');if(!el)return;const ac=(S().accounts611||[]).filter(a=>a.businessId===biz()&&['asset','liability'].includes(a.category));el.innerHTML=shell('Cash & Bank',`<div class="p611-form"><input id="pAccName" placeholder="New bank / UPI / loan account"><select id="pAccCat"><option value="asset">Asset / Bank / UPI</option><option value="liability">Loan / Liability</option></select><input id="pAccOpen" type="number" min="0" placeholder="Opening balance"></div><button class="btn primary" onclick="p611AddAccount()">Add Account</button><div class="p611-table"><table class="table"><thead><tr><th>Account</th><th>Category</th><th>Balance</th></tr></thead><tbody>${ac.map(a=>`<tr><td>${safe(a.name)}</td><td>${safe(a.category)}</td><td>${cash(a.category==='liability'?-accountBalance(a.id):accountBalance(a.id))}</td></tr>`).join('')}</tbody></table></div><h3>Payment / Deposit / Withdrawal</h3>${enhancedTxForm('PAYMENT_IN')}`)}
 function renderReports(from='',to=''){const el=$('businessModuleArea');if(!el)return;const t=totals(from,to),bs=balanceSheet(),bi=billWisePnL(from,to).slice(0,30),pw=partyWisePnL(from,to).slice(0,30),ag=ageing(from,to).slice(0,30),integ=accountingIntegrity();el.innerHTML=shell('Reports & Accounting',`<div class="p611-form"><label>From <input id="pRepFrom" type="date" value="${safe(from)}"></label><label>To <input id="pRepTo" type="date" value="${safe(to)}"></label><button class="btn primary" onclick="p612ApplyReports()">Apply</button><button class="btn" onclick="p612RepairAccounting()">Repair/Rebuild Accounting</button></div><div class="p611-grid"><div class="stat"><span>Revenue</span><b>${cash(t.revenue)}</b></div><div class="stat"><span>COGS</span><b>${cash(t.cogs)}</b></div><div class="stat"><span>Expenses</span><b>${cash(t.expenses)}</b></div><div class="stat"><span>Net Profit</span><b>${cash(t.net)}</b></div><div class="stat"><span>Assets</span><b>${cash(bs.assets)}</b></div><div class="stat"><span>Liabilities</span><b>${cash(bs.liabilities)}</b></div></div><div class="notice ${integ.ok?'success':'danger'}"><b>Ledger integrity:</b> Debits ${cash(integ.debit)} · Credits ${cash(integ.credit)} · Difference ${cash(integ.difference)} ${integ.ok?'✓ Balanced':'⚠ Needs repair'}</div><div class="actions"><button class="btn" onclick="p612Export('daybook')">Day Book CSV</button><button class="btn" onclick="p612Export('billpnl')">Bill-wise P&L CSV</button><button class="btn" onclick="p612Export('partypnl')">Party-wise P&L CSV</button><button class="btn" onclick="p612Export('ageing')">Ageing CSV</button><button class="btn" onclick="p612Export('ledger')">Ledger CSV</button><button class="btn" onclick="p612Export('stock')">Stock CSV</button></div><h3>Bill-wise P&L</h3><div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Invoice</th><th>Party</th><th>Revenue</th><th>COGS</th><th>Profit</th><th>Due</th></tr></thead><tbody>${bi.map(r=>`<tr><td>${r.date}</td><td>${safe(r.number)}</td><td>${safe(r.party)}</td><td>${cash(r.revenue)}</td><td>${cash(r.cogs)}</td><td>${cash(r.profit)}</td><td>${cash(r.balance)}</td></tr>`).join('')||'<tr><td colspan="7">No sales.</td></tr>'}</tbody></table></div><h3>Party-wise P&L</h3><div class="p611-table"><table class="table"><thead><tr><th>Party</th><th>Revenue</th><th>COGS</th><th>Profit</th></tr></thead><tbody>${pw.map(r=>`<tr><td>${safe(r.party)}</td><td>${cash(r.revenue)}</td><td>${cash(r.cogs)}</td><td>${cash(r.profit)}</td></tr>`).join('')||'<tr><td colspan="4">No party sales.</td></tr>'}</tbody></table></div><h3>Receivable / Payable Ageing</h3><div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Document</th><th>Party</th><th>Outstanding</th><th>Days</th><th>Bucket</th></tr></thead><tbody>${ag.map(r=>`<tr><td>${r.date}</td><td>${r.type}</td><td>${safe(r.number)}</td><td>${safe(r.party)}</td><td>${cash(r.balance)}</td><td>${r.days}</td><td>${r.bucket}</td></tr>`).join('')||'<tr><td colspan="7">No outstanding documents.</td></tr>'}</tbody></table></div>`)}
 function renderBusinesses(){const el=$('businessModuleArea');if(!el)return;el.innerHTML=shell('Businesses / Firms',`<div class="p611-form"><input id="pBizName" placeholder="Business name"><select id="pBizCurrency"><option>INR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AED</option><option>JPY</option></select><button class="btn primary" onclick="p611AddBusiness()">Create Business</button></div><div class="p611-table"><table class="table"><thead><tr><th>Business</th><th>Base Currency</th><th>Actions</th></tr></thead><tbody>${(S().businesses||[]).map(b=>`<tr><td>${safe(b.name)}</td><td>${safe(b.baseCurrency||'INR')}</td><td><button class="btn mini ${b.id===biz()?'primary':''}" onclick="p611SwitchBusiness('${b.id}')">${b.id===biz()?'Active':'Switch'}</button> <button class="btn mini" onclick="p612EditBusiness('${b.id}')">Edit</button> <button class="btn mini danger" onclick="p612DeleteBusiness('${b.id}')">Delete</button></td></tr>`).join('')}</tbody></table></div><p class="muted">Delete is blocked when a business has transactions, preventing accidental data loss.</p>`)}
@@ -9604,6 +9622,25 @@ function button(label,action,tier='business',kind=''){
   return `<button type="button" class="vx621-action ${kind} ${blue?'blue':''} ${locked?'is-locked':''}" onclick="${action}"><span>${E(label)}</span>${tierBadge(tier)}</button>`;
 }
 function featureCard(title,desc,actions,icon='◈'){
+  const paths = {
+    '⇄':'<path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/>',
+    '👥':'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2"/>',
+    '▣':'<path d="M4 8h16v13H4zM8 8V4h8v4M8 13h8"/>',
+    '₹':'<rect x="3" y="5" width="18" height="15" rx="3"/><path d="M16 11h5v5h-5a2.5 2.5 0 0 1 0-5ZM5 5V3h12"/>',
+    '≡':'<path d="M5 3h14v18H5zM8 7h8M8 12h8M8 17h5"/>',
+    '▥':'<path d="M4 3v18h17M8 17v-5M13 17V7M18 17v-8"/>',
+    'GST':'<path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Zm3 13 8-9"/><circle cx="8" cy="8" r="1"/><circle cx="16" cy="15" r="1"/>',
+    '−':'<rect x="3" y="5" width="18" height="15" rx="3"/><path d="M8 12h8"/>',
+    '▤':'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3ZM9 7h6M9 11h6M9 15h4"/>',
+    '↗':'<path d="M14 3h7v7M21 3l-9 9M10 3H4v18h16v-7"/>',
+    '✉':'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/>',
+    '¤':'<path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/>',
+    '▦':'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7v10M10 7v10M14 7v10M17 7v10"/>',
+    '⌂':'<path d="m3 10 9-7 9 7v11H3V10ZM8 21V11h8v10M8 16h8"/>',
+    '⚙':'<circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/>'
+  };
+  const vector = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[icon] || paths['▤']) + '</svg>';
+  icon = vector;
   return `<article class="vx621-feature-card"><div class="vx621-feature-icon" aria-hidden="true">${icon}</div><div class="vx621-feature-copy"><h3>${E(title)}</h3><p>${E(desc)}</p><div class="vx621-card-actions">${actions}</div></div></article>`;
 }
 function group(title,subtitle,cards){
@@ -9726,7 +9763,7 @@ function recentTransactions(){
 }
 function recentActivityHtml(){
   const rows=recentTransactions();
-  return `<div class="vx621-recent-head"><div><h2>Recent Business Activity</h2><p>Your latest transactions. Cancelling a transaction reverses its stock and balance changes.</p></div><div class="vx621-bulk-actions"><button class="btn mini" onclick="vx621SelectAllRecent(true)">Select All</button><button class="btn mini" onclick="vx621SelectAllRecent(false)">Clear</button><button class="btn mini danger" onclick="vx621CancelRecentSelected()">Cancel Selected</button></div></div><div class="vx621-table-wrap"><table class="table vx621-table"><thead><tr><th class="vx621-check-col"><input type="checkbox" onchange="vx621SelectAllRecent(this.checked)"></th><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows.map(t=>`<tr><td><input class="vx621-recent-check" type="checkbox" value="${E(t.id)}" ${t.status==='cancelled'?'disabled':''}></td><td>${E(t.date)}</td><td>${E(t.type)}</td><td>${E(t.number)}</td><td>${E(t.partyName||'')}</td><td>${M(t.total)}</td><td>${E(t.status||'active')}</td><td>${t.status==='cancelled'?'<span class="vx621-muted">Cancelled</span>':`<button class="btn mini danger" onclick="p611Cancel('${E(t.id)}')">Cancel</button>`}</td></tr>`).join('')||'<tr><td colspan="8" class="muted">No business transactions yet.</td></tr>'}</tbody></table></div>`;
+  return `<div class="vx621-recent-head"><div><h2>Recent Business Activity</h2><p>Your latest transactions. Cancelling a transaction reverses its stock and balance changes.</p></div><div class="vx621-bulk-actions"><button class="btn mini" onclick="vx621SelectAllRecent(true)">Select All</button><button class="btn mini" onclick="vx621SelectAllRecent(false)">Clear</button><button class="btn mini danger" onclick="vx621CancelRecentSelected()">Cancel Selected</button></div></div><div class="vx621-table-wrap"><table class="table vx621-table"><thead><tr><th class="vx621-check-col"><input type="checkbox" onchange="vx621SelectAllRecent(this.checked)"></th><th>Date</th><th>Type</th><th>Total</th><th>Party</th><th>No.</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows.map(t=>`<tr><td><input class="vx621-recent-check" type="checkbox" value="${E(t.id)}" ${t.status==='cancelled'?'disabled':''}></td><td>${E(t.date)}</td><td>${E(t.type)}</td><td>${M(t.total)}</td><td>${E(t.partyName||'')}</td><td>${E(t.number)}</td><td>${E(t.status||'active')}</td><td>${t.status==='cancelled'?'<span class="vx621-muted">Cancelled</span>':`<button class="btn mini danger" onclick="p611Cancel('${E(t.id)}')">Cancel</button>`}</td></tr>`).join('')||'<tr><td colspan="8" class="muted">No business transactions yet.</td></tr>'}</tbody></table></div>`;
 }
 window.vx621SelectAllRecent=function(checked){ document.querySelectorAll('.vx621-recent-check:not(:disabled)').forEach(x=>x.checked=!!checked); };
 window.vx621CancelRecentSelected=async function(){
@@ -9762,7 +9799,7 @@ function renderBusinessHome(){
     featureCard('Central Ledgers','View customer, supplier and account balances.',button('Open Ledgers',"vx621OpenPlatform('business','ledger','business')",'business','primary'),'≡'),
     featureCard('58 Reports','Profit, balance sheet and GST reports.',button('Open Reports',"vx621OpenDomain('reports','business')",'business','primary'),'▥'),
     featureCard('Advanced GST & Tax','GST, e-way bills and tax settings.',button('Advanced GST',"vx621OpenDomain('gst','business')",'business','primary'),'GST'),
-    featureCard('Business Expenses','Record shop expenses and track their effect on profit.',button('Expense Entry',"businessShowModule('expenses')",'business','primary'),'−')
+    featureCard('Business Expenses','Shop expenses and their effect on profit.',button('Expense Entry',"businessShowModule('expenses')",'business','primary'),'−')
   ];
   const docs=[
     featureCard('Invoice & Thermal','PDF invoices and thermal printing.',button('Invoice & Print',"vx621OpenPlatform('business','print620','business')",'business','primary'),'▤'),
@@ -9888,7 +9925,7 @@ function appendStockTools(){
   const el=document.getElementById('screen-stock'); if(!el || el.querySelector('.vx621-stock-tools')) return;
   const block=document.createElement('section'); block.className='card vx621-stock-tools';
   block.innerHTML=`<div class="vx621-context-head"><div><span class="pill">Stock Tools</span><h2>Inventory Workspace</h2><p>Manage your catalog, godowns and stock transfers.</p></div></div><div class="vx621-feature-grid compact">
-    ${featureCard('Product Catalog & Barcode','Product, SKU/article, size/color, barcode, bulk import, reorder and dead-stock helpers.',button('Catalog & Barcode',"vx621OpenAdvanced('stock','inventory','business')",'business','primary'),'▦')}
+    ${featureCard('Product Catalog & Barcode','Products, variants, barcodes and bulk import.',button('Catalog & Barcode',"vx621OpenAdvanced('stock','inventory','business')",'business','primary'),'▦')}
     ${featureCard('Godowns & Transfers','Stock locations and transfers.',button('Godowns',"vx621OpenPlatform('stock','inventory','business')",'business','primary'),'⌂')}
     ${featureCard('Advanced Inventory','Units, wholesale rates and stock tools.',button('Advanced Inventory',"vx621OpenPlatform('stock','inventory620','business')",'business','primary'),'⚙')}
     ${featureCard('Stock Reports','Stock levels, value and movement.',button('Stock Reports',"vx621OpenPlatform('stock','reports620','business')",'business','primary'),'▥')}

@@ -19,6 +19,7 @@
       <section id="recordImportPanel" class="card upload-panel" role="tabpanel">
         <h2>Choose a file</h2><p class="muted">JSON, CSV or TXT · up to 64 MB</p>
         <label class="file-drop"><input id="uploadFile" type="file" accept=".json,.csv,.txt,application/json,text/csv,text/plain" onchange="VyaparUpload.fileSelected(this)"><span class="file-drop-icon" aria-hidden="true">↥</span><strong id="uploadFileName">Tap to choose a file</strong><span id="uploadFileSize">From your device or Downloads</span></label>
+        <div id="uploadFileActions" class="actions" hidden><button type="button" class="btn" onclick="document.getElementById('uploadFile').click()">Change file</button><button type="button" class="btn danger" onclick="VyaparUpload.removeFile()">Remove file</button></div>
         <label for="uploadType">Record type</label><select id="uploadType" onchange="VyaparUpload.clearPreview()"><option value="auto">Detect automatically</option><option value="profit">Monthly profit</option><option value="stock">Stock</option><option value="sale">Sales</option></select>
         <button id="uploadReview" type="button" class="btn primary upload-main-action" onclick="analyzeFile()">Review file</button>
         <div id="uploadStatus" class="notice" role="status" aria-live="polite">Choose a file to see a preview.</div><div id="uploadPreview"></div>
@@ -40,6 +41,7 @@
     clearPreview(); const file = input.files && input.files[0];
     document.getElementById('uploadFileName').textContent = file ? file.name : 'Tap to choose a file';
     document.getElementById('uploadFileSize').textContent = file ? size(file.size) : 'From your device or Downloads';
+    const actions=document.getElementById('uploadFileActions'); if(actions) actions.hidden=!file;
     status(file ? 'File selected. Tap Review file to continue.' : 'Choose a file to see a preview.');
   }
   function rowsFrom(data) {
@@ -140,6 +142,7 @@
   }
   root.VyaparUpload = {
     render, review, clearPreview, fileSelected, confirmImport, rowsFrom,
+    removeFile() { const input=document.getElementById('uploadFile'); if(input) {input.value='';fileSelected(input);} },
     tab(value, button) {
       document.getElementById('recordImportPanel').hidden = value !== 'import';
       document.getElementById('labelScanPanel').hidden = value !== 'scan';

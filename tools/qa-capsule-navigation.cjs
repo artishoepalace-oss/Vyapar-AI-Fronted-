@@ -35,7 +35,7 @@ const remote='20.10.2004.00016.2026';
   });
   const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>!document.getElementById('vy855BootGuard'),{timeout:15000});
+  await page.waitForFunction(()=>!document.getElementById('vy855BootGuard'),null,{timeout:15000}).catch(async error=>{console.error('Startup errors:',errors);await page.screenshot({path:path.join(out,'boot-failure-'+width+'.png')});throw error;});
   await page.waitForTimeout(900);
   await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());window.setTab('home',false);});
   await page.waitForTimeout(350);

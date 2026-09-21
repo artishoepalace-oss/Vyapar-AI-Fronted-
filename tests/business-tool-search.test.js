@@ -112,7 +112,7 @@ function categoryFixture() {
   const originalQuery=f.root.querySelector;
   f.root.querySelector=s=>s==='.vx621-business-shell'?shell:s.includes('modebar')?(s.includes('aria-selected')?bar?.buttons.find(b=>b.attributes['aria-selected']==='true'):bar):s==='.vx621-recent'?recent:originalQuery(s);
   f.root.querySelectorAll=s=>s.includes('p1-mode-section')?[...f.groups,recent].filter(g=>g.classList.contains('p1-mode-section')):[];
-  const doc={readyState:'complete',documentElement:{classList:classes(),dataset:{}},body:{},
+  const doc={readyState:'complete',addEventListener(){},documentElement:{classList:classes(),dataset:{}},body:{},
     getElementById:id=>id==='screen-business'?f.root:null,querySelector:()=>null,querySelectorAll:()=>[],
     createElement(){
       const node=attrs({events:{},buttons:[],addEventListener(type,handler){this.events[type]=handler;},querySelectorAll(){return this.buttons;}});
@@ -122,7 +122,7 @@ function categoryFixture() {
       });}});
       return node;
     }};
-  const win={VyaparBusinessTools:f.api};
+  const win={VyaparBusinessTools:f.api,addEventListener(){}};
   const production=fs.readFileSync(path.join(__dirname,'../frontend-source/android/scripts/production-ui-670p1.js'),'utf8');
   vm.runInNewContext(production,{window:win,document:doc,sessionStorage:{getItem:k=>store.get(k),setItem:(k,v)=>store.set(k,v)},requestAnimationFrame:cb=>frames.push(cb),MutationObserver:class{observe(){}}});
   frames.shift()();

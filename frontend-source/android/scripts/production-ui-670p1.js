@@ -245,9 +245,14 @@
 
   function improveSemantics(root){
     root.querySelectorAll('button:not([type])').forEach(function(button){ button.type = 'button'; });
-    root.querySelectorAll('.scroll,.vx621-table-wrap,.p611-table').forEach(function(scroller){
+    root.querySelectorAll('.scroll,.vx621-table-wrap,.p611-table,.insight-table').forEach(function(scroller){
       if(!scroller.hasAttribute('tabindex')) scroller.tabIndex = 0;
       if(!scroller.hasAttribute('aria-label')) scroller.setAttribute('aria-label','Scrollable records');
+      let hint=scroller.previousElementSibling;
+      if(!hint || !hint.classList.contains('table-scroll-hint')) {
+        hint=document.createElement('small');hint.className='table-scroll-hint';hint.textContent='Swipe sideways to see all columns →';scroller.before(hint);
+      }
+      hint.hidden=!scroller.getClientRects().length || scroller.scrollWidth<=scroller.clientWidth+1;
     });
     root.querySelectorAll('input[type="number"]').forEach(function(input){ input.inputMode = 'decimal'; });
   }
@@ -284,6 +289,8 @@
   });
   observer.observe(document.querySelector('main') || document.body, {childList:true, subtree:true});
 
+  window.addEventListener('resize',schedule,{passive:true});
+  document.addEventListener('toggle',event=>{if(event.target.tagName==='DETAILS')schedule();},true);
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule, {once:true});
   else schedule();
 

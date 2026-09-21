@@ -139,6 +139,12 @@ jobs:
           QA_OUTPUT_DIR: ${{ runner.temp }}/vyapar-chrome-results
         run: node tools/qa-capsule-navigation.cjs
 
+      - name: Verify workspace flows and responsive layouts
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ runner.temp }}/vyapar-browser-qa/node_modules
+          QA_OUTPUT_DIR: ${{ runner.temp }}/vyapar-chrome-results/workspaces
+        run: node tools/qa-ui-polish.cjs
+
       - name: Upload browser verification screenshots
         if: always()
         uses: actions/upload-artifact@v4
