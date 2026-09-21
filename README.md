@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00031.2026** (`2010200431`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00032.2026** (`2010200432`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 
@@ -40,10 +40,11 @@ The original financial engines and feature modules remain in place. Do not remov
 
 ## Current improvements
 
+- Release 00032 rounds all four More-sheet corners and matches its right arrows to the warm gold icons, retaining the existing inset and navbar clearance.
 - Release 00031 unifies card spacing, readable selected states, table surfaces and popup/navbar clearance. It adds specific entry actions, state-preserving Calculator tabs and clearer verified-plan status.
 - Browser release gates cover navigation at five widths plus core Stock, Sales, Billing, Insights, Upload and Calculator flows at 320, 360 and 412px. All external account/network responses are mocked in these checks.
 - Business, Sales and Stock share compact tool cards with shorter descriptions and consistent actions. Business categories and cross-category search remain available.
-- Fixed 367×50px black bottom navbar with a 68×42px sliding grey capsule, five equal tab cells, measured centering and responsive end padding. See `RELEASE_20.10.2004.00031.2026.md`.
+- Fixed 367×50px black bottom navbar with a 68×42px sliding grey capsule, five equal tab cells, measured centering and responsive end padding. See `RELEASE_20.10.2004.00032.2026.md`.
 - Dark-only Settings with search, multiword matching, clear/Escape and empty results.
 - Profit dashboard with a year selector, Overview / Compare / History / Plan, signed profit charts, annual history pages, monthly details, CSV export, goals and investment metrics.
 - IndexedDB is the primary device store. Record arrays are saved in chunks inside atomic snapshot transactions; startup waits for hydration. Legacy local data migrates after a successful commit. Save failures remain visible.
