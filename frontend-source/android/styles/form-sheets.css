@@ -15,7 +15,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready .app > .top {
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet {
   left:var(--vy-shell-inset)!important;right:var(--vy-shell-inset)!important;
   max-width:936px!important;bottom:0!important;
-  border-radius:26px 26px 0 0!important;
+  border-radius:26px!important;
 }
 html.vy861-flat-black.vy-motion-ready body .vy-form-storage,
 html.vy861-flat-black.vy-motion-ready body .vy-form-parked { display:none!important; }
@@ -34,7 +34,7 @@ html.vy861-flat-black.vy-motion-ready body .vy-form-sheet,
 html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-sheet {
   position:relative!important;inset:auto!important;bottom:0!important;
   width:100%!important;max-width:936px!important;max-height:100%!important;min-height:0!important;
-  box-sizing:border-box!important;margin:0!important;border-radius:26px 26px 0 0!important;
+  box-sizing:border-box!important;margin:0!important;border-radius:26px!important;
   border:1px solid #2a2c30!important;
   background:#151619!important;color:#f5f5f6!important;
   padding:0!important;box-shadow:none!important;overflow-x:hidden!important;

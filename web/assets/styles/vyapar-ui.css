@@ -9793,7 +9793,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready .app > .top {
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet {
   left:var(--vy-shell-inset)!important;right:var(--vy-shell-inset)!important;
   max-width:936px!important;bottom:0!important;
-  border-radius:26px 26px 0 0!important;
+  border-radius:26px!important;
 }
 html.vy861-flat-black.vy-motion-ready body .vy-form-storage,
 html.vy861-flat-black.vy-motion-ready body .vy-form-parked { display:none!important; }
@@ -9812,7 +9812,7 @@ html.vy861-flat-black.vy-motion-ready body .vy-form-sheet,
 html.vy861-flat-black.vy-motion-ready body #shopProgressSheet .shop-progress-sheet {
   position:relative!important;inset:auto!important;bottom:0!important;
   width:100%!important;max-width:936px!important;max-height:100%!important;min-height:0!important;
-  box-sizing:border-box!important;margin:0!important;border-radius:26px 26px 0 0!important;
+  box-sizing:border-box!important;margin:0!important;border-radius:26px!important;
   border:1px solid #2a2c30!important;
   background:#151619!important;color:#f5f5f6!important;
   padding:0!important;box-shadow:none!important;overflow-x:hidden!important;
@@ -9846,7 +9846,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-settings,#screen-upload,.vy-unified-overlay) [aria-invalid="true"] {outline:2px solid #de687d!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vy-unified-overlay button:focus-visible {outline:2px solid #9fabbc!important;outline-offset:2px!important;}
-/* Same edge-to-edge viewport attachment, shade and radius across all app popups. */
+/* All app popups share 26px corners on every edge and a 16px content inset (~1.618). */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay).vy-unified-overlay {
   position:fixed!important;inset:auto 0 0!important;top:var(--vy-sheet-top,0px)!important;
   width:100%!important;height:var(--vy-sheet-height,100%)!important;max-height:none!important;min-height:0!important;
@@ -9858,7 +9858,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopPr
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#shopProgressSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,.vy-unified-overlay) > .vy-unified-panel {
   position:relative!important;inset:auto!important;bottom:0!important;left:auto!important;right:auto!important;
   width:100%!important;max-width:none!important;min-width:0!important;max-height:100%!important;min-height:0!important;
-  margin:0!important;box-sizing:border-box!important;border:0!important;border-radius:26px 26px 0 0!important;
+  margin:0!important;box-sizing:border-box!important;border:0!important;border-radius:26px!important;
   background:#151619!important;background-image:none!important;color:#f5f5f6!important;box-shadow:none!important;
   padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px))!important;
   overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;translate:none!important;animation:none!important;
@@ -10019,8 +10019,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-sales,#scree
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business #businessToolResults,#screen-sales,#screen-stock) .vx621-feature-card[hidden],
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) :is(.vx621-group,.vx621-sales-tools,.vx621-stock-tools)[hidden] {display:none!important;}
 /* Joined lists: inset row dividers instead of a border around every item. */
-/* More: 26px corners with the shared 16px inset follow the existing ~1.618 proportion. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet > .android-sheet.vy-unified-panel {--vy-more-gold:#d4af55;border-radius:26px!important;}
+/* More keeps its warm gold icons and arrows within the shared popup geometry. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet > .android-sheet.vy-unified-panel {--vy-more-gold:#d4af55;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet :is(.android-sheet-item-arrow,.android-sheet-item-icon) {color:var(--vy-more-gold)!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-grid {display:block!important;gap:0!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item,
