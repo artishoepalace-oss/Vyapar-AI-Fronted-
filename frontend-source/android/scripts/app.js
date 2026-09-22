@@ -1169,7 +1169,10 @@ function handleNativeBackPress(){
     }
   }
   if(typeof window.closeMoreSheet==='function' && document.getElementById('androidMoreSheet')){ window.closeMoreSheet(); return true; }
-  if(currentTab !== 'home'){ setTab('home',false); return true; }
+  if(currentTab !== 'home'){
+    if(window.vyaparMotion)window.vyaparMotion.navigate('home');else setTab('home',false);
+    return true;
+  }
   return false;
 }
 window.handleNativeBackPress=handleNativeBackPress;
@@ -8323,8 +8326,12 @@ render();
       if(!button || !nav.contains(button)) return;
       event.preventDefault();
       const tab=button.dataset.androidTab;
-      if(tab==='more'){ moreSheetTrigger=button; openMoreSheet(); }
-      else if(typeof window.setTab==='function') window.setTab(tab,false);
+      if(tab==='more'){
+        moreSheetTrigger=button;
+        if(window.vyaparMotion)window.vyaparMotion.whenPageSettled(openMoreSheet);else openMoreSheet();
+      }
+      else if(window.vyaparMotion)window.vyaparMotion.navigate(tab);
+      else if(typeof window.setTab==='function')window.setTab(tab,false);
     });
   }
 
@@ -8535,11 +8542,15 @@ render();
     settings.appendChild(footer);
   }
 
-  function closeMoreSheet(restoreNav){
+  function closeMoreSheet(restoreNav,onClosed){
     const shouldRestore = restoreNav !== false;
     const sheet = document.getElementById("androidMoreSheet");
     if(sheet && sheet.__vyClosing) return;
-    const finish=()=>{ if(sheet) sheet.remove(); document.body.classList.remove("android-sheet-open"); renderNav(); };
+    const finish=()=>{
+      if(sheet)sheet.remove();
+      document.body.classList.remove("android-sheet-open");
+      if(typeof onClosed==='function')onClosed();else renderNav();
+    };
     if(sheet && window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
     const trigger = moreSheetTrigger;
     moreSheetTrigger = null;
@@ -8598,8 +8609,10 @@ render();
     overlay.querySelectorAll("[data-tab]").forEach(function(button){
       button.addEventListener("click", function(){
         const tab = button.getAttribute("data-tab");
-        closeMoreSheet(false);
-        if(typeof window.setTab === "function") window.setTab(tab, false);
+        closeMoreSheet(false,()=>{
+          if(window.vyaparMotion)window.vyaparMotion.navigate(tab,1);
+          else if(typeof window.setTab==='function')window.setTab(tab,false);
+        });
       });
     });
 

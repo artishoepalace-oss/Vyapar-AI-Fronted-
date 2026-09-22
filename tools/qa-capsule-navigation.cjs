@@ -39,7 +39,7 @@ const remote='20.10.2004.00016.2026';
   await page.waitForTimeout(900);
   await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());window.setTab('home',false);});
   await page.waitForTimeout(350);
-  const settle=()=>page.waitForTimeout(450);
+  const settle=async()=>{await page.waitForTimeout(450);await page.waitForFunction(()=>!document.documentElement.classList.contains('vy-page-transitioning'),null,{timeout:2500});};
   const near=(actual,expected)=>assert(Math.abs(actual-expected)<0.02,'Subpixel geometry: '+actual+' expected '+expected);
   async function geometry(expected){
     // More closes first, then the 390ms capsule transition starts. Wait for
@@ -108,6 +108,7 @@ const remote='20.10.2004.00016.2026';
   await page.locator('#nav [data-android-tab="home"]').click();await page.waitForTimeout(50);
   assert.equal((await geometry('home')).transition,'0s','Reduced motion honored');
   await page.emulateMedia({reducedMotion:'no-preference'});
+  if([320,360,412].includes(width))await require('./qa-page-transitions.cjs')(page,out,width);
   await page.screenshot({path:path.join(out,'home-'+width+'.png')});
   if([320,412].includes(width))await require('./qa-settings-selection.cjs')(page,out,width);
   assert.equal(errors.length,0,errors.join('\n'));results.push({width,positions,errors});await context.close();

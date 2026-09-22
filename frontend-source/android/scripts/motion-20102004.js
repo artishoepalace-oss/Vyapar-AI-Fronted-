@@ -1,4 +1,4 @@
-/* Vyapar AI — Telegram-inspired compositor motion owner.
+/* Vyapar AI — directional page slides and compositor motion owner.
  * One motion owner for pages, dialogs, sheets and transient UI.
  * Page navigation keeps the outgoing screen alive through the same paint cycle,
  * then animates outgoing + incoming surfaces together before cleanup.
@@ -25,11 +25,12 @@
   const ease='cubic-bezier(.16,1,.3,1)';
   const easeSoft='cubic-bezier(.2,.8,.2,1)';
   const easeClose='cubic-bezier(.4,0,.2,1)';
-  const moreEase='cubic-bezier(.22,1,.36,1)';
+  const pageEase='cubic-bezier(.32,.72,0,1)';
+  const moreEase=pageEase;
   const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
   const pageStyleProps=['position','top','left','right','bottom','width','height','margin','z-index','pointer-events','display','contain','isolation','transform','opacity','will-change','transition','backface-visibility','-webkit-backface-visibility'];
-  let pageTransition=null,pageSequence=0;
+  let pageTransition=null,pendingNavigation=null,navigationDirection=null;
 
   function reduced(){return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);}
   function duration(ms){
@@ -105,6 +106,8 @@
     node.style.setProperty('will-change',keys.join(','),'important');
     keys.forEach(p=>node.style.setProperty(p,from[p],'important'));
     node.addEventListener('transitionend',end);
+    // Commit the starting pose before the next frame, including on older WebViews.
+    node.getBoundingClientRect();
     frame=requestAnimationFrame(()=>{
       if(finished)return;
       node.style.setProperty('transition',keys.map(p=>p+' '+time+'ms '+easing).join(','),'important');
@@ -122,14 +125,15 @@
     tween(node,{transform:rest+'translate3d('+distance+'px,0,0)'},{transform:base},205,null,ease);
   }
 
-  function stopPageTransition(){
+  function stopPageTransition(flushPending=false){
     const active=pageTransition;
     if(!active)return;
+    const next=flushPending?pendingNavigation:null;
+    pendingNavigation=null;
     pageTransition=null;
     if(active.frame)cancelAnimationFrame(active.frame);
-    if(active.frame2)cancelAnimationFrame(active.frame2);
     if(active.timer)clearTimeout(active.timer);
-    (active.animations||[]).forEach(animation=>{try{animation.onfinish=null;animation.oncancel=null;animation.cancel();}catch(_){}});
+    if(active.onEnd)active.incoming.removeEventListener('transitionend',active.onEnd);
     const outgoing=active.outgoing,incoming=active.incoming;
     if(outgoing){
       restoreInline(outgoing,active.outgoingStyle);
@@ -142,6 +146,19 @@
       incoming.removeAttribute('aria-hidden');
     }
     document.documentElement.classList.remove('vy-page-transitioning');
+    if(next)next();
+  }
+
+  function whenPageSettled(action){
+    // Keep the visible slide intact; only the latest tap is replayed at its end.
+    if(pageTransition){pendingNavigation=action;return true;}
+    return action();
+  }
+  function navigate(tab,direction){
+    return whenPageSettled(()=>{
+      navigationDirection=direction===1||direction===-1?direction:null;
+      try{return window.setTab(tab,false);}finally{navigationDirection=null;}
+    });
   }
 
   function pageRect(node){
@@ -159,17 +176,17 @@
     if(!outgoing||!incoming||outgoing===incoming||reduced())return false;
     stopPageTransition();
 
-    const time=duration(218);
+    const time=duration(600);
     if(!time)return false;
-    const token=++pageSequence;
-    const active={token,outgoing,incoming,animations:[],frame:0,frame2:0,timer:0,
+    const active={outgoing,incoming,frame:0,timer:0,
       outgoingStyle:saveInline(outgoing,pageStyleProps),incomingStyle:saveInline(incoming,pageStyleProps)};
     pageTransition=active;
 
     const rect=context.previousRect||pageRect(outgoing);
     const width=Math.max(1,Number(rect.width)||window.innerWidth||360);
-    const incomingDistance=Math.min(46,Math.max(28,Math.round(width*.12)))*(direction<0?-1:1);
-    const outgoingDistance=Math.min(18,Math.max(10,Math.round(width*.045)))*(direction<0?1:-1);
+    const travel=Math.max(width,window.innerWidth||width);
+    const incomingDistance=travel*(direction<0?-1:1);
+    const outgoingDistance=-incomingDistance;
     const incomingBase=css(incoming,'transform','none');
     const outgoingBase=css(outgoing,'transform','none');
     const incomingRest=incomingBase==='none'?'':incomingBase+' ';
@@ -200,46 +217,35 @@
 
     incoming.style.setProperty('position','relative','important');
     incoming.style.setProperty('z-index','3','important');
+    incoming.style.setProperty('pointer-events','none','important');
     incoming.style.setProperty('backface-visibility','hidden','important');
     incoming.style.setProperty('-webkit-backface-visibility','hidden','important');
     outgoing.style.setProperty('will-change','transform','important');
     incoming.style.setProperty('will-change','transform','important');
 
-    const finish=()=>{if(pageTransition===active)stopPageTransition();};
+    const finish=()=>{if(pageTransition===active)stopPageTransition(true);};
     const outgoingFrom=outgoingBase;
     const outgoingTo=outgoingRest+'translate3d('+outgoingDistance+'px,0,0)';
     const incomingFrom=incomingRest+'translate3d('+incomingDistance+'px,0,0)';
     const incomingTo=incomingBase;
 
-    if(typeof incoming.animate==='function'&&typeof outgoing.animate==='function'){
-      try{
-        const outAnim=outgoing.animate([{transform:outgoingFrom},{transform:outgoingTo}],{duration:time,easing:ease,fill:'both',composite:'replace'});
-        const inAnim=incoming.animate([{transform:incomingFrom},{transform:incomingTo}],{duration:time,easing:ease,fill:'both',composite:'replace'});
-        active.animations.push(outAnim,inAnim);
-        inAnim.onfinish=finish;
-        inAnim.oncancel=()=>{};
-        active.timer=setTimeout(finish,time+48);
-        return true;
-      }catch(_){active.animations.length=0;}
-    }
-
+    // CSS transitions override legacy !important screen transforms; Web Animations do not.
+    // Move both real screens by one viewport, with no fade, cloning or rerendering.
     outgoing.style.setProperty('transition','none','important');
     incoming.style.setProperty('transition','none','important');
     outgoing.style.setProperty('transform',outgoingFrom,'important');
     incoming.style.setProperty('transform',incomingFrom,'important');
-    /* Two frames intentionally: frame 1 commits the start pose; frame 2 starts movement.
-       This avoids WebView coalescing start/end styles into a hard cut. */
+    incoming.getBoundingClientRect();
+    active.onEnd=event=>{if(event.target===incoming&&event.propertyName==='transform')finish();};
+    incoming.addEventListener('transitionend',active.onEnd);
     active.frame=requestAnimationFrame(()=>{
       if(pageTransition!==active)return;
-      active.frame2=requestAnimationFrame(()=>{
-        if(pageTransition!==active)return;
-        const transition='transform '+time+'ms '+ease;
-        outgoing.style.setProperty('transition',transition,'important');
-        incoming.style.setProperty('transition',transition,'important');
-        outgoing.style.setProperty('transform',outgoingTo,'important');
-        incoming.style.setProperty('transform',incomingTo,'important');
-        active.timer=setTimeout(finish,time+48);
-      });
+      const transition='transform '+time+'ms '+pageEase;
+      outgoing.style.setProperty('transition',transition,'important');
+      incoming.style.setProperty('transition',transition,'important');
+      outgoing.style.setProperty('transform',outgoingTo,'important');
+      incoming.style.setProperty('transform',incomingTo,'important');
+      active.timer=setTimeout(finish,time+64);
     });
     return true;
   }
@@ -253,19 +259,19 @@
   }
   function autoTop(){try{return typeof state!=='undefined' && state.settings && state.settings.autoScrollTop===true;}catch(_){return false;}}
   function beforePage(previous,next){
-    /* A rapid tap settles the old handoff first, making the current destination the only live screen. */
+    /* Programmatic navigation can settle immediately; navbar/Back requests use navigate(). */
     stopPageTransition();
     const top=Math.max(0,window.scrollY || (document.scrollingElement||document.documentElement).scrollTop || 0);
     positions[previous]=top;
     const previousNode=document.getElementById('screen-'+previous);
     cancel(previousNode);cancel(document.getElementById('screen-'+next));
-    return {previous,next,previousNode,previousRect:pageRect(previousNode),top:autoTop()?0:(Object.prototype.hasOwnProperty.call(positions,next)?positions[next]:0)};
+    return {previous,next,direction:navigationDirection,previousNode,previousRect:pageRect(previousNode),top:autoTop()?0:(Object.prototype.hasOwnProperty.call(positions,next)?positions[next]:0)};
   }
   function afterPage(context,node){
     if(!context || !node)return;
     scrollToPosition(context.top);
     if(context.previous!==context.next && !document.documentElement.classList.contains('vy855-booting')){
-      const direction=(ranks[context.next]||0)<(ranks[context.previous]||0)?-1:1;
+      const direction=context.direction || ((ranks[context.next]||0)<(ranks[context.previous]||0)?-1:1);
       if(!animatePagePair(context,node,direction))enter(node,direction);
     }
   }
@@ -311,9 +317,9 @@
     cancel(card);cancel(overlay);
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
-    tween(overlay,{opacity:'0'},{opacity:'1'},more?240:sheet?145:125,null,easeSoft);
+    tween(overlay,{opacity:'0'},{opacity:'1'},more?400:sheet?145:125,null,easeSoft);
     const fullSheet=info.sheet;
-    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?480:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
+    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?600:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
     requestAnimationFrame(()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
       if(!overlay.contains(document.activeElement)){
@@ -347,7 +353,7 @@
     if(!duration(120)){finish();return;}
     const card=info.card,overlayOpacity=renderedCss(overlay,'opacity','1');
     const fullSheet=info.sheet;
-    const closeTime=overlay.id==='androidMoreSheet'?320:fullSheet?180:info.sheet?145:120;
+    const closeTime=overlay.id==='androidMoreSheet'?440:fullSheet?180:info.sheet?145:120;
     if(card){
       // Sample the visible frame before cancelling an unfinished entrance.
       const currentTransform=renderedCss(card,'transform','none');cancel(card);
@@ -362,10 +368,11 @@
     const close=overlay.querySelector('[data-sheet-dismiss]') || overlay.querySelector(closeSelector+', [data-update-close]');if(close){close.click();return true;}return false;
   }
 
-  window.vyaparMotion={enter,cancel,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition};
+  window.vyaparMotion={enter,cancel,navigate,whenPageSettled,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition};
 
   function boot(){
     document.documentElement.classList.add('vy-motion-ready');
+    window.addEventListener('resize',()=>stopPageTransition(true),{passive:true});
     document.querySelectorAll(overlaySelector).forEach(openOverlay);
     const observer=new MutationObserver(records=>{
       records.forEach(record=>{

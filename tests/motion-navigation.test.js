@@ -38,10 +38,10 @@ for(const platform of ['android','web']){
   const f=fixture(platform);f.env.scrollY=410;f.html.style.setProperty('scroll-behavior','smooth','important');
   assert.equal(f.env.setTab('sales',true),true);assert.equal(f.env.scrollY,0);
   const sales=f.nodes.get('screen-sales'),home=f.nodes.get('screen-home');
-  assert.match(sales.style.getPropertyValue('transform'),/translate3d\(43px/);assert(home.classList.contains('hide'));assert(home.classList.contains('vy-page-outgoing'));assert.equal(home.style.getPropertyValue('display'),'block');
+  assert.match(sales.style.getPropertyValue('transform'),/translate3d\(360px/);assert(home.classList.contains('hide'));assert(home.classList.contains('vy-page-outgoing'));assert.equal(home.style.getPropertyValue('display'),'block');
   assert.equal(sales.value,'unsaved draft');assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);assert.equal(f.html.style.getPropertyValue('scroll-behavior'),'smooth');
   f.finish();assert(!home.classList.contains('vy-page-outgoing'));assert.equal(home.style.getPropertyValue('display'),'');
-  f.env.scrollY=780;assert.equal(f.env.setTab('home'),true);assert.equal(f.env.scrollY,410);assert.match(f.nodes.get('screen-home').style.getPropertyValue('transform'),/translate3d\(-43px/);f.finish();
+  f.env.scrollY=780;assert.equal(f.env.setTab('home'),true);assert.equal(f.env.scrollY,410);assert.match(f.nodes.get('screen-home').style.getPropertyValue('transform'),/translate3d\(-360px/);f.finish();
  });
  test(platform+': rapid taps settle obsolete handoffs and leave one logical screen',()=>{
   const f=fixture(platform);for(const tab of ['sales','stock','business','home','settings','calculator','sales'])f.env.setTab(tab);f.finish();
@@ -49,6 +49,40 @@ for(const platform of ['android','web']){
   f.env.scrollY=700;f.env.setTab('home');f.env.state.settings.autoScrollTop=true;f.env.setTab('sales');assert.equal(f.env.scrollY,0);
  });
 }
+test('All main-tab pairs slide according to Home, Business, Sales, Stock order',()=>{
+ const f=fixture(),tabs=['home','business','sales','stock'];
+ for(const from of tabs)for(const to of tabs){
+  if(from===to)continue;
+  f.env.setTab(from);f.finish();f.env.vyaparMotion.navigate(to);
+  const sign=tabs.indexOf(to)>tabs.indexOf(from)?1:-1;
+  assert.equal(f.nodes.get('screen-'+to).style.getPropertyValue('transform'),'translate3d('+(360*sign)+'px,0,0)',from+' to '+to);
+  f.flushFrames();assert.equal(f.nodes.get('screen-'+from).style.getPropertyValue('transform'),'translate3d('+(-360*sign)+'px,0,0)');f.finish();
+ }
+});
+test('Rapid navbar requests keep the visible slide, then honor only the latest tap',()=>{
+ const f=fixture(),motion=f.env.vyaparMotion;
+ motion.navigate('business');f.flushFrames();
+ const home=f.nodes.get('screen-home'),business=f.nodes.get('screen-business');
+ const before=home.style.getPropertyValue('transform');
+ motion.navigate('stock');motion.navigate('sales');
+ assert.equal(f.env.currentTab,'business');assert.equal(home.style.getPropertyValue('transform'),before);assert(business.classList.contains('vy-page-incoming'));
+ f.finish();assert.equal(f.env.currentTab,'sales');assert(!f.nodes.get('screen-stock').classList.contains('vy-page-incoming'));
+ f.finish();assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);
+ for(const node of f.screens){assert.equal(node.style.getPropertyValue('transform'),'');assert.equal(node.style.getPropertyValue('pointer-events'),'');}
+});
+test('More destinations always enter from the right, including Settings to Insights',()=>{
+ const f=fixture();
+ for(const tab of ['analytics','upload','calculator','subscription','settings']){
+  f.env.setTab(tab==='settings'?'calculator':'settings');f.finish();
+  f.env.vyaparMotion.navigate(tab,1);
+  assert.equal(f.nodes.get('screen-'+tab).style.getPropertyValue('transform'),'translate3d(360px,0,0)');f.finish();
+ }
+});
+test('Page CSS transitions work even when Web Animations would be overridden by legacy CSS',()=>{
+ const f=fixture();for(const node of f.screens)node.animate=()=>{throw new Error('Page motion must use the CSS compositor path');};
+ f.env.setTab('business');f.flushFrames();
+ assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/600ms/);f.finish();
+});
 for(const platform of ['android','web']){
  test(platform+': blocked, unknown and same-page navigation never starts a transition',()=>{
   const f=fixture(platform);f.env.allowed=false;f.env.scrollY=240;
@@ -83,7 +117,7 @@ test('Closing More during entry continues from the visible frame and resolves on
 });
 test('Release identity and bundled motion order are synchronized',()=>{
  const version=JSON.parse(fs.readFileSync(path.join(root,'version.json'))),cacheKey=String(version.versionCode)+'-workspace1';
- assert.equal(version.versionName,'20.10.2004.00035.2026');
+ assert.equal(version.versionName,'20.10.2004.00036.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
   const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes(`vyapar-ui.css?v=${cacheKey}`));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));

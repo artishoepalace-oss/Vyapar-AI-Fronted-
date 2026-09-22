@@ -1,11 +1,11 @@
-/* Vyapar AI 20.10.2004.00002 — final Telegram-fast motion authority.
+/* Vyapar AI — shared directional page and sheet motion authority.
    JS owns page/dialog/sheet transforms. CSS only provides micro feedback and disables legacy duplicate motion. */
 html.vy-motion-ready{
   --vy-motion-ease:cubic-bezier(.16,1,.3,1);
   --vy-motion-ease-soft:cubic-bezier(.2,.8,.2,1);
   --vy-motion-fast:78ms;
   --vy-motion-ui:125ms;
-  --vy-motion-page:205ms;
+  --vy-motion-page:600ms;
 }
 html.vy-motion-ready body .app{overflow:visible!important}
 html.vy-motion-ready body .top{position:sticky!important;top:8px!important;z-index:100!important}

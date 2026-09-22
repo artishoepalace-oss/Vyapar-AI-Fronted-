@@ -34,7 +34,15 @@ const version=require('../version.json').versionName;
    const page=await context.newPage(),errors=[];let stage='boot';
    await page.clock.setFixedTime(new Date('2026-09-21T12:00:00Z'));
    page.on('pageerror',error=>errors.push(error.message));
-   const settle=()=>page.waitForTimeout(420);
+   const settle=async()=>{
+    await page.waitForTimeout(420);
+    await page.waitForFunction(()=>{
+     const more=document.querySelector('#androidMoreSheet .android-sheet');
+     return !document.documentElement.classList.contains('vy-page-transitioning')&&
+      ![...document.querySelectorAll('.vy-unified-overlay')].some(el=>el.__vyClosing)&&
+      (!more||getComputedStyle(more).transform==='none');
+    },null,{timeout:2500});
+   };
    async function shot(name){
     stage=name;
     const overflow=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));
