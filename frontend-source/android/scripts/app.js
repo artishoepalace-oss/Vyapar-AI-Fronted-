@@ -3213,7 +3213,7 @@ function renderStock(){
       </button>
     </div>
 
-    <div class="card" style="margin-top:14px">
+    ${(state.stocks || []).length ? `<div class="card" id="stockAlerts" style="margin-top:14px">
       <h3>Stock Alerts</h3>
       ${window.VyaparRecords ? window.VyaparRecords.controls('stocks') : ''}
 
@@ -3224,9 +3224,9 @@ function renderStock(){
             ${num(s.qty) <= num(s.min || s.lowStock || 5) ? '<b class="danger-text"> Reorder</b>' : ''}
           </p>
         `).join(' ')
-        || '<p class="muted">No stock data yet.</p>'
+        || '<p class="muted">No stock items match your search.</p>'
       }
-    </div>
+    </div>` : ''}
   `;
 }
 

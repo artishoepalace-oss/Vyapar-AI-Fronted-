@@ -70,9 +70,20 @@ test('Lite motion stays fast and reduced-motion settles immediately',()=>{
 test('Popup close remains single-owner and resolver executes once',()=>{
  const f=fixture();const overlay=f.element('test-popup');overlay.card=f.element('test-card');let resolved=0;f.env.vyaparMotion.openOverlay(overlay);f.flushFrames();f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;overlay.remove();});f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;});assert.equal(resolved,0);f.finish();assert.equal(resolved,1);assert(!overlay.isConnected);
 });
+test('Closing More during entry continues from the visible frame and resolves once',()=>{
+ const f=fixture();const overlay=f.element('androidMoreSheet'),card=overlay.card=f.element('more-card');
+ f.env.vyaparMotion.openOverlay(overlay);f.flushFrames();
+ const original=f.env.getComputedStyle;
+ f.env.getComputedStyle=node=>node===card?{transform:'matrix(1, 0, 0, 1, 0, 120)'}:node===overlay?{opacity:'.6'}:original(node);
+ let resolved=0;f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;overlay.remove();});
+ assert.equal(card.style.getPropertyValue('transform'),'matrix(1, 0, 0, 1, 0, 120)');
+ assert.equal(overlay.style.getPropertyValue('opacity'),'.6');
+ f.env.vyaparMotion.closeOverlay(overlay,()=>resolved++);f.finish();
+ assert.equal(resolved,1);assert(!overlay.isConnected);assert.equal(card.style.getPropertyValue('will-change'),'');
+});
 test('Release identity and bundled motion order are synchronized',()=>{
  const version=JSON.parse(fs.readFileSync(path.join(root,'version.json'))),cacheKey=String(version.versionCode)+'-workspace1';
- assert.equal(version.versionName,'20.10.2004.00034.2026');
+ assert.equal(version.versionName,'20.10.2004.00035.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
   const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes(`vyapar-ui.css?v=${cacheKey}`));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));

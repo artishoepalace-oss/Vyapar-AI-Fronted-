@@ -180,9 +180,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-sales,#scree
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business #businessToolResults,#screen-sales,#screen-stock) .vx621-feature-card[hidden],
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) :is(.vx621-group,.vx621-sales-tools,.vx621-stock-tools)[hidden] {display:none!important;}
 /* Joined lists: inset row dividers instead of a border around every item. */
-/* More keeps its warm gold icons and arrows within the shared popup geometry. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet > .android-sheet.vy-unified-panel {--vy-more-gold:#d4af55;}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet :is(.android-sheet-item-arrow,.android-sheet-item-icon) {color:var(--vy-more-gold)!important;}
+/* More uses the same burgundy accent as the logo and active navigation icons. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet :is(.android-sheet-item-arrow,.android-sheet-item-icon,.android-sheet-item svg,.android-sheet-item svg *) {color:var(--vy-logo-burgundy,#80011f)!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-grid {display:block!important;gap:0!important;}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-row {position:relative!important;min-height:68px!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}

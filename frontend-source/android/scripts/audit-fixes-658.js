@@ -115,16 +115,6 @@
     if(card) card.querySelectorAll('.vy658-year-filter').forEach(node=>node.remove());
   }
 
-  function enhanceStock(){
-    const screen=document.getElementById('screen-stock'); if(!screen) return;
-    const empty=[...screen.querySelectorAll('p.muted')].find(p=>(p.textContent||'').trim()==='No stock data yet.');
-    if(empty){
-      empty.className='vy658-empty-state';
-      empty.innerHTML='<b>No stock added yet</b><span>Add your first item to start quantity and low-stock tracking.</span><button type="button" class="btn primary">+ Add Stock Item</button>';
-      empty.querySelector('button').addEventListener('click',()=>{ if(window.VyaparFormSheets){window.VyaparFormSheets.openField('stockItem');return;} const i=document.getElementById('stockItem'); if(i){i.scrollIntoView({behavior:'auto',block:'nearest'});i.focus();} });
-    }
-  }
-
   function enhanceBulkLabels(root=document){
     [...root.querySelectorAll('button')].forEach(b=>{
       const t=(b.textContent||'').trim();
@@ -143,7 +133,7 @@
     });
   }
 
-  function polish(){ enhanceHome(); enhanceAnalytics(); enhanceSettings(); enhanceSales(); enhanceStock(); enhanceBulkLabels(); enhanceFooter(); }
+  function polish(){ enhanceHome(); enhanceAnalytics(); enhanceSettings(); enhanceSales(); enhanceBulkLabels(); enhanceFooter(); }
   const observer=new MutationObserver(()=>{ clearTimeout(window.__vy658PolishTimer); window.__vy658PolishTimer=setTimeout(polish,30); });
   observer.observe(document.documentElement,{subtree:true,childList:true});
   window.addEventListener('load',()=>setTimeout(polish,0),{once:true});
