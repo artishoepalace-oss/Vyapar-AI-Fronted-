@@ -50,7 +50,7 @@ module.exports=async function(page,out,width){
    assert(f.scrollWidth<=width,'No horizontal overflow: '+label);
   }
   assert(!data.overlap,'More closes before the page slide starts');
-  assert(data.elapsed>=500,'Slow page transition: '+label);
+  assert(data.elapsed>=380,'Smooth page transition has time to render: '+label);
   results.push({label,frames:data.frames.length,positions:new Set(data.frames.map(f=>Math.round(f.inX))).size,elapsed:Math.round(data.elapsed)});
  }
  for(const from of tabs)for(const to of tabs){

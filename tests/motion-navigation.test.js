@@ -81,7 +81,7 @@ test('More destinations always enter from the right, including Settings to Insig
 test('Page CSS transitions work even when Web Animations would be overridden by legacy CSS',()=>{
  const f=fixture();for(const node of f.screens)node.animate=()=>{throw new Error('Page motion must use the CSS compositor path');};
  f.env.setTab('business');f.flushFrames();
- assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/600ms/);f.finish();
+ assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/460ms/);f.finish();
 });
 for(const platform of ['android','web']){
  test(platform+': blocked, unknown and same-page navigation never starts a transition',()=>{
@@ -117,7 +117,7 @@ test('Closing More during entry continues from the visible frame and resolves on
 });
 test('Release identity and bundled motion order are synchronized',()=>{
  const version=JSON.parse(fs.readFileSync(path.join(root,'version.json'))),cacheKey=String(version.versionCode)+'-workspace1';
- assert.equal(version.versionName,'20.10.2004.00036.2026');
+ assert.equal(version.versionName,'20.10.2004.00037.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
   const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes(`vyapar-ui.css?v=${cacheKey}`));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));

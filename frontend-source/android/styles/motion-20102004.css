@@ -5,7 +5,7 @@ html.vy-motion-ready{
   --vy-motion-ease-soft:cubic-bezier(.2,.8,.2,1);
   --vy-motion-fast:78ms;
   --vy-motion-ui:125ms;
-  --vy-motion-page:600ms;
+  --vy-motion-page:460ms;
 }
 html.vy-motion-ready body .app{overflow:visible!important}
 html.vy-motion-ready body .top{position:sticky!important;top:8px!important;z-index:100!important}

@@ -953,7 +953,7 @@
     if(!outgoing||!incoming||outgoing===incoming||reduced())return false;
     stopPageTransition();
 
-    const time=duration(600);
+    const time=duration(460);
     if(!time)return false;
     const active={outgoing,incoming,frame:0,timer:0,
       outgoingStyle:saveInline(outgoing,pageStyleProps),incomingStyle:saveInline(incoming,pageStyleProps)};
@@ -1094,9 +1094,9 @@
     cancel(card);cancel(overlay);
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
-    tween(overlay,{opacity:'0'},{opacity:'1'},more?400:sheet?145:125,null,easeSoft);
+    tween(overlay,{opacity:'0'},{opacity:'1'},more?300:sheet?145:125,null,easeSoft);
     const fullSheet=info.sheet;
-    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?600:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
+    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?460:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
     requestAnimationFrame(()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
       if(!overlay.contains(document.activeElement)){
@@ -1130,7 +1130,7 @@
     if(!duration(120)){finish();return;}
     const card=info.card,overlayOpacity=renderedCss(overlay,'opacity','1');
     const fullSheet=info.sheet;
-    const closeTime=overlay.id==='androidMoreSheet'?440:fullSheet?180:info.sheet?145:120;
+    const closeTime=overlay.id==='androidMoreSheet'?340:fullSheet?180:info.sheet?145:120;
     if(card){
       // Sample the visible frame before cancelling an unfinished entrance.
       const currentTransform=renderedCss(card,'transform','none');cancel(card);
