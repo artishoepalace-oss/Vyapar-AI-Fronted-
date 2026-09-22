@@ -14,11 +14,14 @@ const remote='20.10.2004.00016.2026';
   fs.readFile(file,(err,data)=>{if(err){res.writeHead(404).end();return;}res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');res.end(data);});
  });
  await new Promise(resolve=>server.listen(8765,'127.0.0.1',resolve));
- const browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_PATH,args:['--no-sandbox']}).catch(error=>{server.close();throw error;});
+ let browser;
  const results=[];
  try{
  for(const width of [320,360,383,412,768]){
   console.log('Checking navigation at '+width+'px');
+  // Isolate each viewport in its own browser process. Closing a live context in
+  // a reused headless browser can stall Chromium between viewport checks.
+  browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_PATH,args:['--no-sandbox']});
   const context=await browser.newContext({viewport:{width,height:760},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   await context.addInitScript(()=>{
     localStorage.setItem('vyapar_ai_auth_token_v1','qa-only-token');
@@ -114,9 +117,12 @@ const remote='20.10.2004.00016.2026';
   if([320,360,412].includes(width))await require('./qa-page-transitions.cjs')(page,out,width);
   await page.screenshot({path:path.join(out,'home-'+width+'.png')});
   if([320,412].includes(width))await require('./qa-settings-selection.cjs')(page,out,width);
-  assert.equal(errors.length,0,errors.join('\n'));results.push({width,positions,errors});await context.close();
+  await settle();
+  assert.equal(errors.length,0,errors.join('\n'));results.push({width,positions,errors});
+  console.log('Completed navigation at '+width+'px; closing browser');
+  await browser.close();browser=null;
  }
  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));
  console.log(JSON.stringify(results,null,2));
- }finally{await browser.close();server.close();}
+ }finally{if(browser)await browser.close();server.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
