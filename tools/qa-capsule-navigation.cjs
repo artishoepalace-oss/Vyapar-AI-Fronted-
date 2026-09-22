@@ -18,6 +18,7 @@ const remote='20.10.2004.00016.2026';
  const results=[];
  try{
  for(const width of [320,360,383,412,768]){
+  console.log('Checking navigation at '+width+'px');
   const context=await browser.newContext({viewport:{width,height:760},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   await context.addInitScript(()=>{
     localStorage.setItem('vyapar_ai_auth_token_v1','qa-only-token');
@@ -34,6 +35,8 @@ const remote='20.10.2004.00016.2026';
    return route.fulfill({json:{success:true}});
   });
   const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
+  page.setDefaultTimeout(10000);
+  page.setDefaultNavigationTimeout(15000);
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>!document.getElementById('vy855BootGuard'),null,{timeout:15000}).catch(async error=>{console.error('Startup errors:',errors);await page.screenshot({path:path.join(out,'boot-failure-'+width+'.png')});throw error;});
   await page.waitForTimeout(900);

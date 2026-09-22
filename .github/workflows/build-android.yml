@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: vyapar-main-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-apk:
@@ -134,12 +134,14 @@ jobs:
           "$RUNNER_TEMP/vyapar-browser-qa/node_modules/.bin/playwright" install --with-deps chromium
 
       - name: Verify header and navbar in Chromium
+        timeout-minutes: 8
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ runner.temp }}/vyapar-browser-qa/node_modules
           QA_OUTPUT_DIR: ${{ runner.temp }}/vyapar-chrome-results
         run: node tools/qa-capsule-navigation.cjs
 
       - name: Verify workspace flows and responsive layouts
+        timeout-minutes: 8
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ runner.temp }}/vyapar-browser-qa/node_modules
           QA_OUTPUT_DIR: ${{ runner.temp }}/vyapar-chrome-results/workspaces
