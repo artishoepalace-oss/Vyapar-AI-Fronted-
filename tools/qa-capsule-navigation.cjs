@@ -33,7 +33,12 @@ const remote='20.10.2004.00016.2026';
   progress('Checking navigation at '+width+'px');
   // Isolate each viewport in its own browser process. Closing a live context in
   // a reused headless browser can stall Chromium between viewport checks.
-  browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_PATH,args:['--no-sandbox']});
+  // The regular Chromium build exercises compositor-backed mobile pages more
+  // like an Android WebView than Playwright's separate headless-shell binary.
+  const launch={headless:true,args:['--no-sandbox','--disable-dev-shm-usage']};
+  if(process.env.QA_CHROMIUM_PATH)launch.executablePath=process.env.QA_CHROMIUM_PATH;
+  else launch.channel='chromium';
+  browser=await chromium.launch(launch);
   progress('Chromium launched at '+width+'px');
   const context=await browser.newContext({viewport:{width,height:760},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   await context.addInitScript(()=>{
@@ -51,9 +56,12 @@ const remote='20.10.2004.00016.2026';
    return route.fulfill({json:{success:true}});
   });
   const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
+  page.on('crash',()=>console.error('Browser QA renderer crashed at '+width+'px: '+stage));
+  page.on('console',message=>{if(message.text().startsWith('QA heartbeat'))console.log(message.text());});
   page.setDefaultTimeout(10000);
   page.setDefaultNavigationTimeout(15000);
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>setInterval(()=>console.log('QA heartbeat '+innerWidth+'px '+document.documentElement.className),5000));
   progress('Document loaded at '+width+'px');
   await page.waitForFunction(()=>!document.getElementById('vy855BootGuard'),null,{timeout:15000}).catch(async error=>{console.error('Startup errors:',errors);await page.screenshot({path:path.join(out,'boot-failure-'+width+'.png')});throw error;});
   progress('Startup complete at '+width+'px');
