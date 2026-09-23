@@ -1,0 +1,54 @@
+/* Middle-screen page selector: one black track and one graphite sliding thumb.
+   This deliberately does not style the five-icon #nav bottom dock. */
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
+  position:relative!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+  gap:4px!important;padding:4px!important;margin:0 0 16px!important;
+  height:52px!important;min-height:52px!important;max-height:52px!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  box-sizing:border-box!important;border:1px solid #292b2f!important;border-radius:19px!important;
+  background:#101113!important;background-image:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+  overflow:hidden!important;isolation:isolate;touch-action:pan-y!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {
+  content:"";position:absolute;left:0;top:3px;z-index:0;
+  width:var(--vy-middle-width,0px);height:44px;border-radius:15px;
+  box-sizing:border-box;border:1px solid #46484d;
+  background:linear-gradient(180deg,#3c3e43 0%,#2e3035 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 1px 2px rgba(0,0,0,.16);
+  pointer-events:none;
+  transform:translate3d(var(--vy-middle-x,4px),0,0);
+  transition:transform 260ms cubic-bezier(.22,1,.36,1);
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
+  position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:1 1 0!important;width:0!important;max-width:none!important;min-width:0!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  box-sizing:border-box!important;padding:0 3px!important;margin:0!important;
+  border:0!important;border-radius:15px!important;background:transparent!important;background-image:none!important;
+  box-shadow:none!important;color:#b2b4ba!important;font-size:clamp(10px,3vw,12px)!important;
+  font-weight:650!important;line-height:1.15!important;text-align:center!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
+  transform:none!important;transition:color 140ms ease!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-selected="true"],
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-pressed="true"] {
+  /* Distinct computed surface keeps existing visual/QA selectors compatible;
+     real visible thumb belongs to the track rather than individual buttons. */
+  background:rgba(255,255,255,.012)!important;color:#f6f6f8!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button:focus-visible {
+  outline:2px solid #f1f1f3!important;outline-offset:-3px!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready.vy-middle-instant::before {
+  transition:none!important;
+}
+@media(max-width:359px){
+  html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
+    font-size:10px!important;letter-spacing:-.15px!important;padding:0 2px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {transition:none!important;}
+}

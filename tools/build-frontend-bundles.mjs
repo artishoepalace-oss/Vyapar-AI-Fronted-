@@ -62,7 +62,8 @@ const uiStyles = [
   'form-sheets.css',
   'refined-surfaces.css',
   'capsule-navigation.css',
-  'settings-selection.css'
+  'settings-selection.css',
+  'middle-bar-2026.css'
 ];
 
 const scripts = [
@@ -101,7 +102,8 @@ const scripts = [
   'video-final-867.js',
   'workspace-startup.js',
   'github-updates.js',
-  'form-sheets.js'
+  'form-sheets.js',
+  'middle-bar-2026.js'
 ];
 
 function readSource(subdirectory, filename) {
