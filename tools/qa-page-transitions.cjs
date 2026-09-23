@@ -167,6 +167,7 @@ module.exports=async function(page,out,width,progress=console.log){
   }
  }
  assert.equal(await page.locator('.vy-page-incoming,.vy-page-outgoing').count(),0);
+ if(width===360)await require('./qa-scroll-navigation.cjs')(page,out,progress);
  fs.writeFileSync(path.join(out,'page-motion-'+width+'.json'),JSON.stringify(results,null,2));
  console.log('PASS page slides '+width+' ('+results.length+' directions/destinations)');
 };

@@ -816,7 +816,10 @@
   }
   function compactMotion(){
     const root=document.documentElement;
-    return root.classList.contains('perf-tier-legacy') || root.classList.contains('perf-low-ram');
+    // Older WebViews cannot clip sideways overflow without creating another
+    // scrolling container. Use the bounded single-screen path on those engines.
+    const canClip=window.CSS && typeof window.CSS.supports==='function' && window.CSS.supports('overflow','clip');
+    return !canClip || root.classList.contains('perf-tier-legacy') || root.classList.contains('perf-low-ram');
   }
   function css(node,prop,fallback){
     if(!node)return fallback;
@@ -1087,7 +1090,11 @@
     const roots=[document.documentElement,document.body,document.scrollingElement].filter((node,index,all)=>node && all.indexOf(node)===index);
     const saved=roots.map(node=>[node,node.style.getPropertyValue('scroll-behavior'),node.style.getPropertyPriority('scroll-behavior')]);
     roots.forEach(node=>node.style.setProperty('scroll-behavior','auto','important'));
-    window.scrollTo(0,Math.max(0,Number(top)||0));
+    const target=Math.max(0,Number(top)||0);
+    // An explicit instant scroll also cancels a user/programmatic smooth scroll
+    // before the destination is painted. Numeric scrollTo inherited old CSS.
+    try{window.scrollTo({left:0,top:target,behavior:'instant'});}
+    catch(_){window.scrollTo(0,target);}
     saved.forEach(([node,value,priority])=>{if(value)node.style.setProperty('scroll-behavior',value,priority);else node.style.removeProperty('scroll-behavior');});
   }
   function autoTop(){try{return typeof state!=='undefined' && state.settings && state.settings.autoScrollTop===true;}catch(_){return false;}}
@@ -1233,6 +1240,7 @@
       });
       const locked=!!topOverlay();
       if(document.body.classList.contains('vy-popup-open')!==locked)document.body.classList.toggle('vy-popup-open',locked);
+      if(document.documentElement.classList.contains('vy-popup-open')!==locked)document.documentElement.classList.toggle('vy-popup-open',locked);
     });
     observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
     document.addEventListener('keydown',event=>{

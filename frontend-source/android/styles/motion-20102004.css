@@ -7,6 +7,30 @@ html.vy-motion-ready{
   --vy-motion-ui:125ms;
   --vy-motion-page:460ms;
 }
+/* The viewport owns page scrolling. A second scroll container on body breaks
+   the sticky header, while inherited smooth scrolling competes with page slides. */
+html.vy861-flat-black.vy-motion-ready{
+  overflow-x:hidden!important;overflow-y:auto!important;
+  scroll-behavior:auto!important;overflow-anchor:none!important;
+}
+html.vy861-flat-black.vy-motion-ready body{
+  overflow:visible!important;scroll-behavior:auto!important;
+}
+html.vy861-flat-black.vy-motion-ready.vy-popup-open{overflow-y:hidden!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready.vy-popup-open body.vy-popup-open{overflow:visible!important}
+@supports(overflow:clip){
+  html.vy861-flat-black.vy-motion-ready body,
+  html.vy861-flat-black.workspace-v7.vy-motion-ready.vy-popup-open body.vy-popup-open{
+    overflow-x:clip!important;overflow-y:visible!important;
+  }
+}
+@supports not (overflow:clip){
+  /* The header is outside main, so it keeps using the viewport for stickiness.
+     These engines use a short incoming-only slide rather than a fixed pair. */
+  html.vy861-flat-black.vy-motion-ready body .app main{
+    overflow-x:hidden!important;overflow-y:visible!important;
+  }
+}
 html.vy-motion-ready body .app{overflow:visible!important}
 html.vy-motion-ready body .top{position:sticky!important;top:8px!important;z-index:100!important}
 html.vy-motion-ready body .screen{
@@ -119,7 +143,7 @@ html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet{
 
 /* 20.10.2004.00003 frame-continuity handoff.
    Outgoing keeps .hide for navigation semantics while inline display temporarily keeps its pixels alive. */
-html.vy-motion-ready.vy-page-transitioning body{overflow-x:hidden!important}
+html.vy861-flat-black.vy-motion-ready.vy-page-transitioning{overflow-x:hidden!important}
 html.vy-motion-ready body .screen.vy-page-outgoing,
 html.vy-motion-ready body .screen.vy-page-incoming{
   animation:none!important;transition:none!important;transform-style:flat!important;

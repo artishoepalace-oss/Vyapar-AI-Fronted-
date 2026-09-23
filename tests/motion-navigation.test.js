@@ -24,9 +24,9 @@ function fixture(platform='android',reduce=false){
   const screens=tabs.map(tab=>{const el=element('screen-'+tab);if(tab!=='home')el.classList.add('hide');return el;});
   const env={console,Map,WeakMap,Set,Math,Number,Object,Array,Boolean,JSON,state:{settings:{autoScrollTop:false}},currentTab:'home',allowed:true,innerWidth:360,innerHeight:800,scrollY:0,
     document:{documentElement:html,body,scrollingElement:html,activeElement:body,readyState:'loading',getElementById:id=>nodes.get(id)||null,querySelectorAll:selector=>selector==='.screen'?screens:[],addEventListener(type,fn){(listeners[type]||=[]).push(fn)},removeEventListener(){}},
-    matchMedia:()=>({matches:reduce}),getComputedStyle:node=>({transform:node.style.getPropertyValue('transform')||'none',display:'block',visibility:'visible'}),
+    CSS:{supports:()=>true},matchMedia:()=>({matches:reduce}),getComputedStyle:node=>({transform:node.style.getPropertyValue('transform')||'none',display:'block',visibility:'visible'}),
     requestAnimationFrame:fn=>{const id=++sequence;frames.set(id,fn);return id;},cancelAnimationFrame:id=>frames.delete(id),setTimeout:fn=>{const id=++sequence;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id),
-    scrollTo(x,y){assert.equal(html.style.getPropertyValue('scroll-behavior'),'auto');env.scrollY=y;html.scrollTop=y;},requiredPlanForTab:tab=>tab==='business'||tab==='stock'?'business':null,requirePlan:()=>env.allowed,drawAnalyticsCharts(){},showTabLoader(){throw new Error('Tab loader must not interrupt navigation');},MutationObserver:class{observe(){}}
+    scrollTo(x,y){assert.equal(html.style.getPropertyValue('scroll-behavior'),'auto');if(typeof x==='object'){assert.equal(x.behavior,'instant');assert.equal(x.left,0);y=x.top;}env.scrollY=y;html.scrollTop=y;},requiredPlanForTab:tab=>tab==='business'||tab==='stock'?'business':null,requirePlan:()=>env.allowed,drawAnalyticsCharts(){},showTabLoader(){throw new Error('Tab loader must not interrupt navigation');},MutationObserver:class{observe(){}}
   };env.window=env;vm.createContext(env);
   vm.runInContext(read(path.join(root,platform==='android'?'frontend-source/android/scripts/motion-20102004.js':'web/assets/scripts/motion-20102004.js'),'utf8'),env);
   const app=read(path.join(root,platform==='android'?'frontend-source/android/scripts/app.js':'web/assets/scripts/app.js'),'utf8');
@@ -123,6 +123,14 @@ test('Low-memory More sheet defers focus until its short entrance settles',()=>{
  assert.match(card.style.getPropertyValue('transition'),/245ms/);
  f.finish();assert.equal(f.env.document.activeElement,card);
 });
+test('WebViews without overflow clip use a single bounded navigation surface',()=>{
+ const f=fixture();f.env.CSS.supports=()=>false;
+ f.env.vyaparMotion.navigate('business');
+ assert(f.html.classList.contains('vy-page-compact'));
+ assert(!f.nodes.get('screen-home').classList.contains('vy-page-outgoing'));
+ assert.match(f.nodes.get('screen-business').style.getPropertyValue('transform'),/translate3d\(23px/);
+ f.finish();assert.equal(f.env.currentTab,'business');assert(!f.html.classList.contains('vy-page-transitioning'));
+});
 for(const platform of ['android','web']){
  test(platform+': blocked, unknown and same-page navigation never starts a transition',()=>{
   const f=fixture(platform);f.env.allowed=false;f.env.scrollY=240;
@@ -133,6 +141,13 @@ for(const platform of ['android','web']){
 test('Interrupted micro transitions restore original inline properties and priorities',()=>{
  const f=fixture();const node=f.nodes.get('screen-home');node.style.setProperty('transform','scale(1)','important');node.style.setProperty('opacity','.8');
  f.env.vyaparMotion.enter(node,1);f.env.vyaparMotion.enter(node,-1);f.finish();assert.equal(node.style.getPropertyValue('transform'),'scale(1)');assert.equal(node.style.getPropertyPriority('transform'),'important');assert.equal(node.style.getPropertyValue('opacity'),'.8');assert.equal(node.style.getPropertyValue('will-change'),'');
+});
+test('Instant scroll falls back safely when an older WebView rejects scroll options',()=>{
+ const f=fixture();let calls=0;
+ f.env.scrollTo=(x,y)=>{calls++;if(typeof x==='object')throw new TypeError('Unsupported scroll options');assert.equal(x,0);assert.equal(f.html.style.getPropertyValue('scroll-behavior'),'auto');f.env.scrollY=y;};
+ f.html.style.setProperty('scroll-behavior','smooth','important');
+ f.env.vyaparMotion.scrollTo(315);
+ assert.equal(f.env.scrollY,315);assert.equal(calls,2);assert.equal(f.html.style.getPropertyValue('scroll-behavior'),'smooth');
 });
 test('Fast popup close never replays entrance motion or leaves a stale timer',()=>{
  const f=fixture();const overlay=f.element('fast-popup');overlay.card=f.element('fast-card');let resolved=0;f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;overlay.remove();});assert.equal(f.frames.size,2);f.env.vyaparMotion.cancelOverlay(overlay);f.finish();assert.equal(resolved,1);
@@ -157,7 +172,7 @@ test('Closing More during entry continues from the visible frame and resolves on
 });
 test('Release identity and bundled motion order are synchronized',()=>{
  const version=JSON.parse(fs.readFileSync(path.join(root,'version.json'))),cacheKey=String(version.versionCode)+'-workspace1';
- assert.equal(version.versionName,'20.10.2004.00038.2026');
+ assert.equal(version.versionName,'20.10.2004.00039.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
   const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes(`vyapar-ui.css?v=${cacheKey}`));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));
