@@ -16,12 +16,23 @@ const remote='20.10.2004.00016.2026';
  await new Promise(resolve=>server.listen(8765,'127.0.0.1',resolve));
  let browser;
  const results=[];
+ let stage='starting browser checks';
+ let watchdog;
+ const progress=message=>{
+  stage=message;
+  console.log('Browser QA: '+message);
+  clearTimeout(watchdog);
+  // Playwright's locator timeout cannot interrupt a renderer that stops
+  // replying to protocol messages. Fail with the exact stuck stage instead.
+  watchdog=setTimeout(()=>{console.error('Browser QA stalled: '+stage);process.exit(1);},35000);
+ };
  try{
  for(const width of [320,360,383,412,768]){
-  console.log('Checking navigation at '+width+'px');
+  progress('Checking navigation at '+width+'px');
   // Isolate each viewport in its own browser process. Closing a live context in
   // a reused headless browser can stall Chromium between viewport checks.
   browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_PATH,args:['--no-sandbox']});
+  progress('Chromium launched at '+width+'px');
   const context=await browser.newContext({viewport:{width,height:760},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   await context.addInitScript(()=>{
     localStorage.setItem('vyapar_ai_auth_token_v1','qa-only-token');
@@ -41,7 +52,9 @@ const remote='20.10.2004.00016.2026';
   page.setDefaultTimeout(10000);
   page.setDefaultNavigationTimeout(15000);
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+  progress('Document loaded at '+width+'px');
   await page.waitForFunction(()=>!document.getElementById('vy855BootGuard'),null,{timeout:15000}).catch(async error=>{console.error('Startup errors:',errors);await page.screenshot({path:path.join(out,'boot-failure-'+width+'.png')});throw error;});
+  progress('Startup complete at '+width+'px');
   await page.waitForTimeout(900);
   await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());window.setTab('home',false);});
   await page.waitForTimeout(350);
@@ -94,14 +107,18 @@ const remote='20.10.2004.00016.2026';
     return g;
   }
   await page.screenshot({path:path.join(out,'initial-'+width+'.png')});
+  progress('Initial screenshot at '+width+'px');
   const positions=[];
   for(const tab of ['home','business','sales','stock','more']){
+    progress('Selecting '+tab+' at '+width+'px');
     await page.locator('#nav [data-android-tab="'+tab+'"]').click();await settle();
     const g=await geometry(tab);positions.push({tab,x:g.cap.x-g.nav.x,width:g.cap.w,height:g.cap.h});
+    progress('Selected '+tab+' at '+width+'px');
     if(tab!=='more')assert(await page.locator('#screen-'+tab).isVisible(),'Destination opens '+tab);
     else assert.equal(await page.locator('#androidMoreSheet').count(),1);
     if(width===383)await page.locator('#nav').screenshot({path:path.join(out,tab+'-367x50.png')});
   }
+  progress('Checking Back and rapid taps at '+width+'px');
   await page.evaluate(()=>handleNativeBackPress());await settle();await geometry('stock');
   assert.equal(await page.locator('#androidMoreSheet').count(),0,'Back dismisses More and restores capsule');
   await page.evaluate(()=>setTab('settings',false));await settle();await geometry('more');
@@ -114,14 +131,17 @@ const remote='20.10.2004.00016.2026';
   await page.locator('#nav [data-android-tab="home"]').click();await page.waitForTimeout(50);
   assert.equal((await geometry('home')).transition,'0s','Reduced motion honored');
   await page.emulateMedia({reducedMotion:'no-preference'});
+  progress('Checking full page motion at '+width+'px');
   if([320,360,412].includes(width))await require('./qa-page-transitions.cjs')(page,out,width);
+  progress('Checking Settings selection at '+width+'px');
   await page.screenshot({path:path.join(out,'home-'+width+'.png')});
   if([320,412].includes(width))await require('./qa-settings-selection.cjs')(page,out,width);
   await settle();
   assert.equal(errors.length,0,errors.join('\n'));results.push({width,positions,errors});
-  console.log('Completed navigation at '+width+'px; closing browser');
+  progress('Completed navigation at '+width+'px; closing browser');
   await browser.close();browser=null;
  }
+ clearTimeout(watchdog);
  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));
  console.log(JSON.stringify(results,null,2));
  }finally{if(browser)await browser.close();server.close();}

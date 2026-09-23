@@ -54,12 +54,13 @@ module.exports=async function(page,out,width){
   results.push({label,frames:data.frames.length,positions:new Set(data.frames.map(f=>Math.round(f.inX))).size,elapsed:Math.round(data.elapsed)});
  }
  for(const from of tabs)for(const to of tabs){
-  if(from===to)continue;await go(from);
+  if(from===to)continue;console.log('Checking page slide '+width+'px '+from+' → '+to);await go(from);
   const data=await sample(to);check(data,tabs.indexOf(to)>tabs.indexOf(from)?1:-1,from+' → '+to);
   assert.equal(data.destination,'screen-'+to);
  }
  // Every More destination opens right-to-left, even from a later-ranked page.
  for(const to of ['analytics','upload','calculator','subscription','settings']){
+  console.log('Checking More slide '+width+'px → '+to);
   await go(to==='settings'?'calculator':'settings');
   await page.locator('#nav [data-android-tab="more"]').click();
   await page.waitForFunction(()=>{const p=document.querySelector('#androidMoreSheet .android-sheet');return p&&getComputedStyle(p).transform==='none';});
