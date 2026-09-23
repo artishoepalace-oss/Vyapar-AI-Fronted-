@@ -1,5 +1,5 @@
 /* Middle-screen page selector: one black track and one graphite sliding thumb.
-   This deliberately does not style the five-icon #nav bottom dock. */
+   This deliberately does not style the five-icon bottom dock. */
 html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
   position:relative!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
   gap:4px!important;padding:4px!important;margin:0 0 16px!important;
