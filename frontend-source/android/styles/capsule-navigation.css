@@ -86,6 +86,15 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
   transition:transform 390ms cubic-bezier(.22,1,.36,1);
   will-change:transform;
 }
+/* Keep the selection capsule in step with the compact page handoff on old GPUs. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-tier-legacy body #nav.nav.bottom-nav .active-capsule,
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-low-ram body #nav.nav.bottom-nav .active-capsule {
+  transition-duration:280ms!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-tier-legacy.perf-lite body #nav.nav.bottom-nav .active-capsule,
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-low-ram.perf-lite body #nav.nav.bottom-nav .active-capsule {
+  transition-duration:220ms!important;
+}
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::before,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button::before,

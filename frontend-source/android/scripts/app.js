@@ -8524,6 +8524,7 @@ render();
     const settings = document.querySelector("#screen-settings .settings-stack");
     if(!settings) return;
     let footer = document.getElementById("appLegalFooter");
+    if(footer && footer.__vyLegalFooterReady && footer.parentElement===settings) return;
     if(!footer){
       footer = document.createElement("footer");
       footer.id = "appLegalFooter";
@@ -8540,29 +8541,43 @@ render();
       '</span>' +
       '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
     settings.appendChild(footer);
+    footer.__vyLegalFooterReady=true;
+  }
+
+  let decorationsQueued=false;
+  function queuePageDecorations(){
+    if(decorationsQueued)return;
+    decorationsQueued=true;
+    const run=()=>{
+      if(document.documentElement.classList.contains('vy-page-transitioning')){
+        document.addEventListener('vyapar-page-settled',run,{once:true});
+        return;
+      }
+      decorationsQueued=false;
+      renderNav();updateHeader();improveCurrentScreen();syncThemeVisuals();ensureLegalFooter();
+      if(visibleTab()==='home')addQuickActions();
+    };
+    if(document.documentElement.classList.contains('vy-page-transitioning')){
+      document.addEventListener('vyapar-page-settled',run,{once:true});
+    }else requestAnimationFrame(run);
   }
 
   function closeMoreSheet(restoreNav,onClosed){
     const shouldRestore = restoreNav !== false;
     const sheet = document.getElementById("androidMoreSheet");
     if(sheet && sheet.__vyClosing) return;
+    const trigger = moreSheetTrigger;
+    moreSheetTrigger = null;
     const finish=()=>{
       if(sheet)sheet.remove();
       document.body.classList.remove("android-sheet-open");
       if(typeof onClosed==='function')onClosed();else renderNav();
+      if(shouldRestore && trigger){
+        const fresh=document.querySelector('.nav button[data-android-tab="more"]');
+        if(fresh){try{fresh.focus({preventScroll:true})}catch(_){}}
+      }
     };
     if(sheet && window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
-    const trigger = moreSheetTrigger;
-    moreSheetTrigger = null;
-    if(shouldRestore){
-      requestAnimationFrame(function(){
-        renderNav();
-        if(trigger){
-          const fresh=document.querySelector('.nav button[data-android-tab="more"]');
-          if(fresh){try{fresh.focus({preventScroll:true})}catch(_){}}
-        }
-      });
-    }
   }
 
   window.closeMoreSheet=closeMoreSheet;
@@ -8622,7 +8637,7 @@ render();
     const closeButton = overlay.querySelector("[data-sheet-dismiss]");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);
-      setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
+      if(!window.vyaparMotion)setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
     }
   }
 
@@ -8632,14 +8647,7 @@ render();
       if(result === false) return result;
       renderNav();
       updateHeader();
-      requestAnimationFrame(function(){
-        renderNav();
-        updateHeader();
-        improveCurrentScreen();
-        syncThemeVisuals();
-        ensureLegalFooter();
-        if(tab === "home") addQuickActions();
-      });
+      queuePageDecorations();
       return result;
     };
   }
@@ -8680,14 +8688,7 @@ render();
     attributeFilter:["class"]
   });
 
-  const observer = new MutationObserver(function(){
-    requestAnimationFrame(function(){
-      improveCurrentScreen();
-      syncThemeVisuals();
-      ensureLegalFooter();
-      if(visibleTab() === "home") addQuickActions();
-    });
-  });
+  const observer = new MutationObserver(queuePageDecorations);
 
   document.querySelectorAll(".screen").forEach(function(screen){
     observer.observe(screen, {attributes:true, attributeFilter:["class"]});

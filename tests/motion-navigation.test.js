@@ -97,6 +97,33 @@ test('Page CSS transitions work even when Web Animations would be overridden by 
  assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/460ms/);f.finish();
 });
 for(const platform of ['android','web']){
+ test(platform+': low-memory navigation animates one surface and cleans up after rapid taps',()=>{
+  const f=fixture(platform);f.html.classList.add('perf-tier-legacy','perf-low-ram');
+  const home=f.nodes.get('screen-home'),business=f.nodes.get('screen-business');
+  f.env.vyaparMotion.navigate('business');
+  assert(f.html.classList.contains('vy-page-compact'));
+  assert.match(business.style.getPropertyValue('transform'),/translate3d\(23px/);
+  assert(!home.classList.contains('vy-page-outgoing'));
+  assert.equal(home.style.getPropertyValue('display'),'','Hidden source screen is never promoted to a second GPU layer');
+  f.flushFrames();assert.equal(business.style.getPropertyValue('transition'),'none');
+  f.flushFrames();assert.match(business.style.getPropertyValue('transition'),/250ms/);
+  f.env.vyaparMotion.navigate('stock');f.env.vyaparMotion.navigate('sales');
+  assert.equal(f.env.currentTab,'business');f.finish();f.finish();
+  assert.equal(f.env.currentTab,'sales');assert(!f.html.classList.contains('vy-page-compact'));
+  for(const screen of f.screens){assert.equal(screen.style.getPropertyValue('will-change'),'');assert.equal(screen.style.getPropertyValue('opacity'),'');}
+  f.env.vyaparMotion.navigate('home');assert.match(home.style.getPropertyValue('transform'),/translate3d\(-23px/);f.finish();
+  assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);
+ });
+}
+test('Low-memory More sheet defers focus until its short entrance settles',()=>{
+ const f=fixture();f.html.classList.add('perf-tier-legacy');
+ const overlay=f.element('androidMoreSheet'),card=overlay.card=f.element('more-card');
+ f.env.vyaparMotion.openOverlay(overlay);f.flushFrames();
+ assert.equal(f.env.document.activeElement,f.nodes.get('body'));
+ assert.match(card.style.getPropertyValue('transition'),/245ms/);
+ f.finish();assert.equal(f.env.document.activeElement,card);
+});
+for(const platform of ['android','web']){
  test(platform+': blocked, unknown and same-page navigation never starts a transition',()=>{
   const f=fixture(platform);f.env.allowed=false;f.env.scrollY=240;
   assert.equal(f.env.setTab('business'),false);assert.equal(f.env.currentTab,'home');assert.equal(f.env.scrollY,240);assert.equal(f.frames.size,0);
@@ -130,7 +157,7 @@ test('Closing More during entry continues from the visible frame and resolves on
 });
 test('Release identity and bundled motion order are synchronized',()=>{
  const version=JSON.parse(fs.readFileSync(path.join(root,'version.json'))),cacheKey=String(version.versionCode)+'-workspace1';
- assert.equal(version.versionName,'20.10.2004.00037.2026');
+ assert.equal(version.versionName,'20.10.2004.00038.2026');
  for(const base of ['web','android-app/app/src/main/assets']){
   const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes(`vyapar-ui.css?v=${cacheKey}`));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));

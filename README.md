@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00037.2026** (`2010200437`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00038.2026** (`2010200438`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 
@@ -40,7 +40,8 @@ The original financial engines and feature modules remain in place. Do not remov
 
 ## Current improvements
 
-- Release 00037 makes page slides and More opening 460ms, with a 340ms More exit. It retains the directional slides and continuous rapid-tap handling while reducing navigation wait.
+- Release 00038 detects legacy and low-memory Android WebViews and animates only the incoming page over a short 250ms directional transition; modern devices retain the full two-page slide. Heavy page decoration and More sheet focus wait until motion finishes. See `RELEASE_20.10.2004.00038.2026.md`.
+- Release 00037 made page slides and More opening 460ms, with a 340ms More exit. It retained the directional slides and continuous rapid-tap handling while reducing navigation wait.
 - Release 00036 adds full-width, directional 600ms page slides, latest-tap navigation handling and sequenced More-to-page transitions. More opens in 600ms and closes in 440ms, respecting motion preferences.
 - Release 00035 gives More burgundy icons/arrows and slower, interruptible sheet motion. Stock Manage has one add-item entry; alerts appear when stock exists.
 - Release 00034 applies the app’s black, white and burgundy palette to Privacy, Terms, Refund and Delete Account pages, with readable text and larger footer link targets.

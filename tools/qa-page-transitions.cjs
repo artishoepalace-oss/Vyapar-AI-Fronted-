@@ -109,6 +109,44 @@ module.exports=async function(page,out,width,progress=console.log){
  await page.locator('#nav [data-android-tab="more"]').click();await page.waitForTimeout(700);
  await page.screenshot({path:path.join(out,'smooth-more-'+width+'.png')});
  await page.evaluate(()=>handleNativeBackPress());await page.waitForSelector('#androidMoreSheet',{state:'detached'});
+ if(width===360){
+  // Android 8 / low-RAM uses a single short screen layer. Exercise the real
+  // navbar and sheet so this fallback cannot silently regress in a release.
+  await go('home');
+  await page.evaluate(()=>{
+   const root=document.documentElement;
+   root.classList.remove('perf-tier-modern','perf-tier-mid','perf-lite');
+   root.classList.add('perf-tier-legacy','perf-low-ram');
+  });
+  const compact=await page.evaluate(()=>{
+   document.querySelector('#nav [data-android-tab="business"]').click();
+   const root=document.documentElement,incoming=document.getElementById('screen-business'),outgoing=document.getElementById('screen-home');
+   return {active:root.classList.contains('vy-page-compact'),pose:incoming.style.transform,
+    outgoingLayer:outgoing.classList.contains('vy-page-outgoing'),outgoingDisplay:outgoing.style.display};
+  });
+  assert(compact.active&&/translate3d\(23px/.test(compact.pose),'Low-memory destination starts nearby');
+  assert(!compact.outgoingLayer&&!compact.outgoingDisplay,'Low-memory source stays off the compositor');
+  await idle();
+  await page.evaluate(()=>document.querySelector('#nav [data-android-tab="home"]').click());
+  const reverse=await page.evaluate(()=>document.getElementById('screen-home').style.transform);
+  assert(/translate3d\(-23px/.test(reverse),'Low-memory Backward navigation moves from the left');
+  await idle();
+  assert.equal(await page.locator('.screen:not(.hide)').getAttribute('id'),'screen-home');
+  assert.equal(await page.locator('.vy-page-incoming,.vy-page-outgoing').count(),0);
+  await page.locator('#nav [data-android-tab="more"]').click();
+  await page.waitForSelector('#androidMoreSheet .android-sheet');
+  await page.waitForTimeout(75);
+  const popup=await page.evaluate(()=>({transition:document.querySelector('#androidMoreSheet .android-sheet').style.transition,
+   scrollWidth:document.documentElement.scrollWidth}));
+  assert.match(popup.transition,/245ms/,'Low-memory More entry stays brief');
+  assert(popup.scrollWidth<=width,'Low-memory sheet does not overflow');
+  await page.locator('#androidMoreSheet [data-tab="analytics"]').click();
+  await page.waitForSelector('#androidMoreSheet',{state:'detached'});
+  await idle();
+  assert.equal(await page.locator('.screen:not(.hide)').getAttribute('id'),'screen-analytics');
+  await page.evaluate(()=>document.documentElement.classList.remove('perf-tier-legacy','perf-low-ram'));
+  await go('home');
+ }
  await page.evaluate(()=>document.querySelector('#nav [data-android-tab="stock"]').click());await page.waitForTimeout(100);
  await page.setViewportSize({width:width+24,height:760});await idle();
  await page.setViewportSize({width,height:760});

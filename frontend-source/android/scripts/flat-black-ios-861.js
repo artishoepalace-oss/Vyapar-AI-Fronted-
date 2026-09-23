@@ -149,7 +149,7 @@
   if(previousSetTab&&!previousSetTab.__vy861Wrapped){
     const wrapped=function(tab,withLoader){
       const result=previousSetTab.call(this,tab,false);
-      requestAnimationFrame(()=>{decorateNav();syncModalState();cleanupOptics();});
+      if(result!==false)scheduleVisualSync();
       return result;
     };
     wrapped.__vy861Wrapped=true;
@@ -168,18 +168,20 @@
   }
 
   let queued=false;
-  const observer=new MutationObserver(()=>{
+  function scheduleVisualSync(){
     if(queued)return;
     queued=true;
-    requestAnimationFrame(()=>{
-      queued=false;
-      cleanupOptics();
-      decorateNav();
-      syncModalState();
-      fixAuthGate();
-      applyThemeMeta();
-    });
-  });
+    requestAnimationFrame(runVisualSync);
+  }
+  function runVisualSync(){
+    if(root.classList.contains('vy-page-transitioning')){
+      document.addEventListener('vyapar-page-settled',runVisualSync,{once:true});
+      return;
+    }
+    queued=false;
+    cleanupOptics();decorateNav();syncModalState();fixAuthGate();applyThemeMeta();
+  }
+  const observer=new MutationObserver(scheduleVisualSync);
 
   function init(){
     cleanupOptics();

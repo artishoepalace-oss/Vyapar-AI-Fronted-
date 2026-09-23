@@ -807,12 +807,16 @@
   const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
   const pageStyleProps=['position','top','left','right','bottom','width','height','margin','z-index','pointer-events','display','contain','isolation','transform','opacity','will-change','transition','backface-visibility','-webkit-backface-visibility'];
-  let pageTransition=null,pendingNavigation=null,navigationDirection=null;
+  let pageTransition=null,pendingNavigation=null,navigationDirection=null,settledNotice=0;
 
   function reduced(){return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);}
   function duration(ms){
     if(reduced()) return 0;
     return document.documentElement.classList.contains('perf-lite') ? Math.round(ms*.72) : ms;
+  }
+  function compactMotion(){
+    const root=document.documentElement;
+    return root.classList.contains('perf-tier-legacy') || root.classList.contains('perf-low-ram');
   }
   function css(node,prop,fallback){
     if(!node)return fallback;
@@ -885,10 +889,12 @@
     node.addEventListener('transitionend',end);
     // Commit the starting pose before the next frame, including on older WebViews.
     node.getBoundingClientRect();
+    timer=setTimeout(finish,Math.max(1100,time*3));
     frame=requestAnimationFrame(()=>{
       if(finished)return;
       node.style.setProperty('transition',keys.map(p=>p+' '+time+'ms '+easing).join(','),'important');
       keys.forEach(p=>node.style.setProperty(p,to[p],'important'));
+      clearTimeout(timer);
       timer=setTimeout(finish,time+56);
     });
   }
@@ -922,8 +928,16 @@
       incoming.classList.remove('vy-page-incoming');
       incoming.removeAttribute('aria-hidden');
     }
-    document.documentElement.classList.remove('vy-page-transitioning');
+    document.documentElement.classList.remove('vy-page-transitioning','vy-page-compact');
     if(next)next();
+    // Legacy UI helpers can update content after the page finishes moving.
+    // Notify after a paint instead of invalidating the animated layer.
+    if(!settledNotice)settledNotice=setTimeout(()=>{
+      settledNotice=0;
+      if(!pageTransition&&typeof document.dispatchEvent==='function'&&typeof Event==='function'){
+        document.dispatchEvent(new Event('vyapar-page-settled'));
+      }
+    },32);
   }
 
   function whenPageSettled(action){
@@ -952,6 +966,44 @@
     const outgoing=context && context.previousNode;
     if(!outgoing||!incoming||outgoing===incoming||reduced())return false;
     stopPageTransition();
+
+    if(compactMotion()){
+      /* Old GPUs stall while rasterizing two full-height screens. Keep the
+         outgoing page hidden and animate only the already visible destination. */
+      const time=duration(250);
+      const distance=Math.min(24,Math.round((window.innerWidth||360)*.065))*(direction<0?-1:1);
+      const base=css(incoming,'transform','none');
+      const rest=base==='none'?'':base+' ';
+      const active={outgoing,incoming,frame:0,timer:0,outgoingStyle:null,
+        incomingStyle:saveInline(incoming,pageStyleProps)};
+      pageTransition=active;
+      outgoing.setAttribute('aria-hidden','true');
+      incoming.removeAttribute('aria-hidden');
+      incoming.classList.add('vy-page-incoming');
+      document.documentElement.classList.add('vy-page-transitioning','vy-page-compact');
+      incoming.style.setProperty('transition','none','important');
+      incoming.style.setProperty('will-change','transform,opacity','important');
+      incoming.style.setProperty('transform',rest+'translate3d('+distance+'px,0,0)','important');
+      incoming.style.setProperty('opacity','.94','important');
+      const finish=()=>{if(pageTransition===active)stopPageTransition(true);};
+      active.onEnd=event=>{if(event.target===incoming&&event.propertyName==='transform')finish();};
+      incoming.addEventListener('transitionend',active.onEnd);
+      active.timer=setTimeout(finish,Math.max(1000,time*3));
+      // Give the WebView a paint opportunity without a synchronous full-page
+      // layout read on the tap thread. The second frame starts the compositor.
+      active.frame=requestAnimationFrame(()=>{
+        if(pageTransition!==active)return;
+        active.frame=requestAnimationFrame(()=>{
+          if(pageTransition!==active)return;
+          incoming.style.setProperty('transition','transform '+time+'ms '+pageEase+',opacity '+time+'ms '+pageEase,'important');
+          incoming.style.setProperty('transform',base,'important');
+          incoming.style.setProperty('opacity','1','important');
+          clearTimeout(active.timer);
+          active.timer=setTimeout(finish,time+96);
+        });
+      });
+      return true;
+    }
 
     const time=duration(460);
     if(!time)return false;
@@ -1017,7 +1069,7 @@
     incoming.addEventListener('transitionend',active.onEnd);
     // If animation frames stop while the WebView is backgrounded or under
     // severe load, finish the handoff and replay the last navigation request.
-    active.timer=setTimeout(finish,time+64);
+    active.timer=setTimeout(finish,Math.max(1200,time*3));
     active.frame=requestAnimationFrame(()=>{
       if(pageTransition!==active)return;
       const transition='transform '+time+'ms '+pageEase;
@@ -1025,6 +1077,8 @@
       incoming.style.setProperty('transition',transition,'important');
       outgoing.style.setProperty('transform',outgoingTo,'important');
       incoming.style.setProperty('transform',incomingTo,'important');
+      clearTimeout(active.timer);
+      active.timer=setTimeout(finish,time+96);
     });
     return true;
   }
@@ -1044,7 +1098,7 @@
     positions[previous]=top;
     const previousNode=document.getElementById('screen-'+previous);
     cancel(previousNode);cancel(document.getElementById('screen-'+next));
-    return {previous,next,direction:navigationDirection,previousNode,previousRect:pageRect(previousNode),top:autoTop()?0:(Object.prototype.hasOwnProperty.call(positions,next)?positions[next]:0)};
+    return {previous,next,direction:navigationDirection,previousNode,previousRect:compactMotion()?null:pageRect(previousNode),top:autoTop()?0:(Object.prototype.hasOwnProperty.call(positions,next)?positions[next]:0)};
   }
   function afterPage(context,node){
     if(!context || !node)return;
@@ -1074,7 +1128,7 @@
     if(!overlay || !card)return null;
     // One surface contract for all app-owned dialogs. Native system dialogs stay native.
     overlay.classList.add('vy-unified-overlay');card.classList.add('vy-unified-panel');
-    const info={card,trigger:overlay.__vyTrigger || document.activeElement,finish:null,sheet:true};
+    const info={card,trigger:overlay.__vyTrigger || document.activeElement,finish:null,focusTimer:0,sheet:true};
     const handle=card.querySelector('[data-sheet-dismiss]');
     if(handle && !handle.__vySwipe){
       handle.__vySwipe=true;
@@ -1096,21 +1150,27 @@
     cancel(card);cancel(overlay);
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
-    tween(overlay,{opacity:'0'},{opacity:'1'},more?300:sheet?145:125,null,easeSoft);
+    const compact=more&&compactMotion();
+    const entrance=more?(compact?245:460):sheet?280:220;
+    tween(overlay,{opacity:'0'},{opacity:'1'},more?(compact?150:300):sheet?145:125,null,easeSoft);
     const fullSheet=info.sheet;
-    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?460:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
-    requestAnimationFrame(()=>{
+    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?entrance:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
+    const focus=()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
       if(!overlay.contains(document.activeElement)){
         const target=focusables(card)[0]||card;
         if(target===card)card.setAttribute('tabindex','-1');
         try{target.focus({preventScroll:true});}catch(_){ }
       }
-    });
+    };
+    // Focusing the first row causes a full layout read; do it after More's
+    // entrance so the old WebView doesn't pause the moving sheet mid-frame.
+    if(more)info.focusTimer=setTimeout(focus,duration(entrance)+20);
+    else requestAnimationFrame(focus);
   }
 
   function cancelOverlay(overlay){
-    const info=overlays.get(overlay);cancel(overlay);if(info)cancel(info.card);
+    const info=overlays.get(overlay);cancel(overlay);if(info){clearTimeout(info.focusTimer);cancel(info.card);}
     if(info && info.finish)info.finish();overlays.delete(overlay);
   }
 
@@ -1120,11 +1180,12 @@
     let info=overlays.get(overlay);
     if(!info)info=registerOverlay(overlay)||{card:overlay.querySelector?overlay.querySelector(cardSelector):null,trigger:null,sheet:false};
     overlay.__vyClosing=true;overlay.style.setProperty('pointer-events','auto','important');
+    clearTimeout(info.focusTimer);
     let finished=false;
     const finish=()=>{
       if(finished)return;finished=true;cancel(overlay);cancel(info.card);overlays.delete(overlay);
       if(callback)callback();else overlay.remove();
-      if(info.trigger && info.trigger.isConnected && (document.activeElement===document.body || (overlay.contains && overlay.contains(document.activeElement)))){
+      if(overlay.id!=='androidMoreSheet' && info.trigger && info.trigger.isConnected && (document.activeElement===document.body || (overlay.contains && overlay.contains(document.activeElement)))){
         try{info.trigger.focus({preventScroll:true});}catch(_){ }
       }
     };
@@ -1132,7 +1193,7 @@
     if(!duration(120)){finish();return;}
     const card=info.card,overlayOpacity=renderedCss(overlay,'opacity','1');
     const fullSheet=info.sheet;
-    const closeTime=overlay.id==='androidMoreSheet'?340:fullSheet?180:info.sheet?145:120;
+    const closeTime=overlay.id==='androidMoreSheet'?(compactMotion()?190:340):fullSheet?180:info.sheet?145:120;
     if(card){
       // Sample the visible frame before cancelling an unfinished entrance.
       const currentTransform=renderedCss(card,'transform','none');cancel(card);
@@ -10559,6 +10620,7 @@ render();
     const settings = document.querySelector("#screen-settings .settings-stack");
     if(!settings) return;
     let footer = document.getElementById("appLegalFooter");
+    if(footer && footer.__vyLegalFooterReady && footer.parentElement===settings) return;
     if(!footer){
       footer = document.createElement("footer");
       footer.id = "appLegalFooter";
@@ -10575,29 +10637,43 @@ render();
       '</span>' +
       '<strong class="gupta-legacy-signature">From: Gupta Legacy</strong>';
     settings.appendChild(footer);
+    footer.__vyLegalFooterReady=true;
+  }
+
+  let decorationsQueued=false;
+  function queuePageDecorations(){
+    if(decorationsQueued)return;
+    decorationsQueued=true;
+    const run=()=>{
+      if(document.documentElement.classList.contains('vy-page-transitioning')){
+        document.addEventListener('vyapar-page-settled',run,{once:true});
+        return;
+      }
+      decorationsQueued=false;
+      renderNav();updateHeader();improveCurrentScreen();syncThemeVisuals();ensureLegalFooter();
+      if(visibleTab()==='home')addQuickActions();
+    };
+    if(document.documentElement.classList.contains('vy-page-transitioning')){
+      document.addEventListener('vyapar-page-settled',run,{once:true});
+    }else requestAnimationFrame(run);
   }
 
   function closeMoreSheet(restoreNav,onClosed){
     const shouldRestore = restoreNav !== false;
     const sheet = document.getElementById("androidMoreSheet");
     if(sheet && sheet.__vyClosing) return;
+    const trigger = moreSheetTrigger;
+    moreSheetTrigger = null;
     const finish=()=>{
       if(sheet)sheet.remove();
       document.body.classList.remove("android-sheet-open");
       if(typeof onClosed==='function')onClosed();else renderNav();
+      if(shouldRestore && trigger){
+        const fresh=document.querySelector('.nav button[data-android-tab="more"]');
+        if(fresh){try{fresh.focus({preventScroll:true})}catch(_){}}
+      }
     };
     if(sheet && window.vyaparMotion) window.vyaparMotion.closeOverlay(sheet,finish); else finish();
-    const trigger = moreSheetTrigger;
-    moreSheetTrigger = null;
-    if(shouldRestore){
-      requestAnimationFrame(function(){
-        renderNav();
-        if(trigger){
-          const fresh=document.querySelector('.nav button[data-android-tab="more"]');
-          if(fresh){try{fresh.focus({preventScroll:true})}catch(_){}}
-        }
-      });
-    }
   }
 
   window.closeMoreSheet=closeMoreSheet;
@@ -10657,7 +10733,7 @@ render();
     const closeButton = overlay.querySelector("[data-sheet-dismiss]");
     if(closeButton){
       closeButton.addEventListener("click", closeMoreSheet);
-      setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
+      if(!window.vyaparMotion)setTimeout(function(){ try{closeButton.focus({preventScroll:true});}catch(_){} }, 0);
     }
   }
 
@@ -10667,14 +10743,7 @@ render();
       if(result === false) return result;
       renderNav();
       updateHeader();
-      requestAnimationFrame(function(){
-        renderNav();
-        updateHeader();
-        improveCurrentScreen();
-        syncThemeVisuals();
-        ensureLegalFooter();
-        if(tab === "home") addQuickActions();
-      });
+      queuePageDecorations();
       return result;
     };
   }
@@ -10715,14 +10784,7 @@ render();
     attributeFilter:["class"]
   });
 
-  const observer = new MutationObserver(function(){
-    requestAnimationFrame(function(){
-      improveCurrentScreen();
-      syncThemeVisuals();
-      ensureLegalFooter();
-      if(visibleTab() === "home") addQuickActions();
-    });
-  });
+  const observer = new MutationObserver(queuePageDecorations);
 
   document.querySelectorAll(".screen").forEach(function(screen){
     observer.observe(screen, {attributes:true, attributeFilter:["class"]});
@@ -15557,7 +15619,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   if(previousSetTab&&!previousSetTab.__vy861Wrapped){
     const wrapped=function(tab,withLoader){
       const result=previousSetTab.call(this,tab,false);
-      requestAnimationFrame(()=>{decorateNav();syncModalState();cleanupOptics();});
+      if(result!==false)scheduleVisualSync();
       return result;
     };
     wrapped.__vy861Wrapped=true;
@@ -15576,18 +15638,20 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   let queued=false;
-  const observer=new MutationObserver(()=>{
+  function scheduleVisualSync(){
     if(queued)return;
     queued=true;
-    requestAnimationFrame(()=>{
-      queued=false;
-      cleanupOptics();
-      decorateNav();
-      syncModalState();
-      fixAuthGate();
-      applyThemeMeta();
-    });
-  });
+    requestAnimationFrame(runVisualSync);
+  }
+  function runVisualSync(){
+    if(root.classList.contains('vy-page-transitioning')){
+      document.addEventListener('vyapar-page-settled',runVisualSync,{once:true});
+      return;
+    }
+    queued=false;
+    cleanupOptics();decorateNav();syncModalState();fixAuthGate();applyThemeMeta();
+  }
+  const observer=new MutationObserver(scheduleVisualSync);
 
   function init(){
     cleanupOptics();
