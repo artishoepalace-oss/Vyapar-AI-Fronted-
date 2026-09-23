@@ -14,21 +14,29 @@ module.exports=async function(page,out,width,progress=console.log){
    const nav=document.getElementById('nav'),header=document.querySelector('.top');
    const navRect=nav.getBoundingClientRect(),headerRect=header.getBoundingClientRect();
    const frames=[],start=performance.now();
+   if(more)console.log('QA sample '+to+' before click');
    if(more)document.querySelector('#androidMoreSheet [data-tab="'+to+'"]').click();
    else document.querySelector('#nav [data-android-tab="'+to+'"]').click();
+   if(more)console.log('QA sample '+to+' click returned');
    let started=false,overlap=false;
    await new Promise((resolve,reject)=>{
     // A throttled WebView can pause animation frames entirely. The check must
     // report that condition, not leave the release job waiting indefinitely.
     const deadline=setTimeout(()=>reject(new Error('Page slide stopped painting: '+to)),2600);
+    let ticks=0;
     function tick(){
+     ticks++;
+     const trace=more&&(ticks<=2||ticks%8===0);
+     if(trace)console.log('QA sample '+to+' tick '+ticks+' before class check');
      const active=document.documentElement.classList.contains('vy-page-transitioning');
      if(active){
       started=true;overlap=overlap||!!document.getElementById('androidMoreSheet');
+      if(trace)console.log('QA sample '+to+' tick '+ticks+' before layout');
       const nr=nav.getBoundingClientRect(),hr=header.getBoundingClientRect();
       frames.push({t:performance.now()-start,inX:x(incoming),outX:x(previous),screens:document.querySelectorAll('.screen:not(.hide)').length,
        navMove:Math.abs(nr.x-navRect.x)+Math.abs(nr.y-navRect.y),headerMove:Math.abs(hr.x-headerRect.x)+Math.abs(hr.y-headerRect.y),
        scrollWidth:document.documentElement.scrollWidth});
+      if(trace)console.log('QA sample '+to+' tick '+ticks+' measured frame');
      }
      if(started&&!active){clearTimeout(deadline);return resolve();}
      if(performance.now()-start>2200)return reject(new Error('Page slide never completed: '+to));

@@ -57,7 +57,7 @@ const remote='20.10.2004.00016.2026';
   });
   const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
   page.on('crash',()=>console.error('Browser QA renderer crashed at '+width+'px: '+stage));
-  page.on('console',message=>{if(message.text().startsWith('QA heartbeat'))console.log(message.text());});
+  page.on('console',message=>{if(message.text().startsWith('QA '))console.log(message.text());});
   page.setDefaultTimeout(10000);
   page.setDefaultNavigationTimeout(15000);
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
