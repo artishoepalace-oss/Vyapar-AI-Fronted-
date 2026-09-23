@@ -73,7 +73,7 @@
     const markup = '<div class="insights-workspace"><div class="workspace-heading"><div><span class="workspace-eyebrow">BUSINESS INSIGHTS</span><h1>Profit dashboard</h1></div><label class="year-field"><span>Year</span><select aria-label="Profit year" onchange="VyaparInsights.selectYear(this.value)">' + options(selected) + '</select></label></div><section class="card insight-balance"><span>' + selected + ' net profit' + (currentYear ? ' · recorded so far' : '') + '</span><strong class="' + (f.net < 0 ? 'is-loss' : '') + '">' + amount(f.net) + '</strong><p class="muted">' + escape(change) + '</p><div class="insight-mini-stats"><div><span>Revenue</span><b>' + amount(f.revenue) + '</b></div><div><span>Expenses</span><b>' + amount(f.expenses) + '</b></div></div></section>' + tabs + content + '</div>';
     // Preserve the connected tab bar: removing it on every view change reset
     // the sliding thumb before the browser could animate between positions.
-    const existing = el.querySelector(':scope > .insights-workspace');
+    const existing = typeof el.querySelector === 'function' ? el.querySelector(':scope > .insights-workspace') : null;
     const oldTabs = existing && existing.querySelector(':scope > .workspace-tabs');
     if (oldTabs) {
       const staged = document.createElement('div');
