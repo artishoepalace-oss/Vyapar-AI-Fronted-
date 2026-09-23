@@ -27,7 +27,7 @@
     var width=Math.round(rect.width*100)/100;
     var old=cache.get(bar);
     if(old && old.x===x && old.width===width && old.active===active)return;
-    var instant=!old || old.width!==width || first;
+    var instant=!old || first;
     if(instant)bar.classList.add('vy-middle-instant');
     bar.style.setProperty('--vy-middle-x',x+'px');
     bar.style.setProperty('--vy-middle-width',width+'px');

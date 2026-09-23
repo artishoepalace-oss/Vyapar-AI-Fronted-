@@ -70,7 +70,28 @@
       const visible = years.slice(page * 8, page * 8 + 8).reverse();
       content += '<section class="card insight-panel"><h2>Annual net profit</h2>' + chart(visible.map(y => year(y).net), null, visible).replace('Monthly net profit chart. Exact values in the monthly details table.', 'Annual net profit chart. Exact values in the year list above.') + '</section>';
     }
-    el.innerHTML = '<div class="insights-workspace"><div class="workspace-heading"><div><span class="workspace-eyebrow">BUSINESS INSIGHTS</span><h1>Profit dashboard</h1></div><label class="year-field"><span>Year</span><select aria-label="Profit year" onchange="VyaparInsights.selectYear(this.value)">' + options(selected) + '</select></label></div><section class="card insight-balance"><span>' + selected + ' net profit' + (currentYear ? ' · recorded so far' : '') + '</span><strong class="' + (f.net < 0 ? 'is-loss' : '') + '">' + amount(f.net) + '</strong><p class="muted">' + escape(change) + '</p><div class="insight-mini-stats"><div><span>Revenue</span><b>' + amount(f.revenue) + '</b></div><div><span>Expenses</span><b>' + amount(f.expenses) + '</b></div></div></section>' + tabs + content + '</div>';
+    const markup = '<div class="insights-workspace"><div class="workspace-heading"><div><span class="workspace-eyebrow">BUSINESS INSIGHTS</span><h1>Profit dashboard</h1></div><label class="year-field"><span>Year</span><select aria-label="Profit year" onchange="VyaparInsights.selectYear(this.value)">' + options(selected) + '</select></label></div><section class="card insight-balance"><span>' + selected + ' net profit' + (currentYear ? ' · recorded so far' : '') + '</span><strong class="' + (f.net < 0 ? 'is-loss' : '') + '">' + amount(f.net) + '</strong><p class="muted">' + escape(change) + '</p><div class="insight-mini-stats"><div><span>Revenue</span><b>' + amount(f.revenue) + '</b></div><div><span>Expenses</span><b>' + amount(f.expenses) + '</b></div></div></section>' + tabs + content + '</div>';
+    // Preserve the connected tab bar: removing it on every view change reset
+    // the sliding thumb before the browser could animate between positions.
+    const existing = el.querySelector(':scope > .insights-workspace');
+    const oldTabs = existing && existing.querySelector(':scope > .workspace-tabs');
+    if (oldTabs) {
+      const staged = document.createElement('div');
+      staged.innerHTML = markup;
+      const incoming = staged.firstElementChild;
+      // Only refresh data-driven chrome and the current panel; keep the tab node
+      // and its measured thumb coordinates in the live DOM throughout the switch.
+      existing.replaceChild(incoming.firstElementChild, existing.children[0]);
+      existing.replaceChild(incoming.firstElementChild, existing.children[1]);
+      Array.prototype.forEach.call(oldTabs.children, function (tab, index) {
+        tab.setAttribute('aria-selected', String(['overview', 'compare', 'history', 'plan'][index] === view));
+      });
+      while (oldTabs.nextSibling) existing.removeChild(oldTabs.nextSibling);
+      const newTabs = incoming.querySelector(':scope > .workspace-tabs');
+      while (newTabs.nextSibling) existing.appendChild(newTabs.nextSibling);
+    } else {
+      el.innerHTML = markup;
+    }
   }
   root.VyaparInsights = {
     render, chart,

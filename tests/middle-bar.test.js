@@ -23,3 +23,13 @@ test('middle capsule provides 44px buttons and reduced-motion fallback',()=>{
   assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(css,/translate3d\(var\(--vy-middle-x/);
 });
+
+test('insights view switching retains the live tab bar so its thumb can slide',()=>{
+  const insights=read('frontend-source/android/scripts/insights-workspace.js');
+  assert.match(insights,/const oldTabs = existing && existing\.querySelector\(':scope > \.workspace-tabs'\)/);
+  assert.match(insights,/tab\.setAttribute\('aria-selected'/);
+  assert.match(insights,/while \(oldTabs\.nextSibling\)/);
+  assert.match(insights,/existing\.replaceChild\(incoming\.firstElementChild/);
+  assert.doesNotMatch(js,/old\.width!==width/,'unequal subpixel widths must not cancel the slide');
+  assert.match(css,/transition:transform 260ms [^;]+,width 260ms/);
+});
