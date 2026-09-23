@@ -10457,8 +10457,8 @@ html.android-ui body .vx622-menu-card table.vx622-selection-table.vx622-selectio
 /* Middle-screen page selector: one black track and one graphite sliding thumb.
    This deliberately does not style the five-icon bottom dock. */
 html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
-  position:relative!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
-  gap:4px!important;padding:4px!important;margin:0 0 16px!important;
+  position:relative!important;top:auto!important;bottom:auto!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+  gap:0!important;padding:3px 4px!important;margin:0 0 16px!important;
   height:52px!important;min-height:52px!important;max-height:52px!important;
   width:100%!important;max-width:100%!important;min-width:0!important;
   box-sizing:border-box!important;border:1px solid #292b2f!important;border-radius:19px!important;
@@ -10467,7 +10467,7 @@ html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#scre
   overflow:hidden!important;isolation:isolate;touch-action:pan-y!important;
 }
 html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {
-  content:"";position:absolute;left:0;top:3px;z-index:0;
+  content:"";position:absolute;left:0;top:4px;z-index:0;
   width:var(--vy-middle-width,0px);height:44px;border-radius:15px;
   box-sizing:border-box;border:1px solid #46484d;
   background:linear-gradient(180deg,#3c3e43 0%,#2e3035 100%);
