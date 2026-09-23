@@ -51,6 +51,23 @@ const version=require('../version.json').versionName;
    }
    async function go(tab){stage=tab;await page.evaluate(t=>setTab(t,false),tab);await settle();assert(await page.locator('#screen-'+tab).isVisible());}
    async function mode(tab,value){stage=tab+'-'+value;await page.locator('#screen-'+tab+' .p1-modebar [data-mode="'+value+'"]').click();await settle();await shot(stage);}
+   async function verifyMiddleFit(tab){
+    const info=await page.locator('#screen-'+tab+' .p1-modebar').first().evaluate(bar=>{
+     const track=bar.getBoundingClientRect(),previous=bar.previousElementSibling?.getBoundingClientRect(),buttons=[...bar.children].filter(node=>node.tagName==='BUTTON');
+     const selected=buttons.find(node=>node.getAttribute('aria-selected')==='true')||buttons[0];
+     const active=selected.getBoundingClientRect();
+     return {top:getComputedStyle(bar).top,ready:bar.classList.contains('vy-middle-ready'),gap:previous?track.top-previous.bottom:null,
+      left:track.left,width:track.width,right:track.right,activeLeft:active.left,activeRight:active.right,
+      buttonHeights:buttons.map(node=>node.getBoundingClientRect().height),buttonWidths:buttons.map(node=>node.getBoundingClientRect().width)};
+    });
+    assert.equal(info.top,'auto',tab+' bar must not inherit the previous sticky top offset');
+    assert(info.ready,tab+' middle capsule measured');
+    assert(info.gap!==null && info.gap>=-1 && info.gap<=36,tab+' summary-to-bar spacing: '+JSON.stringify(info));
+    assert(info.left>=-1 && info.right<=width+1,tab+' bar stays inside viewport');
+    assert(info.buttonHeights.every(height=>Math.abs(height-44)<1),tab+' buttons retain 44px touch targets');
+    assert(info.buttonWidths.every(buttonWidth=>buttonWidth>0),tab+' tabs fit available width');
+    assert(info.activeLeft>=info.left+2 && info.activeRight<=info.right-2,tab+' active capsule clears both edges');
+   }
    async function sheet(){
     await settle();assert.equal(await page.locator('#vyFormSheet').count(),1,'Exactly one form');
     const g=await page.evaluate(()=>{const p=document.querySelector('#vyFormSheet .vy-unified-panel').getBoundingClientRect(),n=document.getElementById('nav').getBoundingClientRect();return {x:p.x,w:p.width,bottom:p.bottom,navTop:n.top,viewport:innerWidth};});
@@ -64,12 +81,12 @@ const version=require('../version.json').versionName;
     await go('home');
     assert.equal(await page.locator('.home-metric-head').filter({hasText:'Yearly profit'}).count(),0);
     assert(await page.locator('.home-metric-head').filter({hasText:'This month'}).isVisible());await shot('home');
-    await go('business');
+    await go('business');await verifyMiddleFit('business');
     const due=await page.locator('.vx621-kpi').last().boundingBox(),kpi=await page.locator('.vx621-kpi').first().boundingBox();
     assert(due.width>kpi.width*1.8,'Customer Due spans the summary');
     for(const value of ['daily','accounts','documents','activity'])await mode('business',value);
     await page.locator('#businessToolSearch').fill('GST');await settle();assert(await page.locator('#businessToolResults .vx621-feature-card:visible').count()>0);await page.locator('#businessToolSearch').fill('');
-    await go('stock');await mode('stock','manage');
+    await go('stock');await verifyMiddleFit('stock');await mode('stock','manage');
     assert.equal(await page.locator('#recordSearch-stocks').count(),0,'Empty stock has no unused search');
     assert.equal(await page.getByRole('button',{name:'Add Stock Item',exact:true}).count(),1,'One stock entry action');
     await page.locator('[data-form-field="stockItem"] > button').click();await sheet();
@@ -78,7 +95,7 @@ const version=require('../version.json').versionName;
     const toast=await page.locator('.glass-toast.show').boundingBox(),toastNav=await page.locator('#nav').boundingBox();assert(toast&&toast.y+toast.height<toastNav.y,'Save feedback clears the navbar');
     assert.equal(await page.evaluate(()=>state.stocks[0].qty),12);assert.equal(await page.locator('#vyFormSheet').count(),0);
     for(const value of ['tools','records'])await mode('stock',value);
-    await go('sales');await mode('sales','today');
+    await go('sales');await verifyMiddleFit('sales');await mode('sales','today');
     await page.locator('[data-form-field="sproduct"] > button').click();await sheet();
     await page.locator('#sproduct').fill('QA sale');await page.locator('#sdate').fill('2026-09-20');await page.locator('#sqty').fill('2');await page.locator('#sbuy').fill('200');await page.locator('#ssell').fill('300');
     await page.locator('#vyFormSheet button').filter({hasText:'Save Sale',exact:true}).click();await settle();

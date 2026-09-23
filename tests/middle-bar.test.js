@@ -18,6 +18,8 @@ test('middle capsule reads existing aria state and follows measured coordinates'
 });
 test('middle capsule provides 44px buttons and reduced-motion fallback',()=>{
   assert.match(css,/height:44px!important/);
+  assert.match(css,/position:relative!important;top:auto!important;bottom:auto!important/,'relative bar resets inherited sticky top offset');
+  assert.match(css,/padding:3px 4px!important/,'52px track accommodates 44px tap targets and border');
   assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(css,/translate3d\(var\(--vy-middle-x/);
 });
