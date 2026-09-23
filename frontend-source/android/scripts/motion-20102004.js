@@ -323,6 +323,10 @@
   function autoTop(){try{return typeof state!=='undefined' && state.settings && state.settings.autoScrollTop===true;}catch(_){return false;}}
   function beforePage(previous,next){
     /* Programmatic navigation can settle immediately; navbar/Back requests use navigate(). */
+    // A popup can remove itself and navigate in the same callback. Release its
+    // scroll lock before measuring/animating pages, not in a later observer
+    // microtask that changes the viewport underneath the first slide frame.
+    syncScrollLock();
     stopPageTransition();
     const top=Math.max(0,window.scrollY || (document.scrollingElement||document.documentElement).scrollTop || 0);
     positions[previous]=top;
@@ -341,6 +345,11 @@
 
   function visible(node){return node && node.isConnected && !node.hidden && css(node,'display','block')!=='none' && css(node,'visibility','visible')!=='hidden';}
   function topOverlay(){return Array.from(document.querySelectorAll(overlaySelector)).filter(visible).pop();}
+  function syncScrollLock(){
+    const locked=!!topOverlay();
+    if(document.body.classList.contains('vy-popup-open')!==locked)document.body.classList.toggle('vy-popup-open',locked);
+    if(document.documentElement.classList.contains('vy-popup-open')!==locked)document.documentElement.classList.toggle('vy-popup-open',locked);
+  }
   function focusables(node){return Array.from(node.querySelectorAll(focusSelector)).filter(el=>visible(el) && el.getClientRects().length);}
   function isSheet(overlay,card){
     if(overlay && overlay.matches && overlay.matches('.vy-form-overlay'))return true;
@@ -461,9 +470,7 @@
           }
         });
       });
-      const locked=!!topOverlay();
-      if(document.body.classList.contains('vy-popup-open')!==locked)document.body.classList.toggle('vy-popup-open',locked);
-      if(document.documentElement.classList.contains('vy-popup-open')!==locked)document.documentElement.classList.toggle('vy-popup-open',locked);
+      syncScrollLock();
     });
     observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
     document.addEventListener('keydown',event=>{

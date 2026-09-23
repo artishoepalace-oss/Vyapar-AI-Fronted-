@@ -149,6 +149,16 @@ test('Instant scroll falls back safely when an older WebView rejects scroll opti
  f.env.vyaparMotion.scrollTo(315);
  assert.equal(f.env.scrollY,315);assert.equal(calls,2);assert.equal(f.html.style.getPropertyValue('scroll-behavior'),'smooth');
 });
+test('Popup navigation releases its scroll lock before page geometry is sampled',()=>{
+ const f=fixture();f.html.classList.add('vy-popup-open');f.env.document.body.classList.add('vy-popup-open');
+ f.nodes.get('screen-home').getBoundingClientRect=()=>{
+  assert(!f.html.classList.contains('vy-popup-open'));
+  assert(!f.env.document.body.classList.contains('vy-popup-open'));
+  return {top:80,left:0,width:360,height:900};
+ };
+ f.env.vyaparMotion.navigate('analytics',1);
+ assert.equal(f.env.currentTab,'analytics');f.finish();
+});
 test('Fast popup close never replays entrance motion or leaves a stale timer',()=>{
  const f=fixture();const overlay=f.element('fast-popup');overlay.card=f.element('fast-card');let resolved=0;f.env.vyaparMotion.closeOverlay(overlay,()=>{resolved++;overlay.remove();});assert.equal(f.frames.size,2);f.env.vyaparMotion.cancelOverlay(overlay);f.finish();assert.equal(resolved,1);
 });
