@@ -1015,6 +1015,9 @@
     incoming.getBoundingClientRect();
     active.onEnd=event=>{if(event.target===incoming&&event.propertyName==='transform')finish();};
     incoming.addEventListener('transitionend',active.onEnd);
+    // If animation frames stop while the WebView is backgrounded or under
+    // severe load, finish the handoff and replay the last navigation request.
+    active.timer=setTimeout(finish,time+64);
     active.frame=requestAnimationFrame(()=>{
       if(pageTransition!==active)return;
       const transition='transform '+time+'ms '+pageEase;
@@ -1022,7 +1025,6 @@
       incoming.style.setProperty('transition',transition,'important');
       outgoing.style.setProperty('transform',outgoingTo,'important');
       incoming.style.setProperty('transform',incomingTo,'important');
-      active.timer=setTimeout(finish,time+64);
     });
     return true;
   }
