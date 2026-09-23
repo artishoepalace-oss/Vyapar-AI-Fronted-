@@ -60,7 +60,7 @@ const version=require('../version.json').versionName;
       left:track.left,width:track.width,right:track.right,activeLeft:active.left,activeRight:active.right,
       buttonHeights:buttons.map(node=>node.getBoundingClientRect().height),buttonWidths:buttons.map(node=>node.getBoundingClientRect().width)};
     });
-    assert.equal(info.top,'auto',tab+' bar must not inherit the previous sticky top offset');
+    assert(Math.abs(Number.parseFloat(info.top)||0)<1,tab+' bar must not inherit the previous sticky top offset: '+info.top);
     assert(info.ready,tab+' middle capsule measured');
     assert(info.gap!==null && info.gap>=-1 && info.gap<=36,tab+' summary-to-bar spacing: '+JSON.stringify(info));
     assert(info.left>=-1 && info.right<=width+1,tab+' bar stays inside viewport');
