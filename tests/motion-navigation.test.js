@@ -70,6 +70,19 @@ test('Rapid navbar requests keep the visible slide, then honor only the latest t
  f.finish();assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);
  for(const node of f.screens){assert.equal(node.style.getPropertyValue('transform'),'');assert.equal(node.style.getPropertyValue('pointer-events'),'');}
 });
+test('Navigation still settles if the WebView pauses animation frames',()=>{
+ const f=fixture(),motion=f.env.vyaparMotion;
+ motion.navigate('business');motion.navigate('stock');
+ assert.equal(f.env.currentTab,'business');
+ assert(f.frames.size>0,'The renderer has a pending animation frame');
+ const fallback=[...f.timers.values()][0];
+ assert.equal(typeof fallback,'function','The page transition has an independent timeout');
+ fallback();
+ assert.equal(f.env.currentTab,'stock','The latest request is replayed without animation frames');
+ f.finish();
+ assert(!f.html.classList.contains('vy-page-transitioning'));
+ assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);
+});
 test('More destinations always enter from the right, including Settings to Insights',()=>{
  const f=fixture();
  for(const tab of ['analytics','upload','calculator','subscription','settings']){

@@ -16,6 +16,8 @@ const remote='20.10.2004.00016.2026';
  await new Promise(resolve=>server.listen(8765,'127.0.0.1',resolve));
  let browser;
  const results=[];
+ const widths=process.env.QA_WIDTHS ? process.env.QA_WIDTHS.split(',').map(Number) : [320,360,383,412,768];
+ if(widths.some(width=>![320,360,383,412,768].includes(width)))throw new Error('Unsupported QA_WIDTHS viewport');
  let stage='starting browser checks';
  let watchdog;
  const progress=message=>{
@@ -27,7 +29,7 @@ const remote='20.10.2004.00016.2026';
   watchdog=setTimeout(()=>{console.error('Browser QA stalled: '+stage);process.exit(1);},35000);
  };
  try{
- for(const width of [320,360,383,412,768]){
+ for(const width of widths){
   progress('Checking navigation at '+width+'px');
   // Isolate each viewport in its own browser process. Closing a live context in
   // a reused headless browser can stall Chromium between viewport checks.
@@ -132,7 +134,7 @@ const remote='20.10.2004.00016.2026';
   assert.equal((await geometry('home')).transition,'0s','Reduced motion honored');
   await page.emulateMedia({reducedMotion:'no-preference'});
   progress('Checking full page motion at '+width+'px');
-  if([320,360,412].includes(width))await require('./qa-page-transitions.cjs')(page,out,width);
+  if([320,360,412].includes(width))await require('./qa-page-transitions.cjs')(page,out,width,progress);
   progress('Checking Settings selection at '+width+'px');
   await page.screenshot({path:path.join(out,'home-'+width+'.png')});
   if([320,412].includes(width))await require('./qa-settings-selection.cjs')(page,out,width);

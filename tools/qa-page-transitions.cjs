@@ -2,7 +2,7 @@
  * not just declared keyframes, so legacy !important CSS cannot silently disable motion. */
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-module.exports=async function(page,out,width){
+module.exports=async function(page,out,width,progress=console.log){
  const idle=()=>page.waitForFunction(()=>!document.documentElement.classList.contains('vy-page-transitioning'),null,{timeout:2500});
  const go=async tab=>{await page.evaluate(t=>setTab(t,false),tab);await idle();};
  const tabs=['home','business','sales','stock'],results=[];
@@ -18,6 +18,9 @@ module.exports=async function(page,out,width){
    else document.querySelector('#nav [data-android-tab="'+to+'"]').click();
    let started=false,overlap=false;
    await new Promise((resolve,reject)=>{
+    // A throttled WebView can pause animation frames entirely. The check must
+    // report that condition, not leave the release job waiting indefinitely.
+    const deadline=setTimeout(()=>reject(new Error('Page slide stopped painting: '+to)),2600);
     function tick(){
      const active=document.documentElement.classList.contains('vy-page-transitioning');
      if(active){
@@ -27,7 +30,7 @@ module.exports=async function(page,out,width){
        navMove:Math.abs(nr.x-navRect.x)+Math.abs(nr.y-navRect.y),headerMove:Math.abs(hr.x-headerRect.x)+Math.abs(hr.y-headerRect.y),
        scrollWidth:document.documentElement.scrollWidth});
      }
-     if(started&&!active)return resolve();
+     if(started&&!active){clearTimeout(deadline);return resolve();}
      if(performance.now()-start>2200)return reject(new Error('Page slide never completed: '+to));
      requestAnimationFrame(tick);
     }
@@ -54,17 +57,20 @@ module.exports=async function(page,out,width){
   results.push({label,frames:data.frames.length,positions:new Set(data.frames.map(f=>Math.round(f.inX))).size,elapsed:Math.round(data.elapsed)});
  }
  for(const from of tabs)for(const to of tabs){
-  if(from===to)continue;console.log('Checking page slide '+width+'px '+from+' → '+to);await go(from);
+  if(from===to)continue;progress('Checking page slide '+width+'px '+from+' → '+to);await go(from);
   const data=await sample(to);check(data,tabs.indexOf(to)>tabs.indexOf(from)?1:-1,from+' → '+to);
   assert.equal(data.destination,'screen-'+to);
  }
  // Every More destination opens right-to-left, even from a later-ranked page.
  for(const to of ['analytics','upload','calculator','subscription','settings']){
-  console.log('Checking More slide '+width+'px → '+to);
+  progress('Preparing More slide '+width+'px → '+to);
   await go(to==='settings'?'calculator':'settings');
+  progress('Opening More sheet '+width+'px → '+to);
   await page.locator('#nav [data-android-tab="more"]').click();
   await page.waitForFunction(()=>{const p=document.querySelector('#androidMoreSheet .android-sheet');return p&&getComputedStyle(p).transform==='none';});
+  progress('Checking More slide '+width+'px → '+to);
   const data=await sample(to,true);check(data,1,'More → '+to);assert.equal(data.destination,'screen-'+to);
+  progress('Completed More slide '+width+'px → '+to);
  }
  await go('home');
  const rapid=await page.evaluate(async()=>{
