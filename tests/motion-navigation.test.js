@@ -182,7 +182,9 @@ test('Closing More during entry continues from the visible frame and resolves on
 });
 test('Release identity and bundled motion order are synchronized',()=>{
  const version=JSON.parse(fs.readFileSync(path.join(root,'version.json'))),cacheKey=String(version.versionCode)+'-workspace1';
- assert.equal(version.versionName,'20.10.2004.00039.2026');
+ const gradle=fs.readFileSync(path.join(root,'android-app/app/build.gradle'),'utf8');
+ assert.equal(version.versionName,(gradle.match(/versionName\s+["']([^"']+)/)||[])[1]);
+ assert.equal(version.versionCode,Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]));
  for(const base of ['web','android-app/app/src/main/assets']){
   const html=fs.readFileSync(path.join(root,base,'index.html'),'utf8');assert(html.includes(`vyapar-ui.css?v=${cacheKey}`));assert(!html.includes('motion-20102004.css'));assert(!html.includes('surface-hierarchy-20102004.css'));
   const styles=fs.readFileSync(path.join(root,base,'assets/styles/vyapar-ui.css'),'utf8');assert(styles.indexOf('STYLE SOURCE: surface-hierarchy-20102004.css')<styles.indexOf('STYLE SOURCE: motion-20102004.css'));
