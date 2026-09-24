@@ -28,9 +28,9 @@ module.exports=async function(page,out,width){
   await card.locator('h2').click();
   assert.equal(await checks.first().isVisible(),true,'Outside click preserves manual selection');
   await trigger.click();
-  const deleteSelected=card.getByRole('menuitem',{name:/Delete selected/i});
-  const selectAll=card.getByRole('menuitem',{name:/Select all/i});
-  const deselectAll=card.getByRole('menuitem',{name:/Deselect all/i});
+  const deleteSelected=card.getByRole('menuitem',{name:/^Delete selected(?: \(\d+\))?$/i});
+  const selectAll=card.getByRole('menuitem',{name:/^Select all$/i});
+  const deselectAll=card.getByRole('menuitem',{name:/^Deselect all$/i});
   await deleteSelected.click();
   await page.locator('#vyaparGlassDialog [data-glass-cancel]').click();
   assert.deepEqual(await page.evaluate(()=>state.stocks.map(x=>x.id)),['qa-a','qa-b','qa-c'],'Cancel preserves all records');
