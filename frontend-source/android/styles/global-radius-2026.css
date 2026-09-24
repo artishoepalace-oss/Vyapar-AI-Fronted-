@@ -97,8 +97,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-
   gap:12px!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi:last-child span {margin:0!important;}
-/* Actual old small-phone behavior remains one column at <=380px: the
-   fifth tile must not span across more columns than the grid contains. */
+/* Small phones keep two readable KPI columns and a full-width due tile. */
 @media(max-width:380px) {
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis {
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
