@@ -10452,63 +10452,6 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu:not(.is
 html.android-ui body .vx622-menu-card table.vx622-selection-table:not(.vx622-selection-open) .vx622-check-col {display:none!important;}
 html.android-ui body .vx622-menu-card table.vx622-selection-table.vx622-selection-open .vx622-check-col {display:table-cell!important;}
 
-/* ===== STYLE SOURCE: middle-bar-2026.css ===== */
-
-/* Middle-screen page selector: one black track and one graphite sliding thumb.
-   This deliberately does not style the five-icon bottom dock. */
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
-  position:relative!important;top:auto!important;bottom:auto!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
-  gap:0!important;padding:3px 4px!important;margin:0 0 16px!important;
-  height:52px!important;min-height:52px!important;max-height:52px!important;
-  width:100%!important;max-width:100%!important;min-width:0!important;
-  box-sizing:border-box!important;border:1px solid #292b2f!important;border-radius:19px!important;
-  background:#101113!important;background-image:none!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
-  overflow:hidden!important;isolation:isolate;touch-action:pan-y!important;
-}
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {
-  content:"";position:absolute;left:0;top:4px;z-index:0;
-  width:var(--vy-middle-width,0px);height:44px;border-radius:15px;
-  box-sizing:border-box;border:1px solid #46484d;
-  background:linear-gradient(180deg,#3c3e43 0%,#2e3035 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 1px 2px rgba(0,0,0,.16);
-  pointer-events:none;
-  transform:translate3d(var(--vy-middle-x,4px),0,0);
-  transition:transform 260ms cubic-bezier(.22,1,.36,1),width 260ms cubic-bezier(.22,1,.36,1);
-}
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
-  position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
-  flex:1 1 0!important;width:0!important;max-width:none!important;min-width:0!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
-  box-sizing:border-box!important;padding:0 3px!important;margin:0!important;
-  border:0!important;border-radius:15px!important;background:transparent!important;background-image:none!important;
-  box-shadow:none!important;color:#b2b4ba!important;font-size:clamp(10px,3vw,12px)!important;
-  font-weight:650!important;line-height:1.15!important;text-align:center!important;
-  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
-  transform:none!important;transition:color 140ms ease!important;
-}
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-selected="true"],
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-pressed="true"] {
-  /* Distinct computed surface keeps existing visual/QA selectors compatible;
-     real visible thumb belongs to the track rather than individual buttons. */
-  background:rgba(255,255,255,.012)!important;color:#f6f6f8!important;
-}
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button:focus-visible {
-  outline:2px solid #f1f1f3!important;outline-offset:-3px!important;
-}
-html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready.vy-middle-instant::before {
-  transition:none!important;
-}
-@media(max-width:359px){
-  html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
-    font-size:10px!important;letter-spacing:-.15px!important;padding:0 2px!important;
-  }
-}
-@media(prefers-reduced-motion:reduce){
-  html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {transition:none!important;}
-}
-
 /* ===== STYLE SOURCE: invoice-workspace-2026.css ===== */
 
 /* v00042 follow-up: one clear mobile workflow for saved invoices, without nested dialogs. */
@@ -11064,3 +11007,270 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 
 /* Keyboard safe areas, sheet positioning, native popup back behavior,
    table scrolling and existing middle-bar animations are NOT overridden. */
+
+/* ===== STYLE SOURCE: middle-bar-2026.css ===== */
+
+/* Middle-screen page selector: one opaque light-grey track and one solid sliding thumb.
+   This deliberately does not style the five-icon bottom dock. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
+  position:relative!important;top:auto!important;bottom:auto!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+  gap:0!important;padding:3px 4px!important;margin:0 0 16px!important;
+  height:52px!important;min-height:52px!important;max-height:52px!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  box-sizing:border-box!important;border:1px solid #b8bac0!important;border-radius:999px!important;
+  background:#d4d5d8!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
+  box-shadow:none!important;
+  overflow:hidden!important;isolation:isolate;touch-action:pan-y!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {
+  content:"";position:absolute;left:0;top:4px;z-index:0;
+  width:var(--vy-middle-width,0px);height:44px;border-radius:999px;
+  box-sizing:border-box;border:1px solid #b9bbc0!important;
+  background:#f4f4f5!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
+  box-shadow:none!important;
+  pointer-events:none;
+  transform:translate3d(var(--vy-middle-x,4px),0,0);
+  transition:transform 205ms cubic-bezier(.16,1,.3,1);
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
+  position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:1 1 0!important;width:0!important;max-width:none!important;min-width:0!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  box-sizing:border-box!important;padding:0 3px!important;margin:0!important;
+  border:0!important;border-radius:999px!important;background:transparent!important;background-image:none!important;
+  box-shadow:none!important;color:#45464c!important;font-size:clamp(10px,3vw,12px)!important;
+  font-weight:650!important;line-height:1.15!important;text-align:center!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
+  transform:none!important;transition:color 140ms ease!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-selected="true"],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-pressed="true"] {
+  /* Distinct computed surface keeps existing visual/QA selectors compatible;
+     real visible thumb belongs to the track rather than individual buttons. */
+  background:rgba(244,244,245,.018)!important;color:#74384e!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button:focus-visible {
+  outline:2px solid #74384e!important;outline-offset:-3px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready.vy-middle-instant::before {
+  transition:none!important;
+}
+@media(max-width:359px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
+    font-size:10px!important;letter-spacing:-.15px!important;padding:0 2px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {transition:none!important;}
+}
+
+/* Disable inherited reflection layers; keep the moving ::before thumb. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready::after,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button::after {content:none!important;display:none!important;}
+
+/* ===== STYLE SOURCE: three-dot-menu-00046.css ===== */
+
+/* Vyapar AI 00046 — stock-style three-dot menu, shared by every converted bulk record menu. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready {
+  --vx46-menu-bg:#303137;
+  --vx46-menu-button:#36373d;
+  --vx46-menu-button-border:#55565e;
+  --vx46-menu-border:#585960;
+  --vx46-option-icon:#494a51;
+  --vx46-option-active:#47484f;
+  --vx46-accent:#9b536d;
+  --vx46-accent-bg:#392b34;
+  --vx46-danger:#f17489;
+  --vx46-danger-icon:#59323d;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu {
+  overflow:visible!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger {
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  justify-self:end!important;
+  width:44px!important;
+  min-width:44px!important;
+  max-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid var(--vx46-menu-button-border)!important;
+  border-radius:50%!important;
+  background:var(--vx46-menu-button)!important;
+  background-image:none!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  transform:none!important;
+  transition:background 180ms ease,border-color 180ms ease,transform 180ms ease!important;
+  -webkit-tap-highlight-color:transparent!important;
+  touch-action:manipulation!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger:active {
+  transform:scale(.94)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger[aria-expanded="true"] {
+  background:var(--vx46-accent-bg)!important;
+  border-color:var(--vx46-accent)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-three-dot-icon {
+  display:block!important;
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  min-height:22px!important;
+  margin:0!important;
+  fill:currentColor!important;
+  stroke:none!important;
+  pointer-events:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-three-dot-icon circle {
+  fill:currentColor!important;
+  stroke:none!important;
+}
+
+/* Popup geometry follows the supplied component but still lets positionBulkMenu
+   move it above the trigger when the navbar/viewport leaves too little room. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel {
+  display:none!important;
+  position:absolute!important;
+  top:calc(100% + 8px);
+  right:0!important;
+  width:245px!important;
+  max-width:calc(100vw - 55px)!important;
+  padding:6px!important;
+  margin:0!important;
+  border:1px solid var(--vx46-menu-border)!important;
+  border-radius:18px!important;
+  background:var(--vx46-menu-bg)!important;
+  background-image:none!important;
+  box-shadow:0 12px 35px rgba(0,0,0,.48)!important;
+  z-index:2147482000!important;
+  transform-origin:top right!important;
+  overscroll-behavior:contain!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel {
+  display:grid!important;
+  gap:0!important;
+  animation:vx46MenuOpen 180ms ease-out both!important;
+}
+@keyframes vx46MenuOpen {
+  from {opacity:0;transform:translateY(-6px) scale(.96);}
+  to {opacity:1;transform:translateY(0) scale(1);}
+}
+
+/* Options: icon tile + label, including destructive treatment. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  min-height:48px!important;
+  gap:12px!important;
+  margin:0!important;
+  padding:9px 10px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:#f5f5f7!important;
+  box-shadow:none!important;
+  text-align:left!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  line-height:1.35!important;
+  transition:background 150ms ease!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:active {
+  background:var(--vx46-option-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:disabled {
+  opacity:.4!important;
+  cursor:not-allowed!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-option-icon {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 30px!important;
+  width:30px!important;
+  min-width:30px!important;
+  max-width:30px!important;
+  height:30px!important;
+  min-height:30px!important;
+  max-height:30px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:10px!important;
+  background:var(--vx46-option-icon)!important;
+  color:currentColor!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-option-icon svg {
+  display:block!important;
+  width:18px!important;
+  height:18px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.8!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-menu-label {
+  display:block!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-menu-divider {
+  display:block!important;
+  height:1px!important;
+  min-height:1px!important;
+  margin:5px 8px!important;
+  padding:0!important;
+  border:0!important;
+  background:#4e4f56!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"]) {
+  color:var(--vx46-danger)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"]) .vx622-option-icon {
+  background:var(--vx46-danger-icon)!important;
+}
+
+/* Selection toolbar remains functional; count is visually secondary while the
+   three-dot popup owns Select all / Deselect all / Delete selected. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-selection-count {
+  color:#aaaab3!important;
+  font-size:12px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-selection-done {
+  min-height:42px!important;
+  border-radius:21px!important;
+}
+
+/* Consistent focus treatment for keyboard and switch-access users. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx622-menu-trigger,.vx622-menu-item):focus-visible {
+  outline:2px solid #c98ca4!important;
+  outline-offset:2px!important;
+}
+@media(prefers-reduced-motion:reduce) {
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel {
+    animation:none!important;
+  }
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger,
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item {
+    transition:none!important;
+  }
+}
