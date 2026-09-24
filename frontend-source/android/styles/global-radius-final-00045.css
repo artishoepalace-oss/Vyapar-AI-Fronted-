@@ -1,0 +1,236 @@
+/*
+ * Release 00045: FINAL cross-screen rounding layer.
+ * Keep this last in vyapar-ui.css. The previous pass only reached a subset of
+ * descendants inside .screen and missed several body-level sheets, admin
+ * workspaces, lists and table/search controls.
+ * CSS-only changes: never replace nodes, hide content or modify interactions.
+ */
+html.vy861-flat-black.workspace-v7 {
+  --vy45-pill:999px;
+  --vy45-panel:26px;
+  --vy45-card:24px;
+  --vy45-control:16px;
+}
+/* Full-pill outer bars. Do not change the existing 50px navbar track, nav
+   padding, selected-tab calculations, middle-bar width or transition timing. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
+  border-radius:var(--vy45-pill)!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
+  #screen-upload,#screen-calculator,#screen-settings,#screen-subscription
+) :is(.p1-modebar,.workspace-tabs,.vx621-data-tabs,.p620-tabs,.vy675-tabs,.p1-subtabs,.mode-tabs,.insight-tabs) {
+  border-radius:var(--vy45-pill)!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
+  #screen-upload,#screen-calculator,#screen-settings,#screen-subscription
+) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before,
+html.vy861-flat-black.workspace-v7 body :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
+  #screen-upload,#screen-calculator,#screen-settings,#screen-subscription
+) :is(.p1-modebar,.workspace-tabs) > button,
+html.vy861-flat-black.workspace-v7 body :is(.p620-tabs,.vy675-tabs,.p1-subtabs,.mode-tabs,.insight-tabs) > button {
+  border-radius:var(--vy45-pill)!important;
+}
+/* "outer container" contract on ALL existing screen roots, including nested
+   modules and More/Settings cards that are not direct .screen descendants. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen,.app,#androidMoreSheet,#vyFormSheet,.vy-unified-overlay,
+  .android-sheet-overlay,.vy-form-body,.vy-unified-panel,.android-sheet
+) :is(
+  .card,.stat,.stats,.settings-card,.settings-section,.home-section-card,
+  .home-growth-card,.home-metric-card,.sales-card,.stock-card,.business-module-card,
+  .production-card,.production-account-card,.production-account-section,
+  .production-modal,.insight-panel,.insight-card,.insight-finance-card,
+  .insight-history,.insight-overview,.insight-comparison,
+  .subscription-plan-card,.subscription-dialog,.subscription-loader-card,
+  .shop-progress-sheet,.shop-progress-card,.shop-growth-card,.shop-reward-stat,
+  .vx621-kpis,.vx621-group,.vx621-recent,.vx621-context,.vx621-sales-tools,
+  .vx621-stock-tools,.vx621-stock-records,.vx621-platform-host,.vx621-feature-card,
+  .vx622-lock-status,.vx622-settings-list,.vx622-settings-card,
+  .vy675-settings-list,.vy675-settings-home,.vy675-navigation-card,
+  .vy675-page-body,.vy675-settings-card,.settings-stack > section,
+  .vy-form-launcher,.vy-invoice-workspace,.vy-invoice-summary,.vy-invoice-row,
+  .upload-workspace,.upload-review,.upload-preview,.calculator-card,
+  .business-calculator-card,.android-sheet-item,.android-sheet-row
+) {
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  border-radius:var(--vy45-panel)!important;
+}
+/* Outer individual module panels and dialogs can live directly under body,
+   rather than inside .screen or any overlay. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vy-unified-panel,.vy-unified-dialog,.vy-unified-sheet,.vy-form-sheet,
+  .android-sheet,.android-permission-card,.glass-dialog-card,
+  .github-update-dialog,.subscription-dialog,.upgrade-plan-card,
+  .upgrade-plan-reference-card,.shop-progress-sheet,.shop-progress-dialog,
+  .vy6601-select-sheet,.vx643-modal,.production-modal,.account-delete-card,
+  .vy675-modal,.vx622-menu-panel,.android-more-popover,.android-more-sheet,
+  #androidMoreSheet .android-sheet,#vyFormSheet .vy-form-sheet,
+  #vyGitHubUpdate .vy-unified-panel,#vy6601Select .vy-unified-panel
+) {
+  box-sizing:border-box!important;
+  border-radius:var(--vy45-panel)!important;
+}
+/* Nested cards keep a slightly smaller but consistent radius. Apply under
+   each page and under sheet bodies, without rounding table cells, row dividers,
+   segmented selection thumbs, progress bars, checkboxes or graph primitives. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen,.vy-form-body,.android-sheet,.vy-unified-panel,.vy675-page-body
+) :is(
+  .vx621-kpi,.vx621-feature-card,.android-quick-action,
+  .home-metric,.home-metric-tile,.home-stat,.home-quick-action,
+  .settings-link-grid > a,.settings-link-grid > button,
+  .production-account-grid > div,.vy675-option-row,.vy675-navigation-row,
+  .vx622-settings-row,.shop-month-grid > div,.shop-growth-stat,
+  .shop-milestone,.shop-reward-stat,.vy-invoice-summary,.vy-invoice-row,
+  .vy-stock-record,.record-row,.insight-history > button,
+  .subscription-feature,.android-sheet-item,.android-sheet-row,.more-item
+) {
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:100%!important;
+  border-radius:var(--vy45-card)!important;
+}
+/* Explicit overrides of older ID-scoped !important declarations. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-group,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-sales .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings #fs607Settings,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-body > .card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-plan-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-calculator .calculator-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-upload .upload-workspace .card {
+  border-radius:var(--vy45-panel)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-home .android-quick-actions > .android-quick-action,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock) .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vx622-settings-row {
+  border-radius:var(--vy45-card)!important;
+}
+/* Keep the existing responsive KPI columns and the wide Customer Due item.
+   This sheet never changes grid-column, track count, card height or flow. */
+
+/* Identical pill-shaped search backgrounds and clickable inputs across all
+   screens and every overlay, including rendered tables/invoice/stock searches. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen,.vy-form-body,.android-sheet,.vy-unified-panel,#androidMoreSheet
+) :is(
+  .vy-search-control,.business-tool-search-field,.vy675-settings-search,
+  .record-search,.vy-invoice-search,.vy-stock-search,.settings-search,
+  .search-box,.search-field,.search-container,.p620-filter
+) {
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:100%!important;
+  border-radius:var(--vy45-pill)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen,.vy-form-body,.android-sheet,.vy-unified-panel,#androidMoreSheet
+) input[type="search"],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .business-tool-search-field,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-search,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet #vyInvoiceSearch,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock .vy-stock-search input {
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:100%!important;
+  border-radius:var(--vy45-pill)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-settings,
+  .vy-form-body,.android-sheet
+) :is(.vy-search-control,.business-tool-search-field,.vy675-settings-search):focus-within {
+  outline:2px solid #9398a1!important;
+  outline-offset:2px!important;
+}
+/* Not every form control is a search. Ordinary inputs/selects/textareas and
+   full-width action rows have a consistent 16px corner, not a 999px pill. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen,.vy-form-body,.android-sheet,.vy-unified-panel
+) :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="search"]):not([type="color"]),
+  select,textarea,.record-controls > select,.p611-form > input,
+  .vy675-page-body > button,.vx621-action,.vx622-menu-item
+) {
+  border-radius:var(--vy45-control)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen,.vy-form-body,.android-sheet,.vy-unified-panel
+) input[type="search"] {border-radius:var(--vy45-pill)!important;}
+
+/* All visible three-dot RECORD/TOOL overflow controls: identical 44px circles
+   with full-size tap region. Do not turn five bottom nav tabs or the avatar into
+   tiny 44px controls, nor round menu backgrounds into capsules. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx622-menu-trigger,.vx621-more-trigger,.record-more-trigger,
+  .more-options-trigger,.overflow-menu-trigger,.kebab-menu-trigger,
+  .three-dot-trigger,.three-dots-trigger,.menu-dots,.options-trigger,
+  button[aria-label="More options"],button[aria-label="More actions"],
+  button[aria-label="Record options"],button[aria-label="Select records and bulk actions"]
+) {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 44px!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  padding:0!important;margin:0!important;box-sizing:border-box!important;
+  border-radius:50%!important;
+  border:1px solid rgba(210,212,219,.18)!important;
+  background:#202226!important;
+  color:#f5f5f6!important;
+  font-size:24px!important;line-height:1!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records .vx622-menu-trigger,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records > .vx622-bulk-menu > .vx622-menu-trigger,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx621-bulk-actions.vx622-bulk-menu > .vx622-menu-trigger {
+  border-radius:50%!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx622-menu-trigger,.record-more-trigger,.more-options-trigger,
+  .overflow-menu-trigger,.kebab-menu-trigger
+):focus-visible {outline:2px solid #d2d5da!important;outline-offset:2px!important;}
+
+/* Authentication and account onboarding live outside .screen, while the
+   permission prompt, subscription upgrade and account menu live under body. */
+html.vy861-flat-black.workspace-v7 body #vyaparOtpGate :is(
+  .auth-card,.auth-panel,.auth-form,.auth-form > div,.auth-input-wrap
+),
+html.vy861-flat-black.workspace-v7 body :is(
+  #androidPermissionSheet .android-permission-card,
+  #androidMoreSheet .android-sheet,
+  .glass-dialog-card,.github-update-dialog,.vx643-modal,
+  .account-delete-card,.upgrade-plan-reference-card,.upgrade-plan-card,
+  .subscription-dialog,.shop-progress-sheet,.vy6601-select-sheet
+) {box-sizing:border-box!important;border-radius:var(--vy45-panel)!important;}
+html.vy861-flat-black.workspace-v7 body #vyaparOtpGate :is(
+  input:not([type="checkbox"]):not([type="radio"]),select,textarea
+) {border-radius:var(--vy45-control)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,
+  #androidMoreSheet,#screen-settings
+) :is(.vx621-feature-icon,.android-quick-action-icon,.android-sheet-item-icon,.vy675-row-icon) {
+  border-radius:50%!important;
+}
+/* Menus stay visibly circular even inside compact secondary tool headers. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx621-recent-head,.vx621-context-head,.vx621-stock-records,
+  #monthly-profit-records,.record-controls
+) .vx622-menu-trigger {border-radius:50%!important;}
+
+/* Keyboard safe areas, sheet positioning, native popup back behavior,
+   table scrolling and existing middle-bar animations are NOT overridden. */
