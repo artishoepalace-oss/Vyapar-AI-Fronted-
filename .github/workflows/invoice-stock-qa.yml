@@ -1,0 +1,29 @@
+name: Invoice and Stock Follow-up QA
+
+on:
+  pull_request:
+    paths:
+      - 'frontend-source/android/scripts/invoice-workspace-2026.js'
+      - 'frontend-source/android/styles/invoice-workspace-2026.css'
+      - 'tools/build-frontend-bundles.mjs'
+      - 'tests/invoice-workspace-2026.test.js'
+      - '.github/workflows/invoice-stock-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build shared bundles and run regression suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate invoice workspace JavaScript
+        run: node --check frontend-source/android/scripts/invoice-workspace-2026.js
+      - name: Build Android and web bundles from the same sources
+        run: npm run build
+      - name: Run frontend and runtime regression checks
+        run: npm run verify
