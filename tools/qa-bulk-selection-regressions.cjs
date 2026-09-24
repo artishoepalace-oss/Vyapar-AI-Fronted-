@@ -52,11 +52,11 @@ module.exports=async function(page,out,width){
   await tableA.locator('input[value="a1"]').check();await page.waitForTimeout(250);
   assert.equal(await page.evaluate(()=>window.qaCheckboxScrolls),0,'Checkbox focus never starts keyboard-style auto-scrolling');
   assert.equal(await tableA.locator('thead input').evaluate(el=>el.indeterminate),true);
-  await a.locator('.vx622-menu-trigger').click();await a.getByRole('menuitem',{name:'Select all',exact:true}).click();
+  const aTrigger=a.locator('.vx622-menu-trigger');if(await aTrigger.getAttribute('aria-expanded')!=='true')await aTrigger.click();await a.locator('[data-bulk-kind="select"]').click();
   assert.equal(await tableA.locator('tbody input:checked').count(),2,'Disabled rows stay unselected');
   assert.equal(await tableB.locator('tbody input:checked').count(),0,'Select All does not select a neighboring table');
-  await b.locator('.vx622-menu-trigger').click();assert.equal(await b.locator('.vx622-selection-count').innerText(),'0 selected');
-  await b.getByRole('menuitem',{name:'Select all',exact:true}).click();
+  const bTrigger=b.locator('.vx622-menu-trigger');if(await bTrigger.getAttribute('aria-expanded')!=='true')await bTrigger.click();assert.equal(await b.locator('.vx622-selection-count').innerText(),'0 selected');
+  await b.locator('[data-bulk-kind="select"]').click();
   await b.locator('.vx622-selection-done').click();
   assert.equal(await tableA.locator('tbody input:checked').count(),2,'Done in list B preserves list A');
   assert.equal(await tableB.locator('tbody input:checked').count(),0);
