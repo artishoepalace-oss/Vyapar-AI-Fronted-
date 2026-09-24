@@ -10508,3 +10508,91 @@ html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#scre
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black.workspace-v7 body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {transition:none!important;}
 }
+
+/* ===== STYLE SOURCE: invoice-workspace-2026.css ===== */
+
+/* v00042 follow-up: one clear mobile workflow for saved invoices, without nested dialogs. */
+html.vy861-flat-black.workspace-v7 body .vy-invoice-workspace { min-width:0; width:100%; color:#f5f5f6; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-workspace [hidden] { display:none!important; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-search { display:grid;gap:8px;margin:0 0 8px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-search label { font-size:13px;font-weight:700;color:#c9cbd0; }
+html.vy861-flat-black.workspace-v7 body #vyInvoiceSearch,
+html.vy861-flat-black.workspace-v7 body .vy-stock-search input {
+  display:block;width:100%;min-width:0;box-sizing:border-box;min-height:46px;
+  padding:10px 14px;border-radius:14px!important;background:#25262a!important;
+  border:1px solid #484a50!important;color:#f6f6f7!important;font-size:16px;
+}
+html.vy861-flat-black.workspace-v7 body #vyInvoiceCount { margin:4px 0 10px;font-size:12px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-list { display:grid;gap:7px;min-width:0; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row {
+  display:grid;grid-template-columns:minmax(0,1fr) auto 13px;gap:10px;
+  width:100%;min-width:0;min-height:64px;padding:11px 13px;align-items:center;
+  text-align:left;border-radius:15px;border:1px solid #37393f!important;
+  background:#202125!important;color:#f5f5f6!important;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row > span { min-width:0; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row strong,
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row b { font-size:14px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row small {
+  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;color:#b8bac1;margin-top:4px;font-size:11px;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row-end { text-align:right; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-arrow { color:#bdc0c6;font-size:21px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-row:focus-visible,
+html.vy861-flat-black.workspace-v7 body #vyInvoiceSearch:focus-visible {
+  outline:2px solid #a5abb4!important;outline-offset:2px;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-empty { padding:20px 12px;text-align:center;color:#bec0c5; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-back { margin:0 0 14px;min-height:42px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-summary {
+  padding:16px;border-radius:18px;background:#25262b;min-width:0;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-summary small { color:#bdc0c8;font-size:12px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-summary h3 {
+  margin:7px 0 3px;font-size:21px;overflow-wrap:anywhere;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-summary p { margin:0 0 12px;color:#d3d5da;overflow-wrap:anywhere; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-total,
+html.vy861-flat-black.workspace-v7 body .vy-invoice-payments,
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items > div {
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-total { padding:10px 0;border-top:1px solid #414249; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-total strong { font-size:22px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-payments { gap:8px;flex-wrap:wrap;color:#d4d5da;font-size:12px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items { padding:10px 2px;min-width:0; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items h4 { margin:5px 0 10px;font-size:15px; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items > div { padding:9px 0;border-bottom:1px solid #303238; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items span { min-width:0;overflow-wrap:anywhere; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items small { color:#c1c3c9; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-items b { flex:none; }
+html.vy861-flat-black.workspace-v7 body .vy-invoice-actions {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+  padding:10px 0 calc(8px + env(safe-area-inset-bottom,0px));
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-actions .btn {
+  min-width:0;width:100%;min-height:46px;margin:0!important;
+  white-space:normal;font-weight:600;border-radius:14px!important;
+  border:1px solid #41434a!important;background:#292b30!important;
+}
+html.vy861-flat-black.workspace-v7 body .vy-invoice-actions .btn.primary {
+  background:#f1f2f4!important;color:#141518!important;grid-column:1/-1;
+}
+html.vy861-flat-black.workspace-v7 body .vy-stock-search {
+  display:grid;gap:7px;font-size:13px;font-weight:700;margin:12px 0 4px;
+}
+html.vy861-flat-black.workspace-v7 body .vy-stock-count { margin:0 0 9px;font-size:12px; }
+html.vy861-flat-black.workspace-v7 body .vx621-stock-records tbody tr[hidden],
+html.vy861-flat-black.workspace-v7 body #stockAlerts[hidden] { display:none!important; }
+html.vy861-flat-black.workspace-v7 body .vy-sale-preview {
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:11px 12px;margin:12px 0;border-radius:14px;background:#24262a;
+}
+html.vy861-flat-black.workspace-v7 body .vy-sale-preview span { display:grid;gap:4px;color:#bfc2c9;font-size:12px; }
+html.vy861-flat-black.workspace-v7 body .vy-sale-preview strong { color:#f5f5f6;font-size:17px; }
+@media(max-width:390px) {
+  html.vy861-flat-black.workspace-v7 body .vy-invoice-row { grid-template-columns:minmax(0,1fr) auto 10px;padding:10px;gap:7px; }
+  html.vy861-flat-black.workspace-v7 body .vy-invoice-actions { grid-template-columns:minmax(0,1fr); }
+  html.vy861-flat-black.workspace-v7 body .vy-invoice-actions .btn.primary { grid-column:auto; }
+}
