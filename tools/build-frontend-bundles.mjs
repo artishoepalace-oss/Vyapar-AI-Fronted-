@@ -64,7 +64,8 @@ const uiStyles = [
   'capsule-navigation.css',
   'settings-selection.css',
   'middle-bar-2026.css',
-  'invoice-workspace-2026.css'
+  'invoice-workspace-2026.css',
+  'global-radius-2026.css'
 ];
 
 const scripts = [

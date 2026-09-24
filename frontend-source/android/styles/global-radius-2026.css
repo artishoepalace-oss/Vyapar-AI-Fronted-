@@ -1,0 +1,222 @@
+/* Global rounded-surface contract — release v00044.
+   The screenshot's outer left/right corners are the single reference:
+   all outer shells use a full capsule when short, or a 26px radius on tall panels.
+   No DOM cloning, new layout engine, scroll interception or data changes. */
+html.vy861-flat-black.workspace-v7 {
+  --vy44-shell-radius:999px;
+  --vy44-panel-radius:26px;
+  --vy44-inner-radius:24px;
+  --vy44-gap:12px;
+  --vy44-rim:rgba(205,207,213,.17);
+}
+
+/* The header, five-tab navbar and middle tab tracks share rounded ends.
+   Preserve existing widths, heights, tab positions, active-thumb movement and
+   safe-area geometry on older Android WebViews. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
+  border-radius:var(--vy44-shell-radius)!important;
+  border-color:#35373c!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before,
+html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+/* Some pages build a static modebar before motion registration.
+   Do not override the animated-bar button measurements or animation. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs):not(.vy-middle-ready) {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs):not(.vy-middle-ready) > button {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+
+/* Shared card shape across Home, Business, Sales, Stock, More/Settings,
+   insights, calculator, subscription and relocated modal content.
+   Avoid forcing overflow:hidden: selection menus, tooltips and forms must work. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body,.android-sheet,.vy-unified-overlay) :is(
+  .card,.stat,.settings-section,.settings-card,.home-section-card,.sales-card,
+  .stock-card,.business-module-card,.production-card,.production-account-card,
+  .subscription-plan-card,.insight-panel,.insight-card,.insight-history,
+  .vx621-kpis,.vx621-group,.vx621-recent,.vx621-sales-tools,
+  .vx621-stock-tools,.vx621-stock-records,.vx621-platform-host,
+  .vy675-navigation-card,.vy675-settings-list,.vy675-page-body > .card,
+  .vx622-settings-list,.vx622-lock-status,.vx621-feature-card,
+  .vy-form-launcher,.vy-invoice-summary,.vy-invoice-row
+) {
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  border-radius:var(--vy44-panel-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) :is(
+  .vx621-kpi,.android-quick-action,.vx621-feature-card,.shop-growth-stat,
+  .production-account-grid > div,.vy675-option-row,.vy-invoice-summary,
+  .vy-invoice-row,.vx622-settings-row,.settings-link-grid > a
+) {
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  border-radius:var(--vy44-inner-radius)!important;
+}
+/* KPI grid tracks remain two columns on mobile with an edge-to-edge last
+   tile; never set fixed heights so long currency amounts can wrap naturally. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis {
+  gap:10px!important;
+  padding:12px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi {
+  padding:14px 13px!important;
+  min-height:74px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi b {
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:anywhere!important;
+  font-variant-numeric:tabular-nums;
+  line-height:1.22!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi:last-child {
+  grid-column:1/-1;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi:last-child span {margin:0!important;}
+/* Actual old small-phone behavior remains one column at <=380px: the
+   fifth tile must not span across more columns than the grid contains. */
+@media(max-width:380px) {
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi:last-child {grid-column:auto!important;}
+}
+
+/* Search follows the same pill as the fixed navigation. Wrappers own the
+   fill/icon/focus ring; do not put a second opaque pill inside a search field. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body,.android-sheet) :is(
+  .vy-search-control,.business-tool-search-field,.vy675-settings-search,
+  .record-search,.vy-invoice-search input[type="search"],.vy-stock-search input[type="search"]
+) {
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:100%!important;
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body,.android-sheet) input[type="search"] {
+  max-width:100%!important;
+  min-width:0!important;
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) :is(
+  .business-tool-search-field,.vy675-settings-search,.record-search
+) {
+  min-height:48px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.screen,.vy-form-body) :is(
+  .vy-search-control,.business-tool-search-field,.vy675-settings-search
+):focus-within {
+  outline:2px solid #90949e!important;
+  outline-offset:2px!important;
+}
+
+/* Popups and menus: tall sheets use the same 26px container corners, and
+   all compact overflow "three dots" are true circles, not squircles. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vy-form-sheet,.android-sheet,.shop-progress-sheet,.vy-unified-dialog,
+  .vy-unified-sheet,.vx622-menu-panel,.android-more-popover
+) {
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  border-radius:var(--vy44-panel-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx622-menu-trigger,button[aria-label="More options"],
+  button[aria-label="More actions"],button[aria-label="Record options"]
+) {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 44px!important;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  min-height:44px!important;
+  max-width:44px!important;
+  max-height:44px!important;
+  padding:0!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  border-radius:50%!important;
+  border:1px solid var(--vy44-rim)!important;
+  background:#202226!important;
+  background-image:none!important;
+  color:#f5f5f6!important;
+  font-size:24px!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  text-align:center!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx622-menu-trigger,button[aria-label="More options"],
+  button[aria-label="More actions"],button[aria-label="Record options"]
+):focus-visible {
+  outline:2px solid #c5c9d0!important;
+  outline-offset:2px!important;
+}
+/* Keep the native popup's own rounded shell and the top avatar circular. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet {
+  border-radius:var(--vy44-panel-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top :is(
+  #vy863ProfileChip,.vy863-profile-avatar,.vy-logo-frame
+) {border-radius:50%!important;}
+
+/* Preserve space for all labels and menus at narrow widths. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(
+  .vx621-feature-grid,.vx621-feature-copy,.vx621-recent-head,
+  .vx621-context-head,.vy675-page-body,.vy-form-body
+) {min-width:0!important;max-width:100%!important;}
+@media(max-width:359px) {
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis {padding:10px!important;gap:8px!important;}
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi {padding:12px 10px!important;}
+}
+
+/* Exact high-specificity component overrides for older screen-scoped patches. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-group,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-group,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-sales .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock .vx621-feature-card {
+  border-radius:var(--vy44-panel-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-sales,#screen-stock) .android-quick-action {
+  border-radius:var(--vy44-inner-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .business-tool-search .vy-search-control,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-search,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-search input[type="search"],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-settings,#vyFormSheet) .vy-search-control {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records .vx622-menu-trigger,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records > .vx622-bulk-menu > .vx622-menu-trigger {
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  border-radius:50%!important;
+}

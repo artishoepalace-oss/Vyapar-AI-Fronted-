@@ -1,0 +1,26 @@
+name: Global Radius UI QA
+
+on:
+  pull_request:
+    paths:
+      - 'frontend-source/android/styles/global-radius-2026.css'
+      - 'tools/build-frontend-bundles.mjs'
+      - 'tests/global-radius-2026.test.js'
+      - '.github/workflows/global-radius-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Shared build and UI regression
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Rebuild shared Android and web bundles
+        run: npm run build
+      - name: Verify bundle consistency and all frontend regressions
+        run: npm run verify
