@@ -205,5 +205,32 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
   .overflow-menu-trigger,.kebab-menu-trigger
 ):focus-visible {outline:2px solid #d2d5da!important;outline-offset:2px!important;}
 
+/* Authentication and account onboarding live outside .screen, while the
+   permission prompt, subscription upgrade and account menu live under body. */
+html.vy861-flat-black.workspace-v7 body #vyaparOtpGate :is(
+  .auth-card,.auth-panel,.auth-form,.auth-form > div,.auth-input-wrap
+),
+html.vy861-flat-black.workspace-v7 body :is(
+  #androidPermissionSheet .android-permission-card,
+  #androidMoreSheet .android-sheet,
+  .glass-dialog-card,.github-update-dialog,.vx643-modal,
+  .account-delete-card,.upgrade-plan-reference-card,.upgrade-plan-card,
+  .subscription-dialog,.shop-progress-sheet,.vy6601-select-sheet
+) {box-sizing:border-box!important;border-radius:var(--vy45-panel)!important;}
+html.vy861-flat-black.workspace-v7 body #vyaparOtpGate :is(
+  input:not([type="checkbox"]):not([type="radio"]),select,textarea
+) {border-radius:var(--vy45-control)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,
+  #androidMoreSheet,#screen-settings
+) :is(.vx621-feature-icon,.android-quick-action-icon,.android-sheet-item-icon,.vy675-row-icon) {
+  border-radius:50%!important;
+}
+/* Menus stay visibly circular even inside compact secondary tool headers. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx621-recent-head,.vx621-context-head,.vx621-stock-records,
+  #monthly-profit-records,.record-controls
+) .vx622-menu-trigger {border-radius:50%!important;}
+
 /* Keyboard safe areas, sheet positioning, native popup back behavior,
    table scrolling and existing middle-bar animations are NOT overridden. */
