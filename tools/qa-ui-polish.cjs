@@ -134,13 +134,14 @@ const version=require('../version.json').versionName;
     assert((await stockMenu.getByRole('menuitem',{name:/^Select all$/i}).count())===1,'Select all action exists');
     assert((await stockMenu.getByRole('menuitem',{name:/^Deselect all$/i}).count())===1,'Deselect all action exists');
     if(width===360){
-      await page.waitForTimeout(10100);
+      // Advance the installed browser clock; wall time can outrun it under load.
+      await page.clock.runFor(10100);
       assert(!(await stockMenu.isVisible()),'Untouched menu closes after ten seconds');
       await stockMenuTrigger.click();await settle();
     }
     await stockMenu.getByRole('menuitem',{name:/^Select all$/i}).click();await page.waitForTimeout(80);
     if(width===360){
-      await page.waitForTimeout(10100);
+      await page.clock.runFor(10100);
       assert(await stockMenu.isVisible(),'Option interaction cancels auto-close');
     }
 

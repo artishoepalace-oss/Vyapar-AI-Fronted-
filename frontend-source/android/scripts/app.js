@@ -10337,6 +10337,11 @@ function convertBulkRows(root){
     selectBtn.innerHTML=bulkMenuItemMarkup('select','Select all');
     clearBtn.innerHTML=bulkMenuItemMarkup('clear','Deselect all');
     destructiveBtn.innerHTML=bulkMenuItemMarkup(destructiveIsDelete?'delete':'cancel',destructiveLabel);
+    // A prior UI pass may have copied legacy button text (for example Clear)
+    // into aria-label. Keep each accessible name aligned with its new label.
+    selectBtn.setAttribute('aria-label','Select all');
+    clearBtn.setAttribute('aria-label','Deselect all');
+    destructiveBtn.setAttribute('aria-label',destructiveLabel);
     // Select only enabled rows in this list; the existing delete/cancel handler
     // retains its confirmation and accounting validation.
     for(const [button,checked] of [[selectBtn,true],[clearBtn,false]]){

@@ -5,6 +5,7 @@
 - Business Daily / Accounts / Documents / Activity now use the shared motion controller, matching the direction-aware Sales/Stock workspace transitions. Repeated taps cancel stale animations; reduced-motion preferences remain respected.
 - Preserve the supplied circular three-dot design, Select all / Deselect all / Delete selected, invisible 10-second idle close, and disabled timeout after an option interaction. Existing confirmations and accounting safeguards remain in place.
 - Return keyboard focus when an idle menu closes. Confirmation clicks retain the current selection-menu session when cancelling.
+- Synchronize selection-menu accessibility labels with the visible actions, preventing an old "Clear" label from hiding "Deselect all" from assistive tools and browser checks.
 
 ## Validation
 - 101 frontend tests pass; web and Android bundles rebuild and runtime checks pass.
