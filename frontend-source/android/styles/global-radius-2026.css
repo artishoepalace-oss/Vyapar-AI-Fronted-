@@ -21,21 +21,21 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
   border-radius:var(--vy44-shell-radius)!important;
 }
-html.vy861-flat-black.workspace-v7 body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
+html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
   border-radius:var(--vy44-shell-radius)!important;
   border-color:#35373c!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important;
 }
-html.vy861-flat-black.workspace-v7 body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before,
-html.vy861-flat-black.workspace-v7 body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
+html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before,
+html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
   border-radius:var(--vy44-shell-radius)!important;
 }
 /* Some pages build a static modebar before motion registration.
    Do not override the animated-bar button measurements or animation. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs):not(.vy-middle-ready) {
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs):not(.vy-middle-ready) {
   border-radius:var(--vy44-shell-radius)!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs):not(.vy-middle-ready) > button {
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs):not(.vy-middle-ready) > button {
   border-radius:var(--vy44-shell-radius)!important;
 }
 
@@ -193,4 +193,30 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(
 @media(max-width:359px) {
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis {padding:10px!important;gap:8px!important;}
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi {padding:12px 10px!important;}
+}
+
+/* Exact high-specificity component overrides for older screen-scoped patches. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-group,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-group,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpis,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-sales .vx621-feature-card,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-stock .vx621-feature-card {
+  border-radius:var(--vy44-panel-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .vx621-kpi,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-sales,#screen-stock) .android-quick-action {
+  border-radius:var(--vy44-inner-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business .business-tool-search .vy-search-control,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-search,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-settings-search input[type="search"],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-settings,#vyFormSheet) .vy-search-control {
+  border-radius:var(--vy44-shell-radius)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records .vx622-menu-trigger,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #monthly-profit-records > .vx622-bulk-menu > .vx622-menu-trigger {
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  border-radius:50%!important;
 }
