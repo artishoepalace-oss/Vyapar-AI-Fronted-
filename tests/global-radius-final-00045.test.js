@@ -14,7 +14,7 @@ test('v00045 radius layer stays after prior global radius and before later compo
   assert.equal(list.filter(p=>p==='global-radius-final-00045.css').length,1);
   assert.ok(ui.indexOf("'global-radius-final-00045.css'")>ui.indexOf("'global-radius-2026.css'"));
   const later=list.slice(list.indexOf('global-radius-final-00045.css')+1);
-  assert.ok(later.every(name=>/^three-dot-menu-\d+\.css$/.test(name)),'Only scoped component overrides may follow the radius contract');
+  assert.ok(later.every(name=>name==='middle-bar-2026.css'||/^three-dot-menu-\d+\.css$/.test(name)),'Only scoped component overrides may follow the radius contract');
 });
 test('full-pill chrome, inner tabs, cards, searches and sheet hosts are present',()=>{
   ['#nav.nav.bottom-nav','.app > .top','.vy-middle-ready::before','.p1-modebar',

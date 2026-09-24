@@ -10209,7 +10209,9 @@ function armBulkMenuTimer(menu){
     bulkMenuTimers.delete(menu);
     if(menu.classList.contains('is-open')&&!bulkMenuInteracted.has(menu)){
       menu.classList.remove('is-open');
-      menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');
+      const trigger=menu.querySelector('.vx622-menu-trigger');
+      trigger?.setAttribute('aria-expanded','false');
+      if(menu.querySelector('.vx622-menu-panel')?.contains(document.activeElement))trigger?.focus({preventScroll:true});
     }
   },BULK_MENU_AUTO_CLOSE_MS);
   bulkMenuTimers.set(menu,timer);
@@ -10384,7 +10386,11 @@ document.addEventListener('change',event=>{
   const scope=event.target.closest('.vx622-menu-card');
   scope?.querySelectorAll('.vx622-bulk-menu').forEach(menu=>{if(bulkTables(menu).includes(event.target.closest('table')))updateBulkSelection(menu);});
 });
-document.addEventListener('click',event=>{if(!event.target.closest('.vx622-bulk-menu'))closeBulkMenus();});
+document.addEventListener('click',event=>{
+  // Confirmation actions retain the already-interacted menu session on cancel.
+  if(event.target.closest('.glass-dialog-overlay,.production-overlay,.vy-unified-overlay'))return;
+  if(!event.target.closest('.vx622-bulk-menu'))closeBulkMenus();
+});
 document.addEventListener('keydown',event=>{
   if(event.key!=='Escape')return;
   const open=document.querySelector('.vx622-bulk-menu.is-open');

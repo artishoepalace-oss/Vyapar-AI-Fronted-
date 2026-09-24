@@ -91,6 +91,27 @@ const version=require('../version.json').versionName;
       'Global rounded shapes are applied to actual business UI: '+JSON.stringify(radius));
     const due=await page.locator('.vx621-kpi').last().boundingBox(),kpi=await page.locator('.vx621-kpi').first().boundingBox();
     assert(due.width>kpi.width*1.8,'Customer Due spans the summary');
+    const surface=await page.locator('#screen-business .p1-modebar').evaluate(bar=>{
+      const track=getComputedStyle(bar),thumb=getComputedStyle(bar,'::before');
+      return {bg:track.backgroundColor,blur:track.backdropFilter,gradient:track.backgroundImage,
+        thumb:thumb.backgroundColor,thumbGradient:thumb.backgroundImage,shadow:thumb.boxShadow};
+    });
+    assert.deepEqual(surface,{bg:'rgb(212, 213, 216)',blur:'none',gradient:'none',thumb:'rgb(244, 244, 245)',thumbGradient:'none',shadow:'none'},'Middle bar has opaque grey surfaces without glass');
+    await mode('business','daily');
+    for(const [target,sign] of [['accounts',1],['daily',-1]]){
+      const poses=await page.evaluate(target=>{
+        document.querySelector('#screen-business [data-mode="'+target+'"]').click();
+        return [...document.querySelectorAll('#screen-business .p1-mode-section:not([hidden])')]
+          .flatMap(node=>node.getAnimations().map(a=>a.effect.getKeyframes()[0].transform));
+      },target);
+      assert(poses.length>0,'Business content actually animates');
+      assert(poses.every(p=>sign<0?p.includes('translate3d(-'):!p.includes('translate3d(-')),'Business animation follows tab direction');
+      await settle();
+    }
+    await page.evaluate(()=>{for(const target of ['documents','accounts','activity'])document.querySelector('#screen-business [data-mode="'+target+'"]').click();});
+    await settle();
+    assert.equal(await page.locator('#screen-business [data-mode="activity"]').getAttribute('aria-selected'),'true');
+    assert.equal(await page.evaluate(()=>[...document.querySelectorAll('#screen-business .p1-mode-section')].reduce((n,node)=>n+node.getAnimations().length,0)),0,'Rapid switching clears old animations');
     for(const value of ['daily','accounts','documents','activity'])await mode('business',value);
     await page.locator('#businessToolSearch').fill('GST');await settle();assert(await page.locator('#businessToolResults .vx621-feature-card:visible').count()>0);await page.locator('#businessToolSearch').fill('');
     await go('stock');await verifyMiddleFit('stock');await mode('stock','manage');
@@ -112,7 +133,17 @@ const version=require('../version.json').versionName;
     assert.equal(await stockMenu.getAttribute('role'),'menu');
     assert((await stockMenu.getByRole('menuitem',{name:/Select all/i}).count())===1,'Select all action exists');
     assert((await stockMenu.getByRole('menuitem',{name:/Deselect all/i}).count())===1,'Deselect all action exists');
+    if(width===360){
+      await page.waitForTimeout(10100);
+      assert(!(await stockMenu.isVisible()),'Untouched menu closes after ten seconds');
+      await stockMenuTrigger.click();await settle();
+    }
     await stockMenu.getByRole('menuitem',{name:/Select all/i}).click();await page.waitForTimeout(80);
+    if(width===360){
+      await page.waitForTimeout(10100);
+      assert(await stockMenu.isVisible(),'Option interaction cancels auto-close');
+    }
+
     assert(await stockMenu.isVisible(),'Select all keeps menu open');
     assert.equal(await stockMenuTrigger.getAttribute('aria-expanded'),'true');
     await stockMenu.getByRole('menuitem',{name:/Deselect all/i}).click();await page.waitForTimeout(80);

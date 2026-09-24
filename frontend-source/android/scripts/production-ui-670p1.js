@@ -51,18 +51,27 @@
     bar.addEventListener('click', function(event){
       const button = event.target.closest('button[data-mode]');
       if(!button) return;
-      const previous=savedMode(screenId,modes.items[0][0]);
-      if(previous===button.dataset.mode)return;
-      saveMode(screenId, button.dataset.mode);
-      applyMode(screen, screenId, modes);
-      if(window.vyaparMotion){
-        const direction=modes.items.findIndex(item=>item[0]===button.dataset.mode)<modes.items.findIndex(item=>item[0]===previous)?-1:1;
-        screen.querySelectorAll('.p1-mode-section[data-p1-mode]').forEach(node=>{if(!node.hidden)window.vyaparMotion.enter(node,direction)});
-      }
+      changeMode(screen, screenId, modes, button.dataset.mode);
     });
 
     screen.insertBefore(bar, beforeNode || screen.firstChild);
     return bar;
+  }
+
+  // One direction-aware motion path for Business, Sales, Stock and Settings.
+  function changeMode(screen, screenId, modes, next){
+    const previous=savedMode(screenId,modes.items[0][0]);
+    if(previous===next)return;
+    const motion=window.vyaparMotion;
+    if(motion)screen.querySelectorAll('.p1-mode-section[data-p1-mode]').forEach(node=>motion.cancel(node));
+    saveMode(screenId,next);
+    applyMode(screen,screenId,modes);
+    if(motion){
+      const direction=modes.items.findIndex(item=>item[0]===next)<modes.items.findIndex(item=>item[0]===previous)?-1:1;
+      screen.querySelectorAll('.p1-mode-section[data-p1-mode]').forEach(node=>{
+        if(!node.hidden && node.getClientRects().length)motion.enter(node,direction);
+      });
+    }
   }
 
   function setSectionMode(node, mode){
@@ -196,8 +205,8 @@
         if(!button) return;
         const search=screen.querySelector('#businessToolSearch');
         if(search) search.value='';
-        saveMode('business',button.dataset.mode);
-        applyMode(screen,'business',modes);
+        changeMode(screen,'business',modes,button.dataset.mode);
+        if(window.VyaparBusinessTools)window.VyaparBusinessTools.refresh(screen);
       });
       bar.addEventListener('keydown',function(event){
         if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;

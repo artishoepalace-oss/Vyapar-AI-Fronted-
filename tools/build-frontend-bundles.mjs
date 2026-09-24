@@ -63,10 +63,10 @@ const uiStyles = [
   'refined-surfaces.css',
   'capsule-navigation.css',
   'settings-selection.css',
-  'middle-bar-2026.css',
   'invoice-workspace-2026.css',
   'global-radius-2026.css',
   'global-radius-final-00045.css',
+  'middle-bar-2026.css',
   'three-dot-menu-00046.css'
 ];
 
