@@ -82,6 +82,13 @@ const version=require('../version.json').versionName;
     assert.equal(await page.locator('.home-metric-head').filter({hasText:'Yearly profit'}).count(),0);
     assert(await page.locator('.home-metric-head').filter({hasText:'This month'}).isVisible());await shot('home');
     await go('business');await verifyMiddleFit('business');
+    const radius=await page.evaluate(()=>{
+      const size=selector=>{const el=document.querySelector(selector);return el?parseFloat(getComputedStyle(el).borderTopLeftRadius)||0:-1;};
+      return {header:size('.app > .top'),nav:size('#nav.nav'),middle:size('#screen-business .p1-modebar'),
+        kpi:size('#screen-business .vx621-kpi'),search:size('#screen-business .business-tool-search-field')};
+    });
+    assert(radius.header>=40&&radius.nav>=40&&radius.middle>=40&&radius.kpi>=23&&radius.search>=40,
+      'Global rounded shapes are applied to actual business UI: '+JSON.stringify(radius));
     const due=await page.locator('.vx621-kpi').last().boundingBox(),kpi=await page.locator('.vx621-kpi').first().boundingBox();
     assert(due.width>kpi.width*1.8,'Customer Due spans the summary');
     for(const value of ['daily','accounts','documents','activity'])await mode('business',value);
