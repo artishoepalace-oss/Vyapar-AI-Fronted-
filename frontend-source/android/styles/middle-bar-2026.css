@@ -38,7 +38,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-pressed="true"] {
   /* Distinct computed surface keeps existing visual/QA selectors compatible;
      real visible thumb belongs to the track rather than individual buttons. */
-  background:rgba(0,0,0,.001)!important;color:#74384e!important;
+  background:rgba(244,244,245,.018)!important;color:#74384e!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button:focus-visible {
   outline:2px solid #74384e!important;outline-offset:-3px!important;
