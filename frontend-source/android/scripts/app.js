@@ -10191,6 +10191,41 @@ if(typeof oldRenderBusiness==='function'){
 /* ---------- Compact three-dot bulk action menus ---------- */
 const bulkCheckSelector='.vx621-recent-check,.vx621-stock-check,.vx621-data-check,.vx621-platform-tx-check,.vx621-generic-check,.vx621-legacy-check';
 let bulkMenuId=0;
+const BULK_MENU_AUTO_CLOSE_MS=10000;
+const bulkMenuTimers=new WeakMap();
+const bulkMenuInteracted=new WeakSet();
+function clearBulkMenuTimer(menu){
+  const timer=bulkMenuTimers.get(menu);
+  if(timer){clearTimeout(timer);bulkMenuTimers.delete(menu);}
+}
+function bulkMenuTouched(menu){
+  bulkMenuInteracted.add(menu);
+  clearBulkMenuTimer(menu);
+}
+function armBulkMenuTimer(menu){
+  clearBulkMenuTimer(menu);
+  bulkMenuInteracted.delete(menu);
+  const timer=setTimeout(()=>{
+    bulkMenuTimers.delete(menu);
+    if(menu.classList.contains('is-open')&&!bulkMenuInteracted.has(menu)){
+      menu.classList.remove('is-open');
+      menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');
+    }
+  },BULK_MENU_AUTO_CLOSE_MS);
+  bulkMenuTimers.set(menu,timer);
+}
+function bulkMenuIcon(kind){
+  const svg={
+    select:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m7 12 3 3 7-7"/>',
+    clear:'<rect x="3" y="3" width="18" height="18" rx="4"/>',
+    delete:'<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 15h10l1-15"/><path d="M10 10v7"/><path d="M14 10v7"/>',
+    cancel:'<path d="M6 6l12 12M18 6 6 18"/><rect x="3" y="3" width="18" height="18" rx="4"/>'
+  };
+  return '<span class="vx622-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24">'+(svg[kind]||svg.clear)+'</svg></span>';
+}
+function bulkMenuItemMarkup(kind,label){
+  return bulkMenuIcon(kind)+'<span class="vx622-menu-label">'+label+'</span>';
+}
 function bulkScope(menu){return menu.closest('.card')||menu.parentElement;}
 function bulkRows(menu){
   const {checkClass,checkKey,checkValue}=menu.dataset;
@@ -10267,7 +10302,11 @@ function positionBulkMenu(menu){
 }
 function closeBulkMenus(except){
   document.querySelectorAll('.vx622-bulk-menu.is-open').forEach(menu=>{
-    if(menu!==except){menu.classList.remove('is-open');menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');}
+    if(menu!==except){
+      clearBulkMenuTimer(menu);
+      menu.classList.remove('is-open');
+      menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');
+    }
   });
 }
 function convertBulkRows(root){
@@ -10288,35 +10327,54 @@ function convertBulkRows(root){
     }
     const preferred=[selectBtn,clearBtn,destructiveBtn];
     buttons.forEach(button=>{if(!preferred.includes(button))button.remove();});
-    selectBtn.dataset.bulkSelectAll='1';selectBtn.textContent='Select All';selectBtn.title='Select all records shown in this list';
-    clearBtn.textContent='Clear Selected';
-    destructiveBtn.textContent=/delete/i.test(destructiveBtn.textContent)?'Delete Selected':'Cancel Selected';
-    destructiveBtn.dataset.bulkDestructive='1';
+    const destructiveIsDelete=/delete/i.test(destructiveBtn.textContent||'');
+    const destructiveLabel=destructiveIsDelete?'Delete selected':'Cancel selected';
+    selectBtn.dataset.bulkSelectAll='1';selectBtn.dataset.bulkKind='select';selectBtn.title='Select all records shown in this list';
+    clearBtn.dataset.bulkKind='clear';
+    destructiveBtn.dataset.bulkDestructive='1';destructiveBtn.dataset.bulkKind=destructiveIsDelete?'delete':'cancel';
+    selectBtn.innerHTML=bulkMenuItemMarkup('select','Select all');
+    clearBtn.innerHTML=bulkMenuItemMarkup('clear','Deselect all');
+    destructiveBtn.innerHTML=bulkMenuItemMarkup(destructiveIsDelete?'delete':'cancel',destructiveLabel);
     // Select only enabled rows in this list; the existing delete/cancel handler
     // retains its confirmation and accounting validation.
     for(const [button,checked] of [[selectBtn,true],[clearBtn,false]]){
       button.removeAttribute('onclick');
-      button.addEventListener('click',()=>{bulkChecks(row).forEach(input=>{input.checked=checked;});updateBulkSelection(row);});
+      button.addEventListener('click',()=>{
+        bulkMenuTouched(row);
+        bulkChecks(row).forEach(input=>{input.checked=checked;});
+        updateBulkSelection(row);
+      });
     }
     row.dataset.vx622Menu='1';row.classList.add('vx622-bulk-menu');
     const trigger=document.createElement('button');trigger.type='button';trigger.className='btn mini vx622-menu-trigger';
-    trigger.setAttribute('aria-label','Select records and bulk actions');trigger.setAttribute('aria-expanded','false');trigger.textContent='⋮';
+    trigger.setAttribute('aria-label','Open selection menu');trigger.setAttribute('aria-haspopup','menu');trigger.setAttribute('aria-expanded','false');
+    trigger.innerHTML='<svg class="vx622-three-dot-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>';
     const panel=document.createElement('div');panel.className='vx622-menu-panel';panel.id='vx622-bulk-panel-'+(++bulkMenuId);
-    panel.setAttribute('role','group');panel.setAttribute('aria-label','Record selection actions');trigger.setAttribute('aria-controls',panel.id);
+    panel.setAttribute('role','menu');panel.setAttribute('aria-label','Selection options');trigger.setAttribute('aria-controls',panel.id);
     const count=document.createElement('span');count.className='vx622-selection-count';count.setAttribute('role','status');
     const done=document.createElement('button');done.type='button';done.className='btn mini vx622-selection-done';done.textContent='Done';
     done.setAttribute('aria-label','Finish selection and clear checked records');
-    preferred.forEach(button=>{button.type='button';button.classList.add('vx622-menu-item');panel.appendChild(button);});
+    preferred.forEach((button,index)=>{
+      button.type='button';button.classList.add('vx622-menu-item');button.setAttribute('role','menuitem');
+      if(index===2){const divider=document.createElement('div');divider.className='vx622-menu-divider';divider.setAttribute('role','separator');panel.appendChild(divider);}
+      panel.appendChild(button);
+    });
     row.append(count,done,trigger,panel);prepareBulkSelectionColumns(row);updateBulkSelection(row);
     trigger.addEventListener('click',event=>{
       event.stopPropagation();const open=!row.classList.contains('is-open');closeBulkMenus(row);
       row.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));
-      if(open){prepareBulkSelectionColumns(row);setBulkSelectionMode(row,true);positionBulkMenu(row);if(event.detail===0)(selectBtn.disabled?clearBtn:selectBtn).focus({preventScroll:true});}
+      if(open){
+        prepareBulkSelectionColumns(row);setBulkSelectionMode(row,true);positionBulkMenu(row);armBulkMenuTimer(row);
+        if(event.detail===0)(selectBtn.disabled?clearBtn:selectBtn).focus({preventScroll:true});
+      }else clearBulkMenuTimer(row);
     });
     done.addEventListener('click',()=>{closeBulkMenus();setBulkSelectionMode(row,false);trigger.focus({preventScroll:true});});
+    panel.addEventListener('pointerdown',event=>{if(event.target.closest('.vx622-menu-item'))bulkMenuTouched(row);},{capture:true});
     panel.addEventListener('click',event=>{
-      if(!event.target.closest('.vx622-menu-item'))return;
-      closeBulkMenus();updateBulkSelection(row);trigger.focus({preventScroll:true});
+      const item=event.target.closest('.vx622-menu-item');if(!item)return;
+      bulkMenuTouched(row);updateBulkSelection(row);
+      // Match the stock-management menu: menu actions do not auto-close.
+      // Existing destructive handlers retain their own confirmation dialogs.
     });
   });
 }
