@@ -8,12 +8,13 @@ const read=p=>fs.readFileSync(path.join(base,p),'utf8');
 const css=read('frontend-source/android/styles/global-radius-final-00045.css');
 const builder=read('tools/build-frontend-bundles.mjs');
 const core=read('frontend-source/android/styles/global-radius-2026.css');
-test('v00045 final stylesheet is the last Android and web UI source',()=>{
+test('v00045 radius layer stays after prior global radius and before later component-specific overrides',()=>{
   const ui=builder.slice(builder.indexOf('const uiStyles'),builder.indexOf('const scripts'));
   const list=[...ui.matchAll(/'([^']+\.css)'/g)].map(m=>m[1]);
-  assert.equal(list.at(-1),'global-radius-final-00045.css');
   assert.equal(list.filter(p=>p==='global-radius-final-00045.css').length,1);
   assert.ok(ui.indexOf("'global-radius-final-00045.css'")>ui.indexOf("'global-radius-2026.css'"));
+  const later=list.slice(list.indexOf('global-radius-final-00045.css')+1);
+  assert.ok(later.every(name=>/^three-dot-menu-\d+\.css$/.test(name)),'Only scoped component overrides may follow the radius contract');
 });
 test('full-pill chrome, inner tabs, cards, searches and sheet hosts are present',()=>{
   ['#nav.nav.bottom-nav','.app > .top','.vy-middle-ready::before','.p1-modebar',
