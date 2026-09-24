@@ -26,7 +26,7 @@ module.exports=async function(page,out,width){
   assert(selected.scrollWidth<=selected.viewport,'Selection causes no page overflow');
   assert.equal(await bar.locator('.vx622-selection-count').innerText(),'12 selected');
   await page.screenshot({path:path.join(out,'monthly-selection-'+width+'.png')});
-  await trigger.click();await bar.getByRole('menuitem',{name:'Deselect all',exact:true}).click();
+  await bar.getByRole('menuitem',{name:'Deselect all',exact:true}).click();
   await page.waitForTimeout(100);
   const cleared=await measure();assert(Math.abs(cleared.scroll-selected.scroll)<1,'Clear does not jump page scroll');
   await bar.locator('.vx622-selection-done').click();
