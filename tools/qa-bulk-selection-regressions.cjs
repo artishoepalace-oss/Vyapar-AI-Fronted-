@@ -13,7 +13,7 @@ module.exports=async function(page,out,width){
     return {bar:rect(card.querySelector('.vx622-bulk-menu')),trigger:rect(card.querySelector('.vx622-menu-trigger')),done:rect(card.querySelector('.vx622-selection-done')),count:rect(card.querySelector('.vx622-selection-count')),filter:rect(card.querySelector('.record-controls')),scroll:scrollY,viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth};
   });
   const before=await measure();await trigger.click();
-  await bar.getByRole('button',{name:'Select All',exact:true}).click();
+  await bar.getByRole('menuitem',{name:'Select all',exact:true}).click();
   await page.waitForTimeout(100);
   const selected=await measure();console.log('Monthly toolbar geometry',JSON.stringify({before,selected}));
   assert(selected.bar.w>200,'Monthly selection uses the full toolbar, never the old 40px slot');
@@ -26,7 +26,7 @@ module.exports=async function(page,out,width){
   assert(selected.scrollWidth<=selected.viewport,'Selection causes no page overflow');
   assert.equal(await bar.locator('.vx622-selection-count').innerText(),'12 selected');
   await page.screenshot({path:path.join(out,'monthly-selection-'+width+'.png')});
-  await trigger.click();await bar.getByRole('button',{name:'Clear Selected',exact:true}).click();
+  await trigger.click();await bar.getByRole('menuitem',{name:'Deselect all',exact:true}).click();
   await page.waitForTimeout(100);
   const cleared=await measure();assert(Math.abs(cleared.scroll-selected.scroll)<1,'Clear does not jump page scroll');
   await bar.locator('.vx622-selection-done').click();
@@ -52,11 +52,11 @@ module.exports=async function(page,out,width){
   await tableA.locator('input[value="a1"]').check();await page.waitForTimeout(250);
   assert.equal(await page.evaluate(()=>window.qaCheckboxScrolls),0,'Checkbox focus never starts keyboard-style auto-scrolling');
   assert.equal(await tableA.locator('thead input').evaluate(el=>el.indeterminate),true);
-  await a.locator('.vx622-menu-trigger').click();await a.getByRole('button',{name:'Select All',exact:true}).click();
+  await a.locator('.vx622-menu-trigger').click();await a.getByRole('menuitem',{name:'Select all',exact:true}).click();
   assert.equal(await tableA.locator('tbody input:checked').count(),2,'Disabled rows stay unselected');
   assert.equal(await tableB.locator('tbody input:checked').count(),0,'Select All does not select a neighboring table');
   await b.locator('.vx622-menu-trigger').click();assert.equal(await b.locator('.vx622-selection-count').innerText(),'0 selected');
-  await b.getByRole('button',{name:'Select All',exact:true}).click();
+  await b.getByRole('menuitem',{name:'Select all',exact:true}).click();
   await b.locator('.vx622-selection-done').click();
   assert.equal(await tableA.locator('tbody input:checked').count(),2,'Done in list B preserves list A');
   assert.equal(await tableB.locator('tbody input:checked').count(),0);
