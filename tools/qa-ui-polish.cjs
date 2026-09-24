@@ -131,14 +131,14 @@ const version=require('../version.json').versionName;
     const threeDotGeometry=await stockMenuTrigger.evaluate(el=>({w:el.getBoundingClientRect().width,h:el.getBoundingClientRect().height,r:parseFloat(getComputedStyle(el).borderTopLeftRadius),expanded:el.getAttribute('aria-expanded')}));
     assert(threeDotGeometry.w>=42&&threeDotGeometry.h>=42&&threeDotGeometry.r>=20&&threeDotGeometry.expanded==='true','Three-dot trigger is circular and expanded: '+JSON.stringify(threeDotGeometry));
     assert.equal(await stockMenu.getAttribute('role'),'menu');
-    assert((await stockMenu.getByRole('menuitem',{name:/Select all/i}).count())===1,'Select all action exists');
-    assert((await stockMenu.getByRole('menuitem',{name:/Deselect all/i}).count())===1,'Deselect all action exists');
+    assert((await stockMenu.getByRole('menuitem',{name:/^Select all$/i}).count())===1,'Select all action exists');
+    assert((await stockMenu.getByRole('menuitem',{name:/^Deselect all$/i}).count())===1,'Deselect all action exists');
     if(width===360){
       await page.waitForTimeout(10100);
       assert(!(await stockMenu.isVisible()),'Untouched menu closes after ten seconds');
       await stockMenuTrigger.click();await settle();
     }
-    await stockMenu.getByRole('menuitem',{name:/Select all/i}).click();await page.waitForTimeout(80);
+    await stockMenu.getByRole('menuitem',{name:/^Select all$/i}).click();await page.waitForTimeout(80);
     if(width===360){
       await page.waitForTimeout(10100);
       assert(await stockMenu.isVisible(),'Option interaction cancels auto-close');
@@ -146,7 +146,7 @@ const version=require('../version.json').versionName;
 
     assert(await stockMenu.isVisible(),'Select all keeps menu open');
     assert.equal(await stockMenuTrigger.getAttribute('aria-expanded'),'true');
-    await stockMenu.getByRole('menuitem',{name:/Deselect all/i}).click();await page.waitForTimeout(80);
+    await stockMenu.getByRole('menuitem',{name:/^Deselect all$/i}).click();await page.waitForTimeout(80);
     assert(await stockMenu.isVisible(),'Deselect all keeps menu open');
     await stockMenuTrigger.click();await settle();
     assert.equal(await stockMenuTrigger.getAttribute('aria-expanded'),'false');
