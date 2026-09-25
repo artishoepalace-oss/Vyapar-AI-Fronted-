@@ -34,13 +34,13 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.androi
 /* The hand-drawn layout grows directly from the More dock and stays clear of it. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.android-sheet-overlay>.android-sheet{
   position:absolute!important;
-  left:50%!important;
-  right:auto!important;
+  left:var(--vy-chrome-left,8px)!important;
+  right:var(--vy-chrome-right,8px)!important;
   top:auto!important;
   bottom:calc(60px + var(--vy51-more-gap) + env(safe-area-inset-bottom,0px))!important;
   width:var(--vy51-more-width)!important;
   max-width:calc(100vw - var(--vy-chrome-left,8px) - var(--vy-chrome-right,8px))!important;
-  margin:0!important;
+  margin:0 auto!important;
   box-sizing:border-box!important;
   overflow:hidden!important;
   border:1px solid #37393d!important;

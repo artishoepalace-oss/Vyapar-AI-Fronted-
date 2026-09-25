@@ -66,10 +66,10 @@ const uiStyles = [
   'invoice-workspace-2026.css',
   'global-radius-2026.css',
   'minimalist-popups-00049.css',
+  'more-page-00051.css',
   'global-radius-final-00045.css',
   'middle-bar-2026.css',
-  'three-dot-menu-00046.css',
-  'more-page-00051.css'
+  'three-dot-menu-00046.css'
 ];
 
 const scripts = [
