@@ -88,7 +88,7 @@ const version=require('../version.json').versionName;
         return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,navTop:nav.top,bg:getComputedStyle(el).backgroundColor,blur:getComputedStyle(el).backdropFilter};
       });
       assert(bounds.left>=0&&bounds.right<=width&&bounds.top>=0&&bounds.bottom<=bounds.navTop-4,'Popup fits above navbar '+JSON.stringify(bounds));
-      assert.equal(bounds.bg,'rgb(16, 16, 16)');assert.equal(bounds.blur,'none');
+      assert.equal(bounds.bg,'rgb(18, 18, 18)');assert.equal(bounds.blur,'none');
       assert.equal(await page.locator('#vyFormSheet .vy-form-source-heading:visible').count(),0,'Only one visible heading');
       await shot(stage);
     }

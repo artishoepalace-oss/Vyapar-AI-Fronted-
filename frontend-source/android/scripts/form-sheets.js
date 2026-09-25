@@ -98,13 +98,32 @@
   // Return the original node before its owning page rerenders after a successful save.
   ['Sales','Stock','Business','Home'].forEach(label=>wrap('render'+label,schedule,()=>{if(active && active.context===label.toLowerCase())close(true);}));
   ['editSale','editMonthly'].forEach((name,i)=>wrap(name,()=>openField(i?'mprofit':'sproduct')));
-  ['p611Open','businessShowModule','advRenderModule','fs607OpenPOS','vx621RenderDataManager'].forEach(name=>wrap(name,(result)=>{
+  ['p611Open','advRenderModule','fs607OpenPOS','vx621RenderDataManager'].forEach(name=>wrap(name,(result)=>{
     if(result===false)return;
     const host=document.getElementById('businessModuleArea');
     if(host?.closest('#screen-settings'))return;
     const context=host?.dataset.vx621Host||'business';
     if(host && host.querySelector('input,select,textarea,table'))openHost(host,context);
   }));
+  // Legacy expense/payment/billing actions still call businessShowModule().
+  // The 6.2.1 workspace can rename the business host while routing other tools,
+  // so normalize the real Business host before rendering and open that exact node.
+  wrap('businessShowModule',(result)=>{
+    if(result===false)return;
+    const host=document.querySelector('#screen-business [data-vx621-host="business"]')||document.getElementById('businessModuleArea');
+    if(host && host.querySelector('input,select,textarea,table'))openHost(host,'business');
+  },()=>{
+    const host=document.querySelector('#screen-business [data-vx621-host="business"]');
+    if(!host)return;
+    const current=document.getElementById('businessModuleArea');
+    if(current && current!==host && current.dataset.vx621Host){
+      current.id=current.dataset.vx621OriginalId||('vx621-'+current.dataset.vx621Host+'-host');
+    }
+    if(host.id!=='businessModuleArea'){
+      host.dataset.vx621OriginalId=host.dataset.vx621OriginalId||host.id||'vx621-business-host';
+      host.id='businessModuleArea';
+    }
+  });
   ['p611Home','renderAdvancedHome'].forEach(name=>{
     const original=root[name];if(typeof original!=='function')return;
     root[name]=function(){if(active)return close(false);return original.apply(this,arguments);};
