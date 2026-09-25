@@ -12448,8 +12448,9 @@ function convertBulkRows(root){
   root.querySelectorAll('.vx621-bulk-actions').forEach(row=>{
     if(row.dataset.vx622Menu==='1'){prepareBulkSelectionColumns(row);updateBulkSelection(row);return;}
     const buttons=[...row.querySelectorAll(':scope > button')];
-    const selectBtn=buttons.find(button=>/select all/i.test(button.textContent||''));
-    const clearBtn=buttons.find(button=>/clear/i.test(button.textContent||''));
+    const selectBtn=buttons.find(button=>/^select all$/i.test((button.textContent||'').trim()));
+    // The shared label polish can rename Clear before this conversion runs.
+    const clearBtn=buttons.find(button=>/^(?:clear(?: selected)?|deselect all)$/i.test((button.textContent||'').trim()));
     const destructiveBtn=buttons.find(button=>/(delete|cancel).*selected/i.test(button.textContent||''));
     if(!selectBtn||!clearBtn||!destructiveBtn)return;
     const selectAction=selectBtn.getAttribute('onclick')||'';
@@ -12491,14 +12492,12 @@ function convertBulkRows(root){
     const panel=document.createElement('div');panel.className='vx622-menu-panel';panel.id='vx622-bulk-panel-'+(++bulkMenuId);
     panel.setAttribute('role','menu');panel.setAttribute('aria-label','Selection options');trigger.setAttribute('aria-controls',panel.id);
     const count=document.createElement('span');count.className='vx622-selection-count';count.setAttribute('role','status');
-    const done=document.createElement('button');done.type='button';done.className='btn mini vx622-selection-done';done.textContent='Done';
-    done.setAttribute('aria-label','Finish selection and clear checked records');
     preferred.forEach((button,index)=>{
       button.type='button';button.classList.add('vx622-menu-item');button.setAttribute('role','menuitem');
       if(index===2){const divider=document.createElement('div');divider.className='vx622-menu-divider';divider.setAttribute('role','separator');panel.appendChild(divider);}
       panel.appendChild(button);
     });
-    row.append(count,done,trigger,panel);prepareBulkSelectionColumns(row);updateBulkSelection(row);
+    row.append(count,trigger,panel);prepareBulkSelectionColumns(row);updateBulkSelection(row);
     trigger.addEventListener('click',event=>{
       event.stopPropagation();const open=!row.classList.contains('is-open');closeBulkMenus(row);
       row.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));
@@ -12507,7 +12506,6 @@ function convertBulkRows(root){
         if(event.detail===0)(selectBtn.disabled?clearBtn:selectBtn).focus({preventScroll:true});
       }else clearBulkMenuTimer(row);
     });
-    done.addEventListener('click',()=>{closeBulkMenus();setBulkSelectionMode(row,false);trigger.focus({preventScroll:true});});
     panel.addEventListener('pointerdown',event=>{if(event.target.closest('.vx622-menu-item'))bulkMenuTouched(row);},{capture:true});
     panel.addEventListener('click',event=>{
       const item=event.target.closest('.vx622-menu-item');if(!item)return;
