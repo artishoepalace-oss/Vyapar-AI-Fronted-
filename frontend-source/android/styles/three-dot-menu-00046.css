@@ -265,7 +265,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav{
   background:var(--vy52-chrome)!important;
   background-image:none!important;
   border-color:var(--vy52-border)!important;
-  box-shadow:none!important;
+  /* Preserve only the approved inset glossy rim; no outer text/icon shadow. */
+  box-shadow:var(--vy-chrome-rim)!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav .active-capsule{
   background:var(--vy52-control)!important;
