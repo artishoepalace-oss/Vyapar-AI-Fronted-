@@ -65,6 +65,8 @@ module.exports=async function(page,out,width){
   assert.equal(await tableA.locator('tbody input:checked').count(),2,'Deselecting list B preserves list A');
   assert.equal(await tableB.locator('tbody input:checked').count(),0);
   assert.equal(await tableA.locator('thead input').isChecked(),true,'Each header reflects only its own table');
+  if(await aTrigger.getAttribute('aria-expanded')!=='true')await aTrigger.click();
+  assert.equal(await tableA.locator('thead input').isVisible(),true,'Reopening list A restores its checkbox column');
   await tableA.locator('thead input').uncheck();assert.equal(await a.locator('.vx622-selection-count').innerText(),'0 selected');
   await page.evaluate(()=>{HTMLElement.prototype.scrollIntoView=window.qaOriginalScrollIntoView;VyaparFormSheets.close(true);document.getElementById('qaSelectionCard').remove();setTab('home',false);});
   console.log('Monthly toolbar stability, independent selection and sheet checkbox scrolling passed at '+width+'px');
