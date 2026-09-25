@@ -12412,6 +12412,18 @@ function bulkMenuTouched(menu){
   bulkMenuInteracted.add(menu);
   clearBulkMenuTimer(menu);
 }
+function rememberBulkMenuScroll(menu){
+  menu.dataset.vx622OpenScrollY=String(window.scrollY||0);
+  menu.dataset.vx622OpenScrollX=String(window.scrollX||0);
+}
+function restoreBulkMenuScroll(menu){
+  const y=Number(menu.dataset.vx622OpenScrollY);
+  const x=Number(menu.dataset.vx622OpenScrollX);
+  if(!Number.isFinite(y)||!Number.isFinite(x))return;
+  if(Math.abs((window.scrollY||0)-y)>.5||Math.abs((window.scrollX||0)-x)>.5){
+    window.scrollTo({top:y,left:x,behavior:'auto'});
+  }
+}
 function armBulkMenuTimer(menu){
   clearBulkMenuTimer(menu);
   bulkMenuInteracted.delete(menu);
@@ -12419,6 +12431,7 @@ function armBulkMenuTimer(menu){
     bulkMenuTimers.delete(menu);
     if(menu.classList.contains('is-open')&&!bulkMenuInteracted.has(menu)){
       menu.classList.remove('is-open');
+      setBulkSelectionMode(menu,false);
       const trigger=menu.querySelector('.vx622-menu-trigger');
       trigger?.setAttribute('aria-expanded','false');
       if(menu.querySelector('.vx622-menu-panel')?.contains(document.activeElement))trigger?.focus({preventScroll:true});
@@ -12467,12 +12480,14 @@ function updateBulkSelection(menu){
     input.setAttribute('aria-label','Select all shown records');
   }));
 }
-function setBulkSelectionMode(menu,open){
+function setBulkSelectionMode(menu,open,resetSelection=false){
   const scope=bulkScope(menu);
   menu.classList.toggle('is-selecting',!!open);
   bulkTables(menu).forEach(table=>table.classList.toggle('vx622-selection-open',!!open));
   scope.classList.toggle('vx622-selection-open',!!scope.querySelector('.vx622-bulk-menu.is-selecting'));
-  if(!open)bulkRows(menu).forEach(input=>{input.checked=false;});
+  // Closing only hides the page checkbox column. Selection is preserved until
+  // Deselect all is chosen, so reopening the same list does not lose work.
+  if(!open&&resetSelection)bulkRows(menu).forEach(input=>{input.checked=false;});
   updateBulkSelection(menu);
 }
 function prepareBulkSelectionColumns(menu){
@@ -12517,6 +12532,7 @@ function closeBulkMenus(except){
     if(menu!==except){
       clearBulkMenuTimer(menu);
       menu.classList.remove('is-open');
+      setBulkSelectionMode(menu,false);
       menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');
     }
   });
@@ -12580,14 +12596,22 @@ function convertBulkRows(root){
       event.stopPropagation();const open=!row.classList.contains('is-open');closeBulkMenus(row);
       row.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));
       if(open){
+        rememberBulkMenuScroll(row);
         prepareBulkSelectionColumns(row);setBulkSelectionMode(row,true);positionBulkMenu(row);armBulkMenuTimer(row);
         if(event.detail===0)(selectBtn.disabled?clearBtn:selectBtn).focus({preventScroll:true});
-      }else clearBulkMenuTimer(row);
+      }else{
+        clearBulkMenuTimer(row);
+        setBulkSelectionMode(row,false);
+      }
     });
     panel.addEventListener('pointerdown',event=>{if(event.target.closest('.vx622-menu-item'))bulkMenuTouched(row);},{capture:true});
     panel.addEventListener('click',event=>{
       const item=event.target.closest('.vx622-menu-item');if(!item)return;
       bulkMenuTouched(row);updateBulkSelection(row);
+      // Browser/automation focus can scroll an absolutely-positioned menu item
+      // into view. Restore the page to the exact position where the menu opened
+      // so Select/Deselect/Delete never makes the records jump vertically.
+      restoreBulkMenuScroll(row);
       // Match the stock-management menu: menu actions do not auto-close.
       // Existing destructive handlers retain their own confirmation dialogs.
     });
@@ -12602,6 +12626,10 @@ document.addEventListener('change',event=>{
 document.addEventListener('click',event=>{
   // Confirmation actions retain the already-interacted menu session on cancel.
   if(event.target.closest('.glass-dialog-overlay,.production-overlay,.vy-unified-overlay'))return;
+  // A revealed checkbox is part of the active selection session even though it
+  // lives in the table, not inside the three-dot toolbar. Keep the menu open so
+  // multiple rows can be selected without reopening it after every tap.
+  if(event.target.matches(bulkCheckSelector+',thead .vx622-check-col input[type="checkbox"]'))return;
   if(!event.target.closest('.vx622-bulk-menu'))closeBulkMenus();
 });
 document.addEventListener('keydown',event=>{
@@ -16130,7 +16158,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   const observer=new MutationObserver(schedule);
   function init(){
     normalize();
-    if(document.body)observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+    if(document.body)observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
@@ -16251,7 +16279,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
           if(node.nodeType===1){normalizeLogos(node);sanitizeInline(node)}
         }));
         schedule();
-      }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','src']});
+      }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','src']});
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
@@ -16692,13 +16720,32 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   // Return the original node before its owning page rerenders after a successful save.
   ['Sales','Stock','Business','Home'].forEach(label=>wrap('render'+label,schedule,()=>{if(active && active.context===label.toLowerCase())close(true);}));
   ['editSale','editMonthly'].forEach((name,i)=>wrap(name,()=>openField(i?'mprofit':'sproduct')));
-  ['p611Open','businessShowModule','advRenderModule','fs607OpenPOS','vx621RenderDataManager'].forEach(name=>wrap(name,(result)=>{
+  ['p611Open','advRenderModule','fs607OpenPOS','vx621RenderDataManager'].forEach(name=>wrap(name,(result)=>{
     if(result===false)return;
     const host=document.getElementById('businessModuleArea');
     if(host?.closest('#screen-settings'))return;
     const context=host?.dataset.vx621Host||'business';
     if(host && host.querySelector('input,select,textarea,table'))openHost(host,context);
   }));
+  // Legacy expense/payment/billing actions still call businessShowModule().
+  // The 6.2.1 workspace can rename the business host while routing other tools,
+  // so normalize the real Business host before rendering and open that exact node.
+  wrap('businessShowModule',(result)=>{
+    if(result===false)return;
+    const host=document.querySelector('#screen-business [data-vx621-host="business"]')||document.getElementById('businessModuleArea');
+    if(host && host.querySelector('input,select,textarea,table'))openHost(host,'business');
+  },()=>{
+    const host=document.querySelector('#screen-business [data-vx621-host="business"]');
+    if(!host)return;
+    const current=document.getElementById('businessModuleArea');
+    if(current && current!==host && current.dataset.vx621Host){
+      current.id=current.dataset.vx621OriginalId||('vx621-'+current.dataset.vx621Host+'-host');
+    }
+    if(host.id!=='businessModuleArea'){
+      host.dataset.vx621OriginalId=host.dataset.vx621OriginalId||host.id||'vx621-business-host';
+      host.id='businessModuleArea';
+    }
+  });
   ['p611Home','renderAdvancedHome'].forEach(name=>{
     const original=root[name];if(typeof original!=='function')return;
     root[name]=function(){if(active)return close(false);return original.apply(this,arguments);};
