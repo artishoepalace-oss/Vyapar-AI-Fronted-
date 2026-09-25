@@ -66,4 +66,9 @@ test('00052 close behavior hides selection columns and final theme uses four neu
   assert.match(css,/visibility:hidden!important/);
   assert.match(css,/transform:translate3d\(8px,-8px,0\) scale\(\.90\)/);
 });
+test('menu actions restore the page scroll position captured when the popup opens',()=>{
+  assert.match(app,/rememberBulkMenuScroll\(row\)/);
+  assert.match(app,/restoreBulkMenuScroll\(row\)/);
+  assert.match(app,/window\.scrollTo\(\{top:y,left:x,behavior:'auto'\}\)/);
+});
 

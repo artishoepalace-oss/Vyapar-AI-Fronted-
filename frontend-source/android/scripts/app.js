@@ -10280,6 +10280,18 @@ function bulkMenuTouched(menu){
   bulkMenuInteracted.add(menu);
   clearBulkMenuTimer(menu);
 }
+function rememberBulkMenuScroll(menu){
+  menu.dataset.vx622OpenScrollY=String(window.scrollY||0);
+  menu.dataset.vx622OpenScrollX=String(window.scrollX||0);
+}
+function restoreBulkMenuScroll(menu){
+  const y=Number(menu.dataset.vx622OpenScrollY);
+  const x=Number(menu.dataset.vx622OpenScrollX);
+  if(!Number.isFinite(y)||!Number.isFinite(x))return;
+  if(Math.abs((window.scrollY||0)-y)>.5||Math.abs((window.scrollX||0)-x)>.5){
+    window.scrollTo({top:y,left:x,behavior:'auto'});
+  }
+}
 function armBulkMenuTimer(menu){
   clearBulkMenuTimer(menu);
   bulkMenuInteracted.delete(menu);
@@ -10452,6 +10464,7 @@ function convertBulkRows(root){
       event.stopPropagation();const open=!row.classList.contains('is-open');closeBulkMenus(row);
       row.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));
       if(open){
+        rememberBulkMenuScroll(row);
         prepareBulkSelectionColumns(row);setBulkSelectionMode(row,true);positionBulkMenu(row);armBulkMenuTimer(row);
         if(event.detail===0)(selectBtn.disabled?clearBtn:selectBtn).focus({preventScroll:true});
       }else{
@@ -10463,6 +10476,10 @@ function convertBulkRows(root){
     panel.addEventListener('click',event=>{
       const item=event.target.closest('.vx622-menu-item');if(!item)return;
       bulkMenuTouched(row);updateBulkSelection(row);
+      // Browser/automation focus can scroll an absolutely-positioned menu item
+      // into view. Restore the page to the exact position where the menu opened
+      // so Select/Deselect/Delete never makes the records jump vertically.
+      restoreBulkMenuScroll(row);
       // Match the stock-management menu: menu actions do not auto-close.
       // Existing destructive handlers retain their own confirmation dialogs.
     });
