@@ -50,6 +50,10 @@ test('popup matches supplied geometry and is the last shared UI style',()=>{
   assert.equal(styles.at(-1),'three-dot-menu-00046.css');
 });
 
+
+test('checkbox taps stay inside the active selection session',()=>{
+  assert.match(app,/event\.target\.matches\(bulkCheckSelector\+'/, 'table checkbox clicks do not close the three-dot menu');
+});
 test('00052 close behavior hides selection columns and final theme uses four neutral levels',()=>{
   assert.match(app,/setBulkSelectionMode\(menu,false\)/);
   assert.match(app,/setBulkSelectionMode\(row,false\)/);

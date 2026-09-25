@@ -26,7 +26,8 @@ module.exports=async function(page,out,width){
   assert.equal(await card.locator('.vx622-selection-count').innerText(),'1 selected');
   assert.equal(await card.locator('thead input[type="checkbox"]').evaluate(el=>el.indeterminate),true);
   await card.locator('h2').click();
-  assert.equal(await checks.first().isVisible(),true,'Outside click preserves manual selection');
+  assert.equal(await trigger.getAttribute('aria-expanded'),'false','Outside click closes the three-dot popup');
+  assert.equal(await checks.first().isVisible(),false,'Closing the popup hides the checkbox column automatically');
   await trigger.click();
   const deleteSelected=card.getByRole('menuitem',{name:/^Delete selected(?: \(\d+\))?$/i});
   const selectAll=card.getByRole('menuitem',{name:/^Select all$/i});

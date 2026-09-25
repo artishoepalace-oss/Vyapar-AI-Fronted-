@@ -10477,6 +10477,10 @@ document.addEventListener('change',event=>{
 document.addEventListener('click',event=>{
   // Confirmation actions retain the already-interacted menu session on cancel.
   if(event.target.closest('.glass-dialog-overlay,.production-overlay,.vy-unified-overlay'))return;
+  // A revealed checkbox is part of the active selection session even though it
+  // lives in the table, not inside the three-dot toolbar. Keep the menu open so
+  // multiple rows can be selected without reopening it after every tap.
+  if(event.target.matches(bulkCheckSelector+',thead .vx622-check-col input[type="checkbox"]'))return;
   if(!event.target.closest('.vx622-bulk-menu'))closeBulkMenus();
 });
 document.addEventListener('keydown',event=>{
