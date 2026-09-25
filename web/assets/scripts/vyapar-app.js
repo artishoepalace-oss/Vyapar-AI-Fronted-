@@ -6571,7 +6571,20 @@ function businessShowModule(module){
   } else if(module==='purchases'){
     el.innerHTML=`<h2>Purchase Entry</h2><div class="business-calc-grid"><div><label>Supplier</label><input id="purSupplier" placeholder="Supplier name"></div><div><label>Product</label><input id="purProduct" placeholder="School Shoe"></div><div><label>Quantity</label><input id="purQty" type="number" value="1"></div><div><label>Unit Cost</label><input id="purCost" type="number" placeholder="600"></div></div><div class="actions"><button class="btn primary" onclick="businessAddPurchase()">Save Purchase + Stock</button></div><div class="business-table scroll"><table class="table"><thead><tr><th>Date</th><th>Supplier</th><th>Product</th><th>Qty</th><th>Amount</th></tr></thead><tbody>${state.purchases.slice().reverse().map(p=>`<tr><td>${esc(p.date)}</td><td>${esc(p.supplier)}</td><td>${esc(p.product)}</td><td>${p.qty}</td><td>${money(p.amount)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">No purchases.</td></tr>'}</tbody></table></div>`;
   } else if(module==='expenses'){
-    el.innerHTML=`<h2>Expense Entry</h2><div class="business-calc-grid"><div><label>Category</label><select id="expCategory"><option>Rent</option><option>Electricity</option><option>Salary</option><option>Transport</option><option>Marketing</option><option>Packaging</option><option>Repairs</option><option>Other</option></select></div><div><label>Amount</label><input id="expAmount" type="number" placeholder="1000"></div><div><label>Note</label><input id="expNote" placeholder="Monthly expense"></div></div><div class="actions"><button class="btn primary" onclick="businessAddExpense()">Save Expense</button></div><div class="business-table scroll"><table class="table"><thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Amount</th></tr></thead><tbody>${state.expenses.slice().reverse().map(p=>`<tr><td>${esc(p.date)}</td><td>${esc(p.category)}</td><td>${esc(p.note)}</td><td>${money(p.amount)}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">No expenses.</td></tr>'}</tbody></table></div>`;
+    el.innerHTML=`<h2>Expense Entry</h2>
+      <section class="vy-tool-section" aria-labelledby="expenseEntryHeading">
+        <h3 id="expenseEntryHeading">New expense</h3>
+        <div class="business-calc-grid">
+          <div><label for="expCategory">Category</label><select id="expCategory"><option>Rent</option><option>Electricity</option><option>Salary</option><option>Transport</option><option>Marketing</option><option>Packaging</option><option>Repairs</option><option>Other</option></select></div>
+          <div><label for="expAmount">Amount</label><input id="expAmount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="e.g. 1000"></div>
+          <div><label for="expNote">Note</label><input id="expNote" placeholder="e.g. Monthly rent"></div>
+        </div>
+        <div class="actions"><button class="btn primary" onclick="businessAddExpense()">Save Expense</button></div>
+      </section>
+      <section class="vy-tool-section" aria-labelledby="expenseRecordsHeading">
+        <h3 id="expenseRecordsHeading">Saved expenses</h3>
+        <div class="business-table scroll"><table class="table"><thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Amount</th></tr></thead><tbody>${state.expenses.slice().reverse().map(p=>`<tr><td>${esc(p.date)}</td><td>${esc(p.category)}</td><td>${esc(p.note)}</td><td>${money(p.amount)}</td></tr>`).join('')||'<tr><td colspan="4" class="vy-empty-state">No expenses yet.</td></tr>'}</tbody></table></div>
+      </section>`;
   } else if(module==='payments'){
     el.innerHTML=`<h2>Payments</h2><div class="business-calc-grid"><div><label>Direction</label><select id="payDirection"><option value="in">Money In</option><option value="out">Money Out</option></select></div><div><label>Amount</label><input id="payAmount" type="number" placeholder="2000"></div><div><label>Method</label><select id="payMethod"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank</option></select></div><div><label>Note</label><input id="payNote" placeholder="Customer payment"></div></div><div class="actions"><button class="btn primary" onclick="businessAddPayment()">Save Payment</button></div><div class="notice success" style="margin-top:12px">Recorded payments in: <b>${money(businessTotals().paymentsIn)}</b> · out: <b>${money(businessTotals().paymentsOut)}</b></div>`;
   } else if(module==='billing'){
@@ -11600,8 +11613,29 @@ function reportData(key,from,to){const tx=dateFilter((S().transactions611||[]).f
   if(key==='hsn_sales'||key==='tax_purchase'){const wanted=key==='tax_purchase'?'PURCHASE':'SALE',map={};active.filter(t=>t.type===wanted).forEach(t=>(t.items||[]).forEach(i=>{const p=item(i.itemId)||{},k=p.hsn||p.hsnSac||'N/A',r=map[k]||(map[k]={taxable:0,tax:0,qty:0});r.qty+=n(i.qty);r.taxable+=n(i.qty)*n(i.rate);r.tax+=n(i.qty)*n(i.rate)*n(i.tax)/100}));return{columns:['HSN/SAC','Qty','Taxable','Tax'],rows:Object.entries(map).map(([k,r])=>[k,r.qty,r.taxable,r.tax])}}
   return{columns:['Info'],rows:[['No data']]};
 }
-function renderReportLibrary(){const el=$('businessModuleArea');if(!el)return;const cats=[...new Set(reportCatalog().map(r=>r[2]))];el.innerHTML=shell('50+ Reports Library',`<div class="p620-filter"><label>From <input id="r620From" type="date"></label><label>To <input id="r620To" type="date"></label><input id="r620Search" placeholder="Search reports" oninput="p620FilterReports()"></div>${cats.map(c=>`<h3>${safe(c)}</h3><div class="p620-report-grid" data-cat="${safe(c)}">${reportCatalog().filter(r=>r[2]===c).map(r=>`<button class="p620-report-card" data-name="${safe(r[1].toLowerCase())}" onclick="p620ShowReport('${r[0]}')"><b>${safe(r[1])}</b><span>${safe(c)}</span></button>`).join('')}</div>`).join('')}<div id="p620ReportView"></div>`,'Reusable filters · CSV export · accounting, inventory, party and tax reports')}
-window.p620FilterReports=function(){const q=String($('r620Search')?.value||'').toLowerCase();document.querySelectorAll('.p620-report-card').forEach(b=>b.style.display=b.dataset.name.includes(q)?'':'none')};
+function renderReportLibrary(){
+  const el=$('businessModuleArea');if(!el)return;
+  const cats=[...new Set(reportCatalog().map(r=>r[2]))];
+  el.innerHTML=shell('Reports Library',`
+    <section class="vy-tool-section" aria-labelledby="reportFiltersHeading">
+      <h3 id="reportFiltersHeading">Find a report</h3>
+      <div class="p620-filter">
+        <label>From <input id="r620From" type="date"></label>
+        <label>To <input id="r620To" type="date"></label>
+        <label>Search <input id="r620Search" type="search" placeholder="Report name" oninput="p620FilterReports()"></label>
+      </div>
+    </section>
+    ${cats.map((c,i)=>`<section class="vy-tool-section vy-report-section" aria-labelledby="reportCategory${i}"><h3 id="reportCategory${i}">${safe(c)}</h3><div class="p620-report-grid" data-cat="${safe(c)}">${reportCatalog().filter(r=>r[2]===c).map(r=>`<button class="p620-report-card" data-name="${safe(r[1].toLowerCase())}" onclick="p620ShowReport('${r[0]}')"><b>${safe(r[1])}</b><span>View report <span aria-hidden="true">→</span></span></button>`).join('')}</div></section>`).join('')}
+    <div id="p620ReportEmpty" class="notice" role="status" hidden>No reports match your search.</div><div id="p620ReportView"></div>`,'Choose a report, filter by date and export when needed.');
+}
+window.p620FilterReports=function(){
+  const q=String($('r620Search')?.value||'').trim().toLowerCase();
+  const host=$('businessModuleArea');if(!host)return;
+  const cards=[...host.querySelectorAll('.p620-report-card')];
+  cards.forEach(b=>{b.hidden=!b.dataset.name.includes(q);});
+  host.querySelectorAll('.vy-report-section').forEach(section=>{section.hidden=![...section.querySelectorAll('.p620-report-card')].some(b=>!b.hidden);});
+  const empty=$('p620ReportEmpty');if(empty)empty.hidden=cards.some(b=>!b.hidden);
+};
 window.p620ShowReport=function(key){const d=reportData(key,$('r620From')?.value||'',$('r620To')?.value||''),meta=reportCatalog().find(r=>r[0]===key),v=$('p620ReportView');if(!v)return;v.innerHTML=`<div class="card p620-view"><div class="p620-view-head"><h3>${safe(meta?.[1]||key)}</h3><button class="btn mini" onclick="p620ExportReport('${key}')">Export CSV</button></div><div class="p611-table"><table class="table"><thead><tr>${d.columns.map(c=>`<th>${safe(c)}</th>`).join('')}</tr></thead><tbody>${d.rows.slice(0,500).map(r=>`<tr>${r.map(x=>`<td>${typeof x==='number'?cash(x):safe(x)}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${d.columns.length}">No data for selected period.</td></tr>`}</tbody></table></div>${d.rows.length>500?'<p class="muted">Showing first 500 rows. Export includes all rows.</p>':''}</div>`};
 window.p620ExportReport=function(key){const d=reportData(key,$('r620From')?.value||'',$('r620To')?.value||''),name=(reportCatalog().find(r=>r[0]===key)?.[1]||key).toLowerCase().replace(/[^a-z0-9]+/g,'-');csv(name+'.csv',[d.columns,...d.rows])};
 function documentConversions(type){return{ESTIMATE:['SALE'],PROFORMA:['SALE'],SALE_ORDER:['DELIVERY_CHALLAN','SALE'],PURCHASE_ORDER:['PURCHASE'],DELIVERY_CHALLAN:['SALE']}[type]||[]}
@@ -11637,7 +11671,34 @@ async function afterTransaction(t){if(!t||t.__p620Processed)return;t.__p620Proce
 function loyaltyBalance(partyId){return (S().loyaltyEntries611||[]).filter(x=>x.businessId===biz()&&x.partyId===partyId).reduce((z,x)=>z+(x.type==='redeem'?-n(x.points):n(x.points)),0)}
 function injectAdvancedTxFields(){const form=document.querySelector('#businessModuleArea .p611-form');if(!form||$('p620AdvancedFields'))return;const w=document.createElement('div');w.id='p620AdvancedFields';w.className='p620-inline-fields';w.innerHTML=`<label><input id="p620Reverse" type="checkbox"> Reverse Charge</label><input id="p620Eway" placeholder="E-Way Bill No. (optional)"><label><input id="p620Wholesale" type="checkbox"> Use wholesale price</label><label><input id="p620SecondaryQty" type="checkbox"> Qty entered in secondary unit</label><input id="p620Redeem" type="number" min="0" step="1" placeholder="Loyalty points to redeem">`;form.appendChild(w)}
 const MESSAGE_TYPES=['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN','ESTIMATE','PROFORMA','PAYMENT_IN','PAYMENT_OUT','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN','CANCELLED'];
-function renderMessages(){const el=$('businessModuleArea');if(!el)return;const m=S().messaging620,sel=String(window.__p620MsgType||'SALE');el.innerHTML=shell('Messaging & Reminders',`<div class="p620-settings"><label>Provider<select id="mProvider"><option value="manual" ${m.provider==='manual'?'selected':''}>Manual SMS/WhatsApp</option><option value="brevo" ${m.provider==='brevo'?'selected':''}>Brevo SMS (backend)</option></select></label><label>Template type<select id="mType" onchange="p620MsgType(this.value)">${MESSAGE_TYPES.map(k=>`<option value="${k}" ${sel===k?'selected':''}>${k.replaceAll('_',' ')}</option>`).join('')}</select></label></div><h3>Automatic transaction messaging</h3><div class="p620-checks">${MESSAGE_TYPES.map(k=>`<label><input id="mAuto_${k}" type="checkbox" ${m.autoTypes?.[k]?'checked':''}> ${k.replaceAll('_',' ')}</label>`).join('')}</div><h3>${sel.replaceAll('_',' ')} Template</h3><textarea id="mTemplate" class="p620-textarea">${safe(m.templates[sel]||'')}</textarea><p class="muted">Placeholders: {{party}}, {{business}}, {{number}}, {{amount}}, {{received}}, {{balance}}, {{date}}, {{type}}, {{invoice_link}}</p><button class="btn primary" onclick="p620SaveMessaging()">Save Messaging</button><h3>Payment Reminders</h3><div class="actions"><button class="btn" onclick="p620GenerateDueReminders()">Generate Due Reminders</button><button class="btn" onclick="p620OpenServiceReminder()">Add Service Reminder</button></div><div id="p620ReminderList"></div>`,'Per-transaction templates · provider-backed SMS · payment/service reminders');renderReminderList()}
+function renderMessages(){
+  const el=$('businessModuleArea');if(!el)return;
+  const m=S().messaging620,sel=String(window.__p620MsgType||'SALE');
+  el.innerHTML=shell('Messaging & Reminders',`
+    <section class="vy-tool-section" aria-labelledby="messageSetupHeading">
+      <h3 id="messageSetupHeading">Message settings</h3>
+      <div class="p620-settings">
+        <label>Provider<select id="mProvider"><option value="manual" ${m.provider==='manual'?'selected':''}>Manual SMS/WhatsApp</option><option value="brevo" ${m.provider==='brevo'?'selected':''}>Brevo SMS (backend)</option></select></label>
+        <label>Template type<select id="mType" onchange="p620MsgType(this.value)">${MESSAGE_TYPES.map(k=>`<option value="${k}" ${sel===k?'selected':''}>${k.replaceAll('_',' ')}</option>`).join('')}</select></label>
+      </div>
+    </section>
+    <section class="vy-tool-section" aria-labelledby="messageAutoHeading">
+      <h3 id="messageAutoHeading">Automatic transaction messages</h3>
+      <div class="p620-checks">${MESSAGE_TYPES.map(k=>`<label><input id="mAuto_${k}" type="checkbox" ${m.autoTypes?.[k]?'checked':''}> <span>${k.replaceAll('_',' ')}</span></label>`).join('')}</div>
+    </section>
+    <section class="vy-tool-section" aria-labelledby="messageTemplateHeading">
+      <h3 id="messageTemplateHeading"><label for="mTemplate">${sel.replaceAll('_',' ')} template</label></h3>
+      <textarea id="mTemplate" class="p620-textarea" rows="6">${safe(m.templates[sel]||'')}</textarea>
+      <details class="vy-template-help"><summary>Available placeholders</summary><p class="muted">{{party}}, {{business}}, {{number}}, {{amount}}, {{received}}, {{balance}}, {{date}}, {{type}}, {{invoice_link}}</p></details>
+      <div class="actions"><button class="btn primary" onclick="p620SaveMessaging()">Save Messaging</button></div>
+    </section>
+    <section class="vy-tool-section" aria-labelledby="messageRemindersHeading">
+      <h3 id="messageRemindersHeading">Payment & service reminders</h3>
+      <div class="actions"><button class="btn" onclick="p620GenerateDueReminders()">Generate Due Reminders</button><button class="btn" onclick="p620OpenServiceReminder()">Add Service Reminder</button></div>
+      <div id="p620ReminderList"></div>
+    </section>`,'Manage message templates and follow-up reminders.');
+  renderReminderList();
+}
 window.p620MsgType=function(v){const old=String(window.__p620MsgType||'SALE');if($('mTemplate'))S().messaging620.templates[old]=$('mTemplate').value;window.__p620MsgType=v;saveAll();renderMessages()};
 window.p620SaveMessaging=function(){const m=S().messaging620;m.provider=$('mProvider').value;MESSAGE_TYPES.forEach(k=>m.autoTypes[k]=!!$('mAuto_'+k)?.checked);const sel=String($('mType')?.value||window.__p620MsgType||'SALE');m.templates[sel]=$('mTemplate').value;m.sendOnSale=!!m.autoTypes.SALE;m.sendOnPayment=!!m.autoTypes.PAYMENT_IN;saveAll();toast('Messaging settings saved')};
 window.p620GenerateDueReminders=function(){S().paymentReminders611=S().paymentReminders611||[];activeTx().filter(t=>['SALE','PURCHASE'].includes(t.type)&&n(t.balance)>0).forEach(t=>{if(!S().paymentReminders611.some(r=>r.businessId===biz()&&r.transactionId===t.id&&r.status!=='done'))S().paymentReminders611.push({id:uid620(),businessId:biz(),transactionId:t.id,partyId:t.partyId,partyName:t.partyName,dueAmount:t.balance,dueDate:t.dueDate||t.date,nextReminder:today(),repeatDays:3,status:'open',createdAt:now()})});saveAll();renderReminderList();toast('Due reminders updated')};
@@ -11658,7 +11719,24 @@ window.p620AddCheque=function(){const number=$('chNo').value.trim(),amount=Math.
 window.p620ChequeStatus=function(id,status){const c=S().cheques620.find(x=>x.id===id);if(!c)return;if(status==='cleared'&&c.status==='pending'){const ar=ensureAccount(c.direction==='received'?'AR':'AP',c.direction==='received'?'Accounts Receivable':'Accounts Payable',c.direction==='received'?'asset':'liability'),cheque=ensureAccount('CHEQUE','Cheque Account','asset'),tid='CHEQUE-'+c.id;if(c.direction==='received'){addLedgerRaw(tid,cheque.id,c.amount,0,'Cheque received '+c.number,c.date);addLedgerRaw(tid,ar.id,0,c.amount,'Receivable settled by cheque '+c.number,c.date)}else{addLedgerRaw(tid,ar.id,c.amount,0,'Payable settled by cheque '+c.number,c.date);addLedgerRaw(tid,cheque.id,0,c.amount,'Cheque issued '+c.number,c.date)}c.postingId=tid;c.status='cleared';c.clearedAt=now()}else if(status==='bounced'&&c.status==='cleared'){const es=(S().ledgerEntries611||[]).filter(e=>e.businessId===biz()&&e.transactionId===c.postingId);es.forEach(e=>addLedgerRaw(c.postingId+'-BOUNCE',e.accountId,e.credit,e.debit,'Reverse bounced cheque '+c.number,today()));c.status='bounced';c.bouncedAt=now()}else if(status==='bounced'){c.status='bounced';c.bouncedAt=now()}saveAll();renderFinance()};
 window.p620AddLoan=function(){const name=$('lnName').value.trim(),principal=Math.max(0,n($('lnPrincipal').value)),annualRate=Math.max(0,n($('lnRate').value)),termMonths=Math.max(1,Math.floor(n($('lnTerm').value)||1)),payId=$('lnAccount').value;if(!name||!principal||!payId)return alert('Loan name, principal and receiving account required');const loanAcc=ensureAccount('LOAN-'+Date.now(),name+' Loan','liability'),tid='LOAN-OPEN-'+loanAcc.id;addLedgerRaw(tid,payId,principal,0,'Loan proceeds '+name,today());addLedgerRaw(tid,loanAcc.id,0,principal,'Loan liability '+name,today());S().loans620.push({id:uid620(),businessId:biz(),name,principal,annualRate,termMonths,startDate:today(),accountId:loanAcc.id,paymentAccountId:payId,createdAt:now()});saveAll();renderFinance()};
 window.p620RepayLoan=function(id){const l=S().loans620.find(x=>x.id===id);if(!l)return;const principal=Math.max(0,n(prompt('Principal repayment amount','0'))),interest=Math.max(0,n(prompt('Interest amount','0')));if(principal+interest<=0)return;const outstanding=Math.max(0,-accountBalance(l.accountId));if(principal>outstanding+0.01)return alert('Principal exceeds loan outstanding');const pay=prompt('Payment account ID (leave blank for original)',l.paymentAccountId)||l.paymentAccountId,pa=accountById(pay);if(!pa)return alert('Payment account not found');const interestAcc=ensureAccount('INTEREST_EXP','Interest Expense','expense'),tid='LOAN-PAY-'+uid620();if(principal)addLedgerRaw(tid,l.accountId,principal,0,'Loan principal repayment '+l.name,today());if(interest)addLedgerRaw(tid,interestAcc.id,interest,0,'Loan interest '+l.name,today());addLedgerRaw(tid,pa.id,0,principal+interest,'Loan payment '+l.name,today());l.lastPaymentAt=now();saveAll();renderFinance()};
-function renderCurrency(){const el=$('businessModuleArea');if(!el)return;const rates=(S().currencyRates620||[]).filter(r=>r.businessId===biz());el.innerHTML=shell('Multi-Currency Manager',`<div class="notice">Base currency: <b>${safe(baseCurrency())}</b>. Transactions keep original currency + exchange rate + normalized base amount.</div><div class="p611-form"><input id="curCode" maxlength="3" placeholder="Currency e.g. USD"><input id="curRate" type="number" min="0.000001" step="0.000001" placeholder="1 currency = base"><button class="btn primary" onclick="p620SaveRate()">Save Rate</button></div><div class="p611-table"><table class="table"><thead><tr><th>Currency</th><th>Rate to ${safe(baseCurrency())}</th><th>Updated</th><th></th></tr></thead><tbody>${rates.map(r=>`<tr><td>${safe(r.currency)}</td><td>${r.rate}</td><td>${safe(String(r.updatedAt||'').slice(0,19))}</td><td><button class="btn mini danger" onclick="p620DeleteRate('${r.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="4">No saved rates.</td></tr>'}</tbody></table></div>`,'Exchange-rate table · normalized base accounting')}
+function renderCurrency(){
+  const el=$('businessModuleArea');if(!el)return;
+  const rates=(S().currencyRates620||[]).filter(r=>r.businessId===biz());
+  el.innerHTML=shell('Multi-Currency Manager',`
+    <section class="vy-tool-section" aria-labelledby="currencyEntryHeading">
+      <h3 id="currencyEntryHeading">Exchange rate</h3>
+      <p class="muted">Base currency: <b>${safe(baseCurrency())}</b>. Enter the base amount for one unit of foreign currency.</p>
+      <div class="p611-form">
+        <label for="curCode">Currency code<input id="curCode" maxlength="3" placeholder="e.g. USD" autocapitalize="characters" spellcheck="false"></label>
+        <label for="curRate">Rate to ${safe(baseCurrency())}<input id="curRate" type="number" inputmode="decimal" min="0.000001" step="0.000001" placeholder="e.g. 1.00"></label>
+      </div>
+      <div class="actions"><button class="btn primary" onclick="p620SaveRate()">Save Rate</button></div>
+    </section>
+    <section class="vy-tool-section" aria-labelledby="currencyRecordsHeading">
+      <h3 id="currencyRecordsHeading">Saved rates</h3>
+      <div class="p611-table"><table class="table"><thead><tr><th>Currency</th><th>Rate to ${safe(baseCurrency())}</th><th>Updated</th><th>Actions</th></tr></thead><tbody>${rates.map(r=>`<tr><td>${safe(r.currency)}</td><td>${r.rate}</td><td>${safe(String(r.updatedAt||'').slice(0,19))}</td><td><button class="btn mini danger" onclick="p620DeleteRate('${r.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="4" class="vy-empty-state">No saved rates.</td></tr>'}</tbody></table></div>
+    </section>`,'Manage currencies and their conversion rates.');
+}
 window.p620SaveRate=function(){const c=$('curCode').value.trim().toUpperCase().replace(/[^A-Z]/g,'').slice(0,3),r=Math.max(0,n($('curRate').value));if(c.length!==3||r<=0)return alert('Enter valid 3-letter currency and rate');let x=S().currencyRates620.find(x=>x.businessId===biz()&&x.currency===c);if(!x){x={id:uid620(),businessId:biz(),currency:c};S().currencyRates620.push(x)}x.rate=r;x.updatedAt=now();saveAll();renderCurrency()};
 window.p620DeleteRate=function(id){S().currencyRates620=S().currencyRates620.filter(r=>r.id!==id);saveAll();renderCurrency()};
 function token(){return localStorage.getItem('vyapar_ai_auth_token_v1')||''}
@@ -12995,7 +13073,14 @@ function readJson(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}ca
 function normalizePlan(v){const p=String(v||'').trim().toLowerCase();if(p.includes('business'))return'business';if(p.includes('pro'))return'pro';return''}
 function resolvedPlan(){const a=readJson(ACCOUNT_KEY),s=readJson(STATE_KEY),token=String(localStorage.getItem('vyapar_ai_auth_token_v1')||'').trim();const statePlan=(s?.subscription?.verified===true&&String(s?.subscription?.token||token).trim())?normalizePlan(s?.subscription?.plan):'';if(statePlan)return statePlan;const accountPlan=normalizePlan(a?.subscription?.plan),status=String(a?.subscription?.status||'').trim().toLowerCase();const inactive=/^(cancelled|canceled|expired|failed|none|inactive)$/.test(status);if(token&&accountPlan&&!inactive)return accountPlan;return''}
 function decorateAccount(){const card=document.getElementById('productionAccountCard');if(!card)return;const title=card.querySelector('.production-account-head h3');if(!title)return;const plan=resolvedPlan();card.querySelectorAll('.vy647-plan-mark').forEach(el=>el.remove());let badge=title.querySelector('.vy645-plan-tick');if(!plan){if(badge)badge.remove()}else{if(!badge){badge=document.createElement('span');badge.className='vy645-plan-tick';badge.innerHTML=tickSvg;title.appendChild(badge)}badge.className='vy645-plan-tick '+plan;badge.setAttribute('role','img');badge.setAttribute('aria-label',plan==='business'?'Business verified':'Pro verified');badge.title=plan==='business'?'Business verified':'Pro verified'}const avatar=card.querySelector('.production-avatar, .account-avatar, .profile-avatar, .avatar');if(avatar){const wanted=plan||'';if(avatar.dataset.plan!==wanted){avatar.classList.remove('vy648-plan-avatar','pro','business');avatar.removeAttribute('data-plan');if(plan){avatar.classList.add('vy648-plan-avatar',plan);avatar.setAttribute('data-plan',plan)}}}}
-function decoratePlanCards(){document.querySelectorAll('.subscription-plan-grid .subscription-plan-card').forEach(card=>{card.classList.remove('vy649-pro-card','vy649-business-card');const name=String(card.querySelector('h2')?.textContent||'').trim().toLowerCase();if(name==='pro')card.classList.add('vy649-pro-card');if(name==='business')card.classList.add('vy649-business-card')})}
+function decoratePlanCards(){
+  document.querySelectorAll('.subscription-plan-grid .subscription-plan-card').forEach(card=>{
+    const name=String(card.querySelector('h2')?.textContent||'').trim().toLowerCase();
+    for(const [className,wanted] of [['vy649-pro-card',name==='pro'],['vy649-business-card',name==='business']]){
+      if(card.classList.contains(className)!==wanted)card.classList.toggle(className,wanted);
+    }
+  });
+}
 /* Bulk selection is owned by app.js; do not intercept its trigger clicks. */
 let q=false;function refresh(){if(q)return;q=true;requestAnimationFrame(()=>{q=false;decorateAccount();decoratePlanCards()})}
 new MutationObserver(refresh).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('storage',refresh);window.addEventListener('load',refresh,{once:true});setTimeout(refresh,120);setTimeout(refresh,500);setTimeout(refresh,1200);

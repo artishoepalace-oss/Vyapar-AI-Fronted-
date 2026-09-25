@@ -47,7 +47,7 @@ const version=require('../version.json').versionName;
     stage=name;
     const overflow=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert(overflow.scroll<=overflow.w,'No horizontal page overflow: '+name+JSON.stringify(overflow));
-    if(width===360)await page.screenshot({path:path.join(out,name+'-'+width+'.png'),fullPage:true});
+    if(width===360 || stage.startsWith('popup-'))await page.screenshot({path:path.join(out,name+'-'+width+'.png'),fullPage:true});
    }
    async function go(tab){stage=tab;await page.evaluate(t=>setTab(t,false),tab);await settle();assert(await page.locator('#screen-'+tab).isVisible());}
    async function mode(tab,value){stage=tab+'-'+value;await page.locator('#screen-'+tab+' .p1-modebar [data-mode="'+value+'"]').click();await settle();await shot(stage);}
@@ -78,6 +78,60 @@ const version=require('../version.json').versionName;
     await page.goto('http://127.0.0.1:8771/',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>!document.getElementById('vy855BootGuard'),null,{timeout:15000});await settle();
     await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());document.documentElement.classList.add('native-android');state.profile.businessName='QA Shoe Shop';state.monthly=[{id:'m1',month:'2026-01',profit:1200},{id:'m2',month:'2026-09',profit:6700},{id:'m3',month:'2025-09',profit:5000}];state.daily=[{id:'d1',date:'2026-09-15',sale:1000,profit:200}];state.stocks=[];VyaparRecords.invalidate();VyaparInsights.invalidate();render();});
+    // Screenshot-requested business popups: real controls and saves, disposable data.
+    await go('business');
+    async function popup(label){
+      stage='popup-'+label;await settle();
+      assert.equal(await page.locator('#vyFormSheet').count(),1,'One shared popup');
+      const bounds=await page.locator('#vyFormSheet .vy-form-sheet').evaluate(el=>{
+        const r=el.getBoundingClientRect(),nav=document.getElementById('nav').getBoundingClientRect();
+        return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,navTop:nav.top,bg:getComputedStyle(el).backgroundColor,blur:getComputedStyle(el).backdropFilter};
+      });
+      assert(bounds.left>=0&&bounds.right<=width&&bounds.top>=0&&bounds.bottom<=bounds.navTop-4,'Popup fits above navbar '+JSON.stringify(bounds));
+      assert.equal(bounds.bg,'rgb(16, 16, 16)');assert.equal(bounds.blur,'none');
+      assert.equal(await page.locator('#vyFormSheet .vy-form-source-heading:visible').count(),0,'Only one visible heading');
+      await shot(stage);
+    }
+    async function closePopup(){if(await page.locator('#vyFormSheet').count()){await page.evaluate(()=>handleNativeBackPress());await settle();}assert.equal(await page.locator('#vyFormSheet').count(),0);await go('business');}
+    await page.evaluate(()=>businessShowModule('expenses'));await popup('expense');
+    assert.equal(await page.locator('#vyFormSheet .vy-tool-section').count(),2);
+    if(width===360){
+      await page.setViewportSize({width,height:450});await settle();
+      const resized=await page.locator('#vyFormSheet .vy-form-sheet').boundingBox();
+      assert(resized.y>=0&&resized.y+resized.height<=450,'Form follows the reduced visual viewport');
+      await page.getByRole('button',{name:'Save Expense',exact:true}).scrollIntoViewIfNeeded();
+      await page.setViewportSize({width,height:800});await settle();
+    }
+    await page.getByLabel('Amount',{exact:true}).fill('125');await page.getByLabel('Note',{exact:true}).fill('QA popup expense');
+    await page.getByRole('button',{name:'Save Expense',exact:true}).click();await settle();
+    assert.equal(await page.evaluate(()=>state.expenses.filter(x=>x.note==='QA popup expense').length),1,'One expense saved');
+    assert.equal(await page.evaluate(()=>state.expenses.find(x=>x.note==='QA popup expense').amount),125);await closePopup();
+    await page.evaluate(()=>p611Open('currency620'));await popup('currency');
+    await page.getByLabel('Currency code',{exact:true}).fill('USD');await page.getByLabel('Rate to INR',{exact:true}).fill('85');
+    await page.getByRole('button',{name:'Save Rate',exact:true}).click();await settle();
+    assert.equal(await page.evaluate(()=>state.currencyRates620.find(x=>x.currency==='USD').rate),85);await closePopup();
+    await page.evaluate(()=>p611Open('messages620'));await popup('messages');
+    assert.equal(await page.locator('#vyFormSheet .vy-tool-section').count(),4);
+    await page.locator('#mAuto_SALE').check();await page.locator('#mTemplate').fill('Hi {{party}}, QA template.');
+    await page.getByRole('button',{name:'Save Messaging',exact:true}).click();await settle();
+    assert.equal(await page.evaluate(()=>state.messaging620.templates.SALE),'Hi {{party}}, QA template.');
+    assert.equal(await page.evaluate(()=>state.messaging620.autoTypes.SALE),true);
+    if(!await page.locator('#mAuto_SALE').count()){await go('business');await page.evaluate(()=>p611Open('messages620'));await settle();}
+    await page.locator('#mAuto_SALE').uncheck();await page.getByRole('button',{name:'Save Messaging',exact:true}).click();await closePopup();
+    await page.evaluate(()=>p611Open('reports620'));await popup('reports');
+    const reportCount=await page.locator('#vyFormSheet .p620-report-card:visible').count();assert(reportCount>30);
+    await page.getByLabel('Search',{exact:true}).fill('sales register');await settle();
+    assert.equal(await page.locator('#vyFormSheet .p620-report-card:visible').count(),1,'Report search hides nonmatches');
+    await page.locator('#vyFormSheet .p620-report-card:visible').click();await settle();
+    assert((await page.locator('#p620ReportView').innerText()).includes('Sales Register'),'Report opens');
+    await page.getByLabel('Search',{exact:true}).fill('no-such-report-qa');await settle();
+    assert.equal(await page.locator('#vyFormSheet .p620-report-card:visible').count(),0);
+    assert(await page.locator('#p620ReportEmpty').isVisible());
+    await page.getByLabel('Search',{exact:true}).fill('');await settle();
+    assert.equal(await page.locator('#vyFormSheet .p620-report-card:visible').count(),reportCount);await closePopup();
+    if(process.env.QA_POPUPS_ONLY==='1'){
+      assert.equal(errors.length,0,errors.join('\n'));results.push({width,result:'PASS popups',errors});console.log('PASS popups',width);await context.close();continue;
+    }
     await go('home');
     assert.equal(await page.locator('.home-metric-head').filter({hasText:'Yearly profit'}).count(),0);
     assert(await page.locator('.home-metric-head').filter({hasText:'This month'}).isVisible());await shot('home');
