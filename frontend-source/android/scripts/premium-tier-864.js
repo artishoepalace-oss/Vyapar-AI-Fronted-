@@ -109,7 +109,7 @@
           if(node.nodeType===1){normalizeLogos(node);sanitizeInline(node)}
         }));
         schedule();
-      }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','src']});
+      }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','src']});
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
