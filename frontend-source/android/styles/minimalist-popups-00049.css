@@ -1,0 +1,116 @@
+/* Vyapar AI 20.10.2004.00049.2026 -- minimalist shared form popups. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready{
+  --vy49-bg:#0d0e10;--vy49-panel:#131416;--vy49-panel2:#191a1d;
+  --vy49-border:#34363b;--vy49-soft:#292b2f;--vy49-text:#f3f3f4;--vy49-muted:#9ea1a7;
+}
+
+/* Simple centered popup on desktop; compact bottom popup on phones. */
+html.vy861-flat-black.vy-motion-ready body .vy-form-overlay{
+  inset:0!important;top:0!important;width:100%!important;height:100%!important;min-height:100%!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:18px 14px calc(var(--vy-popup-clearance,76px) + 14px)!important;
+  background:rgba(0,0,0,.78)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  overflow:hidden!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-sheet{
+  width:min(920px,100%)!important;max-width:920px!important;
+  max-height:min(820px,calc(100vh - var(--vy-popup-clearance,76px) - 38px))!important;
+  margin:0!important;border:1px solid var(--vy49-border)!important;border-radius:20px!important;
+  background:var(--vy49-bg)!important;color:var(--vy49-text)!important;
+  box-shadow:0 22px 70px rgba(0,0,0,.46)!important;overflow:hidden!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-handle{
+  width:38px!important;height:4px!important;margin:10px auto 2px!important;background:#5d6066!important;border-radius:999px!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-head{
+  min-height:56px!important;padding:13px 18px!important;border-bottom:1px solid var(--vy49-soft)!important;background:#101113!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-head h2{
+  margin:0!important;color:var(--vy49-text)!important;font-size:18px!important;font-weight:720!important;line-height:1.35!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-body{
+  padding:16px 18px 20px!important;background:var(--vy49-bg)!important;color:var(--vy49-text)!important;
+  scrollbar-color:#505258 #121315!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-body>:is(.card,.vx621-platform-host,#businessModuleArea){
+  width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-source-heading{display:none!important;}
+
+/* Separate forms, actions and data instead of one large grey block. */
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body :is(
+ .row,.grid3,.p611-form,.p620-filter,.adv-form-grid,.business-calc-grid,.stats,.notice,
+ .actions,.adv-actions,.p611-actions,.vx621-actions,.adv-table,.business-table,.p611-table,.vx621-table-wrap,.scroll,.insight-table
+){border:1px solid var(--vy49-soft)!important;border-radius:14px!important;background:var(--vy49-panel)!important;box-shadow:none!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body :is(.row,.grid3,.p611-form,.p620-filter,.adv-form-grid,.business-calc-grid,.stats,.notice){
+  margin:0 0 12px!important;padding:13px!important;gap:11px!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body :is(.actions,.adv-actions,.p611-actions,.vx621-actions){
+  display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:12px 0!important;padding:10px!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body :is(.adv-table,.business-table,.p611-table,.vx621-table-wrap,.scroll,.insight-table){
+  margin:12px 0 0!important;padding:0!important;overflow:auto!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body hr{height:1px!important;border:0!important;background:var(--vy49-soft)!important;margin:16px 0!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body :is(h3,h4){margin:16px 0 9px!important;color:#e8e8ea!important;font-size:14px!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .muted{color:var(--vy49-muted)!important;}
+
+/* Form controls: monochrome, aligned and readable. */
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet label{
+  display:block!important;margin:9px 0 5px!important;color:#cdced2!important;font-size:12px!important;font-weight:650!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(input,select,textarea){
+  width:100%!important;max-width:100%!important;min-height:44px!important;margin:0!important;padding:10px 12px!important;
+  border:1px solid #393b40!important;border-radius:11px!important;outline:none!important;background:#18191c!important;color:#f0f0f2!important;
+  box-shadow:none!important;font-size:13px!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet textarea{min-height:92px!important;resize:vertical!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(input,select,textarea)::placeholder{color:#777a80!important;opacity:1!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(input,select,textarea):focus{border-color:#b9bbc0!important;background:#1d1e21!important;box-shadow:none!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet input[type="checkbox"],
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet input[type="radio"]{
+  width:19px!important;height:19px!important;min-height:19px!important;padding:0!important;accent-color:#e1e1e2!important;
+}
+
+/* Buttons: white primary, grey secondary. */
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .btn{
+  min-height:42px!important;padding:10px 14px!important;border:1px solid #3d3f44!important;border-radius:11px!important;
+  background:#222327!important;color:#e7e7e9!important;box-shadow:none!important;text-shadow:none!important;font-size:12px!important;font-weight:700!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .btn.primary{border-color:#e6e6e7!important;background:#ededee!important;color:#111214!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .btn.danger{background:#33171b!important;border-color:#5d2b32!important;color:#ffdce1!important;}
+
+/* Tabs and cards stay separated but simple. */
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.workspace-tabs,.p611-tabs,.segmented,.tab-row){
+  display:flex!important;flex-wrap:wrap!important;gap:7px!important;margin:0 0 12px!important;padding:7px!important;
+  border:1px solid var(--vy49-soft)!important;border-radius:13px!important;background:#111214!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.workspace-tabs,.p611-tabs,.segmented,.tab-row)>button{
+  min-height:38px!important;border:1px solid #36383d!important;border-radius:10px!important;background:#1b1c1f!important;color:#c0c2c7!important;box-shadow:none!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.workspace-tabs,.p611-tabs,.segmented,.tab-row)>button:is(.active,[aria-selected="true"],[aria-pressed="true"]){
+  border-color:#efeff0!important;background:#eeeeef!important;color:#111214!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.adv-module-grid,.vx621-feature-grid,.p611-module-grid){
+  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))!important;gap:9px!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.adv-module,.vx621-feature-card,.p611-module-card){
+  min-height:80px!important;padding:12px!important;border:1px solid #303237!important;border-radius:12px!important;background:var(--vy49-panel2)!important;color:#ededee!important;box-shadow:none!important;
+}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.pill,.badge,.chip,.tag){background:#242529!important;color:#d0d1d4!important;border-color:#3b3d42!important;box-shadow:none!important;}
+
+/* Dense monochrome tables. */
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .table{width:100%!important;min-width:620px!important;border-collapse:collapse!important;background:#101113!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .table :is(th,td){padding:10px 11px!important;border-bottom:1px solid #292b2f!important;color:#dddde0!important;font-size:12px!important;line-height:1.4!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .table thead th{background:#191a1d!important;color:#aaaeb4!important;font-weight:700!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .table tbody tr:nth-child(odd) :is(th,td){background:#111214!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet .table tbody tr:nth-child(even) :is(th,td){background:#151619!important;}
+html.vy861-flat-black.vy-motion-ready body #vyFormSheet *{text-shadow:none!important;}
+
+@media(max-width:700px){
+  html.vy861-flat-black.vy-motion-ready body .vy-form-overlay{align-items:flex-end!important;padding:8px 8px calc(var(--vy-popup-clearance,70px) + 8px)!important;}
+  html.vy861-flat-black.vy-motion-ready body .vy-form-sheet{width:100%!important;max-width:none!important;max-height:calc(100vh - var(--vy-popup-clearance,70px) - 12px)!important;border-radius:18px 18px 12px 12px!important;}
+  html.vy861-flat-black.vy-motion-ready body .vy-form-body{padding:13px!important;}
+  html.vy861-flat-black.vy-motion-ready body #vyFormSheet .vy-form-body :is(.row,.grid3,.p611-form,.p620-filter,.adv-form-grid,.business-calc-grid){grid-template-columns:minmax(0,1fr)!important;}
+  html.vy861-flat-black.vy-motion-ready body #vyFormSheet :is(.actions,.adv-actions,.p611-actions,.vx621-actions)>.btn{flex:1 1 145px!important;}
+}
