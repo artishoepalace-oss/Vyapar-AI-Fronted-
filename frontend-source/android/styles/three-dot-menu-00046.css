@@ -179,10 +179,6 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx62
   color:#aaaab3!important;
   font-size:12px!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-selection-done {
-  min-height:42px!important;
-  border-radius:21px!important;
-}
 
 /* Consistent focus treatment for keyboard and switch-access users. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx622-menu-trigger,.vx622-menu-item):focus-visible {

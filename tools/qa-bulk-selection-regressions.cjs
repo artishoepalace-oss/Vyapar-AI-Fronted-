@@ -10,7 +10,7 @@ module.exports=async function(page,out,width){
   await trigger.evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));await page.waitForTimeout(350);
   const measure=()=>card.evaluate(card=>{
     const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,right:r.right};};
-    return {bar:rect(card.querySelector('.vx622-bulk-menu')),trigger:rect(card.querySelector('.vx622-menu-trigger')),done:rect(card.querySelector('.vx622-selection-done')),count:rect(card.querySelector('.vx622-selection-count')),filter:rect(card.querySelector('.record-controls')),scroll:scrollY,viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth};
+    return {bar:rect(card.querySelector('.vx622-bulk-menu')),trigger:rect(card.querySelector('.vx622-menu-trigger')),count:rect(card.querySelector('.vx622-selection-count')),filter:rect(card.querySelector('.record-controls')),scroll:scrollY,viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth};
   });
   const before=await measure();await trigger.click();
   await bar.getByRole('menuitem',{name:'Select all',exact:true}).click();
@@ -22,22 +22,23 @@ module.exports=async function(page,out,width){
   assert(Math.abs(before.trigger.x-selected.trigger.x)<1,'Trigger stays horizontally anchored');
   assert(Math.abs(before.trigger.y-selected.trigger.y)<1,'Trigger stays vertically anchored');
   assert(Math.abs(before.scroll-selected.scroll)<1,'Select All does not jump page scroll');
-  assert(selected.count.right<=selected.done.x+1&&selected.done.right<=selected.trigger.x+1,'Count, Done and menu do not overlap');
+  assert(selected.count.right<=selected.trigger.x+1,'Count and menu do not overlap');
   assert(selected.scrollWidth<=selected.viewport,'Selection causes no page overflow');
   assert.equal(await bar.locator('.vx622-selection-count').innerText(),'12 selected');
   await page.screenshot({path:path.join(out,'monthly-selection-'+width+'.png')});
   await bar.getByRole('menuitem',{name:'Deselect all',exact:true}).click();
   await page.waitForTimeout(100);
   const cleared=await measure();assert(Math.abs(cleared.scroll-selected.scroll)<1,'Clear does not jump page scroll');
-  await bar.locator('.vx622-selection-done').click();
+  assert.equal(await bar.getByRole('button',{name:'Done',exact:true}).count(),0,'Done is absent from the monthly toolbar');
+  await trigger.click();
   await page.waitForTimeout(100);
-  const done=await measure();assert(Math.abs(done.filter.y-before.filter.y)<1,'Done does not shift the filters');
+  const closed=await measure();assert(Math.abs(closed.filter.y-before.filter.y)<1,'Closing the menu does not shift the filters');
   await page.evaluate(()=>{
     setTab('stock',false);
     const fixture=document.createElement('section');fixture.id='qaSelectionCard';fixture.className='card';
     fixture.innerHTML='<h2>Selection regression fixture</h2>'+['a','b'].map(key=>{
       const id='qa-list-'+key;
-      return '<div class="vx621-bulk-actions" data-qa-list="'+key+'"><button onclick="vx621GenericSelectAll(\''+id+'\',true)">Select All</button><button onclick="vx621GenericSelectAll(\''+id+'\',false)">Clear</button><button onclick="vx621GenericDelete(\''+id+'\',\'selected\')">Delete Selected</button></div><div class="p611-table"><table data-vx621-table-id="'+id+'"><thead><tr><th><input type="checkbox"></th><th>Record</th></tr></thead><tbody>'+[1,2,3].map(n=>'<tr><td><input type="checkbox" class="vx621-generic-check" data-table="'+id+'" value="'+key+n+'" '+(n===3?'disabled':'')+'></td><td>Record '+key+n+'</td></tr>').join('')+'</tbody></table></div>';
+      return '<div class="vx621-bulk-actions" data-qa-list="'+key+'"><button onclick="vx621GenericSelectAll(\''+id+'\',true)">Select All</button><button onclick="vx621GenericSelectAll(\''+id+'\',false)">'+(key==='b'?'Deselect All':'Clear')+'</button><button onclick="vx621GenericDelete(\''+id+'\',\'selected\')">Delete Selected</button></div><div class="p611-table"><table data-vx621-table-id="'+id+'"><thead><tr><th><input type="checkbox"></th><th>Record</th></tr></thead><tbody>'+[1,2,3].map(n=>'<tr><td><input type="checkbox" class="vx621-generic-check" data-table="'+id+'" value="'+key+n+'" '+(n===3?'disabled':'')+'></td><td>Record '+key+n+'</td></tr>').join('')+'</tbody></table></div>';
     }).join('');
     document.getElementById('screen-stock').appendChild(fixture);vx622ConvertBulkRows(document);
     VyaparFormSheets.openHost(fixture,'stock');
@@ -57,8 +58,10 @@ module.exports=async function(page,out,width){
   assert.equal(await tableB.locator('tbody input:checked').count(),0,'Select All does not select a neighboring table');
   const bTrigger=b.locator('.vx622-menu-trigger');if(await bTrigger.getAttribute('aria-expanded')!=='true')await bTrigger.click();assert.equal(await b.locator('.vx622-selection-count').innerText(),'0 selected');
   await b.locator('[data-bulk-kind="select"]').click();
-  await b.locator('.vx622-selection-done').click();
-  assert.equal(await tableA.locator('tbody input:checked').count(),2,'Done in list B preserves list A');
+  await b.getByRole('menuitem',{name:'Deselect all',exact:true}).click();
+  await bTrigger.click();
+  assert.equal(await fixture.locator('.vx622-selection-done').count(),0,'Neither list creates a Done button');
+  assert.equal(await tableA.locator('tbody input:checked').count(),2,'Deselecting list B preserves list A');
   assert.equal(await tableB.locator('tbody input:checked').count(),0);
   assert.equal(await tableA.locator('thead input').isChecked(),true,'Each header reflects only its own table');
   await tableA.locator('thead input').uncheck();assert.equal(await a.locator('.vx622-selection-count').innerText(),'0 selected');

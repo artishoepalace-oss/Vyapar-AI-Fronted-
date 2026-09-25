@@ -49,8 +49,10 @@ module.exports=async function(page,out,width){
   assert.equal(await card.locator('.vx621-stock-check:checked').count(),0);
   assert.equal(await trigger.getAttribute('aria-expanded'),'true','Deselect all keeps menu open');
   await selectAll.click();
-  await card.locator('.vx622-selection-done').click();
-  assert.equal(await checks.first().isVisible(),false,'Done hides and clears selection');
+  await deselectAll.click();
+  await trigger.click();
+  assert.equal(await trigger.getAttribute('aria-expanded'),'false','The trigger closes the selection menu');
+  assert.equal(await page.locator('.vx622-selection-done').count(),0,'Done is removed from all rendered menus');
   assert.equal(await card.locator('.vx621-stock-check:checked').count(),0);
   await trigger.click();await selectAll.click();
   await deleteSelected.click();
@@ -62,5 +64,5 @@ module.exports=async function(page,out,width){
   await page.keyboard.press('Escape');assert.equal(await trigger.getAttribute('aria-expanded'),'false');
   await require('./qa-bulk-selection-regressions.cjs')(page,out,width);
   await page.evaluate(()=>setTab('home',false));
-  console.log('Settings black + manual/select-all/cancel/confirm/delete/Done passed at '+width+'px');
+  console.log('Settings black + manual/select-all/cancel/confirm/delete/deselect passed at '+width+'px');
 };

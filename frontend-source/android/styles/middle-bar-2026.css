@@ -1,12 +1,12 @@
-/* Middle-screen page selector: one opaque light-grey track and one solid sliding thumb.
+/* Middle-screen page selector: one opaque black track and one solid grey sliding thumb.
    This deliberately does not style the five-icon bottom dock. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
   position:relative!important;top:auto!important;bottom:auto!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
   gap:0!important;padding:3px 4px!important;margin:0 0 16px!important;
   height:52px!important;min-height:52px!important;max-height:52px!important;
   width:100%!important;max-width:100%!important;min-width:0!important;
-  box-sizing:border-box!important;border:1px solid #b8bac0!important;border-radius:999px!important;
-  background:#d4d5d8!important;background-image:none!important;
+  box-sizing:border-box!important;border:1px solid #303237!important;border-radius:999px!important;
+  background:#101113!important;background-image:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
   box-shadow:none!important;
   overflow:hidden!important;isolation:isolate;touch-action:pan-y!important;
@@ -14,8 +14,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before {
   content:"";position:absolute;left:0;top:4px;z-index:0;
   width:var(--vy-middle-width,0px);height:44px;border-radius:999px;
-  box-sizing:border-box;border:1px solid #b9bbc0!important;
-  background:#f4f4f5!important;background-image:none!important;
+  box-sizing:border-box;border:1px solid #515358!important;
+  background:#35373c!important;background-image:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
   box-shadow:none!important;
   pointer-events:none;
@@ -28,7 +28,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
   height:44px!important;min-height:44px!important;max-height:44px!important;
   box-sizing:border-box!important;padding:0 3px!important;margin:0!important;
   border:0!important;border-radius:999px!important;background:transparent!important;background-image:none!important;
-  box-shadow:none!important;color:#45464c!important;font-size:clamp(10px,3vw,12px)!important;
+  box-shadow:none!important;color:#bfc1c6!important;font-size:clamp(10px,3vw,12px)!important;
   font-weight:650!important;line-height:1.15!important;text-align:center!important;
   white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
   -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
@@ -38,10 +38,10 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button[aria-pressed="true"] {
   /* Distinct computed surface keeps existing visual/QA selectors compatible;
      real visible thumb belongs to the track rather than individual buttons. */
-  background:rgba(244,244,245,.018)!important;color:#74384e!important;
+  background:rgba(255,255,255,.018)!important;color:#f5f5f7!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button:focus-visible {
-  outline:2px solid #74384e!important;outline-offset:-3px!important;
+  outline:2px solid #f5f5f7!important;outline-offset:-3px!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready.vy-middle-instant::before {
   transition:none!important;

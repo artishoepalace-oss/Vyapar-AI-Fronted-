@@ -146,7 +146,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
   font-weight:650!important;letter-spacing:-.1px!important;text-align:center!important;white-space:nowrap!important;
   color:inherit!important;background:transparent!important;filter:none!important;transform:none!important;animation:none!important;
 }
-/* Every destination illuminates both its selected icon and label. */
+/* Selected icons and labels use a flat burgundy accent without an outer glow. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon svg,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon svg * {
   color:var(--vy-logo-burgundy)!important;fill:var(--vy-logo-burgundy)!important;
@@ -154,11 +154,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
 
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-icon {
   color:var(--vy-logo-burgundy)!important;
-  filter:drop-shadow(0 0 3px rgba(128,1,31,.48))!important;
+  filter:none!important;box-shadow:none!important;text-shadow:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active .android-nav-label {
   color:var(--vy-logo-burgundy)!important;
-  text-shadow:0 0 3px rgba(128,1,31,.48),0 0 8px rgba(128,1,31,.28)!important;
+  text-shadow:none!important;box-shadow:none!important;filter:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button svg.android-nav-lock {
   position:absolute!important;top:6px!important;right:5px!important;

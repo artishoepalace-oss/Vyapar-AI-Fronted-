@@ -96,7 +96,7 @@ const version=require('../version.json').versionName;
       return {bg:track.backgroundColor,blur:track.backdropFilter,gradient:track.backgroundImage,
         thumb:thumb.backgroundColor,thumbGradient:thumb.backgroundImage,shadow:thumb.boxShadow};
     });
-    assert.deepEqual(surface,{bg:'rgb(212, 213, 216)',blur:'none',gradient:'none',thumb:'rgb(244, 244, 245)',thumbGradient:'none',shadow:'none'},'Middle bar has opaque grey surfaces without glass');
+    assert.deepEqual(surface,{bg:'rgb(16, 17, 19)',blur:'none',gradient:'none',thumb:'rgb(53, 55, 60)',thumbGradient:'none',shadow:'none'},'Middle bar has an opaque black track and solid grey selection');
     await mode('business','daily');
     for(const [target,sign] of [['accounts',1],['daily',-1]]){
       const poses=await page.evaluate(target=>{
@@ -128,6 +128,7 @@ const version=require('../version.json').versionName;
     await stockMenuTrigger.click();await settle();
     const stockMenu=page.locator('#screen-stock .vx622-menu-panel').first();
     assert(await stockMenu.isVisible(),'Three-dot menu opens');
+    assert.equal(await page.locator('.vx622-selection-done').count(),0,'No three-dot section creates a Done button');
     const threeDotGeometry=await stockMenuTrigger.evaluate(el=>({w:el.getBoundingClientRect().width,h:el.getBoundingClientRect().height,r:parseFloat(getComputedStyle(el).borderTopLeftRadius),expanded:el.getAttribute('aria-expanded')}));
     assert(threeDotGeometry.w>=42&&threeDotGeometry.h>=42&&threeDotGeometry.r>=20&&threeDotGeometry.expanded==='true','Three-dot trigger is circular and expanded: '+JSON.stringify(threeDotGeometry));
     assert.equal(await stockMenu.getAttribute('role'),'menu');
