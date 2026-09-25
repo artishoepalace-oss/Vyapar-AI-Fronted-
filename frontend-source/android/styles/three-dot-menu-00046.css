@@ -194,3 +194,221 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx
     transition:none!important;
   }
 }
+
+/* Vyapar AI 20.10.2004.00052.2026 — universal monochrome hierarchy + sketch-close motion.
+   Final cascade: only four neutral dark levels, plus border/text and burgundy active state. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready{
+  --vy52-bg:#000000;
+  --vy52-chrome:#121212;
+  --vy52-card:#1A1A1A;
+  --vy52-control:#242424;
+  --vy52-border:#343434;
+  --vy52-text:#FFFFFF;
+  --vy52-muted:#A8A8A8;
+  --vy52-active:#A50035;
+
+  --bg:var(--vy52-bg)!important;
+  --app-bg:var(--vy52-bg)!important;
+  --android-bg:var(--vy52-bg)!important;
+  --nav-bg:var(--vy52-chrome)!important;
+  --card:var(--vy52-card)!important;
+  --card2:var(--vy52-card)!important;
+  --input:var(--vy52-control)!important;
+  --text:var(--vy52-text)!important;
+  --muted:var(--vy52-muted)!important;
+  --line:var(--vy52-border)!important;
+  --line-strong:var(--vy52-border)!important;
+
+  --vy861-bg:var(--vy52-bg)!important;
+  --vy861-surface:var(--vy52-card)!important;
+  --vy861-surface-2:var(--vy52-control)!important;
+  --vy861-surface-3:var(--vy52-control)!important;
+  --vy861-line:var(--vy52-border)!important;
+  --vy861-line-strong:var(--vy52-border)!important;
+  --vy861-text:var(--vy52-text)!important;
+  --vy861-muted:var(--vy52-muted)!important;
+  --vy861-accent:var(--vy52-active)!important;
+
+  --v863-bg:var(--vy52-bg)!important;
+  --v863-surface:var(--vy52-card)!important;
+  --v863-surface-2:var(--vy52-control)!important;
+  --v863-surface-3:var(--vy52-control)!important;
+  --v863-surface-4:var(--vy52-control)!important;
+  --v863-line:var(--vy52-border)!important;
+  --v863-line-strong:var(--vy52-border)!important;
+  --v863-text:var(--vy52-text)!important;
+  --v863-silver:var(--vy52-muted)!important;
+
+  --vy-chrome-black:var(--vy52-chrome)!important;
+  --vy-logo-burgundy:var(--vy52-active)!important;
+
+  --vx46-menu-bg:var(--vy52-chrome);
+  --vx46-menu-button:var(--vy52-control);
+  --vx46-menu-button-border:var(--vy52-border);
+  --vx46-menu-border:var(--vy52-border);
+  --vx46-option-icon:var(--vy52-control);
+  --vx46-option-active:var(--vy52-card);
+  --vx46-accent:var(--vy52-active);
+  --vx46-accent-bg:var(--vy52-control);
+}
+
+/* App + persistent chrome. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body{
+  background:var(--vy52-bg)!important;
+  background-image:none!important;
+  color:var(--vy52-text)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body::after{display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app>.top,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav{
+  background:var(--vy52-chrome)!important;
+  background-image:none!important;
+  border-color:var(--vy52-border)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav .active-capsule{
+  background:var(--vy52-control)!important;
+  background-image:none!important;
+  border:1px solid var(--vy52-border)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-android-tab].active,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-android-tab].active :is(.android-nav-icon,.android-nav-label,svg,svg *){
+  color:var(--vy52-active)!important;
+  stroke:currentColor!important;
+  filter:none!important;
+  text-shadow:none!important;
+}
+
+/* Main / inner surfaces: remove residual bluish graphite (#111214, #17181c, #1c1d21, etc.). */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .screen .card,.screen .stat,.screen .settings-section,.screen .insight-panel,
+  .screen .vx621-group,.screen .vx621-feature-card,.screen .home-action-card,
+  .screen .home-quick-action,.screen .quick-card,.screen .home-tool-card
+){
+  background:var(--vy52-card)!important;
+  background-image:none!important;
+  border-color:var(--vy52-border)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  input:not([type="checkbox"]):not([type="radio"]),select,textarea,
+  .screen .workspace-tabs,.screen .record-controls .btn,.screen .file-drop,
+  .screen .p611-form,.screen .p620-filter,.screen .p620-settings,
+  .screen .inner-card,.screen .sub-card,.screen .setting-control,
+  .screen .btn:not(.danger):not([data-danger="true"])
+){
+  background:var(--vy52-control)!important;
+  background-image:none!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.muted,.secondary-text,.screen small,.screen .tag){
+  color:var(--vy52-muted)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .table,.p611-table,.business-table,.adv-table,.vx621-table-wrap,.scroll,.insight-table
+){
+  background:var(--vy52-card)!important;
+  border-color:var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .table :is(th,td){
+  background:var(--vy52-card)!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-text)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .table thead th{background:var(--vy52-control)!important;color:var(--vy52-muted)!important;}
+
+/* Every popup/bottom sheet uses #121212; internal groups use the same 4-level hierarchy. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .glass-dialog-card,.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
+  .production-modal,.android-permission-card,.android-sheet,.account-delete-card,.account-delete-dialog,
+  .upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"],
+  #vyFormSheet>.vy-form-sheet.vy-unified-panel
+){
+  background:var(--vy52-chrome)!important;
+  background-image:none!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet :is(.vy-form-head,.vy-form-body){
+  background:var(--vy52-chrome)!important;
+  color:var(--vy52-text)!important;
+  border-color:var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-tool-section{
+  background:var(--vy52-card)!important;
+  border-color:var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet :is(input,select,textarea,.p620-checks>label,.p620-report-card,.btn:not(.danger)){
+  background:var(--vy52-control)!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-text)!important;
+}
+
+/* Sketch behavior: popup grows from the three-dot anchor and reverses into it on close. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
+  display:grid!important;
+  gap:0!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  background:var(--vy52-chrome)!important;
+  border-color:var(--vy52-border)!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.42)!important;
+  transform-origin:top right!important;
+  transform:translate3d(8px,-8px,0) scale(.90)!important;
+  transition:opacity 150ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 180ms!important;
+  animation:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel{
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  transform:translate3d(0,0,0) scale(1)!important;
+  transition:opacity 150ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 0s!important;
+  animation:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu>.vx622-menu-trigger{
+  background:var(--vy52-control)!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu>.vx622-menu-trigger[aria-expanded="true"]{
+  background:var(--vy52-control)!important;
+  border-color:var(--vy52-active)!important;
+  color:var(--vy52-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item{
+  background:transparent!important;
+  color:var(--vy52-text)!important;
+  opacity:0;
+  transform:translate3d(5px,-3px,0);
+  transition:opacity 130ms ease,transform 160ms cubic-bezier(.2,.8,.2,1),background 120ms ease!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item{
+  opacity:1;
+  transform:none;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item[data-bulk-kind="select"]{transition-delay:25ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item[data-bulk-kind="clear"]{transition-delay:50ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item[data-bulk-kind="delete"],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item[data-bulk-kind="cancel"]{transition-delay:75ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-option-icon{
+  background:var(--vy52-control)!important;
+  border-color:var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-divider{background:var(--vy52-border)!important;}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel,
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item{
+    transition:none!important;
+    animation:none!important;
+  }
+}
+

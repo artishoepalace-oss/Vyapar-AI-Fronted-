@@ -49,3 +49,17 @@ test('popup matches supplied geometry and is the last shared UI style',()=>{
   const styles=[...ui.matchAll(/'([^']+\.css)'/g)].map(m=>m[1]);
   assert.equal(styles.at(-1),'three-dot-menu-00046.css');
 });
+
+test('00052 close behavior hides selection columns and final theme uses four neutral levels',()=>{
+  assert.match(app,/setBulkSelectionMode\(menu,false\)/);
+  assert.match(app,/setBulkSelectionMode\(row,false\)/);
+  assert.match(app,/resetSelection=false/);
+  assert.match(css,/--vy52-bg:#000000/);
+  assert.match(css,/--vy52-chrome:#121212/);
+  assert.match(css,/--vy52-card:#1A1A1A/);
+  assert.match(css,/--vy52-control:#242424/);
+  assert.match(css,/--vy52-active:#A50035/);
+  assert.match(css,/visibility:hidden!important/);
+  assert.match(css,/transform:translate3d\(8px,-8px,0\) scale\(\.90\)/);
+});
+

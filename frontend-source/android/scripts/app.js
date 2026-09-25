@@ -10287,6 +10287,7 @@ function armBulkMenuTimer(menu){
     bulkMenuTimers.delete(menu);
     if(menu.classList.contains('is-open')&&!bulkMenuInteracted.has(menu)){
       menu.classList.remove('is-open');
+      setBulkSelectionMode(menu,false);
       const trigger=menu.querySelector('.vx622-menu-trigger');
       trigger?.setAttribute('aria-expanded','false');
       if(menu.querySelector('.vx622-menu-panel')?.contains(document.activeElement))trigger?.focus({preventScroll:true});
@@ -10335,12 +10336,14 @@ function updateBulkSelection(menu){
     input.setAttribute('aria-label','Select all shown records');
   }));
 }
-function setBulkSelectionMode(menu,open){
+function setBulkSelectionMode(menu,open,resetSelection=false){
   const scope=bulkScope(menu);
   menu.classList.toggle('is-selecting',!!open);
   bulkTables(menu).forEach(table=>table.classList.toggle('vx622-selection-open',!!open));
   scope.classList.toggle('vx622-selection-open',!!scope.querySelector('.vx622-bulk-menu.is-selecting'));
-  if(!open)bulkRows(menu).forEach(input=>{input.checked=false;});
+  // Closing only hides the page checkbox column. Selection is preserved until
+  // Deselect all is chosen, so reopening the same list does not lose work.
+  if(!open&&resetSelection)bulkRows(menu).forEach(input=>{input.checked=false;});
   updateBulkSelection(menu);
 }
 function prepareBulkSelectionColumns(menu){
@@ -10385,6 +10388,7 @@ function closeBulkMenus(except){
     if(menu!==except){
       clearBulkMenuTimer(menu);
       menu.classList.remove('is-open');
+      setBulkSelectionMode(menu,false);
       menu.querySelector('.vx622-menu-trigger')?.setAttribute('aria-expanded','false');
     }
   });
@@ -10450,7 +10454,10 @@ function convertBulkRows(root){
       if(open){
         prepareBulkSelectionColumns(row);setBulkSelectionMode(row,true);positionBulkMenu(row);armBulkMenuTimer(row);
         if(event.detail===0)(selectBtn.disabled?clearBtn:selectBtn).focus({preventScroll:true});
-      }else clearBulkMenuTimer(row);
+      }else{
+        clearBulkMenuTimer(row);
+        setBulkSelectionMode(row,false);
+      }
     });
     panel.addEventListener('pointerdown',event=>{if(event.target.closest('.vx622-menu-item'))bulkMenuTouched(row);},{capture:true});
     panel.addEventListener('click',event=>{

@@ -60,6 +60,7 @@ module.exports=async function(page,out,width){
   await b.locator('[data-bulk-kind="select"]').click();
   await b.getByRole('menuitem',{name:'Deselect all',exact:true}).click();
   await bTrigger.click();
+  assert.equal(await tableB.locator('input[value="b1"]').isVisible(),false,'Closing the three-dot popup hides its checkbox column');
   assert.equal(await fixture.locator('.vx622-selection-done').count(),0,'Neither list creates a Done button');
   assert.equal(await tableA.locator('tbody input:checked').count(),2,'Deselecting list B preserves list A');
   assert.equal(await tableB.locator('tbody input:checked').count(),0);
