@@ -1,0 +1,218 @@
+/* Vyapar AI 20.10.2004.00051.2026
+   Sketch-matched More page: one compact monochrome panel anchored above More.
+   Existing routes, plan gates, Back handling and motion coordinator remain authoritative. */
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready{
+  --vy51-more-width:367px;
+  --vy51-more-gap:6px;
+  --vy51-more-bg:#111214;
+  --vy51-more-row:#17181a;
+  --vy51-more-line:#303236;
+  --vy51-more-text:#f3f3f4;
+  --vy51-more-muted:#8e9196;
+  --vy51-more-icon:#222428;
+}
+
+/* Keep the overlay full-screen for safe tap ownership, but visually transparent. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.android-sheet-overlay{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  padding:0!important;
+  margin:0!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  background-image:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  pointer-events:auto!important;
+}
+
+/* The hand-drawn layout grows directly from the More dock and stays clear of it. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.android-sheet-overlay>.android-sheet{
+  position:absolute!important;
+  left:50%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:calc(60px + var(--vy51-more-gap) + env(safe-area-inset-bottom,0px))!important;
+  width:var(--vy51-more-width)!important;
+  max-width:calc(100vw - var(--vy-chrome-left,8px) - var(--vy-chrome-right,8px))!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  border:1px solid #37393d!important;
+  border-radius:24px!important;
+  background:var(--vy51-more-bg)!important;
+  background-image:none!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.38)!important;
+  transform-origin:calc(100% - 34px) 100%!important;
+}
+
+/* Motion JS owns panel open/close transform. Keep content animation lightweight. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-handle{
+  display:block!important;
+  width:34px!important;
+  height:4px!important;
+  min-height:4px!important;
+  padding:0!important;
+  margin:9px auto 6px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:#696c70!important;
+  box-shadow:none!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-titlebar{
+  display:block!important;
+  min-height:0!important;
+  padding:7px 16px 12px!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:1px solid var(--vy51-more-line)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  animation:vy51MoreHeadIn 180ms cubic-bezier(.2,.8,.2,1) both!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-titlebar h3{
+  margin:0!important;
+  color:var(--vy51-more-text)!important;
+  font-size:18px!important;
+  line-height:1.2!important;
+  font-weight:760!important;
+  letter-spacing:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-titlebar p{
+  margin:4px 0 0!important;
+  color:var(--vy51-more-muted)!important;
+  font-size:11px!important;
+  line-height:1.35!important;
+  font-weight:560!important;
+}
+
+/* One organized list: no nested card grid and no duplicated visual boxes. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-grid{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  margin:0!important;
+  padding:3px 8px 8px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item{
+  width:100%!important;
+  min-height:56px!important;
+  display:grid!important;
+  grid-template-columns:36px minmax(0,1fr) 24px!important;
+  align-items:center!important;
+  column-gap:10px!important;
+  padding:7px 7px!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:1px solid #292b2f!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:var(--vy51-more-text)!important;
+  box-shadow:none!important;
+  text-align:left!important;
+  opacity:0;
+  transform:translate3d(0,12px,0);
+  animation:vy51MoreRowIn 250ms cubic-bezier(.2,.8,.2,1) forwards!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:last-child{
+  border-bottom:0!important;
+}
+
+/* Opening follows the sketch from the More button upward: bottom item first. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:nth-child(5){animation-delay:35ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:nth-child(4){animation-delay:65ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:nth-child(3){animation-delay:95ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:nth-child(2){animation-delay:125ms!important}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:nth-child(1){animation-delay:155ms!important}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:active{
+  background:#202225!important;
+  transform:scale(.985)!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  flex:0 0 34px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  border:1px solid #383b40!important;
+  border-radius:50%!important;
+  background:var(--vy51-more-icon)!important;
+  background-image:none!important;
+  color:#d6d8db!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon svg{
+  width:18px!important;
+  height:18px!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-copy{
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:3px!important;
+  color:var(--vy51-more-text)!important;
+  font-size:13.5px!important;
+  line-height:1.22!important;
+  font-weight:680!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-copy small{
+  display:block!important;
+  color:var(--vy51-more-muted)!important;
+  font-size:10px!important;
+  line-height:1.3!important;
+  font-weight:540!important;
+  white-space:normal!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-arrow{
+  justify-self:end!important;
+  color:#777a7f!important;
+  font-size:22px!important;
+  line-height:1!important;
+  font-weight:500!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item.is-locked .android-sheet-item-copy{
+  opacity:.62!important;
+}
+
+@keyframes vy51MoreHeadIn{
+  from{opacity:0;transform:translate3d(0,7px,0)}
+  to{opacity:1;transform:none}
+}
+@keyframes vy51MoreRowIn{
+  from{opacity:0;transform:translate3d(0,12px,0)}
+  to{opacity:1;transform:none}
+}
+
+@media(max-width:390px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.android-sheet-overlay>.android-sheet{
+    width:calc(100vw - var(--vy-chrome-left,8px) - var(--vy-chrome-right,8px))!important;
+    max-width:none!important;
+    bottom:calc(60px + var(--vy51-more-gap) + env(safe-area-inset-bottom,0px))!important;
+    border-radius:22px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet :is(.android-sheet-titlebar,.android-sheet-item){
+    animation:none!important;
+    opacity:1!important;
+    transform:none!important;
+  }
+}
