@@ -31,6 +31,6 @@ test('insights view switching retains the live tab bar so its thumb can slide',(
   assert.match(insights,/while \(oldTabs\.nextSibling\)/);
   assert.match(insights,/existing\.replaceChild\(incoming\.firstElementChild/);
   assert.doesNotMatch(js,/old\.width!==width/,'unequal subpixel widths must not cancel the slide');
-  assert.match(css,/transition:transform 205ms/);
+  assert.match(css,/transition:transform 260ms/);
   assert.doesNotMatch(css,/transition:[^;]*,width/,'thumb slides without animating layout');
 });

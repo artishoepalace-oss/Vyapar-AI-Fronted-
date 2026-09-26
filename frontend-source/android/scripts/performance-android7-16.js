@@ -1,4 +1,4 @@
-/* Vyapar AI — Android 7–16 runtime performance profile (2026-09-01) */
+/* Vyapar AI — Android 8–16+ runtime performance + physics profile (2026-09-26) */
 (function(){
   'use strict';
   var root=document.documentElement;
@@ -135,5 +135,5 @@
   };
 
   /* Exposed only for diagnostics/settings UI; no polling. */
-  window.VyaparPerformanceProfile={api:api,tier:tier,lowRam:lowRam,cores:cores,memoryMb:memoryMb,deviceMemory:deviceMemory};
+  window.VyaparPerformanceProfile={api:api,tier:tier,lowRam:lowRam,cores:cores,memoryMb:memoryMb,deviceMemory:deviceMemory,minSupportedApi:26,scrollPhysics:'native-fling',motionPhysics:'adaptive-damped-spring'};
 })();

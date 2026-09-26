@@ -188,11 +188,12 @@ jobs:
           const gradle = fs.readFileSync('android-app/app/build.gradle','utf8');
           const compileSdk = Number((gradle.match(/compileSdk\s+(\d+)/)||[])[1]);
           const targetSdk = Number((gradle.match(/targetSdk\s+(\d+)/)||[])[1]);
+          const minSdk = Number((gradle.match(/minSdk\s+(\d+)/)||[])[1]);
           const versionName = (gradle.match(/versionName\s+["']([^"']+)/)||[])[1];
           const versionCode = Number((gradle.match(/versionCode\s+(\d+)/)||[])[1]);
-          if (compileSdk !== 34 || targetSdk !== 34) throw new Error(`SDK mismatch: compile=${compileSdk}, target=${targetSdk}`);
+          if (compileSdk !== 34 || targetSdk !== 34 || minSdk !== 26) throw new Error(`SDK mismatch: min=${minSdk}, compile=${compileSdk}, target=${targetSdk}`);
           if (versionName !== version.versionName || versionCode !== Number(version.versionCode)) throw new Error(`Version mismatch: ${versionName}/${versionCode} vs ${version.versionName}/${version.versionCode}`);
-          console.log('Android config OK:', {compileSdk,targetSdk,versionName,versionCode});
+          console.log('Android config OK:', {minSdk,compileSdk,targetSdk,versionName,versionCode});
           NODE
 
       - name: Generate Gradle wrapper
