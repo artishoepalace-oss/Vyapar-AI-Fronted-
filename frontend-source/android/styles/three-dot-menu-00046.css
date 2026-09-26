@@ -841,3 +841,172 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
     max-width:calc(100vw - 32px)!important;
   }
 }
+
+
+/* Vyapar AI 00058 — final physical popover + sheet material contract.
+   This is the last stylesheet in the bundle, so it neutralizes conflicting
+   legacy popup optics without changing route, size or safe-area geometry. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger::before{
+  width:34px!important;height:34px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  background:
+    radial-gradient(90% 55% at 50% 0%,rgba(255,255,255,.11),rgba(255,255,255,0) 66%),
+    #242529!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.45)!important;
+  transition:transform 210ms cubic-bezier(.16,.92,.22,1.08),background-color 150ms ease,border-color 150ms ease!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger:active::before{
+  transform:translate(-50%,-50%) scale(.89)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger[aria-expanded="true"]::before{
+  transform:translate(-50%,-50%) scale(.96)!important;
+  border-color:rgba(165,0,53,.70)!important;
+  background:
+    radial-gradient(90% 55% at 50% 0%,rgba(255,255,255,.095),rgba(255,255,255,0) 66%),
+    #2a2225!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
+  width:224px!important;
+  max-width:calc(100vw - 28px)!important;
+  padding:6px!important;
+  border-radius:18px!important;
+  border:1px solid rgba(255,255,255,.095)!important;
+  background:
+    radial-gradient(115% 46% at 50% -4%,rgba(255,255,255,.075),rgba(255,255,255,0) 62%),
+    #1b1c1f!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  transform:translate3d(7px,-7px,0) scale(.90)!important;
+  transition:opacity 145ms ease,transform 260ms cubic-bezier(.16,.92,.22,1.08),visibility 0s linear 260ms!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel{
+  transform:translate3d(0,0,0) scale(1)!important;
+  transition:opacity 145ms ease,transform 260ms cubic-bezier(.16,.92,.22,1.08),visibility 0s linear 0s!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item{
+  min-height:48px!important;height:auto!important;
+  padding:12px 14px!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  border-radius:12px!important;
+  font-size:14px!important;line-height:1.25!important;
+  transition:transform 190ms cubic-bezier(.16,.92,.22,1.08),background-color 130ms ease,opacity 130ms ease!important;
+  transition-delay:0ms!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-label{
+  width:100%!important;text-align:left!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:active{
+  transform:scale(.975)!important;
+  background:#292a2f!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:not(:last-child){
+  border-bottom:1px solid rgba(255,255,255,.055)!important;
+}
+
+/* App sheets share one physical surface: dark material + static top reflection.
+   Positioning/full-width/safe-area values remain owned by refined-surfaces.css. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  #androidMoreSheet > .android-sheet,
+  #vyGitHubUpdate > .github-update-dialog,
+  #vyFormSheet > .vy-form-sheet,
+  #vy6601Select > .vy6601-select-sheet,
+  .glass-dialog-card,.subscription-dialog,.account-delete-dialog
+){
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(125% 46% at 50% -4%,rgba(255,255,255,.075),rgba(255,255,255,0) 63%),
+    #151619!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.075)!important;
+  color:#f6f6f7!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet > .android-sheet{
+  padding:10px 12px 14px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-grid{
+  padding:0 2px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item{
+  min-height:62px!important;
+  padding:10px 8px!important;
+  gap:12px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon{
+  width:38px!important;height:38px!important;min-width:38px!important;
+  border-radius:13px!important;
+  background:
+    radial-gradient(100% 70% at 50% 0%,rgba(255,255,255,.10),rgba(255,255,255,0) 68%),
+    #242529!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-copy{
+  min-width:0!important;padding-right:6px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-copy :is(strong,small){
+  overflow-wrap:anywhere!important;
+}
+
+/* Page/form sheets use separate header/body insets so rounded corners never cut copy. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-head{
+  padding:14px 18px 12px!important;
+  min-width:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body{
+  padding:18px!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body > *{
+  min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
+}
+
+/* Update popup remains the same bottom-attached sheet; only material/spacing changes. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate > .github-update-dialog{
+  width:100%!important;max-width:none!important;
+  padding:18px 18px calc(20px + env(safe-area-inset-bottom,0px))!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-dialog-heading{
+  min-height:44px!important;margin:0 0 10px!important;
+  display:flex!important;align-items:center!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-status{
+  margin:8px 0 16px!important;line-height:1.45!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn{
+  min-width:0!important;min-height:48px!important;border-radius:14px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn:only-child,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn.primary:last-child:nth-child(odd){
+  grid-column:1/-1;
+}
+
+/* Touch should not leave a circular/ring ghost. Keyboard focus remains visible. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready.vy-pointer-input body :is(
+  .vx622-menu-trigger,.vx622-menu-item,#androidMoreSheet .android-sheet-item,
+  #vyGitHubUpdate button,#vyFormSheet button
+):focus:not(:focus-visible){
+  outline:none!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx622-menu-trigger,.vx622-menu-item,#androidMoreSheet .android-sheet-item,
+  #vyGitHubUpdate button,#vyFormSheet button
+):focus-visible{
+  outline:2px solid rgba(231,233,237,.78)!important;
+  outline-offset:2px!important;
+}
+@media(max-width:360px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
+    width:212px!important;max-width:calc(100vw - 24px)!important;
+  }
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx622-menu-panel,.vx622-menu-item){
+    transition:none!important;
+  }
+}

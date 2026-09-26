@@ -81,3 +81,26 @@ test('Native denial never reports success and allows a retry',async()=>{
   assert.equal(await api.download(model()),false);assert.equal(await api.download(model()),false);
   assert.equal(calls,2);assert(messages.includes('File was not saved. Permission denied.'));assert(!messages.some(m=>m.startsWith('Saved')));
 });
+
+
+test('Native invoice share sends the exact PDF attachment and WhatsApp preference',async()=>{
+  const calls=[];
+  const {api}=exporter({AndroidDownloads:{shareBase64(name,mime,base64,text,whatsappOnly){
+    calls.push({name,mime,base64,text,whatsappOnly});
+  }}});
+  const ok=await api.share(model(),{text:'Invoice INV-0042',whatsappOnly:true});
+  assert.equal(ok,true);
+  assert.equal(calls.length,1);
+  assert.equal(calls[0].name,'Invoice-INV-0042.pdf');
+  assert.equal(calls[0].mime,'application/pdf');
+  assert.equal(Buffer.from(calls[0].base64,'base64').subarray(0,4).toString(),'%PDF');
+  assert.equal(calls[0].text,'Invoice INV-0042');
+  assert.equal(calls[0].whatsappOnly,true);
+});
+
+test('Generated invoices declare the standard PDF metadata subject',async()=>{
+  const {api}=exporter();
+  const output=await api.generate(model());
+  const pdf=await lib.PDFDocument.load(output.bytes);
+  assert.equal(pdf.getSubject(),'Vyapar AI standard invoice PDF');
+});

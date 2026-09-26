@@ -3,7 +3,7 @@
 html.vy-motion-ready{
   --vy-motion-ease:cubic-bezier(.18,.89,.32,1.12);
   --vy-motion-ease-soft:cubic-bezier(.2,.82,.24,1.04);
-  --vy-motion-spring:cubic-bezier(.18,.9,.24,1.10);
+  --vy-motion-spring:cubic-bezier(.16,.92,.22,1.08);
   --vy-motion-settle:cubic-bezier(.2,.78,.2,1);
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
@@ -175,4 +175,35 @@ html.vy861-flat-black.vy-motion-ready.vy-physics-motion.perf-scrolling body :is(
   .card,.stat,.android-quick-action,.settings-row,.vy675-settings-row
 ){
   transition-duration:0ms!important;
+}
+
+
+/* 00058 physical interaction pass. Pointer taps compress/settle; keyboard users
+   keep a deliberate focus ring, while touch does not leave a stuck halo. */
+html.vy861-flat-black.vy-motion-ready.vy-pointer-input body :is(button,.btn,[role="button"]):focus:not(:focus-visible){
+  outline:none!important;
+  outline-offset:0!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled){
+  transform-origin:50% 50%;
+}
+html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled):active{
+  transition-duration:72ms!important;
+  transform:translate3d(0,1px,0) scale(.972)!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):focus-visible{
+  outline:2px solid rgba(226,229,235,.76)!important;
+  outline-offset:2px!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(.vy-unified-panel,.android-sheet,.github-update-dialog,.vy-form-sheet){
+  transform-origin:50% 100%!important;
+}
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{
+  transition:transform 220ms var(--vy-motion-spring),background-color 150ms ease,opacity 150ms ease!important;
+}
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item:active{
+  transform:translate3d(0,1px,0) scale(.986)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{transition:none!important;}
 }
