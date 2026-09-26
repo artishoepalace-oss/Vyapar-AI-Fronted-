@@ -694,3 +694,21 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
 @media(max-width:700px){
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body {padding:18px!important;}
 }
+
+
+/* Empty destructive selection actions stay dimensionally stable but visually neutral. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(
+  [data-bulk-kind="delete"],[data-bulk-kind="cancel"]
+):disabled {
+  opacity:.32!important;
+  color:var(--vy52-muted)!important;
+  background:transparent!important;
+  border-color:transparent!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(
+  [data-bulk-kind="delete"],[data-bulk-kind="cancel"]
+):disabled .vx622-option-icon {
+  background:var(--vy52-control)!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-muted)!important;
+}
