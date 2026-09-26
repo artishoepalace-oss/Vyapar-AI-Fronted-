@@ -1,6 +1,6 @@
-/* Settings subpages share the page black; controls keep their own contrast. */
+/* Settings subpages use the shared card level; controls keep their own contrast. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is([data-vy675-page="account"],[data-vy675-page="profile"],[data-vy675-page="business"],[data-vy675-page="security"],[data-vy675-page="appearance"],[data-vy675-page="navigation"],[data-vy675-page="data"]) .vy675-page-body :is(#productionAccountCard,.card,.settings-section,.production-account-card,.production-account-grid > div,.vx622-settings-list,.vx622-settings-row,.vx622-lock-status,.notice,.vy675-option-row,[class*="-panel"]) {
-  background:var(--vy20-page,#000)!important;
+  background:var(--vy52-card,#1A1A1A)!important;
   background-image:none!important;
   box-shadow:none!important;
   border-color:transparent!important;

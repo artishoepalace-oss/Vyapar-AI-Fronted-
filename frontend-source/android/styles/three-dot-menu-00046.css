@@ -195,7 +195,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx
   }
 }
 
-/* Vyapar AI 20.10.2004.00052.2026 — universal monochrome hierarchy + sketch-close motion.
+/* Vyapar AI 20.10.2004.00053.2026 — complete universal palette + sketch-close motion.
    Final cascade: only four neutral dark levels, plus border/text and burgundy active state. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready{
   --vy52-bg:#000000;
@@ -238,6 +238,110 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready{
   --v863-line-strong:var(--vy52-border)!important;
   --v863-text:var(--vy52-text)!important;
   --v863-silver:var(--vy52-muted)!important;
+
+  /* Legacy modules inherit the same semantic palette, including login and settings. */
+  --vy861-bg-soft:var(--vy52-bg)!important;
+  --vy864-bg:var(--vy52-bg)!important;
+  --vy865-black:var(--vy52-bg)!important;
+  --vy20-page:var(--vy52-bg)!important;
+  --p1-bg:var(--vy52-bg)!important;
+  --p1-bg-deep:var(--vy52-bg)!important;
+  --auth-bg:var(--vy52-bg)!important;
+  --vy51-more-bg:var(--vy52-chrome)!important;
+  --vy49-bg:var(--vy52-chrome)!important;
+  --vy864-surface:var(--vy52-card)!important;
+  --vy865-surface:var(--vy52-card)!important;
+  --vy20-surface:var(--vy52-card)!important;
+  --vy20-surface-raised:var(--vy52-card)!important;
+  --vy49-panel:var(--vy52-card)!important;
+  --p1-surface:var(--vy52-card)!important;
+  --android-surface:var(--vy52-card)!important;
+  --auth-card:var(--vy52-card)!important;
+  --vy51-more-row:var(--vy52-card)!important;
+  --vy864-surface-2:var(--vy52-control)!important;
+  --vy864-surface-3:var(--vy52-control)!important;
+  --vy864-surface-4:var(--vy52-control)!important;
+  --vy865-surface-2:var(--vy52-control)!important;
+  --vy865-surface-3:var(--vy52-control)!important;
+  --vy20-surface-inner:var(--vy52-control)!important;
+  --vy49-field:var(--vy52-control)!important;
+  --p1-surface-raised:var(--vy52-control)!important;
+  --p1-surface-soft:var(--vy52-control)!important;
+  --android-surface-2:var(--vy52-control)!important;
+  --auth-soft:var(--vy52-control)!important;
+  --auth-soft-hover:var(--vy52-control)!important;
+  --vy51-more-icon:var(--vy52-control)!important;
+  --vy865-neutral-soft:var(--vy52-control)!important;
+  --vy864-line:var(--vy52-border)!important;
+  --vy864-line-strong:var(--vy52-border)!important;
+  --vy865-line:var(--vy52-border)!important;
+  --vy865-line-strong:var(--vy52-border)!important;
+  --vy20-line:var(--vy52-border)!important;
+  --vy20-line-soft:var(--vy52-border)!important;
+  --vy49-border:var(--vy52-border)!important;
+  --p1-border:var(--vy52-border)!important;
+  --p1-border-strong:var(--vy52-border)!important;
+  --android-border:var(--vy52-border)!important;
+  --android-border-strong:var(--vy52-border)!important;
+  --auth-border:var(--vy52-border)!important;
+  --vy51-more-line:var(--vy52-border)!important;
+  --vy-row-divider:var(--vy52-border)!important;
+  --v863-muted:var(--vy52-muted)!important;
+  --v863-muted-2:var(--vy52-muted)!important;
+  --v863-silver-2:var(--vy52-muted)!important;
+  --vy864-muted:var(--vy52-muted)!important;
+  --vy864-muted-2:var(--vy52-muted)!important;
+  --vy865-muted:var(--vy52-muted)!important;
+  --vy865-neutral:var(--vy52-muted)!important;
+  --vy49-muted:var(--vy52-muted)!important;
+  --workspace-muted:var(--vy52-muted)!important;
+  --p1-muted:var(--vy52-muted)!important;
+  --android-muted:var(--vy52-muted)!important;
+  --auth-muted:var(--vy52-muted)!important;
+  --auth-subtle:var(--vy52-muted)!important;
+  --vy51-more-muted:var(--vy52-muted)!important;
+  --vy864-text:var(--vy52-text)!important;
+  --vy865-text:var(--vy52-text)!important;
+  --vy865-neutral-strong:var(--vy52-text)!important;
+  --vy49-text:var(--vy52-text)!important;
+  --workspace-text:var(--vy52-text)!important;
+  --p1-text:var(--vy52-text)!important;
+  --android-text:var(--vy52-text)!important;
+  --auth-text:var(--vy52-text)!important;
+  --auth-body:var(--vy52-text)!important;
+  --vy51-more-text:var(--vy52-text)!important;
+  --vy861-accent-press:var(--vy52-active)!important;
+  --auth-accent:var(--vy52-active)!important;
+  --auth-primary:var(--vy52-active)!important;
+  --auth-primary-hover:var(--vy52-active)!important;
+
+  --dm-bg:var(--vy52-bg)!important;
+  --dm-bg-soft:var(--vy52-bg)!important;
+  --vy862-black:var(--vy52-bg)!important;
+  --dm-surface:var(--vy52-card)!important;
+  --dm-surface-raised:var(--vy52-card)!important;
+  --vy862-surface:var(--vy52-card)!important;
+  --vy-panel-bg:var(--vy52-card)!important;
+  --vy-card-bg:var(--vy52-card)!important;
+  --dm-surface-soft:var(--vy52-control)!important;
+  --dm-surface-pressed:var(--vy52-control)!important;
+  --vy862-surface-2:var(--vy52-control)!important;
+  --vy862-surface-3:var(--vy52-control)!important;
+  --vy-control-bg:var(--vy52-control)!important;
+  --vy-control-active:var(--vy52-active)!important;
+  --dm-blue:var(--vy52-active)!important;
+  --dm-blue-press:var(--vy52-active)!important;
+  --dm-line:var(--vy52-border)!important;
+  --dm-line-strong:var(--vy52-border)!important;
+  --vy862-border:var(--vy52-border)!important;
+  --vy862-border-strong:var(--vy52-border)!important;
+  --vy-panel-line:var(--vy52-border)!important;
+  --dm-text:var(--vy52-text)!important;
+  --dm-text-strong:var(--vy52-text)!important;
+  --vy862-text:var(--vy52-text)!important;
+  --dm-muted:var(--vy52-muted)!important;
+  --dm-muted-2:var(--vy52-muted)!important;
+  --vy862-muted:var(--vy52-muted)!important;
 
   --vy-chrome-black:var(--vy52-chrome)!important;
   --vy-logo-burgundy:var(--vy52-active)!important;
@@ -282,73 +386,130 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-and
   text-shadow:none!important;
 }
 
-/* Main / inner surfaces: remove residual bluish graphite (#111214, #17181c, #1c1d21, etc.). */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
-  .screen .card,.screen .stat,.screen .settings-section,.screen .insight-panel,
-  .screen .vx621-group,.screen .vx621-feature-card,.screen .home-action-card,
-  .screen .home-quick-action,.screen .quick-card,.screen .home-tool-card
-){
-  background:var(--vy52-card)!important;
-  background-image:none!important;
-  border-color:var(--vy52-border)!important;
-  box-shadow:none!important;
+/* The shared palette covers actual page components, not just generic .card nodes.
+   This section changes paint only; layout, motion and print/PDF documents keep their owners. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.card,.stat,.stats,.settings-section,.settings-card,.vy675-settings-list,.vy675-navigation-card,.insight-panel,.vx621-kpis,.vx621-kpi,.vx621-group,.vx621-context,.vx621-recent,.vx621-feature-card,.home-action-card,.home-quick-action,.quick-card,.home-tool-card,.shop-growth-card,.shop-streak,.subscription-plan-card,.subscription-business-card,.calc-display-wrap,.production-account-card,.production-account-grid>div,.vy-tool-section) {
+  background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
-  input:not([type="checkbox"]):not([type="radio"]),select,textarea,
-  .screen .workspace-tabs,.screen .record-controls .btn,.screen .file-drop,
-  .screen .p611-form,.screen .p620-filter,.screen .p620-settings,
-  .screen .inner-card,.screen .sub-card,.screen .setting-control,
-  .screen .btn:not(.danger):not([data-danger="true"])
-){
-  background:var(--vy52-control)!important;
-  background-image:none!important;
-  border-color:var(--vy52-border)!important;
-  color:var(--vy52-text)!important;
-  box-shadow:none!important;
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-business #businessToolResults .vx621-feature-card {background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.card .card,.card .stat,.card .inner-card,.card .sub-card,.vy660-live-box,.home-metric,.shop-growth-stat,.shop-growth-goal,.shop-month-grid>div,.shop-milestone,.shop-sheet-score) {
+  background:var(--vy52-control)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.muted,.secondary-text,.screen small,.screen .tag){
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.vy660-profit-head,.vy660-profit-title,.vy660-profit-main) {
+  background:transparent!important;background-image:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea,.btn,.vx621-action,.calc-key,.android-quick-action,.vy675-page-back,.vy-search-control,.business-tool-search-field,.vy675-settings-search,.file-drop,.setting-control,.production-account-card button,.insight-history>button) {
+  background:var(--vy52-control)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.android-quick-action-icon,.home-metric-icon,.home-next-icon,.vx621-feature-icon,.vy675-row-icon,.vx622-settings-icon,.file-drop-icon,.pill,.badge,.chip,.tag,.subscription-recommended) {
+  background:var(--vy52-control)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-muted)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(h1,h2,h3,h4,strong,b,label,.vy660-profit-value,.home-metric-value,.calc-result,.subscription-tier,.subscription-price strong,.subscription-features li) {
+  color:var(--vy52-text)!important;text-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.muted,.secondary-text,small,.tag,.home-eyebrow,.home-overview-copy p,.home-profit>span,.workspace-eyebrow,.year-field,.home-section-kicker,.home-metric-head,.home-metric-note,.vy660-live-label,.vy660-live-note,.vx621-kpi span,.vx621-feature-copy p,.vy675-row-copy small,.vy675-settings-eyebrow,.vy675-settings-group h3,.insight-history-arrow,.file-drop span,.subscription-price span) {
   color:var(--vy52-muted)!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
-  .table,.p611-table,.business-table,.adv-table,.vx621-table-wrap,.scroll,.insight-table
-){
-  background:var(--vy52-card)!important;
-  border-color:var(--vy52-border)!important;
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(input,textarea) {
+  caret-color:var(--vy52-text);
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .table :is(th,td){
-  background:var(--vy52-card)!important;
-  border-color:var(--vy52-border)!important;
-  color:var(--vy52-text)!important;
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen input::placeholder,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen textarea::placeholder {color:var(--vy52-muted)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.home-goal-track,.shop-mini-track,progress) {
+  background:var(--vy52-control)!important;background-image:none!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .table thead th{background:var(--vy52-control)!important;color:var(--vy52-muted)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.home-goal-track>span,.shop-mini-track>i) {
+  background:var(--vy52-active)!important;background-image:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.glass-dialog-card,.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,.production-modal,.android-permission-card,.android-sheet,.account-delete-card,.account-delete-dialog,.upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"]) {
+  background:var(--vy52-chrome)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(.vy-unified-panel,.vy-form-head,.vy-form-body,.vy6601-select-head,.update-dialog-heading) {
+  background:var(--vy52-chrome)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(.vy-tool-section,.card,.stat,.shop-sheet-score,.shop-month-grid>div,.shop-milestone) {
+  background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea,.p620-checks>label,.p620-report-card,.btn,.glass-dialog-btn,.vy6601-select-options button,.android-sheet-item-icon) {
+  background:var(--vy52-control)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(h2,h3,strong,label,.android-sheet-item-copy) {
+  color:var(--vy52-text)!important;text-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(.muted,small,p,.p620-report-card span,.vy-empty-state,.vy-template-help summary) {
+  color:var(--vy52-muted)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) .vy-sheet-handle::before {background:var(--vy52-muted)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.table,.p611-table,.business-table,.adv-table,.vx621-table-wrap,.scroll,.insight-table) {
+  background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen .table :is(th,td),
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen .table tbody tr:nth-child(even) :is(th,td) {background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen .table thead th {background:var(--vy52-control)!important;color:var(--vy52-muted)!important;border-color:var(--vy52-border)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(.table,.p611-table,.business-table,.adv-table,.vx621-table-wrap,.scroll,.insight-table) {
+  background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) .table :is(th,td),
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) .table tbody tr:nth-child(even) :is(th,td) {background:var(--vy52-card)!important;background-image:none!important;border-color:var(--vy52-border)!important;color:var(--vy52-text)!important;box-shadow:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) .table thead th {background:var(--vy52-control)!important;color:var(--vy52-muted)!important;border-color:var(--vy52-border)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.btn.primary:active,button[aria-pressed="true"]:not([role="tab"]),.vy6601-select-options button.selected) {
+  background:var(--vy52-active)!important;color:var(--vy52-text)!important;border-color:var(--vy52-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(.btn.danger,button.danger,[data-danger="true"],.delete-solid) {
+  background:var(--vy52-control)!important;color:#ffbdbd!important;border-color:var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-subscription,#screen-settings).screen :is(input[type="checkbox"],input[type="radio"]) {
+  accent-color:var(--vy52-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(.btn.primary:active,button[aria-pressed="true"]:not([role="tab"]),.vy6601-select-options button.selected) {
+  background:var(--vy52-active)!important;color:var(--vy52-text)!important;border-color:var(--vy52-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(.btn.danger,button.danger,[data-danger="true"],.delete-solid) {
+  background:var(--vy52-control)!important;color:#ffbdbd!important;border-color:var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#vyFormSheet,#androidMoreSheet,#vy6601Select,#vyGitHubUpdate,#shopProgressSheet,#vyaparGlassDialog,.vy-unified-overlay) :is(input[type="checkbox"],input[type="radio"]) {
+  accent-color:var(--vy52-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-plan-card.active-plan {border-color:var(--vy52-active)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-subscription .subscription-plan-card .subscription-cta {background:var(--vy52-control)!important;color:var(--vy52-text)!important;border-color:var(--vy52-border)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vy863ProfileChip.vy863-profile-chip {background:var(--vy52-control)!important;}
 
-/* Every popup/bottom sheet uses #121212; internal groups use the same 4-level hierarchy. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
-  .glass-dialog-card,.glass-dialog,.subscription-dialog,.shop-progress-sheet,.vx643-modal,
-  .production-modal,.android-permission-card,.android-sheet,.account-delete-card,.account-delete-dialog,
-  .upgrade-plan-card,.upgrade-plan-reference-card,[role="dialog"],
-  #vyFormSheet>.vy-form-sheet.vy-unified-panel
-){
-  background:var(--vy52-chrome)!important;
-  background-image:none!important;
-  border-color:var(--vy52-border)!important;
-  color:var(--vy52-text)!important;
-  box-shadow:none!important;
+/* Legacy summary IDs carry extra specificity in the original theme. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-sales #vy660ProfitCard .vy660-live-box {background:var(--vy52-control)!important;border-color:var(--vy52-border)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-sales #vy660ProfitCard .vy660-profit-head {background:transparent!important;background-image:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-home #shopGrowthSummary :is(.shop-streak,.shop-growth-stat,.shop-growth-goal) {background:var(--vy52-control)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings #fs607Settings.card {background:var(--vy52-card)!important;color:var(--vy52-text)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="update"] #fs607Settings .btn {background:var(--vy52-control)!important;color:var(--vy52-text)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="navigation"] .vy675-switch input {background:var(--vy52-control)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="navigation"] .vy675-switch span {background:var(--vy52-control)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="navigation"] .vy675-switch input:checked + span {background:var(--vy52-active)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-analytics :is(.insight-performance,.insight-monthly) tr {background:transparent!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .glass-toast {background:var(--vy52-chrome)!important;color:var(--vy52-text)!important;border-color:var(--vy52-border)!important;}
+
+/* Authentication and transient feedback use the same app palette. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate {
+  --auth-bg:var(--vy52-bg)!important;
+  --auth-card:var(--vy52-card)!important;
+  --auth-soft:var(--vy52-control)!important;
+  --auth-soft-hover:var(--vy52-control)!important;
+  --auth-border:var(--vy52-border)!important;
+  --auth-text:var(--vy52-text)!important;
+  --auth-body:var(--vy52-text)!important;
+  --auth-muted:var(--vy52-muted)!important;
+  --auth-subtle:var(--vy52-muted)!important;
+  --auth-accent:var(--vy52-active)!important;
+  --auth-primary:var(--vy52-control)!important;
+  --auth-primary-hover:var(--vy52-active)!important;
+  background:var(--vy52-bg)!important;color:var(--vy52-text)!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet :is(.vy-form-head,.vy-form-body){
-  background:var(--vy52-chrome)!important;
-  color:var(--vy52-text)!important;
-  border-color:var(--vy52-border)!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-tool-section{
-  background:var(--vy52-card)!important;
-  border-color:var(--vy52-border)!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet :is(input,select,textarea,.p620-checks>label,.p620-report-card,.btn:not(.danger)){
-  background:var(--vy52-control)!important;
-  border-color:var(--vy52-border)!important;
-  color:var(--vy52-text)!important;
-}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate .auth-page {background:var(--vy52-bg)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate .auth-card {background:var(--vy52-card)!important;border-color:var(--vy52-border)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate :is(.auth-input,.auth-methods,.auth-method-tabs,.auth-btn,.auth-google-btn,.auth-google,.auth-small-btn,.auth-primary,.auth-otp-row,.auth-submit,.auth-error,.auth-success) {background:var(--vy52-control)!important;background-image:none!important;color:var(--vy52-text)!important;border-color:var(--vy52-border)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate :is(.auth-method-tab.active,.auth-submit:active,.auth-primary:active,.auth-btn:active) {background:var(--vy52-active)!important;color:var(--vy52-text)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate :is(h1,h2,h3,label,.auth-title,.auth-input) {color:var(--vy52-text)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate :is(p,small,.auth-subtitle,.auth-method-tab,.auth-label,.auth-link) {color:var(--vy52-muted)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyaparOtpGate .auth-input::placeholder {color:var(--vy52-muted)!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.production-toast,.glass-toast,.shop-toast) {background:var(--vy52-chrome)!important;background-image:none!important;color:var(--vy52-text)!important;border-color:var(--vy52-border)!important;}
 
 /* Sketch behavior: popup grows from the three-dot anchor and reverses into it on close. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{

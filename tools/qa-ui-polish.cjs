@@ -37,10 +37,10 @@ const version=require('../version.json').versionName;
    const settle=async()=>{
     await page.waitForTimeout(420);
     await page.waitForFunction(()=>{
-     const more=document.querySelector('#androidMoreSheet .android-sheet');
+     const panels=[...document.querySelectorAll('.vy-unified-panel')];
      return !document.documentElement.classList.contains('vy-page-transitioning')&&
       ![...document.querySelectorAll('.vy-unified-overlay')].some(el=>el.__vyClosing)&&
-      (!more||getComputedStyle(more).transform==='none');
+      panels.every(panel=>getComputedStyle(panel).transform==='none');
     },null,{timeout:2500});
    };
    async function shot(name){
@@ -150,7 +150,7 @@ const version=require('../version.json').versionName;
       return {bg:track.backgroundColor,blur:track.backdropFilter,gradient:track.backgroundImage,
         thumb:thumb.backgroundColor,thumbGradient:thumb.backgroundImage,shadow:thumb.boxShadow};
     });
-    assert.deepEqual(surface,{bg:'rgb(16, 17, 19)',blur:'none',gradient:'none',thumb:'rgb(53, 55, 60)',thumbGradient:'none',shadow:'none'},'Middle bar has an opaque black track and solid grey selection');
+    assert.deepEqual(surface,{bg:'rgb(18, 18, 18)',blur:'none',gradient:'none',thumb:'rgb(36, 36, 36)',thumbGradient:'none',shadow:'none'},'Middle bar has an opaque black track and solid grey selection');
     await mode('business','daily');
     for(const [target,sign] of [['accounts',1],['daily',-1]]){
       const poses=await page.evaluate(target=>{
@@ -240,7 +240,7 @@ const version=require('../version.json').versionName;
     await page.getByRole('button',{name:'Remove file',exact:true}).click();await settle();assert.equal(await page.locator('#uploadPreview').innerText(),'');assert.equal(await page.locator('#uploadFile').evaluate(el=>el.files.length),0);
     await page.getByRole('tab',{name:'Scan label',exact:true}).click();await settle();
     const scan=page.locator('[aria-label="Label type"]');
-    for(const value of ['Carton','Manual qty','Box']){await scan.getByRole('button',{name:value,exact:true}).click();const colors=await scan.locator('button').evaluateAll(list=>list.map(el=>({selected:el.getAttribute('aria-pressed'),bg:getComputedStyle(el).backgroundColor})));assert.notEqual(colors.find(x=>x.selected==='true').bg,colors.find(x=>x.selected==='false').bg);}
+    for(const value of ['Carton','Manual qty','Box']){await scan.getByRole('button',{name:value,exact:true}).click();const colors=await scan.locator('button').evaluateAll(list=>list.map(el=>({selected:el.getAttribute('aria-pressed'),color:getComputedStyle(el).color})));assert.notEqual(colors.find(x=>x.selected==='true').color,colors.find(x=>x.selected==='false').color);}
     await shot('upload-scan');
     await go('calculator');await page.locator('[data-calc-view="standard"]').click();
     await page.evaluate(()=>{calcClear('normalCalc','normalResult');['5','0','-','7','5'].forEach(k=>calcPress('normalCalc',k));calcNormal();});
@@ -252,7 +252,14 @@ const version=require('../version.json').versionName;
     await go('subscription');assert((await page.locator('.subscription-intro').innerText()).includes('Your Business plan is active'));assert(!(await page.locator('.subscription-status').innerText()).includes('unlocks only'));assert.equal(await page.locator('.subscription-business-card.active-plan').count(),1);await shot('plans');
     await go('settings');const section=await page.locator('[data-vy675-page="security"]').evaluate(el=>el.closest('[data-vy675-group]').querySelector('h3').textContent);assert.equal(section,'Your account');await shot('settings');
     await page.locator('#nav [data-android-tab="more"]').click();await settle();
-    const more=await page.locator('#androidMoreSheet .android-sheet').boundingBox(),nav=await page.locator('#nav').boundingBox();assert(more.y+more.height<=nav.y-4,'More ends above navbar');await shot('more');await page.evaluate(()=>handleNativeBackPress());await settle();
+    const more=await page.locator('#androidMoreSheet .android-sheet').boundingBox(),nav=await page.locator('#nav').boundingBox();assert(more.y+more.height<=nav.y-4,'More ends above navbar');await shot('more');
+    const handle=page.locator('#androidMoreSheet .vy-sheet-handle');
+    assert.equal(await handle.count(),1,'More has one dismiss button');
+    const handlePaint=await handle.evaluate(el=>{const s=getComputedStyle(el),before=getComputedStyle(el,'::before'),after=getComputedStyle(el,'::after');return {background:s.backgroundColor,height:el.getBoundingClientRect().height,line:before.backgroundColor,lineHeight:before.height,extra:after.content};});
+    assert.equal(handlePaint.background,'rgba(0, 0, 0, 0)','Button itself must not paint a second handle');
+    assert.equal(handlePaint.line,'rgb(168, 168, 168)');assert.equal(handlePaint.lineHeight,'4px');
+    assert(handlePaint.height>=32,'Handle keeps a usable touch target');assert.equal(handlePaint.extra,'none');
+    await handle.click();await settle();assert.equal(await page.locator('#androidMoreSheet').count(),0,'Single handle still dismisses More');
     await page.evaluate(()=>{for(const t of ['home','sales','stock','business','sales'])setTab(t,false);});await settle();assert.equal(await page.locator('.screen:not(.hide)').count(),1);assert.equal(await page.locator('.vy-page-incoming,.vy-page-outgoing').count(),0);
     await page.evaluate(async()=>{await VyaparStorage.save(state);});
     assert.equal(errors.length,0,errors.join('\n'));results.push({width,result:'PASS',errors});console.log('PASS',width);await context.close();

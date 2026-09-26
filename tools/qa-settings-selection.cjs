@@ -7,9 +7,9 @@ module.exports=async function(page,out,width){
     await page.waitForTimeout(100);
     const surfaces=await page.locator('#screen-settings .vy675-page-body').evaluate(el=>[...el.querySelectorAll('.card,.settings-section,.production-account-card,.production-account-grid > div,.vx622-settings-list,.vx622-lock-status,.notice,.vy675-option-row')].filter(el=>el.getBoundingClientRect().height>0).map(el=>{let surface=el;while(surface.parentElement&&getComputedStyle(surface).backgroundColor==='rgba(0, 0, 0, 0)')surface=surface.parentElement;return {name:el.id||el.className,color:getComputedStyle(surface).backgroundColor,image:getComputedStyle(el).backgroundImage};}));
     assert(surfaces.length>0,'Settings page has cards: '+id);
-    for(const s of surfaces){assert.equal(s.color,'rgb(0, 0, 0)',id+' '+s.name);assert.equal(s.image,'none',id+' gradients removed');}
+    for(const s of surfaces){assert.equal(s.color,'rgb(26, 26, 26)',id+' '+s.name);assert.equal(s.image,'none',id+' gradients removed');}
   }
-  await page.screenshot({path:path.join(out,'settings-black-'+width+'.png')});
+  await page.screenshot({path:path.join(out,'settings-palette-'+width+'.png')});
   await page.evaluate(()=>{
     state.stocks=[{id:'qa-a',item:'QA shoes A',qty:2,min:1},{id:'qa-b',item:'QA shoes B',qty:3,min:1},{id:'qa-c',item:'QA shoes C',qty:4,min:1}];
     state.daily=[{id:'qa-unrelated',date:'2026-09-20',revenue:100,cost:40}];

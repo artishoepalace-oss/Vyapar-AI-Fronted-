@@ -5,12 +5,12 @@
 html.vy861-flat-black.workspace-v7.vy-motion-ready{
   --vy51-more-width:367px;
   --vy51-more-gap:6px;
-  --vy51-more-bg:#111214;
-  --vy51-more-row:#17181a;
-  --vy51-more-line:#303236;
-  --vy51-more-text:#f3f3f4;
-  --vy51-more-muted:#8e9196;
-  --vy51-more-icon:#222428;
+  --vy51-more-bg:var(--vy52-chrome);
+  --vy51-more-row:var(--vy52-card);
+  --vy51-more-line:var(--vy52-border);
+  --vy51-more-text:var(--vy52-text);
+  --vy51-more-muted:var(--vy52-muted);
+  --vy51-more-icon:var(--vy52-control);
 }
 
 /* Keep the overlay full-screen for safe tap ownership, but visually transparent. */
@@ -43,7 +43,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.androi
   margin:0 auto!important;
   box-sizing:border-box!important;
   overflow:hidden!important;
-  border:1px solid #37393d!important;
+  border:1px solid var(--vy52-border)!important;
   border-radius:24px!important;
   background:var(--vy51-more-bg)!important;
   background-image:none!important;
@@ -52,17 +52,22 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet.androi
 }
 
 /* Motion JS owns panel open/close transform. Keep content animation lightweight. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-handle{
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-handle.vy-sheet-handle{
   display:block!important;
-  width:34px!important;
-  height:4px!important;
-  min-height:4px!important;
-  padding:0!important;
-  margin:9px auto 6px!important;
-  border:0!important;
-  border-radius:999px!important;
-  background:#696c70!important;
-  box-shadow:none!important;
+  width:72px!important;min-width:72px!important;
+  height:36px!important;min-height:36px!important;
+  padding:0!important;margin:0 auto!important;
+  border:0!important;border-radius:18px!important;
+  background:transparent!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-handle.vy-sheet-handle::before{
+  content:""!important;display:block!important;
+  left:14px!important;top:16px!important;
+  width:44px!important;height:4px!important;
+  background:var(--vy52-muted)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-handle::after{
+  content:none!important;display:none!important;
 }
 
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-titlebar{
@@ -114,7 +119,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .andro
   padding:7px 7px!important;
   margin:0!important;
   border:0!important;
-  border-bottom:1px solid #292b2f!important;
+  border-bottom:1px solid var(--vy52-border)!important;
   border-radius:0!important;
   background:transparent!important;
   background-image:none!important;
@@ -137,7 +142,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .andro
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:nth-child(1){animation-delay:155ms!important}
 
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item:active{
-  background:#202225!important;
+  background:var(--vy52-control)!important;
   transform:scale(.985)!important;
 }
 
@@ -149,11 +154,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .andro
   display:grid!important;
   place-items:center!important;
   margin:0!important;
-  border:1px solid #383b40!important;
+  border:1px solid var(--vy52-border)!important;
   border-radius:50%!important;
   background:var(--vy51-more-icon)!important;
   background-image:none!important;
-  color:#d6d8db!important;
+  color:var(--vy52-active)!important;
   box-shadow:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon svg{
@@ -182,7 +187,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .andro
 
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-arrow{
   justify-self:end!important;
-  color:#777a7f!important;
+  color:var(--vy52-active)!important;
   font-size:22px!important;
   line-height:1!important;
   font-weight:500!important;
