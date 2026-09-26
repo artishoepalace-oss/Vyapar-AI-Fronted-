@@ -12241,3 +12241,161 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
     animation:none!important;
   }
 }
+
+
+
+/* Physical-device screenshot cleanup: settings + live form sheets. */
+/* Settings cards: real inset, no text/control clipping against rounded edges. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
+  [data-vy675-page="account"],[data-vy675-page="profile"],[data-vy675-page="business"],
+  [data-vy675-page="security"],[data-vy675-page="appearance"],[data-vy675-page="navigation"],
+  [data-vy675-page="data"]
+) .vy675-page-body > :is(.card,.settings-section,#fs607Settings),
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="account"] .settings-account-section {
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:18px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  border-color:var(--vy52-border)!important;
+  background:var(--vy52-card)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-body :is(
+  .settings-form-grid,.segmented-settings,.grid3,.settings-actions,.settings-link-grid
+){
+  width:100%!important;
+  min-width:0!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+}
+
+/* Bottom sheets: source card/host must not create a second rounded clipping layer. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body {
+  padding:18px!important;
+  overflow-x:hidden!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body > :is(
+  .card,#businessModuleArea,.vx621-platform-host
+),
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body [data-vy-form-field] {
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Reports, Messaging and Expense use straight section separators instead of
+   nested rounded frames/arcs. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet #businessModuleArea > .vy-tool-section,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vx621-platform-host > .vy-tool-section {
+  width:100%!important;
+  min-width:0!important;
+  margin:0 0 18px!important;
+  padding:0 0 18px!important;
+  overflow:visible!important;
+  border:0!important;
+  border-bottom:1px solid var(--vy52-border)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet #businessModuleArea > .vy-tool-section:last-child,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vx621-platform-host > .vy-tool-section:last-child {
+  margin-bottom:0!important;
+  padding-bottom:0!important;
+  border-bottom:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-tool-section > h3:first-child {
+  margin:0 0 14px!important;
+}
+
+/* Sales / monthly / stock labels and notes stay inside the readable inset. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet [data-vy-form-field] > label:first-of-type {
+  margin-top:2px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet [data-vy-form-field="mprofit"] .vy660-month-note {
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:14px 0 0!important;
+  padding:0 2px 4px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  line-height:1.45!important;
+}
+
+/* One save action = one aligned full-width primary action. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet [data-vy-form-field] > .actions {
+  width:100%!important;
+  margin:18px 0 0!important;
+  padding:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet [data-vy-form-field] > .actions > .btn:only-child,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet [data-vy-form-field="stockItem"] > .btn.primary {
+  display:flex!important;
+  width:100%!important;
+  min-width:100%!important;
+  min-height:48px!important;
+  margin:18px 0 0!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+/* Home Quick Access has no parent slab or centre seam; only the four cards draw surfaces. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-home .android-quick-actions {
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  gap:10px!important;
+  overflow:visible!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-home .android-quick-actions::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-home .android-quick-actions::after {
+  content:none!important;
+  display:none!important;
+}
+
+/* Disabled destructive bulk action is not rendered at all; no empty/red action
+   occupies the Recent Activity toolbar when zero rows are selected. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item[hidden],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-divider[hidden] {
+  display:none!important;
+}
+
+@media(max-width:700px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body {padding:18px!important;}
+}
+
+
+/* Empty destructive selection actions stay dimensionally stable but visually neutral. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(
+  [data-bulk-kind="delete"],[data-bulk-kind="cancel"]
+):disabled {
+  opacity:.32!important;
+  color:var(--vy52-muted)!important;
+  background:transparent!important;
+  border-color:transparent!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(
+  [data-bulk-kind="delete"],[data-bulk-kind="cancel"]
+):disabled .vx622-option-icon {
+  background:var(--vy52-control)!important;
+  border-color:var(--vy52-border)!important;
+  color:var(--vy52-muted)!important;
+}
