@@ -207,11 +207,13 @@
           }).join('') || '<p class="muted">No item rows on this document.</p>')+'</div>'+
           '<div class="vy-invoice-actions">'+
           '<button class="btn primary" type="button" data-invoice-action="pdf">Download PDF</button>'+
+          '<button class="btn" type="button" data-invoice-action="share-pdf">Share PDF</button>'+
+          '<button class="btn" type="button" data-invoice-action="whatsapp-pdf">WhatsApp PDF</button>'+
           '<button class="btn" type="button" data-invoice-action="print">Print invoice</button>'+
           '<button class="btn" type="button" data-invoice-action="thermal">Thermal PDF</button>'+
           '<button class="btn" type="button" data-invoice-action="print-thermal">Print thermal</button>'+
           '<button class="btn" type="button" data-invoice-action="escpos">Bluetooth / ESC-POS</button>'+
-          '<button class="btn" type="button" data-invoice-action="share">Share invoice</button></div>';
+          '<button class="btn" type="button" data-invoice-action="share">Share message/link</button></div>';
         body.closest('.vy-form-body')?.scrollTo(0,0);
         detail.onclick=function (event) {
           if (event.target.closest('[data-invoice-back]')) return showList();
@@ -220,6 +222,8 @@
           var id=tx.id;
           switch (action.dataset.invoiceAction) {
             case 'pdf': return root.p620DownloadPDF(id,false);
+            case 'share-pdf': return root.p620SharePDF(id,false,false);
+            case 'whatsapp-pdf': return root.p620SharePDF(id,false,true);
             case 'print': return root.p620Print(id,false);
             case 'thermal': return root.p620DownloadPDF(id,true);
             case 'print-thermal': return root.p620Print(id,true);
