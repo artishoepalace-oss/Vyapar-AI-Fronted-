@@ -9451,10 +9451,12 @@ html.vy861-flat-black.workspace-v7 .screen button:focus-visible,html.vy861-flat-
 /* Vyapar AI — shared directional page and sheet motion authority.
    JS owns page/dialog/sheet transforms. CSS only provides micro feedback and disables legacy duplicate motion. */
 html.vy-motion-ready{
-  --vy-motion-ease:cubic-bezier(.16,1,.3,1);
-  --vy-motion-ease-soft:cubic-bezier(.2,.8,.2,1);
-  --vy-motion-fast:78ms;
-  --vy-motion-ui:125ms;
+  --vy-motion-ease:cubic-bezier(.18,.89,.32,1.12);
+  --vy-motion-ease-soft:cubic-bezier(.2,.82,.24,1.04);
+  --vy-motion-spring:cubic-bezier(.18,.9,.24,1.10);
+  --vy-motion-settle:cubic-bezier(.2,.78,.2,1);
+  --vy-motion-fast:92ms;
+  --vy-motion-ui:150ms;
   --vy-motion-page:460ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
@@ -9465,6 +9467,16 @@ html.vy861-flat-black.vy-motion-ready{
 }
 html.vy861-flat-black.vy-motion-ready body{
   overflow:visible!important;scroll-behavior:auto!important;
+  overscroll-behavior-y:auto;
+}
+html.vy861-flat-black.vy-motion-ready body main,
+html.vy861-flat-black.vy-motion-ready body .screen{
+  touch-action:pan-y pinch-zoom;
+  scroll-behavior:auto!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(.android-sheet,.shop-progress-sheet,.sheet-content,.vy-form-body){
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
 }
 html.vy861-flat-black.vy-motion-ready.vy-popup-open{overflow-y:hidden!important}
 html.vy861-flat-black.workspace-v7.vy-motion-ready.vy-popup-open body.vy-popup-open{overflow:visible!important}
@@ -9492,11 +9504,11 @@ html.vy-motion-ready body .screen{
 html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.settings-row,.vy675-settings-row,.vx622-settings-row):not(:disabled){
   transition-property:transform,opacity,background-color,color,border-color!important;
   transition-duration:var(--vy-motion-fast),110ms,var(--vy-motion-ui),var(--vy-motion-ui),var(--vy-motion-ui)!important;
-  transition-timing-function:var(--vy-motion-ease-soft)!important;
+  transition-timing-function:var(--vy-motion-spring)!important;
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.settings-row,.vy675-settings-row,.vx622-settings-row):not(:disabled):active{
-  transform:translate3d(0,0,0) scale(.978)!important;
+  transform:translate3d(0,1px,0) scale(.974)!important;
 }
 html.vy-motion-ready body input,
 html.vy-motion-ready body select,
@@ -9529,9 +9541,9 @@ html.vy-motion-ready body #nav.nav button[data-android-tab]{border-radius:20px!i
 html.vy-motion-ready body #nav.nav button.active{background:rgba(255,255,255,.06)!important;color:#fff!important}
 html.vy-motion-ready body #nav.nav button[data-android-tab]:not(:disabled):active{transform:translate3d(0,1px,0) scale(.968)!important}
 html.vy-motion-ready body #nav.nav .android-nav-icon{
-  transition:transform 125ms var(--vy-motion-ease),background-color var(--vy-motion-ui) ease!important;
+  transition:transform 210ms var(--vy-motion-spring),background-color var(--vy-motion-ui) ease!important;
 }
-html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-2px,0) scale(1.035)!important}
+html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-2px,0) scale(1.045)!important}
 
 /* One JS motion owner for all known overlays/cards. */
 html.vy-motion-ready body :is(
@@ -9600,6 +9612,20 @@ html.vy-motion-ready body .screen.vy-page-incoming{
   backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
 }
 html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important}
+
+
+/* 00057 physics layer: native WebView owns finger/fling scrolling; UI chrome
+   uses damped transform-only springs so scrolling never competes with JS. */
+html.vy861-flat-black.vy-motion-ready.vy-physics-motion body :is(
+  .card,.stat,.android-quick-action,.subscription-plan-card,.vx622-menu-trigger
+):not(:disabled):active{
+  transform:translate3d(0,1px,0) scale(.982)!important;
+}
+html.vy861-flat-black.vy-motion-ready.vy-physics-motion.perf-scrolling body :is(
+  .card,.stat,.android-quick-action,.settings-row,.vy675-settings-row
+){
+  transition-duration:0ms!important;
+}
 
 /* ===== STYLE SOURCE: workspace-v7.css ===== */
 
@@ -10292,7 +10318,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
   box-shadow:inset 0 1px 0 rgba(255,255,255,.13);
   pointer-events:none;z-index:0;
   transform:translate3d(0,0,0);
-  transition:transform 390ms cubic-bezier(.22,1,.36,1);
+  transition:transform 420ms cubic-bezier(.18,.90,.24,1.12);
   will-change:transform;
 }
 /* Keep the selection capsule in step with the compact page handoff on old GPUs. */
@@ -11644,7 +11670,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
   box-shadow:none!important;
   pointer-events:none;
   transform:translate3d(var(--vy-middle-x,4px),0,0);
-  transition:transform 205ms cubic-bezier(.16,1,.3,1);
+  transition:transform 260ms cubic-bezier(.18,.90,.24,1.10);
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
   position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
@@ -11682,6 +11708,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready::after,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button::before,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button::after {content:none!important;display:none!important;}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-tier-legacy body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-low-ram body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before{
+  transition-duration:190ms!important;
+}
 
 /* ===== STYLE SOURCE: three-dot-menu-00046.css ===== */
 
@@ -12191,7 +12222,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   box-shadow:0 10px 24px rgba(0,0,0,.42)!important;
   transform-origin:top right!important;
   transform:translate3d(8px,-8px,0) scale(.90)!important;
-  transition:opacity 150ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 180ms!important;
+  transition:opacity 150ms ease,transform 220ms cubic-bezier(.18,.90,.24,1.08),visibility 0s linear 180ms!important;
   animation:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel{
@@ -12199,7 +12230,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open
   opacity:1!important;
   pointer-events:auto!important;
   transform:translate3d(0,0,0) scale(1)!important;
-  transition:opacity 150ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 0s!important;
+  transition:opacity 150ms ease,transform 220ms cubic-bezier(.18,.90,.24,1.08),visibility 0s linear 0s!important;
   animation:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu>.vx622-menu-trigger{
@@ -12218,7 +12249,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   color:var(--vy52-text)!important;
   opacity:0;
   transform:translate3d(5px,-3px,0);
-  transition:opacity 130ms ease,transform 160ms cubic-bezier(.2,.8,.2,1),background 120ms ease!important;
+  transition:opacity 130ms ease,transform 190ms cubic-bezier(.18,.90,.24,1.08),background 120ms ease!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item{
   opacity:1;
@@ -12427,7 +12458,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx62
   border-radius:50%;
   background:var(--vy52-control);
   box-sizing:border-box;
-  transition:background 150ms ease,border-color 150ms ease,transform 150ms ease;
+  transition:background 150ms ease,border-color 150ms ease,transform 190ms cubic-bezier(.18,.90,.24,1.10);
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger:active::before {
   transform:translate(-50%,-50%) scale(.92);
