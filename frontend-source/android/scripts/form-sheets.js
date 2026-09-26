@@ -73,6 +73,7 @@
       if(!card || card.closest('.vy-form-overlay,.vy-form-storage'))return;
       const screen=card.closest('.screen');if(!screen)return;
       const title=card.querySelector('h2,h3')?.textContent.trim()||'Add record';
+      card.dataset.vyFormField=id;
       const launcher=document.createElement('section');launcher.className='card vy-form-launcher';
       launcher.dataset.formField=id;
       launcher.innerHTML='<h2></h2><button type="button" class="btn primary"></button><div class="vy-form-storage" hidden></div>';
