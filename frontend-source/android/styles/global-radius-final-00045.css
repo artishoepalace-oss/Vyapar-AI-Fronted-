@@ -7,9 +7,11 @@
  */
 html.vy861-flat-black.workspace-v7 {
   --vy45-pill:999px;
-  --vy45-panel:26px;
-  --vy45-card:24px;
-  --vy45-control:16px;
+  --vy45-panel:24px;
+  --vy45-card:18px;
+  --vy45-control:14px;
+  --vy45-panel-pad:18px;
+  --vy45-card-pad:14px;
 }
 /* Full-pill outer bars. Do not change the existing 50px navbar track, nav
    padding, selected-tab calculations, middle-bar width or transition timing. */
@@ -234,3 +236,42 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 
 /* Keyboard safe areas, sheet positioning, native popup back behavior,
    table scrolling and existing middle-bar animations are NOT overridden. */
+
+
+/* 00058 content-safety contract: outer curvature must never consume text space.
+   Apply padding only to content-bearing panels, not layout tracks or table cells. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .settings-section,.settings-card,.production-card,.production-account-card,
+  .subscription-plan-card,.insight-panel,.insight-card,.calculator-card,
+  .business-calculator-card,.upload-review,.upload-preview,.vy-invoice-summary,
+  .github-update-dialog,.glass-dialog-card,.account-delete-card
+){
+  padding-left:var(--vy45-panel-pad)!important;
+  padding-right:var(--vy45-panel-pad)!important;
+  overflow:visible!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx621-feature-card,.android-quick-action,.home-metric-tile,.vy675-option-row,
+  .vx622-settings-row,.vy-invoice-row,.record-row,.shop-month-grid>div
+){
+  min-width:0!important;
+  padding-left:var(--vy45-card-pad)!important;
+  padding-right:var(--vy45-card-pad)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .card,.settings-section,.settings-card,.vx621-group,.vx621-feature-card,
+  .vy675-page-body,.vy-unified-panel,.android-sheet,.vy-form-body,
+  .vy-invoice-summary,.vy-invoice-row
+) > *{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .card,.settings-section,.settings-card,.vx621-group,.vx621-feature-card,
+  .vy675-page-body,.vy-unified-panel,.android-sheet,.vy-form-body,
+  .vy-invoice-summary,.vy-invoice-row
+) :is(h1,h2,h3,h4,p,label,small,strong,.muted,.android-sheet-item-copy,.vy675-row-copy){
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
