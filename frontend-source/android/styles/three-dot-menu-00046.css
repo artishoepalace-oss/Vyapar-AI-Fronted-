@@ -504,7 +504,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   box-shadow:0 10px 24px rgba(0,0,0,.42)!important;
   transform-origin:top right!important;
   transform:translate3d(8px,-8px,0) scale(.90)!important;
-  transition:opacity 150ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 180ms!important;
+  transition:opacity 150ms ease,transform 220ms cubic-bezier(.18,.90,.24,1.08),visibility 0s linear 180ms!important;
   animation:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel{
@@ -512,7 +512,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open
   opacity:1!important;
   pointer-events:auto!important;
   transform:translate3d(0,0,0) scale(1)!important;
-  transition:opacity 150ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 0s!important;
+  transition:opacity 150ms ease,transform 220ms cubic-bezier(.18,.90,.24,1.08),visibility 0s linear 0s!important;
   animation:none!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu>.vx622-menu-trigger{
@@ -531,7 +531,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   color:var(--vy52-text)!important;
   opacity:0;
   transform:translate3d(5px,-3px,0);
-  transition:opacity 130ms ease,transform 160ms cubic-bezier(.2,.8,.2,1),background 120ms ease!important;
+  transition:opacity 130ms ease,transform 190ms cubic-bezier(.18,.90,.24,1.08),background 120ms ease!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-item{
   opacity:1;
@@ -740,7 +740,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx62
   border-radius:50%;
   background:var(--vy52-control);
   box-sizing:border-box;
-  transition:background 150ms ease,border-color 150ms ease,transform 150ms ease;
+  transition:background 150ms ease,border-color 150ms ease,transform 190ms cubic-bezier(.18,.90,.24,1.10);
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger:active::before {
   transform:translate(-50%,-50%) scale(.92);
