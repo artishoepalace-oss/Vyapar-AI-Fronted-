@@ -98,12 +98,13 @@ test('Invoice chooser escapes names and routes PDF/Share to existing engines',()
     vyInvoiceDetail:element(),
     vyInvoiceCount:element()
   };
-  let pdf=0,share=0;
+  let pdf=0,share=0,pdfShare=0,whatsappPdf=0;
   const app=boot({nodes,window:{
     __p620PrintTx:[{id:'inv-42',number:'INV-42',partyName:'<script>bad</script>',
       date:'2026-09-24',type:'SALE',total:700,receivedPaid:400,balance:300,
       items:[{name:'Shoe',qty:2,rate:350}]}],
     p620DownloadPDF(id,thermal){assert.equal(id,'inv-42');assert.equal(thermal,false);pdf++;},
+    p620SharePDF(id,thermal,whatsappOnly){assert.equal(id,'inv-42');assert.equal(thermal,false);if(whatsappOnly)whatsappPdf++;else pdfShare++;},
     p611Share(id){assert.equal(id,'inv-42');share++;}
   }});
   app.window.p620PrintTab('documents');
@@ -117,8 +118,12 @@ test('Invoice chooser escapes names and routes PDF/Share to existing engines',()
     return selector==='button[data-invoice-action]'?{dataset:{invoiceAction:name}}:null;
   }}});
   nodes.vyInvoiceDetail.onclick(action('pdf'));
+  nodes.vyInvoiceDetail.onclick(action('share-pdf'));
+  nodes.vyInvoiceDetail.onclick(action('whatsapp-pdf'));
   nodes.vyInvoiceDetail.onclick(action('share'));
   assert.equal(pdf,1);
+  assert.equal(pdfShare,1);
+  assert.equal(whatsappPdf,1);
   assert.equal(share,1);
 });
 
