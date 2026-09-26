@@ -12399,3 +12399,132 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   border-color:var(--vy52-border)!important;
   color:var(--vy52-muted)!important;
 }
+
+
+/* Vyapar AI 00055 — compact iOS-style three-dot action popover. */
+/* Keep the full 44px tap target, but make the visible ellipsis control quieter. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger {
+  position:relative!important;
+  width:44px!important;
+  min-width:44px!important;
+  max-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger::before {
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:32px;
+  height:32px;
+  transform:translate(-50%,-50%);
+  border:1px solid var(--vy52-border);
+  border-radius:50%;
+  background:var(--vy52-control);
+  box-sizing:border-box;
+  transition:background 150ms ease,border-color 150ms ease,transform 150ms ease;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger:active::before {
+  transform:translate(-50%,-50%) scale(.92);
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger[aria-expanded="true"]::before {
+  background:#2a2326;
+  border-color:var(--vy52-active);
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger[aria-expanded="true"] {
+  background:transparent!important;
+  border-color:transparent!important;
+  color:var(--vy52-active)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-three-dot-icon {
+  position:relative!important;
+  z-index:1!important;
+  width:18px!important;
+  height:18px!important;
+  min-width:18px!important;
+  min-height:18px!important;
+}
+
+/* One compact sheet: no stacked rounded cards, no oversized icon tiles. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel {
+  top:calc(100% + 6px);
+  right:0!important;
+  width:218px!important;
+  max-width:calc(100vw - 40px)!important;
+  padding:0!important;
+  border:1px solid var(--vy52-border)!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  background:var(--vy52-card)!important;
+  background-image:none!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.50)!important;
+  transform-origin:top right!important;
+  transform:translate3d(5px,-5px,0) scale(.94)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel {
+  gap:0!important;
+  transform:translate3d(0,0,0) scale(1)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item {
+  width:100%!important;
+  min-height:46px!important;
+  height:46px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  gap:0!important;
+  justify-content:center!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:var(--vy52-text)!important;
+  text-align:center!important;
+  font-size:14px!important;
+  font-weight:500!important;
+  line-height:1.2!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item[data-bulk-kind="select"],
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item[data-bulk-kind="clear"] {
+  border-bottom:1px solid var(--vy52-border)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:active {
+  background:var(--vy52-control)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-option-icon {
+  display:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-label {
+  display:block!important;
+  flex:0 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-divider {
+  display:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"],[data-bulk-kind="cancel"]) {
+  background:transparent!important;
+  color:#e56f83!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"],[data-bulk-kind="cancel"]):disabled {
+  opacity:.34!important;
+  background:transparent!important;
+  color:var(--vy52-muted)!important;
+}
+
+@media(max-width:360px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel {
+    width:208px!important;
+    max-width:calc(100vw - 32px)!important;
+  }
+}
