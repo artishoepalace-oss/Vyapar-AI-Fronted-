@@ -276,7 +276,7 @@ protected void onCreate(Bundle savedInstanceState) {
     private void dismissStartupCover() {
         if (startupCover == null || startupCoverDismissQueued || webView == null) return;
         startupCoverDismissQueued = true;
-        // API 23+, matching minSdk: release only when the DOM is ready to draw.
+        // API 26+, matching minSdk: release only when the DOM is ready to draw.
         webView.postVisualStateCallback(1L, new WebView.VisualStateCallback() {
             @Override
             public void onComplete(long requestId) {
