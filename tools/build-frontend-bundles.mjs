@@ -67,10 +67,10 @@ const uiStyles = [
   'global-radius-2026.css',
   'minimalist-popups-00049.css',
   'more-page-00051.css',
+  'settings-adjustment-00055.css',
   'global-radius-final-00045.css',
   'middle-bar-2026.css',
-  'three-dot-menu-00046.css',
-  'settings-adjustment-00055.css'
+  'three-dot-menu-00046.css'
 ];
 
 const scripts = [
