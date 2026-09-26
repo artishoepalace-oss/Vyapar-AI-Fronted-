@@ -65,7 +65,37 @@
     return null;
   }
 
-  function themeName() { return 'Dark'; }
+  function themeName() {
+    const tier=document.documentElement?.dataset?.perfTier || document.documentElement?.getAttribute('data-perf-tier') || '';
+    if(tier==='legacy') return 'Lite';
+    if(tier==='mid') return 'Balanced';
+    return 'Auto';
+  }
+
+  const CANONICAL_HEADINGS = {
+    account: /account|plan|subscription|sign[ -]?in/i,
+    profile: /business profile|shop details|business details|profile/i,
+    business: /business controls|admin settings|company|staff|transaction/i,
+    security: /account password|password|security|app lock|lock/i,
+    appearance: /motion|performance|appearance|animation/i,
+    navigation: /navigation|scroll|page behaviour|page behavior/i,
+    data: /backup|restore|data safety|drive/i,
+    update: /app update|updates|version/i,
+    legal: /help|legal|privacy|terms|refund|support/i
+  };
+
+  function synchronizeCardHeading(id,item,cards) {
+    const matcher=CANONICAL_HEADINGS[id];
+    cards.forEach(card=>{
+      card.dataset.vy675Owner=id;
+      card.setAttribute('aria-label',item.title);
+      const candidates=[
+        ...card.querySelectorAll(':scope > h1,:scope > h2,:scope > h3,:scope > .settings-section-heading > h1,:scope > .settings-section-heading > h2,:scope > .settings-section-heading > h3,:scope > .settings-section-heading > strong')
+      ];
+      const heading=candidates.find(node=>matcher && matcher.test(String(node.textContent||'').trim())) || null;
+      if(heading && String(heading.textContent||'').trim()!==item.title) heading.textContent=item.title;
+    });
+  }
 
   function currentPlan() {
     const node = document.querySelector('#productionAccountCard .production-plan, #planBadge');
@@ -320,6 +350,7 @@
     const subtitle = shell.querySelector('.vy675-page-header p');
     const cards = map[id] || [];
     body.replaceChildren(...cards);
+    synchronizeCardHeading(id,item,cards);
     if (!cards.length) {
       const empty = document.createElement('div');
       empty.className = 'vy675-page-empty';
