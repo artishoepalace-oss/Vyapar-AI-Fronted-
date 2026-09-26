@@ -24,8 +24,8 @@ test('full-pill chrome, inner tabs, cards, searches and sheet hosts are present'
    '.android-sheet','#vyFormSheet','#vyaparOtpGate','.glass-dialog-card',
    '.vx622-menu-trigger','#monthly-profit-records'].forEach(q=>assert.ok(css.includes(q),q));
   assert.match(css,/--vy45-pill:999px/);
-  assert.match(css,/--vy45-panel:26px/);
-  assert.match(css,/--vy45-card:24px/);
+  assert.match(css,/--vy45-panel:24px/);
+  assert.match(css,/--vy45-card:18px/);
   assert.match(css,/border-radius:50%!important/);
   assert.match(css,/width:44px!important/);
   assert.match(css,/height:44px!important/);
