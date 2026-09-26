@@ -1007,6 +1007,7 @@
       document.documentElement.classList.add('vy-page-transitioning','vy-page-compact');
       incoming.style.setProperty('transition','none','important');
       incoming.style.setProperty('will-change','transform,opacity','important');
+      incoming.style.setProperty('contain','paint','important');
       incoming.style.setProperty('transform',rest+'translate3d('+distance+'px,0,0)','important');
       incoming.style.setProperty('opacity','.94','important');
       const finish=()=>{if(pageTransition===active)stopPageTransition(true);};
@@ -1071,6 +1072,7 @@
     incoming.style.setProperty('position','relative','important');
     incoming.style.setProperty('z-index','3','important');
     incoming.style.setProperty('pointer-events','none','important');
+    incoming.style.setProperty('contain','paint','important');
     incoming.style.setProperty('backface-visibility','hidden','important');
     incoming.style.setProperty('-webkit-backface-visibility','hidden','important');
     outgoing.style.setProperty('will-change','transform','important');
