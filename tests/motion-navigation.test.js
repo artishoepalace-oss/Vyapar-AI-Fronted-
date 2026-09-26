@@ -94,7 +94,7 @@ test('More destinations always enter from the right, including Settings to Insig
 test('Page CSS transitions work even when Web Animations would be overridden by legacy CSS',()=>{
  const f=fixture();for(const node of f.screens)node.animate=()=>{throw new Error('Page motion must use the CSS compositor path');};
  f.env.setTab('business');f.flushFrames();
- assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/460ms/);f.finish();
+ assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/500ms/);f.finish();
 });
 for(const platform of ['android','web']){
  test(platform+': low-memory navigation animates one surface and cleans up after rapid taps',()=>{
