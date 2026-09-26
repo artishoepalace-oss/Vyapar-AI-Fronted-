@@ -3884,9 +3884,6 @@ function renderSubscription(){
       </article>
     </div>
 
-    <div class="notice success subscription-status" style="margin-top:14px">
-      Current plan: <b>${currentPlan.toUpperCase()}</b> · ${proIncluded ? 'Verified access is active.' : 'Free tools are ready to use.'}
-    </div>
   `;
 }
 
@@ -4656,7 +4653,7 @@ render();
     advEnsure(); const el=ad('businessModuleArea');if(!el)return;
     const back=`<button class="btn mini" onclick="renderAdvancedHome()">← All Modules</button>`;
     if(mod==='inventory'){
-      el.innerHTML=`${back}<h2>Inventory & Barcode</h2><div class="adv-form-grid">
+      el.innerHTML=`<h2>Inventory & Barcode</h2><div class="adv-form-grid">
       <input id="advPName" placeholder="Product name"><input id="advPBrand" placeholder="Brand"><input id="advPArticle" placeholder="Article"><input id="advPSku" placeholder="SKU"><input id="advPSize" placeholder="Size"><input id="advPColor" placeholder="Color"><input id="advPCategory" placeholder="Category" value="Footwear"><input id="advPBarcode" placeholder="Barcode"><input id="advPHsn" placeholder="HSN/SAC"><input id="advPGst" type="number" placeholder="GST %"><input id="advPPurchase" type="number" placeholder="Purchase price"><input id="advPSale" type="number" placeholder="Selling price"><input id="advPMrp" type="number" placeholder="MRP"><input id="advPQty" type="number" placeholder="Opening qty"><input id="advPReorder" type="number" placeholder="Reorder point" value="5"></div><div class="adv-actions"><button class="btn primary" onclick="advAddProduct()">Save Product</button><button class="btn" onclick="advScanBarcode()">Scan Barcode</button><label class="btn">Bulk CSV <input type="file" accept=".csv,text/csv" onchange="advImportCSV(this)" hidden></label><button class="btn" onclick="advReconcile()">Rebuild Stock Ledger</button><button class="btn" onclick="advReorderReport()">Reorder CSV</button><button class="btn" onclick="advDeadStock()">Dead Stock CSV</button><button class="btn" onclick="advProductProfit()">Product Profit CSV</button></div><div class="adv-table"><table class="table"><thead><tr><th>Product</th><th>Size</th><th>Color</th><th>SKU</th><th>Qty</th><th>MRP</th><th>Sale</th><th>Barcode</th><th></th></tr></thead><tbody>${products().slice().reverse().slice(0,200).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.size)}</td><td>${esc(p.color)}</td><td>${esc(p.sku)}</td><td>${num(p.qty)}</td><td>${money(p.mrp)}</td><td>${money(p.sellingPrice)}</td><td>${esc(p.barcode)}</td><td><button class="btn mini danger" onclick="advDeleteProduct('${p.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="9">No products yet.</td></tr>'}</tbody></table></div>`;
     } else if(mod==='customers'){
       el.innerHTML=`${back}<h2>Customers & Udhaar</h2><div class="adv-form-grid"><input id="advCName" placeholder="Customer name"><input id="advCMobile" placeholder="Mobile"><input id="advCDue" type="number" placeholder="Opening due"><input id="advCAddress" placeholder="Address"></div><div class="adv-actions"><button class="btn primary" onclick="advAddCustomer()">Add Customer</button><button class="btn" onclick="advReminderExport()">Due Reminder CSV</button></div><div class="adv-table"><table class="table"><thead><tr><th>Name</th><th>Mobile</th><th>Due</th><th>Actions</th></tr></thead><tbody>${(state.customers||[]).map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.mobile)}</td><td>${money(c.due)}</td><td><button class="btn mini" onclick="advReceive('${c.id}')">Receive</button><button class="btn mini" onclick="advStatement('customer','${esc(c.name)}')">Statement</button><button class="btn mini" onclick="advWhatsReminder('${c.id}')">WhatsApp</button></td></tr>`).join('')||'<tr><td colspan="4">No customers.</td></tr>'}</tbody></table></div>`;
@@ -10340,7 +10337,13 @@ function updateBulkSelection(menu){
   const count=menu.querySelector('.vx622-selection-count'),text=selected+' selected';
   if(count&&count.textContent!==text)count.textContent=text;
   const action=menu.querySelector('[data-bulk-destructive]');
-  if(action)action.disabled=selected===0;
+  if(action){
+    const unavailable=selected===0;
+    action.disabled=unavailable;
+    action.hidden=unavailable;
+    const divider=action.previousElementSibling;
+    if(divider?.classList.contains('vx622-menu-divider'))divider.hidden=unavailable;
+  }
   const select=menu.querySelector('[data-bulk-select-all]');if(select)select.disabled=!checks.length;
   bulkTables(menu).forEach(table=>table.querySelectorAll('thead .vx622-check-col input[type="checkbox"]').forEach(input=>{
     input.checked=checks.length>0&&selected===checks.length;
