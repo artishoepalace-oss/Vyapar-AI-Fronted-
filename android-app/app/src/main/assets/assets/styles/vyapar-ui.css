@@ -9453,11 +9453,11 @@ html.vy861-flat-black.workspace-v7 .screen button:focus-visible,html.vy861-flat-
 html.vy-motion-ready{
   --vy-motion-ease:cubic-bezier(.18,.89,.32,1.12);
   --vy-motion-ease-soft:cubic-bezier(.2,.82,.24,1.04);
-  --vy-motion-spring:cubic-bezier(.18,.9,.24,1.10);
+  --vy-motion-spring:cubic-bezier(.16,.92,.22,1.08);
   --vy-motion-settle:cubic-bezier(.2,.78,.2,1);
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
-  --vy-motion-page:460ms;
+  --vy-motion-page:500ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
    the sticky header, while inherited smooth scrolling competes with page slides. */
@@ -9625,6 +9625,37 @@ html.vy861-flat-black.vy-motion-ready.vy-physics-motion.perf-scrolling body :is(
   .card,.stat,.android-quick-action,.settings-row,.vy675-settings-row
 ){
   transition-duration:0ms!important;
+}
+
+
+/* 00058 physical interaction pass. Pointer taps compress/settle; keyboard users
+   keep a deliberate focus ring, while touch does not leave a stuck halo. */
+html.vy861-flat-black.vy-motion-ready.vy-pointer-input body :is(button,.btn,[role="button"]):focus:not(:focus-visible){
+  outline:none!important;
+  outline-offset:0!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled){
+  transform-origin:50% 50%;
+}
+html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled):active{
+  transition-duration:72ms!important;
+  transform:translate3d(0,1px,0) scale(.972)!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):focus-visible{
+  outline:2px solid rgba(226,229,235,.76)!important;
+  outline-offset:2px!important;
+}
+html.vy861-flat-black.vy-motion-ready body :is(.vy-unified-panel,.android-sheet,.github-update-dialog,.vy-form-sheet){
+  transform-origin:50% 100%!important;
+}
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{
+  transition:transform 220ms var(--vy-motion-spring),background-color 150ms ease,opacity 150ms ease!important;
+}
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item:active{
+  transform:translate3d(0,1px,0) scale(.986)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{transition:none!important;}
 }
 
 /* ===== STYLE SOURCE: workspace-v7.css ===== */
@@ -10242,7 +10273,7 @@ html.vy861-flat-black {
   --vy-chrome-width:367px;
   --vy-chrome-left:8px;
   --vy-chrome-right:8px;
-  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.30),inset 0 0 0 1px rgba(255,255,255,.12);
+  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.10);
 }
 @supports (left:max(8px,1px)) {
   html.vy861-flat-black {
@@ -10262,7 +10293,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top {
   transform:translateX(-50%)!important;
   height:56px!important;min-height:56px!important;padding:6px 10px!important;
   box-sizing:border-box!important;border:0!important;border-radius:28px!important;
-  background:var(--vy-chrome-black)!important;background-image:none!important;
+  background:var(--vy-chrome-black)!important;
+  background-image:radial-gradient(120% 38% at 50% -2%,rgba(255,255,255,.105),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 48%)!important;
   box-shadow:var(--vy-chrome-rim)!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
@@ -10297,8 +10329,9 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav {
   height:50px!important;min-height:50px!important;max-height:50px!important;
   padding:0!important;gap:0!important;margin:0 auto!important;
   box-sizing:border-box!important;border:0!important;border-radius:25px!important;
-  background:var(--vy-chrome-black)!important;background-image:none!important;
-  /* Inset hairline follows the rounded shell without changing its measured bounds. */
+  background:var(--vy-chrome-black)!important;
+  background-image:radial-gradient(115% 42% at 50% -4%,rgba(255,255,255,.11),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 50%)!important;
+  /* Static optical reflection: no blur or animated filter cost on Android 8. */
   box-shadow:var(--vy-chrome-rim)!important;
   overflow:hidden!important;isolation:isolate;
   transform:none!important;translate:none!important;
@@ -10314,8 +10347,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
   width:68px;min-width:68px;max-width:68px;
   height:42px;min-height:42px;max-height:42px;
   box-sizing:border-box;border:0;border-radius:21px;
-  background:linear-gradient(135deg,#d1cdd0 0%,#b8b4b8 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.13);
+  background:linear-gradient(180deg,#d8d5d8 0%,#c5c1c5 42%,#aaa6aa 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(52,48,52,.18);
   pointer-events:none;z-index:0;
   transform:translate3d(0,0,0);
   transition:transform 420ms cubic-bezier(.18,.90,.24,1.12);
@@ -10403,10 +10436,10 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .app {
   padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
 }
-/* Narrow phones: shrink only the outer bar. Keep the fixed capsule clear of
-   both rounded ends (at least 6px at a 320px viewport). */
+/* Narrow phones: use a half-pixel-safe inset so fractional grid rounding
+   still leaves >6px physical clearance at both 320px rounded ends. */
 @media(max-width:367px){
-  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .nav-track {left:12px;right:12px;}
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .nav-track {left:12.5px;right:12.5px;}
 }
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
@@ -11250,9 +11283,9 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
   width:100%!important;
   min-width:0!important;
   margin:0!important;
-  padding:16px!important;
+  padding:18px!important;
   box-sizing:border-box!important;
-  overflow:hidden!important;
+  overflow:visible!important;
   border:1px solid var(--vy55-settings-line)!important;
   border-radius:24px!important;
   background:var(--vy55-settings-card)!important;
@@ -11320,8 +11353,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="profile"] .vy675-page-body :is(input,select,textarea):focus {
   border-color:#686868!important;
-  outline:0!important;
-  box-shadow:0 0 0 2px rgba(255,255,255,.055)!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="profile"] .vy675-page-body :is(input,select,textarea):focus-visible {
+  border-color:#8b8b8b!important;
 }
 
 /* Motion choices and password action keep equal widths, spacing and tap targets. */
@@ -11407,6 +11443,14 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy
   }
 }
 
+/* Keep all Settings copy inside the inner tangent of rounded cards. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-body :is(
+  .card,.settings-section,#fs607Settings,.vy675-navigation-card
+) > *{min-width:0!important;max-width:100%!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-body :is(
+  h2,h3,h4,p,small,label,.muted,.vy675-option-copy,.vx622-settings-copy
+){overflow-wrap:anywhere!important;}
+
 /* ===== STYLE SOURCE: global-radius-final-00045.css ===== */
 
 /*
@@ -11418,9 +11462,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy
  */
 html.vy861-flat-black.workspace-v7 {
   --vy45-pill:999px;
-  --vy45-panel:26px;
-  --vy45-card:24px;
-  --vy45-control:16px;
+  --vy45-panel:24px;
+  --vy45-card:18px;
+  --vy45-control:14px;
+  --vy45-panel-pad:18px;
+  --vy45-card-pad:14px;
 }
 /* Full-pill outer bars. Do not change the existing 50px navbar track, nav
    padding, selected-tab calculations, middle-bar width or transition timing. */
@@ -11645,6 +11691,44 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 
 /* Keyboard safe areas, sheet positioning, native popup back behavior,
    table scrolling and existing middle-bar animations are NOT overridden. */
+
+
+/* 00058 content-safety contract: outer curvature must never consume text space.
+   Apply padding only to content-bearing panels, not layout tracks or table cells. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .settings-section,.settings-card,.production-card,.production-account-card,
+  .subscription-plan-card,.insight-panel,.insight-card,.calculator-card,
+  .business-calculator-card,.upload-review,.upload-preview,.vy-invoice-summary,
+  .github-update-dialog,.glass-dialog-card,.account-delete-card
+){
+  padding-left:var(--vy45-panel-pad)!important;
+  padding-right:var(--vy45-panel-pad)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx621-feature-card,.android-quick-action,.home-metric-tile,.vy675-option-row,
+  .vx622-settings-row,.vy-invoice-row,.record-row,.shop-month-grid>div
+){
+  min-width:0!important;
+  padding-left:var(--vy45-card-pad)!important;
+  padding-right:var(--vy45-card-pad)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .card,.settings-section,.settings-card,.vx621-group,.vx621-feature-card,
+  .vy675-page-body,.vy-unified-panel,.android-sheet,.vy-form-body,
+  .vy-invoice-summary,.vy-invoice-row
+) > *{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .card,.settings-section,.settings-card,.vx621-group,.vx621-feature-card,
+  .vy675-page-body,.vy-unified-panel,.android-sheet,.vy-form-body,
+  .vy-invoice-summary,.vy-invoice-row
+) :is(h1,h2,h3,h4,p,label,small,strong,.muted,.android-sheet-item-copy,.vy675-row-copy){
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
 
 /* ===== STYLE SOURCE: middle-bar-2026.css ===== */
 
@@ -12557,5 +12641,174 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel {
     width:208px!important;
     max-width:calc(100vw - 32px)!important;
+  }
+}
+
+
+/* Vyapar AI 00058 — final physical popover + sheet material contract.
+   This is the last stylesheet in the bundle, so it neutralizes conflicting
+   legacy popup optics without changing route, size or safe-area geometry. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger::before{
+  width:34px!important;height:34px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  background:
+    radial-gradient(90% 55% at 50% 0%,rgba(255,255,255,.11),rgba(255,255,255,0) 66%),
+    #242529!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.45)!important;
+  transition:transform 210ms cubic-bezier(.16,.92,.22,1.08),background-color 150ms ease,border-color 150ms ease!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger:active::before{
+  transform:translate(-50%,-50%) scale(.89)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx622-menu-trigger[aria-expanded="true"]::before{
+  transform:translate(-50%,-50%) scale(.96)!important;
+  border-color:rgba(165,0,53,.70)!important;
+  background:
+    radial-gradient(90% 55% at 50% 0%,rgba(255,255,255,.095),rgba(255,255,255,0) 66%),
+    #2a2225!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
+  width:224px!important;
+  max-width:calc(100vw - 28px)!important;
+  padding:6px!important;
+  border-radius:18px!important;
+  border:1px solid rgba(255,255,255,.095)!important;
+  background:
+    radial-gradient(115% 46% at 50% -4%,rgba(255,255,255,.075),rgba(255,255,255,0) 62%),
+    #1b1c1f!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  transform:translate3d(7px,-7px,0) scale(.90)!important;
+  transition:opacity 145ms ease,transform 260ms cubic-bezier(.16,.92,.22,1.08),visibility 0s linear 260ms!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel{
+  transform:translate3d(0,0,0) scale(1)!important;
+  transition:opacity 145ms ease,transform 260ms cubic-bezier(.16,.92,.22,1.08),visibility 0s linear 0s!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item{
+  min-height:48px!important;height:auto!important;
+  padding:12px 14px!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  border-radius:12px!important;
+  font-size:14px!important;line-height:1.25!important;
+  transition:transform 190ms cubic-bezier(.16,.92,.22,1.08),background-color 130ms ease,opacity 130ms ease!important;
+  transition-delay:0ms!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-label{
+  width:100%!important;text-align:left!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:active{
+  transform:scale(.975)!important;
+  background:#292a2f!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:not(:last-child){
+  border-bottom:1px solid rgba(255,255,255,.055)!important;
+}
+
+/* App sheets share one physical surface: dark material + static top reflection.
+   Positioning/full-width/safe-area values remain owned by refined-surfaces.css. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  #androidMoreSheet > .android-sheet,
+  #vyGitHubUpdate > .github-update-dialog,
+  #vyFormSheet > .vy-form-sheet,
+  #vy6601Select > .vy6601-select-sheet,
+  .glass-dialog-card,.subscription-dialog,.account-delete-dialog
+){
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(125% 46% at 50% -4%,rgba(255,255,255,.075),rgba(255,255,255,0) 63%),
+    #151619!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.075)!important;
+  color:#f6f6f7!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet > .android-sheet{
+  padding:10px 12px 14px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-grid{
+  padding:0 2px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item{
+  min-height:62px!important;
+  padding:10px 8px!important;
+  gap:12px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon{
+  width:38px!important;height:38px!important;min-width:38px!important;
+  border-radius:13px!important;
+  background:
+    radial-gradient(100% 70% at 50% 0%,rgba(255,255,255,.10),rgba(255,255,255,0) 68%),
+    #242529!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-copy{
+  min-width:0!important;padding-right:6px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #androidMoreSheet .android-sheet-item-copy :is(strong,small){
+  overflow-wrap:anywhere!important;
+}
+
+/* Page/form sheets use separate header/body insets so rounded corners never cut copy. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-head{
+  padding:14px 18px 12px!important;
+  min-width:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body{
+  padding:18px!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet .vy-form-body > *{
+  min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
+}
+
+/* Update popup remains the same bottom-attached sheet; only material/spacing changes. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate > .github-update-dialog{
+  width:100%!important;max-width:none!important;
+  padding:18px 18px calc(20px + env(safe-area-inset-bottom,0px))!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-dialog-heading{
+  min-height:44px!important;margin:0 0 10px!important;
+  display:flex!important;align-items:center!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-status{
+  margin:8px 0 16px!important;line-height:1.45!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn{
+  min-width:0!important;min-height:48px!important;border-radius:14px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn:only-child,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions .btn.primary:last-child:nth-child(odd){
+  grid-column:1/-1;
+}
+
+/* Touch should not leave a circular/ring ghost. Keyboard focus remains visible. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready.vy-pointer-input body :is(
+  .vx622-menu-trigger,.vx622-menu-item,#androidMoreSheet .android-sheet-item,
+  #vyGitHubUpdate button,#vyFormSheet button
+):focus:not(:focus-visible){
+  outline:none!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
+  .vx622-menu-trigger,.vx622-menu-item,#androidMoreSheet .android-sheet-item,
+  #vyGitHubUpdate button,#vyFormSheet button
+):focus-visible{
+  outline:2px solid rgba(231,233,237,.78)!important;
+  outline-offset:2px!important;
+}
+@media(max-width:360px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
+    width:212px!important;max-width:calc(100vw - 24px)!important;
+  }
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx622-menu-panel,.vx622-menu-item){
+    transition:none!important;
   }
 }

@@ -1033,7 +1033,7 @@
       return true;
     }
 
-    const time=duration(460);
+    const time=duration(500);
     if(!time)return false;
     const active={outgoing,incoming,frame:0,timer:0,
       outgoingStyle:saveInline(outgoing,pageStyleProps),incomingStyle:saveInline(incoming,pageStyleProps)};
@@ -1230,6 +1230,48 @@
     overlays.set(overlay,info);guardOverlay(overlay);return info;
   }
 
+  function springProgressFrames(ms,stiffness,damping,mass){
+    const frames=Math.max(14,Math.min(26,Math.round(ms/18))),dt=(ms/1000)/frames;
+    let x=0,v=0;const out=[{offset:0,p:0}];
+    for(let i=1;i<=frames;i++){
+      const a=(-stiffness*(x-1)-damping*v)/mass;
+      v+=a*dt;x+=v*dt;
+      /* Panels may settle a few percent past rest, like a damped physical sheet,
+         but never enough to expose layout behind the rounded edge. */
+      const p=Math.max(0,Math.min(1.055,x));
+      out.push({offset:i/frames,p:i===frames?1:p});
+    }
+    return out;
+  }
+  function springPanelIn(node,base,fullSheet,more,ms,done){
+    if(!node||reduced()||compactMotion()||typeof node.animate!=='function')return false;
+    cancel(node);
+    let height=320;
+    try{height=Math.max(120,node.getBoundingClientRect().height||height);}catch(_){}
+    const distance=fullSheet?Math.min(height+28,Math.max(360,(window.innerHeight||720)*.82)):(more?30:20);
+    const startScale=fullSheet?1:(more ? .988 : .994);
+    const rest=base==='none'?'':base+' ';
+    const frames=springProgressFrames(ms,fullSheet?250:290,fullSheet?27:29,1).map(sample=>{
+      const remaining=1-sample.p;
+      return {offset:sample.offset,transform:rest+'translate3d(0,'+(distance*remaining).toFixed(2)+'px,0) scale('+(1-(1-startScale)*remaining).toFixed(4)+')'};
+    });
+    const saved=saveInline(node,['transform','will-change','transition']);
+    let animation=null,timer=0,finished=false;
+    const finish=()=>{
+      if(finished)return;finished=true;if(timer)clearTimeout(timer);
+      if(animation){try{animation.onfinish=null;animation.oncancel=null;animation.cancel();}catch(_){}}
+      restoreInline(node,saved);running.delete(node);if(done)done();
+    };
+    try{
+      node.style.setProperty('will-change','transform','important');
+      animation=node.animate(frames,{duration:duration(ms),easing:'linear',fill:'both'});
+      animation.onfinish=finish;animation.oncancel=()=>{};
+      timer=setTimeout(finish,duration(ms)+100);
+      running.set(node,{cancel:finish});
+      return true;
+    }catch(_){if(animation)try{animation.cancel();}catch(__){}restoreInline(node,saved);return false;}
+  }
+
   function openOverlay(overlay){
     if(overlays.has(overlay) || !visible(overlay) || overlay.__vyClosing)return;
     const info=registerOverlay(overlay);if(!info)return;
@@ -1239,9 +1281,12 @@
     const rest=base==='none'?'':base+' ';
     const compact=more&&compactMotion();
     const entrance=more?(compact?245:460):sheet?280:220;
-    tween(overlay,{opacity:'0'},{opacity:'1'},more?(compact?150:300):sheet?145:125,null,easeSoft);
+    tween(overlay,{opacity:'0'},{opacity:'1'},more?(compact?150:260):sheet?150:130,null,easeSoft);
     const fullSheet=info.sheet;
-    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?entrance:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
+    const panelTime=more?entrance:fullSheet?300:sheet?235:195;
+    if(!springPanelIn(card,base,fullSheet,more,panelTime,null)){
+      tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},panelTime,null,more?moreEase:ease);
+    }
     const focus=()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
       if(!overlay.contains(document.activeElement)){
@@ -1300,6 +1345,8 @@
   function boot(){
     document.documentElement.classList.add('vy-motion-ready','vy-physics-motion');
     document.documentElement.setAttribute('data-motion-engine',physicsProfile.engine);
+    document.addEventListener('pointerdown',()=>document.documentElement.classList.add('vy-pointer-input'),true);
+    document.addEventListener('keydown',event=>{if(event.key==='Tab'||event.key.startsWith('Arrow'))document.documentElement.classList.remove('vy-pointer-input');},true);
     window.addEventListener('resize',()=>stopPageTransition(true),{passive:true});
     document.querySelectorAll(overlaySelector).forEach(openOverlay);
     const observer=new MutationObserver(records=>{
@@ -2150,7 +2197,7 @@
     if(s.showPageNumbers!==false) {
       for(let i=0;i<pages.length;i++) { page=pages[i];await text('Page '+(i+1)+' of '+pages.length,margin,height-22,8,false,muted); }
     }
-    pdf.setTitle('Invoice '+clean(tx.number));pdf.setAuthor(clean(business.name || 'Vyapar AI'));pdf.setCreator('Vyapar AI');
+    pdf.setTitle('Invoice '+clean(tx.number));pdf.setAuthor(clean(business.name || 'Vyapar AI'));pdf.setCreator('Vyapar AI');pdf.setSubject('Vyapar AI standard invoice PDF');
     return { bytes:await pdf.save(),name:filename(tx.number),pageCount:pages.length };
   }
   function base64(bytes) { let result='';for(let i=0;i<bytes.length;i+=8192)result+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));return btoa(result); }
@@ -2170,13 +2217,46 @@
     const a=document.createElement('a');a.href=url;a.download=result.name;document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),60000);return 'PDF download started.';
   }
+  async function shareResult(result, options) {
+    options=options || {};
+    const message=clean(options.text || '');
+    const whatsappOnly=options.whatsappOnly===true;
+    const bridge=window.AndroidDownloads;
+    if(bridge && typeof bridge.shareBase64==='function') {
+      bridge.shareBase64(result.name,'application/pdf',base64(result.bytes),message,whatsappOnly);
+      return whatsappOnly ? 'Opening WhatsApp with PDF…' : 'Opening share sheet with PDF…';
+    }
+    const blob=new Blob([result.bytes],{type:'application/pdf'});
+    if(typeof File==='function' && navigator.share) {
+      const file=new File([blob],result.name,{type:'application/pdf'});
+      const payload={title:result.name,text:message,files:[file]};
+      if(!navigator.canShare || navigator.canShare({files:[file]})) {
+        await navigator.share(payload);
+        return 'PDF shared.';
+      }
+    }
+    /* Browser fallback cannot guarantee a PDF attachment. Save the exact file
+       first and let the user attach it from Downloads rather than silently
+       downgrading to a text-only invoice. */
+    await save(result);
+    return 'PDF saved. Attach it from Downloads to the app or number you want.';
+  }
   function download(model) {
     if(activeJob)return activeJob;
     status('Preparing invoice PDF…');
     activeJob=generate(model).then(save).then(message=>{status(message);return true;}).catch(error=>{status(error.message || 'PDF could not be saved. Please try again.',true);return false;}).finally(()=>{activeJob=null;});
     return activeJob;
   }
-  window.VyaparInvoicePDF={generate,download,filename,splitText};
+  function share(model,options) {
+    if(activeJob)return activeJob;
+    status('Preparing invoice PDF…');
+    activeJob=generate(model).then(result=>shareResult(result,options)).then(message=>{status(message);return true;}).catch(error=>{
+      if(error && error.name==='AbortError')return false;
+      status(error.message || 'PDF could not be shared. Please try again.',true);return false;
+    }).finally(()=>{activeJob=null;});
+    return activeJob;
+  }
+  window.VyaparInvoicePDF={generate,download,share,shareResult,filename,splitText};
 })();
 
 /* ===== SCRIPT SOURCE: app.js ===== */
@@ -11695,17 +11775,28 @@ function businessInfo(){const b=(S().businesses||[]).find(x=>x.id===biz())||{},p
 function invoiceHtml(tx,thermal){const st=S().invoiceSettings620,bi=businessInfo(),custom=(S().invoiceCustomFields620||[]).filter(x=>x.businessId===biz()&&x.enabled!==false),w=thermal?(st.thermalWidth==='58'?'58mm':'80mm'):(st.paperSize==='A5'?'148mm':'210mm'),compact=!!thermal;const fields=(tx.items||[]).map((i,idx)=>`<tr><td>${idx+1}</td><td><b>${safe(i.name)}</b>${st.showDescription&&item(i.itemId)?.description?`<br><small>${safe(item(i.itemId).description)}</small>`:''}${st.showHSN&&item(i.itemId)?.hsn?`<br><small>HSN ${safe(item(i.itemId).hsn)}</small>`:''}</td><td>${i.qty} ${safe(i.unit||'')}</td>${st.showMRP&&!compact?`<td>${cash(item(i.itemId)?.mrp||i.rate)}</td>`:''}<td>${cash(i.rate)}</td>${st.showTax&&!compact?`<td>${n(i.tax)}%</td>`:''}<td>${cash(n(i.qty)*n(i.rate))}</td></tr>`).join('');return `<!doctype html><html><head><meta charset="utf-8"><title>${safe(tx.number)}</title><style>@page{size:${thermal?w+' auto':st.paperSize+' '+st.orientation};margin:${thermal?'3mm':'10mm'}}*{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0 auto;padding:${thermal?'2mm':'8mm'};width:${w};color:#111;font-size:${compact?'11px':st.fontSize==='small'?'11px':st.fontSize==='large'?'15px':'13px'}}.head{border-bottom:${st.theme==='classic'?'3px double':st.theme==='compact'?'1px solid':'2px solid'} ${st.accent};padding-bottom:${st.theme==='compact'?'4px':'8px'};margin-bottom:${st.theme==='compact'?'5px':'10px'}}.brand{font-size:${compact?'18px':'26px'};font-weight:800;color:${st.accent}}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ddd;padding:${compact?'3px':'6px'};text-align:left}.right{text-align:right}.totals{margin-left:auto;max-width:${compact?'100%':'330px'};margin-top:10px}.totals div{display:flex;justify-content:space-between;padding:3px 0}.grand{font-size:${compact?'15px':'20px'};font-weight:800;border-top:2px solid #111}.footer{margin-top:18px;border-top:1px dashed #999;padding-top:10px}.copy{text-align:center;font-weight:700;margin-bottom:6px}@media print{button{display:none}}</style></head><body>${st.originalDuplicate?'<div class="copy">ORIGINAL / CUSTOMER COPY</div>':''}<div class="head">${st.showLogo&&bi.logo?`<img src="${safe(bi.logo)}" alt="Logo" style="max-height:${compact?'34px':'54px'};max-width:120px;float:right">`:''}<div class="brand">${safe(bi.name)}</div>${st.showAddress&&bi.address?`<div>${safe(bi.address)}</div>`:''}${st.showPhone&&bi.phone?`<div>Phone: ${safe(bi.phone)}</div>`:''}${st.showEmail&&bi.email?`<div>Email: ${safe(bi.email)}</div>`:''}${st.showGSTIN&&bi.gstin?`<div>GSTIN: ${safe(bi.gstin)}</div>`:''}</div><div><b>${safe(tx.type.replaceAll('_',' '))}</b> #${safe(tx.number)}<br>Date: ${safe(tx.date)}${tx.partyName?`<br>Party: ${safe(tx.partyName)}`:''}${tx.eWayBillNo?`<br>E-Way Bill: ${safe(tx.eWayBillNo)}`:''}${custom.map(f=>`<br>${safe(f.label)}: ${safe(f.value)}`).join('')}</div><table><thead><tr><th>#</th><th>Item</th><th>Qty</th>${st.showMRP&&!compact?'<th>MRP</th>':''}<th>Rate</th>${st.showTax&&!compact?'<th>Tax</th>':''}<th>Amount</th></tr></thead><tbody>${fields}</tbody></table><div class="totals"><div><span>Subtotal</span><b>${cash(tx.subtotal)}</b></div>${n(tx.discount)?`<div><span>Discount</span><b>${cash(tx.discount)}</b></div>`:''}${st.showTax?`<div><span>GST</span><b>${cash(tx.tax)}</b></div>${n(tx.cess)?`<div><span>CESS</span><b>${cash(tx.cess)}</b></div>`:''}`:''}<div class="grand"><span>Total</span><span>${cash(tx.total)}</span></div>${st.showReceived?`<div><span>Received</span><b>${cash(tx.receivedPaid)}</b></div>`:''}${st.showBalance?`<div><span>Balance</span><b>${cash(tx.balance)}</b></div>`:''}${st.showPaymentMode?`<div><span>Payment</span><b>${safe(tx.paymentMode||'')}</b></div>`:''}</div>${st.showAmountWords?`<p><b>Amount in words:</b> ${safe(amountWords(tx.total))}</p>`:''}<div class="footer">${st.showTerms?`<p><b>Terms:</b> ${safe(st.terms)}</p>`:''}${st.showSignature?`<p class="right"><br><br><b>${safe(st.signatureText)}</b></p>`:''}</div>${st.originalDuplicate&&!compact?'<div style="page-break-before:always"></div><script>document.write(document.body.innerHTML.split("<div style=\\"page-break-before:always\\"></div>")[0].replace("ORIGINAL / CUSTOMER COPY","DUPLICATE / OFFICE COPY"))</script>':''}</body></html>`}
 function printHtml(html){const w=window.open('','_blank');if(!w)return alert('Popup blocked. Allow popup/print for invoice.');w.document.open();w.document.write(html);w.document.close();setTimeout(()=>{try{w.print()}catch(_){}},250)}
 function renderPrint(){const el=$('businessModuleArea');if(!el)return;const s=S().invoiceSettings620,txs=activeTx().filter(t=>['SALE','PURCHASE','ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN'].includes(t.type)).slice().reverse().slice(0,100);el.innerHTML=shell('Invoices & PDF',`<div class="p620-tabs"><button class="btn" onclick="p620PrintTab('settings')">Print settings</button><button class="btn" onclick="p620PrintTab('documents')">Saved invoices</button></div><div id="p620PrintBody"></div>`,'A4/A5 + 58/80mm thermal · field toggles · terms · signature · ESC/POS');window.__p620PrintTx=txs;window.p620PrintTab('documents')}
-window.p620PrintTab=function(tab){const v=$('p620PrintBody');if(!v)return;const s=S().invoiceSettings620;if(tab==='documents'){const txs=window.__p620PrintTx||[];v.innerHTML=`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Actions</th></tr></thead><tbody>${txs.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${safe(t.number)}</td><td>${safe(t.partyName)}</td><td>${cash(t.total)}</td><td><button class="btn mini primary" onclick="p620DownloadPDF('${t.id}',false)">Download PDF</button> <button class="btn mini" onclick="p620Print('${t.id}',false)">Print</button> <button class="btn mini" onclick="p620DownloadPDF('${t.id}',true)">Thermal PDF</button> <button class="btn mini" onclick="p620Print('${t.id}',true)">Print thermal</button> <button class="btn mini" onclick="p620EscPos('${t.id}')">ESC/POS</button></td></tr>`).join('')||'<tr><td colspan="6">No saved invoices yet. Create a sale or order first.</td></tr>'}</tbody></table></div>`;return}v.innerHTML=`<div class="p620-settings"><label>Paper size<select id="iPaper"><option ${s.paperSize==='A4'?'selected':''}>A4</option><option ${s.paperSize==='A5'?'selected':''}>A5</option></select></label><label>Orientation<select id="iOrient"><option ${s.orientation==='portrait'?'selected':''}>portrait</option><option ${s.orientation==='landscape'?'selected':''}>landscape</option></select></label><label>Font<select id="iFont"><option ${s.fontSize==='small'?'selected':''}>small</option><option ${s.fontSize==='medium'?'selected':''}>medium</option><option ${s.fontSize==='large'?'selected':''}>large</option></select></label><label>Theme<select id="iTheme"><option value="clean" ${s.theme==='clean'?'selected':''}>Clean</option><option value="compact" ${s.theme==='compact'?'selected':''}>Compact</option><option value="classic" ${s.theme==='classic'?'selected':''}>Classic</option></select></label><label>Accent<input id="iAccent" type="color" value="${safe(s.accent)}"></label><label>Thermal width<select id="iThermal"><option value="58" ${s.thermalWidth==='58'?'selected':''}>58mm</option><option value="80" ${s.thermalWidth==='80'?'selected':''}>80mm</option></select></label><label>Copies<input id="iCopies" type="number" min="1" max="5" value="${n(s.thermalCopies)||1}"></label><label>Terms<textarea id="iTerms">${safe(s.terms)}</textarea></label><label>Signature text<input id="iSign" value="${safe(s.signatureText)}"></label></div><div class="p620-checks">${[['showLogo','Logo'],['showAddress','Address'],['showEmail','Email'],['showPhone','Phone'],['showGSTIN','GSTIN'],['showHSN','HSN/SAC'],['showMRP','MRP'],['showDescription','Description'],['showTax','Tax details'],['showReceived','Received'],['showBalance','Balance'],['showAmountWords','Amount in words'],['showPaymentMode','Payment mode'],['showTerms','Terms & Conditions'],['showSignature','Signature'],['showPageNumbers','Page numbers'],['originalDuplicate','Original + Duplicate'],['thermalAutoCut','Thermal auto-cut'],['thermalCashDrawer','Cash drawer pulse']].map(([k,l])=>`<label><input id="i_${k}" type="checkbox" ${s[k]?'checked':''}> ${l}</label>`).join('')}</div><h3>Custom Invoice Fields</h3><div class="p611-form"><input id="iCustomLabel" placeholder="Field label"><input id="iCustomValue" placeholder="Field value"><button class="btn" onclick="p620AddInvoiceCustomField()">Add Field</button></div><div id="iCustomList">${(S().invoiceCustomFields620||[]).filter(x=>x.businessId===biz()).map(x=>`<span class="pill">${safe(x.label)}: ${safe(x.value)} <button class="btn mini danger" onclick="p620DeleteInvoiceCustomField('${x.id}')">×</button></span>`).join('')}</div><button class="btn primary" onclick="p620SavePrintSettings()">Save Print Settings</button><p class="muted">Direct ESC/POS uses a paired Bluetooth printer when the Android bridge is available. Browser mode safely downloads an ESC/POS .bin fallback.</p>`};
+window.p620PrintTab=function(tab){const v=$('p620PrintBody');if(!v)return;const s=S().invoiceSettings620;if(tab==='documents'){const txs=window.__p620PrintTx||[];v.innerHTML=`<div class="p611-table"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>No.</th><th>Party</th><th>Total</th><th>Actions</th></tr></thead><tbody>${txs.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${safe(t.number)}</td><td>${safe(t.partyName)}</td><td>${cash(t.total)}</td><td><button class="btn mini primary" onclick="p620DownloadPDF('${t.id}',false)">Download PDF</button> <button class="btn mini" onclick="p620SharePDF('${t.id}',false,false)">Share PDF</button> <button class="btn mini" onclick="p620SharePDF('${t.id}',false,true)">WhatsApp PDF</button> <button class="btn mini" onclick="p620Print('${t.id}',false)">Print</button> <button class="btn mini" onclick="p620DownloadPDF('${t.id}',true)">Thermal PDF</button> <button class="btn mini" onclick="p620Print('${t.id}',true)">Print thermal</button> <button class="btn mini" onclick="p620EscPos('${t.id}')">ESC/POS</button></td></tr>`).join('')||'<tr><td colspan="6">No saved invoices yet. Create a sale or order first.</td></tr>'}</tbody></table></div>`;return}v.innerHTML=`<div class="p620-settings"><label>Paper size<select id="iPaper"><option ${s.paperSize==='A4'?'selected':''}>A4</option><option ${s.paperSize==='A5'?'selected':''}>A5</option></select></label><label>Orientation<select id="iOrient"><option ${s.orientation==='portrait'?'selected':''}>portrait</option><option ${s.orientation==='landscape'?'selected':''}>landscape</option></select></label><label>Font<select id="iFont"><option ${s.fontSize==='small'?'selected':''}>small</option><option ${s.fontSize==='medium'?'selected':''}>medium</option><option ${s.fontSize==='large'?'selected':''}>large</option></select></label><label>Theme<select id="iTheme"><option value="clean" ${s.theme==='clean'?'selected':''}>Clean</option><option value="compact" ${s.theme==='compact'?'selected':''}>Compact</option><option value="classic" ${s.theme==='classic'?'selected':''}>Classic</option></select></label><label>Accent<input id="iAccent" type="color" value="${safe(s.accent)}"></label><label>Thermal width<select id="iThermal"><option value="58" ${s.thermalWidth==='58'?'selected':''}>58mm</option><option value="80" ${s.thermalWidth==='80'?'selected':''}>80mm</option></select></label><label>Copies<input id="iCopies" type="number" min="1" max="5" value="${n(s.thermalCopies)||1}"></label><label>Terms<textarea id="iTerms">${safe(s.terms)}</textarea></label><label>Signature text<input id="iSign" value="${safe(s.signatureText)}"></label></div><div class="p620-checks">${[['showLogo','Logo'],['showAddress','Address'],['showEmail','Email'],['showPhone','Phone'],['showGSTIN','GSTIN'],['showHSN','HSN/SAC'],['showMRP','MRP'],['showDescription','Description'],['showTax','Tax details'],['showReceived','Received'],['showBalance','Balance'],['showAmountWords','Amount in words'],['showPaymentMode','Payment mode'],['showTerms','Terms & Conditions'],['showSignature','Signature'],['showPageNumbers','Page numbers'],['originalDuplicate','Original + Duplicate'],['thermalAutoCut','Thermal auto-cut'],['thermalCashDrawer','Cash drawer pulse']].map(([k,l])=>`<label><input id="i_${k}" type="checkbox" ${s[k]?'checked':''}> ${l}</label>`).join('')}</div><h3>Custom Invoice Fields</h3><div class="p611-form"><input id="iCustomLabel" placeholder="Field label"><input id="iCustomValue" placeholder="Field value"><button class="btn" onclick="p620AddInvoiceCustomField()">Add Field</button></div><div id="iCustomList">${(S().invoiceCustomFields620||[]).filter(x=>x.businessId===biz()).map(x=>`<span class="pill">${safe(x.label)}: ${safe(x.value)} <button class="btn mini danger" onclick="p620DeleteInvoiceCustomField('${x.id}')">×</button></span>`).join('')}</div><button class="btn primary" onclick="p620SavePrintSettings()">Save Print Settings</button><p class="muted">Direct ESC/POS uses a paired Bluetooth printer when the Android bridge is available. Browser mode safely downloads an ESC/POS .bin fallback.</p>`};
 window.p620SavePrintSettings=function(){const s=S().invoiceSettings620;s.paperSize=$('iPaper').value;s.orientation=$('iOrient').value;s.fontSize=$('iFont').value;s.theme=$('iTheme').value;s.accent=$('iAccent').value;s.thermalWidth=$('iThermal').value;s.thermalCopies=Math.max(1,Math.min(5,n($('iCopies').value)||1));s.terms=$('iTerms').value;s.signatureText=$('iSign').value;['showLogo','showAddress','showEmail','showPhone','showGSTIN','showHSN','showMRP','showDescription','showTax','showReceived','showBalance','showAmountWords','showPaymentMode','showTerms','showSignature','showPageNumbers','originalDuplicate','thermalAutoCut','thermalCashDrawer'].forEach(k=>s[k]=$('i_'+k).checked);log('UPDATE','PRINT_SETTINGS','620','Invoice/thermal settings updated');saveAll();toast('Print settings saved')};
 window.p620AddInvoiceCustomField=function(){const label=String($('iCustomLabel')?.value||'').trim(),value=String($('iCustomValue')?.value||'').trim();if(!label)return alert('Field label required');S().invoiceCustomFields620.push({id:uid620(),businessId:biz(),label,value,enabled:true,createdAt:now()});saveAll();p620PrintTab('settings')};
 window.p620DeleteInvoiceCustomField=function(id){S().invoiceCustomFields620=S().invoiceCustomFields620.filter(x=>x.id!==id);saveAll();p620PrintTab('settings')};
 window.p620Print=function(id,thermal){const t=txById(id);if(t)printHtml(invoiceHtml(t,thermal))};
+function invoiceExportModel(t,thermal){
+  const business=businessInfo();
+  return {transaction:t,business,settings:S().invoiceSettings620,thermal:!!thermal,
+    customFields:(S().invoiceCustomFields620||[]).filter(f=>f.businessId===biz()),
+    amountWords:((t.currency||business.baseCurrency||'INR')==='INR'?amountWords(t.total):'')};
+}
+function invoiceShareText(t){
+  const bi=businessInfo();
+  return 'Invoice '+String(t.number||'')+' from '+String(bi.name||'Vyapar AI')+' · '+cash(t.total)+(t.partyName?' · '+t.partyName:'');
+}
 window.p620DownloadPDF=function(id,thermal){
   ensure(); const t=txById(id); if(!t)return;
-  const business=businessInfo();
-  return window.VyaparInvoicePDF.download({transaction:t,business,settings:S().invoiceSettings620,thermal:!!thermal,
-    customFields:(S().invoiceCustomFields620||[]).filter(f=>f.businessId===biz()),
-    amountWords:((t.currency||business.baseCurrency||'INR')==='INR'?amountWords(t.total):'')});
+  return window.VyaparInvoicePDF.download(invoiceExportModel(t,thermal));
+};
+window.p620SharePDF=function(id,thermal,whatsappOnly){
+  ensure(); const t=txById(id); if(!t)return;
+  return window.VyaparInvoicePDF.share(invoiceExportModel(t,thermal),{text:invoiceShareText(t),whatsappOnly:!!whatsappOnly});
 };
 function escPosBytes(t){const st=S().invoiceSettings620,bi=businessInfo(),width=st.thermalWidth==='58'?32:48,enc=new TextEncoder(),parts=[];const push=s=>parts.push(enc.encode(s));push('\x1b@');push('\x1ba\x01');push(bi.name+'\n');push('\x1ba\x00');push(t.type+' '+t.number+'\n'+t.date+'\n'+(t.partyName?'Party: '+t.partyName+'\n':'')+'-'.repeat(width)+'\n');(t.items||[]).forEach(i=>push((i.name+' x'+i.qty+' '+cash(n(i.qty)*n(i.rate))).slice(0,width)+'\n'));push('-'.repeat(width)+'\nTOTAL: '+cash(t.total)+'\nReceived: '+cash(t.receivedPaid)+'\nBalance: '+cash(t.balance)+'\n');if(st.showTerms)push(st.terms+'\n');push('\n\n');if(st.thermalCashDrawer)parts.push(Uint8Array.from([27,112,0,25,250]));if(st.thermalAutoCut)parts.push(Uint8Array.from([29,86,0]));const len=parts.reduce((z,p)=>z+p.length,0),out=new Uint8Array(len);let o=0;parts.forEach(p=>{out.set(p,o);o+=p.length});return out}
 function bytesB64(bytes){let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,Math.min(bytes.length,i+8192)));return btoa(s)}
@@ -15131,7 +15222,37 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     return null;
   }
 
-  function themeName() { return 'Dark'; }
+  function themeName() {
+    const tier=document.documentElement?.dataset?.perfTier || document.documentElement?.getAttribute('data-perf-tier') || '';
+    if(tier==='legacy') return 'Lite';
+    if(tier==='mid') return 'Balanced';
+    return 'Auto';
+  }
+
+  const CANONICAL_HEADINGS = {
+    account: /account|plan|subscription|sign[ -]?in/i,
+    profile: /business profile|shop details|business details|profile/i,
+    business: /business controls|admin settings|company|staff|transaction/i,
+    security: /account password|password|security|app lock|lock/i,
+    appearance: /motion|performance|appearance|animation/i,
+    navigation: /navigation|scroll|page behaviour|page behavior/i,
+    data: /backup|restore|data safety|drive/i,
+    update: /app update|updates|version/i,
+    legal: /help|legal|privacy|terms|refund|support/i
+  };
+
+  function synchronizeCardHeading(id,item,cards) {
+    const matcher=CANONICAL_HEADINGS[id];
+    cards.forEach(card=>{
+      card.dataset.vy675Owner=id;
+      card.setAttribute('aria-label',item.title);
+      const candidates=[
+        ...card.querySelectorAll(':scope > h1,:scope > h2,:scope > h3,:scope > .settings-section-heading > h1,:scope > .settings-section-heading > h2,:scope > .settings-section-heading > h3,:scope > .settings-section-heading > strong')
+      ];
+      const heading=candidates.find(node=>matcher && matcher.test(String(node.textContent||'').trim())) || null;
+      if(heading && String(heading.textContent||'').trim()!==item.title) heading.textContent=item.title;
+    });
+  }
 
   function currentPlan() {
     const node = document.querySelector('#productionAccountCard .production-plan, #planBadge');
@@ -15386,6 +15507,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const subtitle = shell.querySelector('.vy675-page-header p');
     const cards = map[id] || [];
     body.replaceChildren(...cards);
+    synchronizeCardHeading(id,item,cards);
     if (!cards.length) {
       const empty = document.createElement('div');
       empty.className = 'vy675-page-empty';
@@ -17113,11 +17235,13 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
           }).join('') || '<p class="muted">No item rows on this document.</p>')+'</div>'+
           '<div class="vy-invoice-actions">'+
           '<button class="btn primary" type="button" data-invoice-action="pdf">Download PDF</button>'+
+          '<button class="btn" type="button" data-invoice-action="share-pdf">Share PDF</button>'+
+          '<button class="btn" type="button" data-invoice-action="whatsapp-pdf">WhatsApp PDF</button>'+
           '<button class="btn" type="button" data-invoice-action="print">Print invoice</button>'+
           '<button class="btn" type="button" data-invoice-action="thermal">Thermal PDF</button>'+
           '<button class="btn" type="button" data-invoice-action="print-thermal">Print thermal</button>'+
           '<button class="btn" type="button" data-invoice-action="escpos">Bluetooth / ESC-POS</button>'+
-          '<button class="btn" type="button" data-invoice-action="share">Share invoice</button></div>';
+          '<button class="btn" type="button" data-invoice-action="share">Share message/link</button></div>';
         body.closest('.vy-form-body')?.scrollTo(0,0);
         detail.onclick=function (event) {
           if (event.target.closest('[data-invoice-back]')) return showList();
@@ -17126,6 +17250,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
           var id=tx.id;
           switch (action.dataset.invoiceAction) {
             case 'pdf': return root.p620DownloadPDF(id,false);
+            case 'share-pdf': return root.p620SharePDF(id,false,false);
+            case 'whatsapp-pdf': return root.p620SharePDF(id,false,true);
             case 'print': return root.p620Print(id,false);
             case 'thermal': return root.p620DownloadPDF(id,true);
             case 'print-thermal': return root.p620Print(id,true);
