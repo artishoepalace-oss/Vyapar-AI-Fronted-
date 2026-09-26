@@ -141,8 +141,8 @@ const version=require('../version.json').versionName;
       return {header:size('.app > .top'),nav:size('#nav.nav'),middle:size('#screen-business .p1-modebar'),
         kpi:size('#screen-business .vx621-kpi'),search:size('#screen-business .business-tool-search-field')};
     });
-    assert(radius.header>=40&&radius.nav>=40&&radius.middle>=40&&radius.kpi>=23&&radius.search>=40,
-      'Global rounded shapes are applied to actual business UI: '+JSON.stringify(radius));
+    assert(radius.header>=40&&radius.nav>=40&&radius.middle>=40&&radius.kpi===18&&radius.search>=40,
+      '00058 pill bars and 18px inner-card radii are applied to actual business UI: '+JSON.stringify(radius));
     const due=await page.locator('.vx621-kpi').last().boundingBox(),kpi=await page.locator('.vx621-kpi').first().boundingBox();
     assert(due.width>kpi.width*1.8,'Customer Due spans the summary');
     const surface=await page.locator('#screen-business .p1-modebar').evaluate(bar=>{
