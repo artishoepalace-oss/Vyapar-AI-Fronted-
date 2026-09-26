@@ -170,10 +170,10 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .app {
   padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
 }
-/* Narrow phones: shrink only the outer bar. Keep the fixed capsule clear of
-   both rounded ends (at least 6px at a 320px viewport). */
+/* Narrow phones: use a half-pixel-safe inset so fractional grid rounding
+   still leaves >6px physical clearance at both 320px rounded ends. */
 @media(max-width:367px){
-  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .nav-track {left:12px;right:12px;}
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .nav-track {left:12.5px;right:12.5px;}
 }
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
