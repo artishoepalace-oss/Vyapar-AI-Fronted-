@@ -208,7 +208,7 @@
     if(s.showPageNumbers!==false) {
       for(let i=0;i<pages.length;i++) { page=pages[i];await text('Page '+(i+1)+' of '+pages.length,margin,height-22,8,false,muted); }
     }
-    pdf.setTitle('Invoice '+clean(tx.number));pdf.setAuthor(clean(business.name || 'Vyapar AI'));pdf.setCreator('Vyapar AI');
+    pdf.setTitle('Invoice '+clean(tx.number));pdf.setAuthor(clean(business.name || 'Vyapar AI'));pdf.setCreator('Vyapar AI');pdf.setSubject('Vyapar AI standard invoice PDF');
     return { bytes:await pdf.save(),name:filename(tx.number),pageCount:pages.length };
   }
   function base64(bytes) { let result='';for(let i=0;i<bytes.length;i+=8192)result+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));return btoa(result); }
@@ -228,11 +228,44 @@
     const a=document.createElement('a');a.href=url;a.download=result.name;document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),60000);return 'PDF download started.';
   }
+  async function shareResult(result, options) {
+    options=options || {};
+    const message=clean(options.text || '');
+    const whatsappOnly=options.whatsappOnly===true;
+    const bridge=window.AndroidDownloads;
+    if(bridge && typeof bridge.shareBase64==='function') {
+      bridge.shareBase64(result.name,'application/pdf',base64(result.bytes),message,whatsappOnly);
+      return whatsappOnly ? 'Opening WhatsApp with PDF…' : 'Opening share sheet with PDF…';
+    }
+    const blob=new Blob([result.bytes],{type:'application/pdf'});
+    if(typeof File==='function' && navigator.share) {
+      const file=new File([blob],result.name,{type:'application/pdf'});
+      const payload={title:result.name,text:message,files:[file]};
+      if(!navigator.canShare || navigator.canShare({files:[file]})) {
+        await navigator.share(payload);
+        return 'PDF shared.';
+      }
+    }
+    /* Browser fallback cannot guarantee a PDF attachment. Save the exact file
+       first and let the user attach it from Downloads rather than silently
+       downgrading to a text-only invoice. */
+    await save(result);
+    return 'PDF saved. Attach it from Downloads to the app or number you want.';
+  }
   function download(model) {
     if(activeJob)return activeJob;
     status('Preparing invoice PDF…');
     activeJob=generate(model).then(save).then(message=>{status(message);return true;}).catch(error=>{status(error.message || 'PDF could not be saved. Please try again.',true);return false;}).finally(()=>{activeJob=null;});
     return activeJob;
   }
-  window.VyaparInvoicePDF={generate,download,filename,splitText};
+  function share(model,options) {
+    if(activeJob)return activeJob;
+    status('Preparing invoice PDF…');
+    activeJob=generate(model).then(result=>shareResult(result,options)).then(message=>{status(message);return true;}).catch(error=>{
+      if(error && error.name==='AbortError')return false;
+      status(error.message || 'PDF could not be shared. Please try again.',true);return false;
+    }).finally(()=>{activeJob=null;});
+    return activeJob;
+  }
+  window.VyaparInvoicePDF={generate,download,share,shareResult,filename,splitText};
 })();
