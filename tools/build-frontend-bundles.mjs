@@ -69,7 +69,8 @@ const uiStyles = [
   'more-page-00051.css',
   'global-radius-final-00045.css',
   'middle-bar-2026.css',
-  'three-dot-menu-00046.css'
+  'three-dot-menu-00046.css',
+  'settings-adjustment-00055.css'
 ];
 
 const scripts = [

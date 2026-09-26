@@ -9,6 +9,28 @@ module.exports=async function(page,out,width){
     assert(surfaces.length>0,'Settings page has cards: '+id);
     for(const s of surfaces){assert.equal(s.color,'rgb(26, 26, 26)',id+' '+s.name);assert.equal(s.image,'none',id+' gradients removed');}
   }
+  // Physical-device Settings regression: content must clear rounded edges and navy controls must not return.
+  for(const id of ['profile','security','appearance','data']){
+    await page.evaluate(id=>vy675OpenSettingsPage(id),id);
+    await page.waitForTimeout(120);
+    const top=page.locator('#screen-settings .vy675-page-body > .card, #screen-settings .vy675-page-body > .settings-section').first();
+    const box=await top.evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {paddingLeft:parseFloat(s.paddingLeft),left:r.left,right:r.right,viewport:innerWidth,bg:s.backgroundColor};});
+    assert(box.paddingLeft>=14,id+' keeps a safe inner gutter: '+JSON.stringify(box));
+    assert(box.left>=0&&box.right<=box.viewport,id+' card fits viewport');
+    assert.equal(box.bg,'rgb(26, 26, 26)',id+' uses shared card surface');
+  }
+  await page.evaluate(()=>vy675OpenSettingsPage('profile'));
+  await page.waitForTimeout(100);
+  const profileControls=await page.locator('#screen-settings .vy675-page-body input:not([type="checkbox"]):not([type="radio"]), #screen-settings .vy675-page-body select').evaluateAll(nodes=>nodes.filter(n=>n.getBoundingClientRect().height>0).map(n=>getComputedStyle(n).backgroundColor));
+  assert(profileControls.length>=2,'Business profile controls rendered');
+  profileControls.forEach(color=>assert.equal(color,'rgb(36, 36, 36)','Business profile control is neutral graphite'));
+  await page.evaluate(()=>vy675OpenSettingsPage('security'));
+  await page.waitForTimeout(80);
+  assert.equal(await page.locator('#vx622AppLockSection .vx622-lock-heading:visible, #vx622AppLockSection .vx643-security-copy:visible').count(),0,'Password card does not repeat page heading');
+  await page.evaluate(()=>vy675OpenSettingsPage('appearance'));
+  await page.waitForTimeout(80);
+  assert.equal(await page.locator('#screen-settings .vy675-page-body > .settings-section > .settings-section-heading:visible, #screen-settings .vy675-page-body > .card > .settings-section-heading:visible').count(),0,'Motion card does not repeat page heading');
+
   await page.screenshot({path:path.join(out,'settings-palette-'+width+'.png')});
   await page.evaluate(()=>{
     state.stocks=[{id:'qa-a',item:'QA shoes A',qty:2,min:1},{id:'qa-b',item:'QA shoes B',qty:3,min:1},{id:'qa-c',item:'QA shoes C',qty:4,min:1}];

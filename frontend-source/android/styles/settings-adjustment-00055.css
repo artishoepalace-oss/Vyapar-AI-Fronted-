@@ -1,0 +1,219 @@
+/* Vyapar AI 20.10.2004.00055.2026
+   Final Settings subpage alignment pass from physical-device screenshots.
+   This file intentionally loads last so old Settings layers cannot remove the
+   inner inset or reintroduce navy controls. */
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings.vy675-settings-ready {
+  --vy55-settings-card:#1A1A1A;
+  --vy55-settings-control:#242424;
+  --vy55-settings-line:#343434;
+  --vy55-settings-text:#FFFFFF;
+  --vy55-settings-muted:#A8A8A8;
+}
+
+/* Header geometry: back button, title and subtitle share one clean baseline. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-header {
+  display:grid!important;
+  grid-template-columns:44px minmax(0,1fr)!important;
+  align-items:center!important;
+  column-gap:12px!important;
+  min-height:64px!important;
+  margin:0 0 16px!important;
+  padding:4px 4px 10px!important;
+  box-sizing:border-box!important;
+  background:#000!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-back {
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  margin:0!important;padding:0!important;border-radius:50%!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-header > div {
+  min-width:0!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-header h2 {
+  margin:0!important;
+  font-size:19px!important;
+  line-height:1.18!important;
+  letter-spacing:-.02em!important;
+  color:var(--vy55-settings-text)!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-header p {
+  margin:4px 0 0!important;
+  max-width:100%!important;
+  font-size:11px!important;
+  line-height:1.38!important;
+  color:var(--vy55-settings-muted)!important;
+  white-space:normal!important;
+}
+
+/* The screenshots exposed a legacy 2px card inset. Restore a real inner gutter
+   so labels/headings cannot sit under the rounded left edge. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
+  [data-vy675-page="profile"],
+  [data-vy675-page="business"],
+  [data-vy675-page="security"],
+  [data-vy675-page="appearance"],
+  [data-vy675-page="navigation"],
+  [data-vy675-page="data"]
+) .vy675-page-body > :is(.card,.settings-section,#fs607Settings) {
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:16px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  border:1px solid var(--vy55-settings-line)!important;
+  border-radius:24px!important;
+  background:var(--vy55-settings-card)!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-body {
+  width:100%!important;
+  min-width:0!important;
+  gap:14px!important;
+  box-sizing:border-box!important;
+}
+
+/* Single-purpose subpages already have a title in the page header. Do not repeat
+   the same heading inside the card. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="security"] #vx622AppLockSection :is(.vx622-lock-heading,.vx643-security-copy),
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="appearance"] .vy675-page-body > :is(.card,.settings-section) > .settings-section-heading {
+  display:none!important;
+}
+
+/* Labels, help text and controls use one left edge and one monochrome hierarchy. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
+  [data-vy675-page="profile"],
+  [data-vy675-page="business"],
+  [data-vy675-page="security"],
+  [data-vy675-page="appearance"],
+  [data-vy675-page="navigation"],
+  [data-vy675-page="data"]
+) .vy675-page-body :is(label,.settings-field-note,.muted,small,p) {
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-body label:not(.vx622-switch):not(.vy675-switch) {
+  margin:0 0 7px!important;
+  color:var(--vy55-settings-muted)!important;
+  font-size:10.5px!important;
+  line-height:1.3!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
+  [data-vy675-page="profile"],
+  [data-vy675-page="business"],
+  [data-vy675-page="security"],
+  [data-vy675-page="appearance"],
+  [data-vy675-page="navigation"],
+  [data-vy675-page="data"]
+) .vy675-page-body :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,textarea,.btn,button:not(.vx622-switch):not(.vy675-switch),
+  .vy675-option-row,.vx622-settings-row,.vx622-lock-status
+) {
+  background:var(--vy55-settings-control)!important;
+  background-image:none!important;
+  border-color:var(--vy55-settings-line)!important;
+  color:var(--vy55-settings-text)!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="profile"] .vy675-page-body :is(input,select,textarea) {
+  min-height:48px!important;
+  padding-left:14px!important;
+  padding-right:14px!important;
+  border:1px solid var(--vy55-settings-line)!important;
+  border-radius:16px!important;
+  background:var(--vy55-settings-control)!important;
+  color:var(--vy55-settings-text)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="profile"] .vy675-page-body :is(input,select,textarea):focus {
+  border-color:#686868!important;
+  outline:0!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.055)!important;
+}
+
+/* Motion choices and password action keep equal widths, spacing and tap targets. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="appearance"] .vy675-page-body :is(.segmented-settings,.grid3) {
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  width:100%!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="appearance"] .vy675-page-body :is(.segmented-settings,.grid3) .btn,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="security"] #vx622AppLockSection .btn {
+  width:100%!important;
+  min-height:48px!important;
+  margin:0!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="security"] #vx622AppLockSection {
+  min-height:0!important;
+}
+
+/* Backup: keep native file input readable and aligned inside the same 16px gutter. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="data"] .data-safety-section input[type="file"] {
+  width:100%!important;
+  max-width:100%!important;
+  min-height:48px!important;
+  margin:0!important;
+  padding:6px!important;
+  box-sizing:border-box!important;
+  border:1px solid var(--vy55-settings-line)!important;
+  border-radius:16px!important;
+  background:var(--vy55-settings-control)!important;
+  color:var(--vy55-settings-text)!important;
+}
+
+/* Help & legal deliberately stays as four separate actions; only normalize
+   geometry so it lines up with the other Settings pages. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="legal"] .vy675-page-body > .settings-section {
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="legal"] .settings-link-grid {
+  gap:8px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="legal"] .settings-link-grid .btn {
+  width:100%!important;
+  min-height:48px!important;
+  padding:0 15px!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  background:var(--vy55-settings-control)!important;
+  border-color:var(--vy55-settings-line)!important;
+  color:var(--vy55-settings-text)!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="legal"] .settings-link-grid .btn.danger {
+  background:#80172d!important;
+  border-color:#80172d!important;
+  color:#fff!important;
+}
+
+@media(max-width:359px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-page-header {
+    grid-template-columns:42px minmax(0,1fr)!important;
+    column-gap:10px!important;
+    padding-inline:2px!important;
+  }
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
+    [data-vy675-page="profile"],
+    [data-vy675-page="business"],
+    [data-vy675-page="security"],
+    [data-vy675-page="appearance"],
+    [data-vy675-page="navigation"],
+    [data-vy675-page="data"]
+  ) .vy675-page-body > :is(.card,.settings-section,#fs607Settings) {
+    padding:14px!important;
+    border-radius:22px!important;
+  }
+}
