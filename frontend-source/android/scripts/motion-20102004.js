@@ -432,6 +432,48 @@
     overlays.set(overlay,info);guardOverlay(overlay);return info;
   }
 
+  function springProgressFrames(ms,stiffness,damping,mass){
+    const frames=Math.max(14,Math.min(26,Math.round(ms/18))),dt=(ms/1000)/frames;
+    let x=0,v=0;const out=[{offset:0,p:0}];
+    for(let i=1;i<=frames;i++){
+      const a=(-stiffness*(x-1)-damping*v)/mass;
+      v+=a*dt;x+=v*dt;
+      /* Panels may settle a few percent past rest, like a damped physical sheet,
+         but never enough to expose layout behind the rounded edge. */
+      const p=Math.max(0,Math.min(1.055,x));
+      out.push({offset:i/frames,p:i===frames?1:p});
+    }
+    return out;
+  }
+  function springPanelIn(node,base,fullSheet,more,ms,done){
+    if(!node||reduced()||compactMotion()||typeof node.animate!=='function')return false;
+    cancel(node);
+    let height=320;
+    try{height=Math.max(120,node.getBoundingClientRect().height||height);}catch(_){}
+    const distance=fullSheet?Math.min(height+28,Math.max(360,(window.innerHeight||720)*.82)):(more?30:20);
+    const startScale=fullSheet?1:(more?.988:.994);
+    const rest=base==='none'?'':base+' ';
+    const frames=springProgressFrames(ms,fullSheet?250:290,fullSheet?27:29,1).map(sample=>{
+      const remaining=1-sample.p;
+      return {offset:sample.offset,transform:rest+'translate3d(0,'+(distance*remaining).toFixed(2)+'px,0) scale('+(1-(1-startScale)*remaining).toFixed(4)+')'};
+    });
+    const saved=saveInline(node,['transform','will-change','transition']);
+    let animation=null,timer=0,finished=false;
+    const finish=()=>{
+      if(finished)return;finished=true;if(timer)clearTimeout(timer);
+      if(animation){try{animation.onfinish=null;animation.oncancel=null;animation.cancel();}catch(_){}}
+      restoreInline(node,saved);running.delete(node);if(done)done();
+    };
+    try{
+      node.style.setProperty('will-change','transform','important');
+      animation=node.animate(frames,{duration:duration(ms),easing:'linear',fill:'both'});
+      animation.onfinish=finish;animation.oncancel=()=>{};
+      timer=setTimeout(finish,duration(ms)+100);
+      running.set(node,{cancel:finish});
+      return true;
+    }catch(_){if(animation)try{animation.cancel();}catch(__){}restoreInline(node,saved);return false;}
+  }
+
   function openOverlay(overlay){
     if(overlays.has(overlay) || !visible(overlay) || overlay.__vyClosing)return;
     const info=registerOverlay(overlay);if(!info)return;
@@ -441,9 +483,12 @@
     const rest=base==='none'?'':base+' ';
     const compact=more&&compactMotion();
     const entrance=more?(compact?245:460):sheet?280:220;
-    tween(overlay,{opacity:'0'},{opacity:'1'},more?(compact?150:300):sheet?145:125,null,easeSoft);
+    tween(overlay,{opacity:'0'},{opacity:'1'},more?(compact?150:260):sheet?150:130,null,easeSoft);
     const fullSheet=info.sheet;
-    tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},more?entrance:fullSheet?280:sheet?220:185,null,more?moreEase:ease);
+    const panelTime=more?entrance:fullSheet?300:sheet?235:195;
+    if(!springPanelIn(card,base,fullSheet,more,panelTime,null)){
+      tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},panelTime,null,more?moreEase:ease);
+    }
     const focus=()=>{
       if(!overlay.isConnected || overlay.__vyClosing)return;
       if(!overlay.contains(document.activeElement)){
@@ -502,6 +547,8 @@
   function boot(){
     document.documentElement.classList.add('vy-motion-ready','vy-physics-motion');
     document.documentElement.setAttribute('data-motion-engine',physicsProfile.engine);
+    document.addEventListener('pointerdown',()=>document.documentElement.classList.add('vy-pointer-input'),true);
+    document.addEventListener('keydown',event=>{if(event.key==='Tab'||event.key.startsWith('Arrow'))document.documentElement.classList.remove('vy-pointer-input');},true);
     window.addEventListener('resize',()=>stopPageTransition(true),{passive:true});
     document.querySelectorAll(overlaySelector).forEach(openOverlay);
     const observer=new MutationObserver(records=>{
