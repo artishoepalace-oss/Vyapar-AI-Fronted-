@@ -248,7 +248,6 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 ){
   padding-left:var(--vy45-panel-pad)!important;
   padding-right:var(--vy45-panel-pad)!important;
-  overflow:visible!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
   .vx621-feature-card,.android-quick-action,.home-metric-tile,.vy675-option-row,
