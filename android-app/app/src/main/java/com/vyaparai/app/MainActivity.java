@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -772,6 +773,68 @@ protected void onCreate(Bundle savedInstanceState) {
         @JavascriptInterface
         public void saveBase64WithResult(String name, String mime, String base64, String requestId) {
             queueDownload(name, mime, base64, requestId);
+        }
+
+        @JavascriptInterface
+        public void shareBase64(String name, String mime, String base64, String text, boolean whatsappOnly) {
+            queueShare(name, mime, base64, text, whatsappOnly);
+        }
+    }
+
+    private void queueShare(String name, String mime, String base64, String text, boolean whatsappOnly) {
+        io.execute(() -> {
+            try {
+                byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                if (bytes.length == 0) throw new Exception("Empty file");
+                String safeName = sanitizeName(name == null || name.trim().isEmpty() ? "Invoice.pdf" : name);
+                if (!safeName.toLowerCase(java.util.Locale.US).endsWith(".pdf")) safeName += ".pdf";
+                File directory = new File(getFilesDir(), "shares");
+                if (!directory.exists() && !directory.mkdirs()) throw new Exception("Share folder unavailable");
+                File file = new File(directory, safeName);
+                try (FileOutputStream out = new FileOutputStream(file, false)) {
+                    out.write(bytes);
+                    out.flush();
+                }
+                final String shareMime = mime == null || mime.trim().isEmpty() ? "application/pdf" : mime;
+                runOnUiThread(() -> sharePreparedFile(file, shareMime, text, whatsappOnly));
+            } catch (Exception e) {
+                runOnUiThread(() -> toast("Invoice PDF could not be prepared for sharing"));
+            }
+        });
+    }
+
+    private void sharePreparedFile(File file, String mime, String text, boolean whatsappOnly) {
+        try {
+            Uri uri = new Uri.Builder()
+                    .scheme("content")
+                    .authority(getPackageName() + ".updates")
+                    .appendPath("share")
+                    .appendPath(file.getName())
+                    .build();
+            Intent send = new Intent(Intent.ACTION_SEND);
+            send.setType(mime == null || mime.isEmpty() ? "application/pdf" : mime);
+            send.putExtra(Intent.EXTRA_STREAM, uri);
+            if (text != null && !text.trim().isEmpty()) send.putExtra(Intent.EXTRA_TEXT, text);
+            send.setClipData(ClipData.newRawUri("Vyapar AI invoice", uri));
+            send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            if (whatsappOnly) {
+                try {
+                    send.setPackage("com.whatsapp");
+                    startActivity(send);
+                    return;
+                } catch (ActivityNotFoundException ignored) {}
+                try {
+                    send.setPackage("com.whatsapp.w4b");
+                    startActivity(send);
+                    return;
+                } catch (ActivityNotFoundException ignored) {}
+                send.setPackage(null);
+                toast("WhatsApp not found. Choose another app.");
+            }
+            startActivity(Intent.createChooser(send, "Share invoice PDF"));
+        } catch (Exception e) {
+            toast("Unable to open invoice sharing");
         }
     }
 
