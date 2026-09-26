@@ -27,7 +27,7 @@
   const ease='cubic-bezier(.18,.89,.32,1.12)';
   const easeSoft='cubic-bezier(.2,.82,.24,1.04)';
   const easeClose='cubic-bezier(.32,0,.2,1)';
-  const pageEase='cubic-bezier(.18,.86,.22,1.04)';
+  const pageEase='cubic-bezier(.18,.86,.22,1)';
   const moreEase='cubic-bezier(.18,.9,.22,1.08)';
   const physicsProfile={engine:'adaptive-damped-spring',scroll:'native-webview-fling',minAndroidApi:26};
   const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
