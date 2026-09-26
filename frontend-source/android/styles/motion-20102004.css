@@ -7,7 +7,7 @@ html.vy-motion-ready{
   --vy-motion-settle:cubic-bezier(.2,.78,.2,1);
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
-  --vy-motion-page:460ms;
+  --vy-motion-page:500ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
    the sticky header, while inherited smooth scrolling competes with page slides. */
