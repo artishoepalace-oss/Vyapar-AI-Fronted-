@@ -451,7 +451,7 @@
     let height=320;
     try{height=Math.max(120,node.getBoundingClientRect().height||height);}catch(_){}
     const distance=fullSheet?Math.min(height+28,Math.max(360,(window.innerHeight||720)*.82)):(more?30:20);
-    const startScale=fullSheet?1:(more?.988:.994);
+    const startScale=fullSheet?1:(more ? .988 : .994);
     const rest=base==='none'?'':base+' ';
     const frames=springProgressFrames(ms,fullSheet?250:290,fullSheet?27:29,1).map(sample=>{
       const remaining=1-sample.p;
