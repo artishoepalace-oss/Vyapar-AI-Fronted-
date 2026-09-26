@@ -20,7 +20,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
   box-shadow:none!important;
   pointer-events:none;
   transform:translate3d(var(--vy-middle-x,4px),0,0);
-  transition:transform 205ms cubic-bezier(.16,1,.3,1);
+  transition:transform 260ms cubic-bezier(.18,.90,.24,1.10);
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button {
   position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
@@ -58,3 +58,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#sc
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready::after,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button::before,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .screen :is(.p1-modebar,.workspace-tabs).vy-middle-ready > button::after {content:none!important;display:none!important;}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-tier-legacy body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-low-ram body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before{
+  transition-duration:190ms!important;
+}
