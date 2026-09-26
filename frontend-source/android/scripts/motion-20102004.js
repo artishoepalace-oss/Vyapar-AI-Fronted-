@@ -1,5 +1,5 @@
-/* Vyapar AI — directional page slides and compositor motion owner.
- * One motion owner for pages, dialogs, sheets and transient UI.
+/* Vyapar AI — adaptive spring, inertia and compositor motion owner.
+ * One motion owner for pages, dialogs, sheets, gestures and transient UI.
  * Page navigation keeps the outgoing screen alive through the same paint cycle,
  * then animates outgoing + incoming surfaces together before cleanup.
  */
@@ -22,11 +22,14 @@
     '.account-delete-dialog','.modal-card','.sheet-content','.vy-form-sheet','.github-update-dialog'
   ].join(',');
   const transientSelector='.glass-toast';
-  const ease='cubic-bezier(.16,1,.3,1)';
-  const easeSoft='cubic-bezier(.2,.8,.2,1)';
-  const easeClose='cubic-bezier(.4,0,.2,1)';
-  const pageEase='cubic-bezier(.32,.72,0,1)';
-  const moreEase=pageEase;
+  /* Cross-WebView damped-spring approximations. Values above 1 provide a tiny
+     physical settle without the rubber-band look or per-frame layout work. */
+  const ease='cubic-bezier(.18,.89,.32,1.12)';
+  const easeSoft='cubic-bezier(.2,.82,.24,1.04)';
+  const easeClose='cubic-bezier(.32,0,.2,1)';
+  const pageEase='cubic-bezier(.18,.86,.22,1.04)';
+  const moreEase='cubic-bezier(.18,.9,.22,1.08)';
+  const physicsProfile={engine:'adaptive-damped-spring',scroll:'native-webview-fling',minAndroidApi:26};
   const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
   const pageStyleProps=['position','top','left','right','bottom','width','height','margin','z-index','pointer-events','display','contain','isolation','transform','opacity','will-change','transition','backface-visibility','-webkit-backface-visibility'];
@@ -373,13 +376,58 @@
     const handle=card.querySelector('[data-sheet-dismiss]');
     if(handle && !handle.__vySwipe){
       handle.__vySwipe=true;
-      let start=null;
-      handle.addEventListener('touchstart',e=>{const t=e.touches[0];start={x:t.clientX,y:t.clientY};},{passive:true});
-      handle.addEventListener('touchend',e=>{
-        if(!start)return;const t=e.changedTouches[0],dy=t.clientY-start.y,dx=Math.abs(t.clientX-start.x);start=null;
-        if(dy>32 && dy>dx){e.preventDefault();handle.click();}
+      let drag=null;
+      const dragPoint=e=>(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||null;
+      const resetDrag=(animateBack)=>{
+        if(!drag)return;
+        const state=drag;drag=null;
+        const current=renderedCss(card,'transform',state.base);
+        card.style.removeProperty('transition');
+        overlay.style.removeProperty('transition');
+        if(animateBack && card.isConnected){
+          tween(card,{transform:current},{transform:state.base},260,null,ease);
+          const opacity=renderedCss(overlay,'opacity','1');
+          tween(overlay,{opacity},{opacity:'1'},170,null,easeSoft);
+        }else{
+          card.style.removeProperty('transform');
+          overlay.style.removeProperty('opacity');
+        }
+      };
+      handle.addEventListener('touchstart',e=>{
+        const t=dragPoint(e);if(!t)return;
+        cancel(card);cancel(overlay);
+        const now=Date.now();
+        drag={x:t.clientX,y:t.clientY,lastY:t.clientY,lastT:now,velocity:0,
+          base:renderedCss(card,'transform','none'),height:Math.max(1,card.getBoundingClientRect().height||320)};
+        card.style.setProperty('transition','none','important');
+        overlay.style.setProperty('transition','none','important');
+      },{passive:true});
+      handle.addEventListener('touchmove',e=>{
+        if(!drag)return;const t=dragPoint(e);if(!t)return;
+        const dy=Math.max(0,t.clientY-drag.y),dx=Math.abs(t.clientX-drag.x);
+        if(dx>dy+12)return;
+        const now=Date.now(),dt=Math.max(8,now-drag.lastT);
+        drag.velocity=(t.clientY-drag.lastY)/dt;drag.lastY=t.clientY;drag.lastT=now;
+        const resisted=dy<120?dy*.82:98.4+(dy-120)*.56;
+        const rest=drag.base==='none'?'':drag.base+' ';
+        card.style.setProperty('transform',rest+'translate3d(0,'+Math.round(resisted*100)/100+'px,0)','important');
+        overlay.style.setProperty('opacity',String(Math.max(.42,1-Math.min(.58,dy/drag.height*.72))),'important');
+        if(e.cancelable)e.preventDefault();
       },{passive:false});
-      handle.addEventListener('touchcancel',()=>{start=null;},{passive:true});
+      handle.addEventListener('touchend',e=>{
+        if(!drag)return;const t=dragPoint(e);
+        const dy=t?Math.max(0,t.clientY-drag.y):0;
+        const dx=t?Math.abs(t.clientX-drag.x):0;
+        const velocity=drag.velocity;
+        const threshold=Math.min(150,Math.max(72,drag.height*.20));
+        const dismiss=dx<dy+18 && (dy>=threshold || (dy>26 && velocity>.52));
+        if(dismiss){
+          drag=null;
+          if(e.cancelable)e.preventDefault();
+          handle.click();
+        }else resetDrag(true);
+      },{passive:false});
+      handle.addEventListener('touchcancel',()=>resetDrag(true),{passive:true});
     }
     overlays.set(overlay,info);guardOverlay(overlay);return info;
   }
@@ -449,10 +497,11 @@
     const close=overlay.querySelector('[data-sheet-dismiss]') || overlay.querySelector(closeSelector+', [data-update-close]');if(close){close.click();return true;}return false;
   }
 
-  window.vyaparMotion={enter,cancel,navigate,whenPageSettled,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition};
+  window.vyaparMotion={enter,cancel,navigate,whenPageSettled,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition,physics:physicsProfile};
 
   function boot(){
-    document.documentElement.classList.add('vy-motion-ready');
+    document.documentElement.classList.add('vy-motion-ready','vy-physics-motion');
+    document.documentElement.setAttribute('data-motion-engine',physicsProfile.engine);
     window.addEventListener('resize',()=>stopPageTransition(true),{passive:true});
     document.querySelectorAll(overlaySelector).forEach(openOverlay);
     const observer=new MutationObserver(records=>{
