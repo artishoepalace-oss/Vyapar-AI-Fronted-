@@ -235,7 +235,7 @@
       return true;
     }
 
-    const time=duration(460);
+    const time=duration(500);
     if(!time)return false;
     const active={outgoing,incoming,frame:0,timer:0,
       outgoingStyle:saveInline(outgoing,pageStyleProps),incomingStyle:saveInline(incoming,pageStyleProps)};
