@@ -10337,13 +10337,7 @@ function updateBulkSelection(menu){
   const count=menu.querySelector('.vx622-selection-count'),text=selected+' selected';
   if(count&&count.textContent!==text)count.textContent=text;
   const action=menu.querySelector('[data-bulk-destructive]');
-  if(action){
-    const unavailable=selected===0;
-    action.disabled=unavailable;
-    action.hidden=unavailable;
-    const divider=action.previousElementSibling;
-    if(divider?.classList.contains('vx622-menu-divider'))divider.hidden=unavailable;
-  }
+  if(action)action.disabled=selected===0;
   const select=menu.querySelector('[data-bulk-select-all]');if(select)select.disabled=!checks.length;
   bulkTables(menu).forEach(table=>table.querySelectorAll('thead .vx622-check-col input[type="checkbox"]').forEach(input=>{
     input.checked=checks.length>0&&selected===checks.length;
