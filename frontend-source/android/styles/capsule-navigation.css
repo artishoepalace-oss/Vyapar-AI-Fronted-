@@ -64,10 +64,10 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav {
   padding:0!important;gap:0!important;margin:0 auto!important;
   box-sizing:border-box!important;border:0!important;border-radius:25px!important;
   background:var(--vy-chrome-black)!important;
-  background-image:radial-gradient(115% 42% at 50% -4%,rgba(255,255,255,.11),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 50%)!important;
-  /* Static optical reflection: no blur or animated filter cost on Android 8. */
+  /* Keep only the crisp one-pixel rim inside the solid navigation surface. */
+  background-image:none!important;
   box-shadow:var(--vy-chrome-rim)!important;
-  overflow:hidden!important;isolation:isolate;
+  overflow:visible!important;contain:layout style!important;isolation:isolate;
   transform:none!important;translate:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
@@ -98,10 +98,25 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready.perf-low-ram.perf-lite body #
   transition-duration:220ms!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::before,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button::before,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button::after {
   content:none!important;display:none!important;
+}
+/* The bottom reflection starts outside the shell, spans half its width, and
+   fades horizontally and downward within the existing 10px bottom clearance.
+   No blur/filter, animation or hit target is added on Android 8 WebViews. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after {
+  content:""!important;display:block!important;position:absolute!important;
+  left:25%!important;right:auto!important;top:100%!important;bottom:auto!important;
+  width:50%!important;height:8px!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;box-sizing:border-box!important;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.34) 50%,rgba(255,255,255,0)) center top / 100% 1px no-repeat,
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.16) 0%,rgba(255,255,255,.055) 38%,rgba(255,255,255,0) 72%)!important;
+  box-shadow:none!important;filter:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  transform:none!important;opacity:1!important;animation:none!important;transition:none!important;
+  pointer-events:none!important;z-index:0!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
   position:relative!important;z-index:1!important;display:flex!important;

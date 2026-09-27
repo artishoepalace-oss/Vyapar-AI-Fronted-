@@ -88,14 +88,24 @@ const remote='20.10.2004.00016.2026';
       return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,nav:rect(nav),cap:rect(cap),
        top:rect(top),logo:rect(logo),avatar:rect(avatar),logoRadius:getComputedStyle(logo).borderRadius,avatarRadius:getComputedStyle(avatar).borderRadius,topRim:getComputedStyle(top).boxShadow,selectedIcon:getComputedStyle(nav.querySelector('button.active .android-nav-icon svg')).color,iconGlow:getComputedStyle(nav.querySelector('button.active .android-nav-icon')).filter,
        iconFills:[...nav.querySelectorAll('button.active .android-nav-icon svg :is(path,circle,rect,polygon)')].map(shape=>getComputedStyle(shape).fill),
-       active:nav.querySelector('button.active')?.dataset.androidTab,
-       before:getComputedStyle(nav,'::before').display,color:getComputedStyle(nav).backgroundColor,
+      active:nav.querySelector('button.active')?.dataset.androidTab,
+      before:getComputedStyle(nav,'::before').display,color:getComputedStyle(nav).backgroundColor,
+       navBackground:getComputedStyle(nav).backgroundImage,navOverflow:getComputedStyle(nav).overflow,navContain:getComputedStyle(nav).contain,
+       reflection:(()=>{const s=getComputedStyle(nav,'::after');return {display:s.display,left:parseFloat(s.left),top:parseFloat(s.top),width:parseFloat(s.width),height:parseFloat(s.height),background:s.backgroundImage,filter:s.filter,shadow:s.boxShadow,pointerEvents:s.pointerEvents,transform:s.transform};})(),
        transition:getComputedStyle(cap).transitionDuration,topColor:getComputedStyle(document.querySelector('.top')).backgroundColor,rim:getComputedStyle(nav).boxShadow,selectedColor:getComputedStyle(nav.querySelector('button.active .android-nav-label')).color,selectedGlow:getComputedStyle(nav.querySelector('button.active .android-nav-label')).textShadow,
        buttons:[...nav.querySelectorAll('button')].map(el=>({id:el.dataset.androidTab,box:rect(el),icon:rect(el.querySelector('.android-nav-icon')),label:rect(el.querySelector('.android-nav-label'))}))};
     });
     assert.equal(g.active,expected);assert.equal(g.buttons.length,5);near(g.nav.h,50);
     near(g.nav.w,Math.min(367,g.viewport-16));near(g.cap.w,68);near(g.cap.h,42);
     assert.equal(g.before,'none');assert.equal(g.color,'rgb(18, 18, 18)');assert(g.scrollWidth<=g.viewport,'No page overflow');
+    assert.equal(g.navBackground,'none','No white gradient spills inside the navbar');
+    assert.equal(g.navOverflow,'visible','Outside reflection is not clipped');
+    assert(!/(paint|strict|content)/.test(g.navContain),'Paint containment must not clip the outside reflection');
+    assert.equal(g.reflection.display,'block');near(g.reflection.left,g.nav.w/4);near(g.reflection.width,g.nav.w/2);
+    near(g.reflection.top,g.nav.h);near(g.reflection.height,8);
+    assert.match(g.reflection.background,/linear-gradient/);assert.match(g.reflection.background,/radial-gradient/);
+    assert.equal(g.reflection.filter,'none');assert.equal(g.reflection.shadow,'none');assert.equal(g.reflection.transform,'none');
+    assert.equal(g.reflection.pointerEvents,'none','Decoration does not intercept navigation taps');
     assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(165, 0, 53)');assert.equal(g.selectedGlow,'none','Navbar labels have no outer shadow');assert(g.rim.includes('inset'),'Glossy rim is inset and preserves geometry');
     assert.equal(g.selectedIcon,'rgb(165, 0, 53)','Selected icon matches label');assert.equal(g.iconGlow,'none','Navbar icons have no outer shadow');
     assert(g.iconFills.length>0,'Active destination has a real SVG icon');
