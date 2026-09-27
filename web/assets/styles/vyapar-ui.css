@@ -11466,6 +11466,89 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy675-
   h2,h3,h4,p,small,label,.muted,.vy675-option-copy,.vx622-settings-copy
 ){overflow-wrap:anywhere!important;}
 
+/* ===== STYLE SOURCE: settings-business-control-00060.css ===== */
+
+/* Vyapar AI 20.10.2004.00060.2026
+   Account-name pencil row and Business Controls popup ownership polish. */
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-row{
+  width:100%!important;min-width:0!important;margin:0 0 12px!important;padding:0!important;
+  box-sizing:border-box!important;border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-summary{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
+  min-height:70px!important;padding:13px 14px!important;box-sizing:border-box!important;
+  border:1px solid #343434!important;border-radius:18px!important;background:#242424!important;color:#fff!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-copy{
+  display:flex!important;flex:1 1 auto!important;min-width:0!important;flex-direction:column!important;gap:3px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-copy small{
+  margin:0!important;font-size:10px!important;line-height:1.2!important;letter-spacing:.08em!important;color:#9f9f9f!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-copy b{
+  min-width:0!important;font-size:15px!important;line-height:1.28!important;font-weight:680!important;color:#fff!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-copy span{
+  font-size:10.5px!important;line-height:1.35!important;color:#a8a8a8!important;white-space:normal!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-name-pencil{
+  display:grid!important;place-items:center!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
+  min-width:42px!important;min-height:42px!important;margin:0!important;padding:0!important;
+  border:1px solid #404040!important;border-radius:50%!important;background:#1a1a1a!important;color:#fff!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-name-pencil svg{
+  width:18px!important;height:18px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-name-pencil:active{
+  transform:scale(.96)!important;background:#303030!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-editor{
+  width:100%!important;margin:0!important;padding:14px!important;box-sizing:border-box!important;
+  border:1px solid #3a3a3a!important;border-radius:18px!important;background:#1a1a1a!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-editor[hidden]{display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-editor label{
+  display:block!important;margin:0 0 7px!important;color:#aaa!important;font-size:10.5px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-editor input{
+  width:100%!important;min-height:48px!important;margin:0!important;padding:0 14px!important;box-sizing:border-box!important;
+  border:1px solid #3c3c3c!important;border-radius:16px!important;background:#242424!important;color:#fff!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-editor input:focus-visible{
+  outline:2px solid #737373!important;outline-offset:1px!important;border-color:#737373!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-actions{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-top:10px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-actions .btn{
+  width:100%!important;min-height:44px!important;margin:0!important;
+}
+
+/* Business Controls owns exactly one shared bottom sheet. The legacy inline host
+   remains parked so a popup can never be accompanied by a second module page. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings #vx622SettingsAdminHost[hidden]{display:none!important;}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet[data-vy60-business-settings="true"] .vy60-business-popup-host{
+  width:100%!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet[data-vy60-business-settings="true"] .vy-form-body{
+  padding-top:10px!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyFormSheet[data-vy60-business-settings="true"] :is(.p611-form,.vx621-data-tools,.actions){
+  min-width:0!important;max-width:100%!important;
+}
+
+@media(max-width:359px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-summary,
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-editor{
+    padding:12px!important;border-radius:16px!important;
+  }
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings .vy60-account-name-copy span{font-size:10px!important;}
+}
+
 /* ===== STYLE SOURCE: global-radius-final-00045.css ===== */
 
 /*
