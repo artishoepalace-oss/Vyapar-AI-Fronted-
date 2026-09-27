@@ -264,6 +264,7 @@ const version=require('../version.json').versionName;
     await companyControl.click();await settle();
     assert.equal(await page.locator('#vyFormSheet[data-vy60-business-settings="true"]').count(),1,'Business Controls owns one popup');
     assert.equal(await page.locator('#vyFormSheet #businessModuleArea').count(),1,'Business module lives inside the popup');
+    assert(await page.locator('#vyFormSheet #pBizName').isVisible(),'Company editor content renders inside the popup');
     assert.equal(await page.locator('#screen-settings #businessModuleArea').count(),0,'No duplicate inline business module page');
     assert.equal(await page.evaluate(()=>currentTab),'settings','Opening Business Controls does not navigate away from Settings');
     assert.equal(await page.locator('#vx622SettingsAdminHost:not([hidden])').count(),0,'Legacy inline settings host stays parked');

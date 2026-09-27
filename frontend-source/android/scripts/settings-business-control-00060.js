@@ -167,17 +167,27 @@
     if(!session)return;
     businessSession=null;
     try{session.observer?.disconnect();}catch(_){ }
-    if(session.host?.isConnected)session.host.remove();
+
+    const host=session.host;
+    if(host?.isConnected){
+      host.innerHTML='';
+      host.hidden=true;
+      host.id='vx622SettingsAdminHost';
+      host.removeAttribute('data-vx621-host');
+      host.removeAttribute('data-vy60-settings-popup');
+      host.classList.remove('vy60-business-popup-host');
+    }
+
+    if(session.idHost?.isConnected && session.idHost!==session.businessHost){
+      if(session.idHostRestoreId)session.idHost.id=session.idHostRestoreId;
+      else session.idHost.removeAttribute('id');
+    }
+
     if(session.businessHost?.isConnected){
       if(session.businessHostAttr===null)session.businessHost.removeAttribute('data-vx621-host');
       else session.businessHost.setAttribute('data-vx621-host',session.businessHostAttr);
+      session.businessHost.id='businessModuleArea';
     }
-    if(session.idHost?.isConnected){
-      if(session.idHostId)session.idHost.id=session.idHostId;
-      else session.idHost.removeAttribute('id');
-    }
-    const legacy=legacySettingsHost();
-    if(legacy){legacy.innerHTML='';legacy.hidden=true;legacy.removeAttribute('data-vx621-host');}
   }
 
   function closeExistingBusinessSession(){
@@ -192,25 +202,36 @@
       if(document.getElementById('vyFormSheet'))root.VyaparFormSheets?.close?.(true);
     }catch(_){ }
 
-    const legacy=legacySettingsHost();
-    if(legacy){legacy.innerHTML='';legacy.hidden=true;legacy.removeAttribute('data-vx621-host');}
-
-    const idHost=document.getElementById('businessModuleArea');
-    const idHostId=idHost?.id||'';
-    if(idHost)idHost.id='vy60HeldBusinessModuleArea';
+    const host=legacySettingsHost();
+    if(!host)return null;
+    host.innerHTML='';
+    host.hidden=false;
 
     const businessHost=document.querySelector('#screen-business [data-vx621-host="business"]');
     const businessHostAttr=businessHost?.getAttribute('data-vx621-host')??null;
+    const idHost=document.getElementById('businessModuleArea');
+    let idHostRestoreId='';
+
+    if(idHost){
+      if(idHost===businessHost){
+        idHostRestoreId=idHost.dataset.vx621OriginalId||'vx621-business-host';
+      }else{
+        const context=idHost.getAttribute('data-vx621-host');
+        idHostRestoreId=idHost.dataset.vx621OriginalId||(context?'vx621-'+context+'-host':'vy60-held-module-host');
+      }
+      idHost.id=idHostRestoreId;
+    }
+
     if(businessHost)businessHost.setAttribute('data-vx621-host','business-hidden');
 
-    const host=document.createElement('div');
     host.id='businessModuleArea';
-    host.className='card vy60-business-popup-host';
     host.setAttribute('data-vx621-host','business');
     host.setAttribute('data-vy60-settings-popup','true');
-    document.body.appendChild(host);
+    host.classList.add('vy60-business-popup-host');
 
-    businessSession={host,idHost,idHostId,businessHost,businessHostAttr,observer:null};
+    businessSession={
+      host,idHost,idHostRestoreId,businessHost,businessHostAttr,observer:null
+    };
     return host;
   }
 
@@ -229,7 +250,8 @@
   function ensurePopup(host){
     if(!host)return false;
     if(!host.closest('#vyFormSheet')){
-      try{root.VyaparFormSheets?.openHost?.(host,'business');}catch(error){console.warn('Business settings popup failed',error);}
+      try{root.VyaparFormSheets?.openHost?.(host,'business');}
+      catch(error){console.warn('Business settings popup failed',error);}
     }
     const overlay=host.closest('#vyFormSheet')||document.getElementById('vyFormSheet');
     if(!overlay){cleanupBusinessSession();return false;}
@@ -241,7 +263,14 @@
   root.vx622OpenSettingsModule=function(module){
     if(!requireBusiness())return false;
     const host=prepareBusinessPopupHost();
+    if(!host)return false;
     try{
+      /*
+       * Render while this live host is still inside Settings. form-sheets.js
+       * intentionally ignores Settings-owned hosts, so the proven platform
+       * renderer fills this exact node without creating a second sheet.
+       * We then move the same node into the one shared popup below.
+       */
       root.p611Open?.(module);
     }catch(error){
       console.warn('Settings business module failed',module,error);
@@ -255,6 +284,7 @@
     if(!requireBusiness())return false;
     if(typeof root.vx621RenderDataManager!=='function')return false;
     const host=prepareBusinessPopupHost();
+    if(!host)return false;
     try{
       root.vx621RenderDataManager();
     }catch(error){
