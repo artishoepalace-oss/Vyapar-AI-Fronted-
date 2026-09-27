@@ -48,9 +48,10 @@
     const account=accountRef();
     const s=stateRef();
     const direct=[
+      s&&s.profile&&s.profile.ownerName,
       account&&account.name,account&&account.displayName,account&&account.fullName,
       account&&account.user&&account.user.name,
-      s&&s.profile&&s.profile.ownerName,s&&s.profile&&s.profile.name
+      s&&s.profile&&s.profile.name
     ].find(v=>String(v||'').trim());
     if(direct)return String(direct).trim();
     const email=String(account&&account.email||account&&account.user&&account.user.email||'').trim();

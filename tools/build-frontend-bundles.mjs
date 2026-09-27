@@ -70,7 +70,8 @@ const uiStyles = [
   'settings-adjustment-00055.css',
   'global-radius-final-00045.css',
   'middle-bar-2026.css',
-  'three-dot-menu-00046.css'
+  'three-dot-menu-00046.css',
+  'settings-business-control-00060.css'
 ];
 
 const scripts = [
@@ -111,7 +112,8 @@ const scripts = [
   'github-updates.js',
   'form-sheets.js',
   'middle-bar-2026.js',
-  'invoice-workspace-2026.js'
+  'invoice-workspace-2026.js',
+  'settings-business-control-00060.js'
 ];
 
 function readSource(subdirectory, filename) {

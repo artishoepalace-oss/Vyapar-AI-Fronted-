@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00059.2026** (`2010200459`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00060.2026** (`2010200460`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 
@@ -40,6 +40,7 @@ The original financial engines and feature modules remain in place. Do not remov
 
 ## Current improvements
 
+- Release 00060 makes Settings > Business controls a single-popup flow instead of competing with an inline module page, restores the Business workspace host on close, and adds an editable Name row with a pencil action in Account & plan. The saved display name is reflected in the top profile shortcut. See `RELEASE_20.10.2004.00060.2026.md`.
 - Release 00039 fixes vertical jumps during horizontal navigation, pins the header while scrolling, bounds mobile page slides without blocking sideways table scrolling, and locks popup backgrounds at their current position. WebViews without overflow-clip support use the compact navigation fallback. Touch-gesture regressions are part of the browser release gate. See `RELEASE_20.10.2004.00039.2026.md`.
 - Release 00038 detects legacy and low-memory Android WebViews and animates only the incoming page over a short 250ms directional transition; modern devices retain the full two-page slide. Heavy page decoration and More sheet focus wait until motion finishes. See `RELEASE_20.10.2004.00038.2026.md`.
 - Release 00037 made page slides and More opening 460ms, with a 340ms More exit. It retained the directional slides and continuous rapid-tap handling while reducing navigation wait.
