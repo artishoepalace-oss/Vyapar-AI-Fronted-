@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),path=require('node:path');
 module.exports=async function(page,out,width){
   await page.evaluate(()=>setTab('settings',false));
-  for(const id of ['account','profile','business','security','appearance','navigation','data']){
+  for(const id of ['profile','business','security','appearance','navigation','data']){
     await page.evaluate(id=>vy675OpenSettingsPage(id),id);
     await page.waitForTimeout(100);
     const surfaces=await page.locator('#screen-settings .vy675-page-body').evaluate(el=>[...el.querySelectorAll('.card,.settings-section,.production-account-card,.production-account-grid > div,.vx622-settings-list,.vx622-lock-status,.notice,.vy675-option-row')].filter(el=>el.getBoundingClientRect().height>0).map(el=>{let surface=el;while(surface.parentElement&&getComputedStyle(surface).backgroundColor==='rgba(0, 0, 0, 0)')surface=surface.parentElement;return {name:el.id||el.className,color:getComputedStyle(surface).backgroundColor,image:getComputedStyle(el).backgroundImage};}));

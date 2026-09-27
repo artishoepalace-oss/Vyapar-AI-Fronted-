@@ -9,11 +9,11 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 test('current release identity and Android 8 minimum are synchronized',()=>{
   const version=JSON.parse(read('version.json'));
   const gradle=read('android-app/app/build.gradle');
-  assert.equal(version.versionName,'20.10.2004.00060.2026');
-  assert.equal(version.versionCode,2010200460);
+  assert.equal(version.versionName,'20.10.2004.00061.2026');
+  assert.equal(version.versionCode,2010200461);
   assert.match(gradle,/minSdk\s+26/);
-  assert.match(gradle,/versionCode\s+2010200460/);
-  assert.match(gradle,/versionName\s+"20\.10\.2004\.00060\.2026"/);
+  assert.match(gradle,/versionCode\s+2010200461/);
+  assert.match(gradle,/versionName\s+"20\.10\.2004\.00061\.2026"/);
 });
 
 test('00058 physical UI owns spring panels, safe radii and static chrome reflections',()=>{

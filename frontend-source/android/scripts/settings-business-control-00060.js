@@ -4,7 +4,7 @@
 (function(root){
   'use strict';
 
-  const VERSION='20.10.2004.00060.2026';
+  const VERSION='20.10.2004.00061.2026';
   const ACCOUNT_KEY='vyapar_ai_account_cache_v1';
   const STATE_KEY='vyapar_ai_prod_v1';
   let businessSession=null;
@@ -75,7 +75,7 @@
     const edit=row.querySelector('[data-vy60-edit-name]');
     if(editor)editor.hidden=true;
     if(summary)summary.hidden=false;
-    if(edit)edit.setAttribute('aria-expanded','false');
+    if(edit){edit.setAttribute('aria-expanded','false');edit.focus({preventScroll:true});}
   }
 
   function openNameEditor(row){
@@ -85,7 +85,7 @@
     const edit=row.querySelector('[data-vy60-edit-name]');
     const input=row.querySelector('[data-vy60-name-input]');
     if(summary)summary.hidden=true;
-    if(editor)editor.hidden=false;
+    if(editor){editor.hidden=false;root.vyaparMotion?.enter(editor,1);}
     if(edit)edit.setAttribute('aria-expanded','true');
     if(input){input.value=accountName()==='Add name'?'':accountName();setTimeout(()=>input.focus({preventScroll:true}),0);}
   }
@@ -104,6 +104,9 @@
     s.profile=s.profile&&typeof s.profile==='object'?s.profile:{};
     s.profile.ownerName=name;
     saveState();
+    root.vy675OpenSettingsPage?.('account',false);
+    row=document.querySelector('.production-account-profile')||row;
+    ensureAccountNameEditor();
     const value=row.querySelector('[data-vy60-account-name]');
     if(value)value.textContent=name;
     closeNameEditor(row);
@@ -117,33 +120,32 @@
     accountQueued=false;
     const section=document.querySelector('#screen-settings .settings-account-section');
     if(!section)return;
-    let row=section.querySelector('.vy60-account-name-row');
-    if(!row){
-      row=document.createElement('div');
-      row.className='vy60-account-name-row';
-      row.innerHTML=''+
-        '<div class="vy60-account-name-summary">'+
-          '<div class="vy60-account-name-copy">'+
-            '<small>NAME</small>'+
-            '<b data-vy60-account-name></b>'+
-            '<span>Shown in your profile shortcut on this device.</span>'+
-          '</div>'+
-          '<button type="button" class="vy60-name-pencil" data-vy60-edit-name aria-label="Edit name" aria-expanded="false">'+pencilIcon()+'</button>'+
-        '</div>'+
-        '<div class="vy60-account-name-editor" hidden>'+
-          '<label for="vy60AccountNameInput">Name</label>'+
-          '<input id="vy60AccountNameInput" data-vy60-name-input type="text" maxlength="80" autocomplete="name" placeholder="Enter your name">'+
-          '<div class="vy60-account-name-actions">'+
-            '<button type="button" class="btn" data-vy60-name-cancel>Cancel</button>'+
-            '<button type="button" class="btn primary" data-vy60-name-save>Save name</button>'+
-          '</div>'+
+    const row=section.querySelector('.production-account-profile');
+    if(!row)return; // The signed-out card keeps its existing sign-in actions.
+    if(!row.querySelector('[data-vy60-edit-name]')){
+      const button=document.createElement('button');
+      button.type='button';button.className='vy60-name-pencil';
+      button.setAttribute('data-vy60-edit-name','');
+      button.setAttribute('aria-label','Edit name');
+      button.setAttribute('aria-expanded','false');
+      button.setAttribute('aria-controls','vy60AccountNameEditor');
+      button.innerHTML=pencilIcon();
+      row.querySelector('.production-account-head').appendChild(button);
+      const editor=document.createElement('div');
+      editor.id='vy60AccountNameEditor';
+      editor.className='vy60-account-name-editor';editor.hidden=true;
+      editor.innerHTML=''+
+        '<label for="vy60AccountNameInput">Name</label>'+
+        '<input id="vy60AccountNameInput" data-vy60-name-input type="text" maxlength="80" autocomplete="name" placeholder="Enter your name">'+
+        '<div class="vy60-account-name-actions">'+
+          '<button type="button" class="btn" data-vy60-name-cancel>Cancel</button>'+
+          '<button type="button" class="btn primary" data-vy60-name-save>Save name</button>'+
         '</div>';
-      const host=section.querySelector('#productionAccountCardHost');
-      if(host)section.insertBefore(row,host);
-      else section.appendChild(row);
-      row.querySelector('[data-vy60-edit-name]').addEventListener('click',()=>openNameEditor(row));
+      row.appendChild(editor);
+      button.addEventListener('click',()=>openNameEditor(row));
       row.querySelector('[data-vy60-name-cancel]').addEventListener('click',()=>closeNameEditor(row));
       row.querySelector('[data-vy60-name-save]').addEventListener('click',()=>saveDisplayName(row));
+      row.querySelector('[data-vy60-name-input]').addEventListener('input',event=>event.target.setCustomValidity(''));
       row.querySelector('[data-vy60-name-input]').addEventListener('keydown',event=>{
         if(event.key==='Enter'){event.preventDefault();saveDisplayName(row);}
         if(event.key==='Escape'){event.preventDefault();closeNameEditor(row);}
@@ -151,7 +153,12 @@
     }
     const value=row.querySelector('[data-vy60-account-name]');
     const name=accountName();
-    if(value&&row.querySelector('.vy60-account-name-editor')?.hidden!==false&&value.textContent!==name)value.textContent=name;
+    if(row.querySelector('.vy60-account-name-editor')?.hidden!==false){
+      if(value&&value.textContent!==name)value.textContent=name;
+      const avatar=row.querySelector('.production-avatar');
+      const initial=name.slice(0,1).toUpperCase();
+      if(avatar&&!avatar.querySelector('img')&&avatar.textContent!==initial)avatar.textContent=initial;
+    }
   }
 
   function scheduleAccountEditor(){

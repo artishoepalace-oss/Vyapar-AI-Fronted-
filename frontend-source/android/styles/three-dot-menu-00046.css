@@ -560,11 +560,10 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
 /* Physical-device screenshot cleanup: settings + live form sheets. */
 /* Settings cards: real inset, no text/control clipping against rounded edges. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings:is(
-  [data-vy675-page="account"],[data-vy675-page="profile"],[data-vy675-page="business"],
+  [data-vy675-page="profile"],[data-vy675-page="business"],
   [data-vy675-page="security"],[data-vy675-page="appearance"],[data-vy675-page="navigation"],
   [data-vy675-page="data"]
-) .vy675-page-body > :is(.card,.settings-section,#fs607Settings),
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #screen-settings[data-vy675-page="account"] .settings-account-section {
+) .vy675-page-body > :is(.card,.settings-section,#fs607Settings) {
   width:100%!important;
   min-width:0!important;
   margin:0!important;

@@ -233,7 +233,7 @@
   function organiseSettings(){
     const screen = document.getElementById('screen-settings');
     const stack = screen && screen.querySelector('.settings-stack');
-    if(!screen || !stack) return;
+    if(!screen || !stack || screen.classList.contains('vy675-settings-ready')) return;
 
     Array.from(stack.children).forEach(function(card){
       if(card.id === 'appLegalFooter') return;

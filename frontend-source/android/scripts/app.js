@@ -6066,127 +6066,80 @@ render();
         : null;
 
     if(loggedIn){
+      const displayName = String(state?.profile?.ownerName || account.user.name || "User").trim();
+      const dateText = (value, includeTime) => {
+        if(!value) return includeTime ? "Not synced yet" : "—";
+        const date = new Date(value);
+        if(!Number.isFinite(date.getTime())) return includeTime ? "Not synced yet" : "—";
+        const day = date.toLocaleDateString("en-IN", {day:"2-digit", month:"short", year:"numeric"});
+        return includeTime ? day + ", " + date.toLocaleTimeString("en-IN", {hour:"numeric", minute:"2-digit", hour12:true}) : day;
+      };
+      const paths = {
+        cloud: '<path d="M7 18h11a4 4 0 0 0 .4-8A6.5 6.5 0 0 0 6 8.5 4.8 4.8 0 0 0 7 18Z"/>',
+        upload: '<path d="M7 19H6a4 4 0 0 1 0-8 6 6 0 0 1 11.6-2A5 5 0 0 1 18 19h-1M12 18V10m-3 3 3-3 3 3"/>',
+        download: '<path d="M7 19H6a4 4 0 0 1 0-8 6 6 0 0 1 11.6-2A5 5 0 0 1 18 19h-1M12 10v8m-3-3 3 3 3-3"/>',
+        logout: '<path d="M9 4H4v16h5m6-12 4 4-4 4m-6-4h10"/>',
+        trash: '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',
+        chevron: '<path d="m9 5 7 7-7 7"/>',
+        check: '<path d="m5 12 4 4 10-10"/>'
+      };
+      const icon = name => '<svg class="production-account-icon" viewBox="0 0 24 24" aria-hidden="true">' + paths[name] + '</svg>';
+      const status = String(account.subscription?.status || "none");
+      const synced = Boolean(lastSync && Number.isFinite(new Date(lastSync).getTime()));
+      // Keep a live name editor (and its draft/focus) through background sync.
+      const existingProfile = card.querySelector('.production-account-profile');
+      const editing = existingProfile?.querySelector('.vy60-account-name-editor:not([hidden])');
+      const focusedInput = editing?.querySelector('input');
+      const restoreFocus = focusedInput && document.activeElement === focusedInput;
+      const selection = restoreFocus ? [focusedInput.selectionStart, focusedInput.selectionEnd] : null;
       card.innerHTML = `
-        <div class="production-account-head">
-          <div class="production-avatar">
-            ${escapeHtml(
-              (
-                account.user.name ||
-                "U"
-              )
-                .slice(0, 1)
-                .toUpperCase()
-            )}
+        <section class="production-account-section production-account-profile vy60-account-name-row" aria-label="Profile">
+          <div class="production-account-head vy60-account-name-summary">
+            <div class="production-avatar" aria-hidden="true">${escapeHtml(displayName.slice(0,1).toUpperCase())}</div>
+            <div class="production-account-identity">
+              <h3><span data-vy60-account-name>${escapeHtml(displayName)}</span></h3>
+              <p class="production-account-email">${escapeHtml(account.user.email || "")}</p>
+            </div>
           </div>
+        </section>
 
-          <div>
-            <h3>
-              ${escapeHtml(
-                account.user.name ||
-                "User"
-              )}
-            </h3>
-
-            <p>
-              ${escapeHtml(
-                account.user.email ||
-                ""
-              )}
-            </p>
+        <section class="production-account-section production-subscription-section" aria-labelledby="productionSubscriptionTitle">
+          <div class="production-section-title">
+            <h3 id="productionSubscriptionTitle">Subscription</h3>
+            <span class="production-plan">${escapeHtml(plan.toUpperCase())}</span>
           </div>
-
-          <span class="production-plan">
-            ${plan.toUpperCase()}
-          </span>
-        </div>
-
-        <div class="production-account-grid">
-          <div>
-            <span>Status</span>
-
-            <b>
-              ${escapeHtml(
-                account.subscription
-                  ? account
-                      .subscription
-                      .status
-                  : "none"
-              )}
-            </b>
+          <div class="production-account-grid">
+            <div><span>Status</span><b>${escapeHtml(status.charAt(0).toUpperCase() + status.slice(1))}</b></div>
+            <div><span>Renews on</span><b>${dateText(end, false)}</b></div>
           </div>
+          ${plan !== "free" ? `<button type="button" class="production-account-action production-cancel-action danger" onclick="window.vyaparCancelSubscription()"><span>Cancel at cycle end</span>${icon('chevron')}</button>` : ""}
+        </section>
 
-          <div>
-            <span>Renewal</span>
-
-            <b>
-              ${
-                end
-                  ? new Date(end)
-                      .toLocaleDateString(
-                        "en-IN"
-                      )
-                  : "-"
-              }
-            </b>
+        <section class="production-account-section production-cloud-section" aria-labelledby="productionCloudTitle">
+          <div class="production-section-title">
+            <h3 id="productionCloudTitle">${icon('cloud')}<span>Cloud backup</span></h3>
+            ${synced ? `<span class="production-sync-status" role="img" aria-label="Last cloud backup completed">${icon('check')}</span>` : ""}
           </div>
-
-          <div>
-            <span>Cloud Sync</span>
-
-            <b>
-              ${
-                lastSync
-                  ? new Date(
-                      lastSync
-                    ).toLocaleString(
-                      "en-IN"
-                    )
-                  : "Not synced"
-              }
-            </b>
+          <div class="production-cloud-time"><span>Last synced</span><b>${dateText(lastSync, true)}</b></div>
+          <div class="production-actions production-backup-actions">
+            <button type="button" onclick="window.vyaparCloudBackup()">${icon('upload')}<span>Backup now</span></button>
+            <button type="button" onclick="window.vyaparCloudRestore()">${icon('download')}<span>Restore cloud</span></button>
           </div>
-        </div>
+        </section>
 
-        <div class="production-actions">
-          <button
-            onclick="window.vyaparCloudBackup()"
-          >
-            Backup Now
-          </button>
-
-          <button
-            onclick="window.vyaparCloudRestore()"
-          >
-            Restore Cloud
-          </button>
-
-          ${
-            plan !== "free"
-              ? `
-                <button
-                  class="danger"
-                  onclick="window.vyaparCancelSubscription()"
-                >
-                  Cancel at Cycle End
-                </button>
-              `
-              : ""
-          }
-
-          <button
-            onclick="window.vyaparLogout()"
-          >
-            Logout
-          </button>
-
-          <button
-            class="danger"
-            onclick="window.vyaparDeleteAccount()"
-          >
-            Delete Account
-          </button>
-        </div>
+        <section class="production-account-section production-session-section" aria-label="Account actions">
+          <button type="button" class="production-account-action" onclick="window.vyaparLogout()">${icon('logout')}<span>Log out</span>${icon('chevron')}</button>
+          <button type="button" class="production-account-action danger" onclick="window.vyaparDeleteAccount()">${icon('trash')}<span>Delete account</span>${icon('chevron')}</button>
+        </section>
       `;
+      if(editing && existingProfile){
+        card.querySelector('.production-account-profile').replaceWith(existingProfile);
+        if(restoreFocus){
+          focusedInput.focus({preventScroll:true});
+          focusedInput.setSelectionRange(selection[0], selection[1]);
+        }
+      }
+      window.VyaparSettings00060?.ensureAccountNameEditor();
 
     }else{
       card.innerHTML = `

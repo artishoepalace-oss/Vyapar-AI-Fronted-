@@ -15,8 +15,8 @@ android {
         minSdk 26
         targetSdk 34
         resValue "string", "google_web_client_id", googleWebClientId
-        versionCode 2010200460
-        versionName "20.10.2004.00060.2026"
+        versionCode 2010200461
+        versionName "20.10.2004.00061.2026"
 
         if (cmakeConfig.exists()) {
             externalNativeBuild {
