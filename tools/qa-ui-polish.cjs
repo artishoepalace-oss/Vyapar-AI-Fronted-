@@ -271,7 +271,7 @@ const version=require('../version.json').versionName;
     await page.evaluate(()=>handleNativeBackPress());await settle();
     assert.equal(await page.locator('#vyFormSheet').count(),0,'Business Controls popup closes cleanly');
     assert.equal(await page.locator('#screen-business #businessModuleArea').count(),1,'Business workspace host restores after popup close');
-    await page.evaluate(()=>vy675OpenSettingsHome());await settle();
+    await page.evaluate(()=>vy675SettingsHome());await settle();
     await page.locator('#nav [data-android-tab="more"]').click();await settle();
     const more=await page.locator('#androidMoreSheet .android-sheet').boundingBox(),nav=await page.locator('#nav').boundingBox();assert(more.y+more.height<=nav.y-4,'More ends above navbar');await shot('more');
     const handle=page.locator('#androidMoreSheet .vy-sheet-handle');
