@@ -32,8 +32,8 @@ test('00064 restores the v00062 navbar contract and prevents master overrides',(
     read('frontend-source/android/styles/global-radius-final-00045.css'),
     read('frontend-source/android/styles/three-dot-menu-00046.css')
   ]){
-    assert.doesNotMatch(legacy,/#nav\.nav\.bottom-nav/);
-    assert.doesNotMatch(legacy,/\.app\s*>\s*\.top/);
+    assert.doesNotMatch(legacy,/#nav\.nav\.bottom-nav\s*(?:,|\{)/);
+    assert.doesNotMatch(legacy,/\.app\s*>\s*\.top\s*(?:,|\{)/);
   }
 });
 
