@@ -13,6 +13,7 @@
 - Assert native WebView zoom controls remain disabled.
 - Assert the packaged/web entry viewport keeps minimum and maximum scale at 1.0 with user scaling disabled.
 - Existing frontend bundle, responsive Chromium, Android build, signing and publication gates remain authoritative.
+- Release identity regex assertions are synchronized to 00065 before the publish gate.
 
 ## Release identity
 
