@@ -13,14 +13,8 @@ html.vy861-flat-black.workspace-v7 {
   --vy45-panel-pad:18px;
   --vy45-card-pad:14px;
 }
-/* Full-pill outer bars. Do not change the existing 50px navbar track, nav
-   padding, selected-tab calculations, middle-bar width or transition timing. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
-  border-radius:var(--vy45-pill)!important;
-}
+/* Root header/navbar radii are excluded from this legacy cross-screen layer.
+   The restored v00062 capsule-navigation.css remains their single authority. */
 html.vy861-flat-black.workspace-v7 body :is(
   #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
   #screen-upload,#screen-calculator,#screen-settings,#screen-subscription
