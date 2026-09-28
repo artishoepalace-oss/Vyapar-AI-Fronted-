@@ -45,7 +45,7 @@ module.exports=async function(page,out,width,progress=console.log){
     tick();
    });
    const nr=nav.getBoundingClientRect(),hr=header.getBoundingClientRect();
-   return {frames,overlap,destination:document.querySelector('.screen:not(.hide)').id,elapsed:performance.now()-start,travel:innerWidth,
+   return {frames,overlap,destination:document.querySelector('.screen:not(.hide)').id,elapsed:performance.now()-start,travel:Math.min(20,Math.max(12,Math.round(innerWidth*.045))),
     navMove:Math.abs(nr.x-navRect.x)+Math.abs(nr.y-navRect.y),headerMove:Math.abs(hr.x-headerRect.x)+Math.abs(hr.y-headerRect.y),
     scrollStart,scrollEnd:document.documentElement.scrollWidth};
   },{to,more});
@@ -64,7 +64,7 @@ module.exports=async function(page,out,width,progress=console.log){
   assert(data.navMove<1&&data.headerMove<1,'Bars remain stable: '+label);
   assert(data.scrollStart<=width&&data.scrollEnd<=width,'No horizontal overflow: '+label);
   assert(!data.overlap,'More closes before the page slide starts');
-  assert(data.elapsed>=380,'Smooth page transition has time to render: '+label);
+  assert(data.elapsed>=180,'Restrained page transition has time to render: '+label);
   results.push({label,frames:data.frames.length,positions:new Set(data.frames.map(f=>Math.round(f.inX))).size,elapsed:Math.round(data.elapsed)});
  }
  for(const from of tabs)for(const to of tabs){
@@ -124,12 +124,12 @@ module.exports=async function(page,out,width,progress=console.log){
    return {active:root.classList.contains('vy-page-compact'),pose:incoming.style.transform,
     outgoingLayer:outgoing.classList.contains('vy-page-outgoing'),outgoingDisplay:outgoing.style.display};
   });
-  assert(compact.active&&/translate3d\(23px/.test(compact.pose),'Low-memory destination starts nearby');
+  assert(compact.active&&/translate3d\(14px/.test(compact.pose),'Low-memory destination starts nearby');
   assert(!compact.outgoingLayer&&!compact.outgoingDisplay,'Low-memory source stays off the compositor');
   await idle();
   await page.evaluate(()=>document.querySelector('#nav [data-android-tab="home"]').click());
   const reverse=await page.evaluate(()=>document.getElementById('screen-home').style.transform);
-  assert(/translate3d\(-23px/.test(reverse),'Low-memory Backward navigation moves from the left');
+  assert(/translate3d\(-14px/.test(reverse),'Low-memory Backward navigation moves from the left');
   await idle();
   assert.equal(await page.locator('.screen:not(.hide)').getAttribute('id'),'screen-home');
   assert.equal(await page.locator('.vy-page-incoming,.vy-page-outgoing').count(),0);
@@ -138,7 +138,7 @@ module.exports=async function(page,out,width,progress=console.log){
   await page.waitForTimeout(75);
   const popup=await page.evaluate(()=>({transition:document.querySelector('#androidMoreSheet .android-sheet').style.transition,
    scrollWidth:document.documentElement.scrollWidth}));
-  assert.match(popup.transition,/245ms/,'Low-memory More entry stays brief');
+  assert.match(popup.transition,/220ms/,'Low-memory More entry stays brief');
   assert(popup.scrollWidth<=width,'Low-memory sheet does not overflow');
   await page.locator('#androidMoreSheet [data-tab="analytics"]').click();
   await page.waitForSelector('#androidMoreSheet',{state:'detached'});
