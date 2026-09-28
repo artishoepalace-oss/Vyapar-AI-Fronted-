@@ -375,6 +375,43 @@ html.workflow-ui-p2 .p2-live-region {
 
 @keyframes p2Spin { to { transform: rotate(360deg); } }
 
+/* Release 00062: transaction forms stay compact and readable after renderer refreshes. */
+html.workflow-ui-p2 .p2-tx-form .p2-field-label {
+  min-height: 16px;
+  color: var(--p1-text, #f3f7fb);
+  font-size: 11px;
+  font-weight: 720;
+  line-height: 1.3;
+}
+html.workflow-ui-p2 .p2-tx-form .p2-field-hint { display: none; }
+html.workflow-ui-p2 .p2-tx-form .p2-field[hidden] { display: none !important; }
+html.workflow-ui-p2 .p2-tx-form .p2-form-group { gap: 8px; }
+html.workflow-ui-p2 .p2-tx-form .p2-form-group-title {
+  margin: 0 1px 2px;
+  font-size: 12px;
+  font-weight: 760;
+}
+html.workflow-ui-p2 .p2-tx-form + .p2-live-preview,
+html.workflow-ui-p2 .vy-form-body .p2-live-preview {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 10px 0 2px;
+  padding: 8px;
+  background: transparent;
+}
+html.workflow-ui-p2 .p2-tx-form + .p2-live-preview .p2-preview-metric,
+html.workflow-ui-p2 .vy-form-body .p2-live-preview .p2-preview-metric {
+  padding: 8px 9px;
+  background: rgba(255,255,255,.02);
+}
+html.workflow-ui-p2 .p2-tx-form .p2-advanced-fields > summary {
+  padding-inline: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+html.workflow-ui-p2 .p2-tx-form .p2-platform-fields::before { display: none; }
+
+
 
 
 
