@@ -513,12 +513,15 @@
     const core = form.querySelector('.p2-core-fields');
     const details = form.querySelector('.p2-advanced-fields');
     const advanced = form.querySelector('.p2-detail-fields');
-    if(!core || !details || !advanced) return false;
+    const heading = core?.querySelector('.p2-form-group-title span');
+    const summary = details?.querySelector('summary');
+    if(!core || !details || !advanced || !heading?.textContent.trim() || !summary?.textContent.trim()) return false;
     return transactionCoreIds.concat(transactionDetailIds).every(function(id){
       const control = $(id);
       if(!control || !form.contains(control)) return true;
       const wrapper = control.closest('.p2-field');
-      if(!wrapper) return false;
+      const label = wrapper?.querySelector('.p2-field-label');
+      if(!wrapper || !label?.textContent.trim()) return false;
       return transactionCoreIds.includes(id) ? core.contains(wrapper) : advanced.contains(wrapper);
     });
   }
@@ -827,6 +830,11 @@
     version: VERSION,
     phase: 2,
     refresh: schedule,
+    needsTransactionRepair: function(){
+      const type = $('pType');
+      const form = type?.closest('.p611-form');
+      return !!form && (form.dataset.p2Enhanced !== '1' || !transactionStructureIntact(form));
+    },
     validate: {
       sale: validateSale,
       daily: validateDaily,
