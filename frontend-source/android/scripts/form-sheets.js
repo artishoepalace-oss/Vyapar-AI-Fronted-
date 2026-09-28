@@ -51,9 +51,13 @@
     node.hidden=false;
     overlay.querySelector('.vy-form-body').appendChild(node);
     document.body.appendChild(overlay);document.body.classList.add('vy-form-open');
+    root.VyaparWorkflowUI?.refresh?.();
     const entry=active;
     syncHeader(entry);
-    entry.observer=new MutationObserver(()=>syncHeader(entry));
+    entry.observer=new MutationObserver(()=>{
+      syncHeader(entry);
+      if(root.VyaparWorkflowUI?.needsTransactionRepair?.()) root.VyaparWorkflowUI.refresh();
+    });
     entry.observer.observe(node,{childList:true,subtree:true,characterData:true});
     overlay.querySelector('[data-sheet-dismiss]').onclick=()=>close(false);
     overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
