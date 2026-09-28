@@ -78,4 +78,20 @@ test('00064 business engine centralizes tax, document state and idempotency hook
   assert.match(app,/Return quantity exceeds remaining quantity/);
 });
 
-test('00065 prevents WebView auto-fit zoom while keeping responsive layout',()=>{\n  const activity=read('android-app/app/src/main/java/com/vyaparai/app/MainActivity.java');\n  const androidHtml=read('android-app/app/src/main/assets/index.html');\n  const webHtml=read('web/index.html');\n  assert.match(activity,/setLoadWithOverviewMode\\(false\\)/);\n  assert.doesNotMatch(activity,/setLoadWithOverviewMode\\(true\\)/);\n  assert.match(activity,/setUseWideViewPort\\(true\\)/);\n  assert.match(activity,/setBuiltInZoomControls\\(false\\)/);\n  assert.match(activity,/setDisplayZoomControls\\(false\\)/);\n  assert.match(activity,/setSupportZoom\\(false\\)/);\n  assert.match(activity,/setTextZoom\\(100\\)/);\n  for(const html of [androidHtml,webHtml]){\n    assert.match(html,/minimum-scale=1\\.0/);\n    assert.match(html,/maximum-scale=1\\.0/);\n    assert.match(html,/user-scalable=no/);\n  }\n});\n
+test('00065 prevents WebView auto-fit zoom while keeping responsive layout',()=>{
+  const activity=read('android-app/app/src/main/java/com/vyaparai/app/MainActivity.java');
+  const androidHtml=read('android-app/app/src/main/assets/index.html');
+  const webHtml=read('web/index.html');
+  assert.match(activity,/setLoadWithOverviewMode\(false\)/);
+  assert.doesNotMatch(activity,/setLoadWithOverviewMode\(true\)/);
+  assert.match(activity,/setUseWideViewPort\(true\)/);
+  assert.match(activity,/setBuiltInZoomControls\(false\)/);
+  assert.match(activity,/setDisplayZoomControls\(false\)/);
+  assert.match(activity,/setSupportZoom\(false\)/);
+  assert.match(activity,/setTextZoom\(100\)/);
+  for(const html of [androidHtml,webHtml]){
+    assert.match(html,/minimum-scale=1\.0/);
+    assert.match(html,/maximum-scale=1\.0/);
+    assert.match(html,/user-scalable=no/);
+  }
+});
