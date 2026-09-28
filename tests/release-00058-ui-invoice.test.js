@@ -13,7 +13,7 @@ test('current release identity and Android 8 minimum are synchronized',()=>{
   assert.equal(version.versionCode,2010200464);
   assert.match(gradle,/minSdk\s+26/);
   assert.match(gradle,/versionCode\s+2010200464/);
-  assert.match(gradle,/versionName\s+"20\.10\.2004\.00063\.2026"/);
+  assert.match(gradle,/versionName\s+"20\.10\.2004\.00064\.2026"/);
 });
 
 test('00058 physical UI owns spring panels, safe radii and static chrome reflections',()=>{
@@ -24,7 +24,7 @@ test('00058 physical UI owns spring panels, safe radii and static chrome reflect
   assert.match(motion,/springProgressFrames/);
   assert.match(motion,/springPanelIn/);
   assert.match(motion,/adaptive-damped-spring/);
-  assert.doesNotMatch(nav,/radial-gradient\(120% 38%/);
+  assert.match(nav,/radial-gradient\(120% 38%/);\n  assert.match(nav,/#nav\\.nav\\.bottom-nav::after[\\s\\S]*display:block!important/);
   assert.match(radius,/--vy45-panel:24px/);
   assert.match(radius,/--vy45-card:18px/);
   assert.match(radius,/--vy45-panel-pad:18px/);
