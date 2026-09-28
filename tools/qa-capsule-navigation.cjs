@@ -71,7 +71,7 @@ const remote='20.10.2004.00016.2026';
   const settle=async()=>{await page.waitForTimeout(450);await page.waitForFunction(()=>!document.documentElement.classList.contains('vy-page-transitioning'),null,{timeout:2500});};
   const near=(actual,expected)=>assert(Math.abs(actual-expected)<0.02,'Subpixel geometry: '+actual+' expected '+expected);
   async function geometry(expected){
-    // More closes first, then the 390ms capsule transition starts. Wait for
+    // More closes first, then the restrained capsule transition starts. Wait for
     // the observed end position instead of measuring mid-animation at 450ms.
     await page.waitForFunction(expected=>{
       const nav=document.getElementById('nav'),active=nav?.querySelector('button.active'),cap=document.getElementById('activeCapsule');
@@ -99,18 +99,14 @@ const remote='20.10.2004.00016.2026';
     near(g.nav.w,Math.min(367,g.viewport-16));near(g.cap.w,68);near(g.cap.h,42);
     assert.equal(g.before,'none');assert.equal(g.color,'rgb(18, 18, 18)');assert(g.scrollWidth<=g.viewport,'No page overflow');
     assert.equal(g.navBackground,'none','No white gradient spills inside the navbar');
-    assert.equal(g.navOverflow,'visible','Outside reflection is not clipped');
-    assert(!/(paint|strict|content)/.test(g.navContain),'Paint containment must not clip the outside reflection');
-    assert.equal(g.reflection.display,'block');near(g.reflection.left,g.nav.w/4);near(g.reflection.width,g.nav.w/2);
-    near(g.reflection.top,g.nav.h);near(g.reflection.height,8);
-    assert.match(g.reflection.background,/linear-gradient/);assert.match(g.reflection.background,/radial-gradient/);
-    assert.equal(g.reflection.filter,'none');assert.equal(g.reflection.shadow,'none');assert.equal(g.reflection.transform,'none');
-    assert.equal(g.reflection.pointerEvents,'none','Decoration does not intercept navigation taps');
-    assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(165, 0, 53)');assert.equal(g.selectedGlow,'none','Navbar labels have no outer shadow');assert(g.rim.includes('inset'),'Glossy rim is inset and preserves geometry');
+    assert.equal(g.navOverflow,'visible','Navigation geometry stays unclipped');
+    assert(!/(paint|strict|content)/.test(g.navContain),'Paint containment must not clip navigation geometry');
+    assert.equal(g.reflection.display,'none','No decorative navbar reflection or glitter');
+    assert.equal(g.color,g.topColor,'Header and navbar share the same black');assert.equal(g.selectedColor,'rgb(165, 0, 53)');assert.equal(g.selectedGlow,'none','Navbar labels have no outer shadow');assert.equal(g.rim,'none','Navbar has no decorative rim or glow');
     assert.equal(g.selectedIcon,'rgb(165, 0, 53)','Selected icon matches label');assert.equal(g.iconGlow,'none','Navbar icons have no outer shadow');
     assert(g.iconFills.length>0,'Active destination has a real SVG icon');
     g.iconFills.forEach(fill=>assert.equal(fill,'rgb(165, 0, 53)','Actual SVG shapes render burgundy'));
-    assert.equal(g.topRim,g.rim,'Both bars have the same glossy rim');
+    assert.equal(g.topRim,'none','Header has no decorative rim or glow');
     assert(Math.abs(g.top.x-g.nav.x)<0.1,'Top and bottom left edges align '+JSON.stringify(g));
     assert(Math.abs(g.top.w-g.nav.w)<0.1,'Both bar widths match');
     near(g.logo.w,44);near(g.logo.h,44);near(g.avatar.w,44);near(g.avatar.h,44);

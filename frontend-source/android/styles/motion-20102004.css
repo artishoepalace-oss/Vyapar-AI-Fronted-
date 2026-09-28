@@ -1,13 +1,13 @@
 /* Vyapar AI — shared directional page and sheet motion authority.
    JS owns page/dialog/sheet transforms. CSS only provides micro feedback and disables legacy duplicate motion. */
 html.vy-motion-ready{
-  --vy-motion-ease:cubic-bezier(.18,.89,.32,1.12);
-  --vy-motion-ease-soft:cubic-bezier(.2,.82,.24,1.04);
-  --vy-motion-spring:cubic-bezier(.16,.92,.22,1.08);
+  --vy-motion-ease:cubic-bezier(.20,.82,.24,1);
+  --vy-motion-ease-soft:cubic-bezier(.20,.80,.25,1);
+  --vy-motion-spring:cubic-bezier(.20,.82,.24,1);
   --vy-motion-settle:cubic-bezier(.2,.78,.2,1);
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
-  --vy-motion-page:500ms;
+  --vy-motion-page:280ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
    the sticky header, while inherited smooth scrolling competes with page slides. */
@@ -58,7 +58,7 @@ html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.s
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.settings-row,.vy675-settings-row,.vx622-settings-row):not(:disabled):active{
-  transform:translate3d(0,1px,0) scale(.974)!important;
+  transform:translate3d(0,1px,0) scale(.988)!important;
 }
 html.vy-motion-ready body input,
 html.vy-motion-ready body select,
@@ -93,7 +93,7 @@ html.vy-motion-ready body #nav.nav button[data-android-tab]:not(:disabled):activ
 html.vy-motion-ready body #nav.nav .android-nav-icon{
   transition:transform 210ms var(--vy-motion-spring),background-color var(--vy-motion-ui) ease!important;
 }
-html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-2px,0) scale(1.045)!important}
+html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-1px,0) scale(1.015)!important}
 
 /* One JS motion owner for all known overlays/cards. */
 html.vy-motion-ready body :is(
@@ -118,7 +118,7 @@ html.vy-motion-ready body #androidMoreSheet .android-sheet-grid{display:flex!imp
 html.vy-motion-ready body #androidMoreSheet .android-sheet-item{min-height:60px!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.04)!important;background:transparent!important;border-radius:0!important;padding:9px 8px!important;box-shadow:none!important}
 html.vy-motion-ready body #androidMoreSheet .android-sheet-item:last-child{border-bottom:0!important}
 html.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon{color:#d3d5d9!important;background:#222428!important;border-radius:12px!important;transition:transform 110ms var(--vy-motion-ease),background-color 120ms ease!important}
-html.vy-motion-ready body #androidMoreSheet .android-sheet-item:active .android-sheet-item-icon{transform:scale(.95)!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-item:active .android-sheet-item-icon{transform:scale(.985)!important}
 html.vy-motion-ready body #shopProgressSheet .shop-progress-sheet{max-height:calc(100dvh - 110px - env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
 
 html.vy-motion-ready body .glass-toast{
@@ -169,7 +169,7 @@ html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important
 html.vy861-flat-black.vy-motion-ready.vy-physics-motion body :is(
   .card,.stat,.android-quick-action,.subscription-plan-card,.vx622-menu-trigger
 ):not(:disabled):active{
-  transform:translate3d(0,1px,0) scale(.982)!important;
+  transform:translate3d(0,1px,0) scale(.989)!important;
 }
 html.vy861-flat-black.vy-motion-ready.vy-physics-motion.perf-scrolling body :is(
   .card,.stat,.android-quick-action,.settings-row,.vy675-settings-row
@@ -189,7 +189,7 @@ html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(
 }
 html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled):active{
   transition-duration:72ms!important;
-  transform:translate3d(0,1px,0) scale(.972)!important;
+  transform:translate3d(0,1px,0) scale(.988)!important;
 }
 html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):focus-visible{
   outline:2px solid rgba(226,229,235,.76)!important;
@@ -202,7 +202,7 @@ html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item
   transition:transform 220ms var(--vy-motion-spring),background-color 150ms ease,opacity 150ms ease!important;
 }
 html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item:active{
-  transform:translate3d(0,1px,0) scale(.986)!important;
+  transform:translate3d(0,1px,0) scale(.990)!important;
 }
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{transition:none!important;}

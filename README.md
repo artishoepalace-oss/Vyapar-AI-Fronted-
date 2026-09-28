@@ -1,7 +1,7 @@
 # Vyapar AI
 
 Android business app and web frontend for sales, stock, billing and shop accounts.
-Current app identity: **20.10.2004.00062.2026** (`2010200462`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
+Current app identity: **20.10.2004.00063.2026** (`2010200463`). The authoritative values are in `version.json` and `android-app/app/build.gradle`.
 
 ## Start here
 

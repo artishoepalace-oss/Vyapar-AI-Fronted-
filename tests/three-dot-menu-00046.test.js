@@ -37,7 +37,7 @@ test('menu idles out after ten seconds but interaction disables that idle close'
   assert.doesNotMatch(app,/if\(!event\.target\.closest\('\.vx622-menu-item'\)\)return;\s*closeBulkMenus\(\)/);
 });
 
-test('popup matches supplied geometry and is the last shared UI style',()=>{
+test('popup keeps supplied geometry before the final master contract',()=>{
   assert.match(css,/width:245px!important/);
   assert.match(css,/max-width:calc\(100vw - 55px\)!important/);
   assert.match(css,/border-radius:18px!important/);
@@ -47,7 +47,8 @@ test('popup matches supplied geometry and is the last shared UI style',()=>{
   assert.match(css,/animation:vx46MenuOpen 180ms ease-out/);
   const ui=build.slice(build.indexOf('const uiStyles'),build.indexOf('const scripts'));
   const styles=[...ui.matchAll(/'([^']+\.css)'/g)].map(m=>m[1]);
-  assert.equal(styles.at(-1),'three-dot-menu-00046.css');
+  assert.equal(styles.at(-1),'master-system-00063.css');
+  assert.ok(styles.indexOf('master-system-00063.css')>styles.indexOf('three-dot-menu-00046.css'));
 });
 
 

@@ -71,7 +71,8 @@ const uiStyles = [
   'settings-business-control-00060.css',
   'global-radius-final-00045.css',
   'middle-bar-2026.css',
-  'three-dot-menu-00046.css'
+  'three-dot-menu-00046.css',
+  'master-system-00063.css'
 ];
 
 const scripts = [
