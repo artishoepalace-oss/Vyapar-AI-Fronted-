@@ -4,7 +4,7 @@
 (function(root){
   'use strict';
 
-  const VERSION='20.10.2004.00062.2026';
+  const VERSION='20.10.2004.00063.2026';
   const ACCOUNT_KEY='vyapar_ai_account_cache_v1';
   const STATE_KEY='vyapar_ai_prod_v1';
   let businessSession=null;
