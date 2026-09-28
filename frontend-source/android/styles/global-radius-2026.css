@@ -10,17 +10,8 @@ html.vy861-flat-black.workspace-v7 {
   --vy44-rim:rgba(205,207,213,.17);
 }
 
-/* The header, five-tab navbar and middle tab tracks share rounded ends.
-   Preserve existing widths, heights, tab positions, active-thumb movement and
-   safe-area geometry on older Android WebViews. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav {
-  border-radius:var(--vy44-shell-radius)!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
-  border-radius:var(--vy44-shell-radius)!important;
-}
+/* Root header/navbar geometry is owned only by capsule-navigation.css.
+   This legacy radius layer now scopes itself to workspace/content surfaces. */
 html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
   border-radius:var(--vy44-shell-radius)!important;
   border-color:#35373c!important;
