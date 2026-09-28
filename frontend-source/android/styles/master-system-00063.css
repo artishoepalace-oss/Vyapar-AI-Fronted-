@@ -237,7 +237,9 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.p1-modebar,.workspa
   box-shadow:none!important;
   filter:none!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before{
+/* Match the legacy route-scoped selector specificity so this final contract
+   actually wins the cascade instead of being silently overridden by older UI layers. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before{
   background:#2a2b2f!important;
   background-image:none!important;
   box-shadow:none!important;
