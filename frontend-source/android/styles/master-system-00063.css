@@ -178,6 +178,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top{
   width:367px!important;
   max-width:calc(100vw - 16px)!important;
+  margin-left:50%!important;
+  margin-right:0!important;
+  left:auto!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
   border-radius:28px!important;
 }
 
