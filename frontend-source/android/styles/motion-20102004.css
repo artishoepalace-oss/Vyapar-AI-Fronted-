@@ -8,6 +8,11 @@ html.vy-motion-ready{
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
   --vy-motion-page:280ms;
+  --motion-micro:120ms;
+  --motion-snappy:190ms;
+  --motion-fluid:280ms;
+  --motion-heavy:360ms;
+  --motion-document:260ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
    the sticky header, while inherited smooth scrolling competes with page slides. */
@@ -67,6 +72,25 @@ html.vy-motion-ready body textarea{
 }
 html.vy-motion-ready body button:focus-visible,
 html.vy-motion-ready body a:focus-visible{outline:2px solid rgba(211,213,217,.72)!important;outline-offset:3px!important}
+
+
+/* Semantic motion classes: one timing vocabulary; no transition:all. */
+html.vy-motion-ready body [data-motion-class="micro"]{
+  transition-duration:var(--motion-micro)!important;
+}
+html.vy-motion-ready body [data-motion-class="snappy"]{
+  transition-duration:var(--motion-snappy)!important;
+}
+html.vy-motion-ready body [data-motion-class="fluid"]{
+  transition-duration:var(--motion-fluid)!important;
+}
+html.vy-motion-ready body [data-motion-class="heavy"]{
+  transition-duration:var(--motion-heavy)!important;
+}
+html.vy-motion-ready body [data-motion-class="document"]{
+  transition-duration:var(--motion-document)!important;
+  transition-timing-function:cubic-bezier(.2,.78,.2,1)!important;
+}
 
 /* Brand/logo remains stationary during navigation. */
 html.vy-motion-ready body .top .brand .logo{
@@ -167,7 +191,9 @@ html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important
 /* 00057 physics layer: native WebView owns finger/fling scrolling; UI chrome
    uses damped transform-only springs so scrolling never competes with JS. */
 html.vy861-flat-black.vy-motion-ready.vy-physics-motion body :is(
-  .card,.stat,.android-quick-action,.subscription-plan-card,.vx622-menu-trigger
+  .card[role="button"],.card[onclick],.card[data-clickable="true"],
+  .stat[role="button"],.stat[onclick],.stat[data-clickable="true"],
+  .android-quick-action,.subscription-plan-card[role="button"],.vx622-menu-trigger
 ):not(:disabled):active{
   transform:translate3d(0,1px,0) scale(.989)!important;
 }
