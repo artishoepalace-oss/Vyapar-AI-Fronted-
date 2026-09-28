@@ -24,7 +24,8 @@ test('00058 physical UI owns spring panels, safe radii and static chrome reflect
   assert.match(motion,/springProgressFrames/);
   assert.match(motion,/springPanelIn/);
   assert.match(motion,/adaptive-damped-spring/);
-  assert.match(nav,/radial-gradient\(120% 38%/);\n  assert.match(nav,/#nav\\.nav\\.bottom-nav::after[\\s\\S]*display:block!important/);
+  assert.match(nav,/radial-gradient\(120% 38%/);
+  assert.match(nav,/#nav\.nav\.bottom-nav::after[\s\S]*display:block!important/);
   assert.match(radius,/--vy45-panel:24px/);
   assert.match(radius,/--vy45-card:18px/);
   assert.match(radius,/--vy45-panel-pad:18px/);
