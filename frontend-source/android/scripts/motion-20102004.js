@@ -29,7 +29,27 @@
   const easeClose='cubic-bezier(.32,0,.2,1)';
   const pageEase='cubic-bezier(.18,.86,.22,1)';
   const moreEase='cubic-bezier(.20,.84,.24,1)';
-  const physicsProfile={engine:'adaptive-damped-spring',scroll:'native-webview-fling',minAndroidApi:26};
+  const physicsProfile={
+    engine:'adaptive-damped-spring',
+    scroll:'native-webview-fling',
+    minAndroidApi:26,
+    classes:{
+      micro:{settleMs:120,mass:.45,stiffness:520,damping:44,overshoot:'none'},
+      snappy:{settleMs:190,mass:.55,stiffness:470,damping:40,overshoot:'very-low'},
+      fluid:{settleMs:280,mass:.8,stiffness:350,damping:34,overshoot:'low'},
+      heavy:{settleMs:360,mass:1.35,stiffness:275,damping:38,overshoot:'minimal'},
+      document:{settleMs:260,mass:1.55,stiffness:300,damping:44,overshoot:'none'}
+    },
+    component:{
+      navigation:{className:'snappy',mass:.75,stiffness:360,damping:32},
+      button:{className:'snappy',mass:.55,stiffness:500,damping:40,pressedScale:.988},
+      card:{className:'fluid',mass:.8,stiffness:350,damping:34,pressedScale:.989},
+      menu:{className:'fluid',mass:.85,stiffness:360,damping:36},
+      sheet:{className:'heavy',mass:1.35,stiffness:275,damping:38},
+      page:{className:'fluid',mass:1.3,stiffness:300,damping:40},
+      document:{className:'document',mass:1.55,stiffness:300,damping:44}
+    }
+  };
   const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
   const pageStyleProps=['position','top','left','right','bottom','width','height','margin','z-index','pointer-events','display','contain','isolation','transform','opacity','will-change','transition','backface-visibility','-webkit-backface-visibility'];
@@ -542,7 +562,12 @@
     const close=overlay.querySelector('[data-sheet-dismiss]') || overlay.querySelector(closeSelector+', [data-update-close]');if(close){close.click();return true;}return false;
   }
 
-  window.vyaparMotion={enter,cancel,navigate,whenPageSettled,scrollTo:scrollToPosition,beforePage,afterPage,openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition,physics:physicsProfile};
+  window.vyaparMotion={
+    enter,cancel,navigate,whenPageSettled,scrollTo:scrollToPosition,beforePage,afterPage,
+    openOverlay,closeOverlay,cancelOverlay,dismissTop,stopPageTransition,
+    physics:physicsProfile,
+    profile(name){return physicsProfile.component[name]||physicsProfile.classes[name]||null;}
+  };
 
   function boot(){
     document.documentElement.classList.add('vy-motion-ready','vy-physics-motion');
