@@ -9,11 +9,11 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 test('current release identity and Android 8 minimum are synchronized',()=>{
   const version=JSON.parse(read('version.json'));
   const gradle=read('android-app/app/build.gradle');
-  assert.equal(version.versionName,'20.10.2004.00062.2026');
-  assert.equal(version.versionCode,2010200462);
+  assert.equal(version.versionName,'20.10.2004.00063.2026');
+  assert.equal(version.versionCode,2010200463);
   assert.match(gradle,/minSdk\s+26/);
-  assert.match(gradle,/versionCode\s+2010200462/);
-  assert.match(gradle,/versionName\s+"20\.10\.2004\.00062\.2026"/);
+  assert.match(gradle,/versionCode\s+2010200463/);
+  assert.match(gradle,/versionName\s+"20\.10\.2004\.00063\.2026"/);
 });
 
 test('00058 physical UI owns spring panels, safe radii and static chrome reflections',()=>{
@@ -24,7 +24,7 @@ test('00058 physical UI owns spring panels, safe radii and static chrome reflect
   assert.match(motion,/springProgressFrames/);
   assert.match(motion,/springPanelIn/);
   assert.match(motion,/adaptive-damped-spring/);
-  assert.match(nav,/radial-gradient\(120% 38%/);
+  assert.doesNotMatch(nav,/radial-gradient\(120% 38%/);
   assert.match(radius,/--vy45-panel:24px/);
   assert.match(radius,/--vy45-card:18px/);
   assert.match(radius,/--vy45-panel-pad:18px/);
