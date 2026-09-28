@@ -9495,6 +9495,11 @@ html.vy-motion-ready{
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
   --vy-motion-page:280ms;
+  --motion-micro:120ms;
+  --motion-snappy:190ms;
+  --motion-fluid:280ms;
+  --motion-heavy:360ms;
+  --motion-document:260ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
    the sticky header, while inherited smooth scrolling competes with page slides. */
@@ -9555,6 +9560,25 @@ html.vy-motion-ready body textarea{
 html.vy-motion-ready body button:focus-visible,
 html.vy-motion-ready body a:focus-visible{outline:2px solid rgba(211,213,217,.72)!important;outline-offset:3px!important}
 
+
+/* Semantic motion classes: one timing vocabulary with explicit properties. */
+html.vy-motion-ready body [data-motion-class="micro"]{
+  transition-duration:var(--motion-micro)!important;
+}
+html.vy-motion-ready body [data-motion-class="snappy"]{
+  transition-duration:var(--motion-snappy)!important;
+}
+html.vy-motion-ready body [data-motion-class="fluid"]{
+  transition-duration:var(--motion-fluid)!important;
+}
+html.vy-motion-ready body [data-motion-class="heavy"]{
+  transition-duration:var(--motion-heavy)!important;
+}
+html.vy-motion-ready body [data-motion-class="document"]{
+  transition-duration:var(--motion-document)!important;
+  transition-timing-function:cubic-bezier(.2,.78,.2,1)!important;
+}
+
 /* Brand/logo remains stationary during navigation. */
 html.vy-motion-ready body .top .brand .logo{
   padding:0!important;border:0!important;border-radius:12px!important;clip-path:none!important;-webkit-clip-path:none!important;
@@ -9567,20 +9591,8 @@ html.vy-motion-ready body #vyaparOtpGate .auth-logo{
   width:100%!important;height:100%!important;object-fit:contain!important;padding:0!important;border-radius:20px!important;background:transparent!important;transform:none!important;
 }
 
-/* Bottom navigation: fixed geometry, fast response, no halo. */
-html.vy-motion-ready body #nav.nav{
-  left:8px!important;right:8px!important;width:auto!important;max-width:620px!important;margin:0 auto!important;
-  bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;transform:none!important;height:68px!important;min-height:68px!important;
-  box-sizing:border-box!important;border-radius:26px!important;padding:5px!important;background:rgba(12,13,15,.975)!important;
-  border:1px solid rgba(255,255,255,.018)!important;box-shadow:none!important;
-}
-html.vy-motion-ready body #nav.nav button[data-android-tab]{border-radius:20px!important}
-html.vy-motion-ready body #nav.nav button.active{background:rgba(255,255,255,.06)!important;color:#fff!important}
-html.vy-motion-ready body #nav.nav button[data-android-tab]:not(:disabled):active{transform:translate3d(0,1px,0) scale(.968)!important}
-html.vy-motion-ready body #nav.nav .android-nav-icon{
-  transition:transform 210ms var(--vy-motion-spring),background-color var(--vy-motion-ui) ease!important;
-}
-html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-1px,0) scale(1.015)!important}
+/* Bottom navigation geometry/material/micro-motion is owned exclusively by
+   capsule-navigation.css so the restored v00062 contract cannot be shadowed. */
 
 /* One JS motion owner for all known overlays/cards. */
 html.vy-motion-ready body :is(
@@ -9654,7 +9666,9 @@ html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important
 /* 00057 physics layer: native WebView owns finger/fling scrolling; UI chrome
    uses damped transform-only springs so scrolling never competes with JS. */
 html.vy861-flat-black.vy-motion-ready.vy-physics-motion body :is(
-  .card,.stat,.android-quick-action,.subscription-plan-card,.vx622-menu-trigger
+  .card[role="button"],.card[onclick],.card[data-clickable="true"],
+  .stat[role="button"],.stat[onclick],.stat[data-clickable="true"],
+  .android-quick-action,.subscription-plan-card[role="button"],.vx622-menu-trigger
 ):not(:disabled):active{
   transform:translate3d(0,1px,0) scale(.989)!important;
 }
@@ -10310,7 +10324,7 @@ html.vy861-flat-black {
   --vy-chrome-width:367px;
   --vy-chrome-left:8px;
   --vy-chrome-right:8px;
-  --vy-chrome-rim:inset 0 0 0 1px rgba(255,255,255,.09);
+  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.10);
 }
 @supports (left:max(8px,1px)) {
   html.vy861-flat-black {
@@ -10331,7 +10345,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top {
   height:56px!important;min-height:56px!important;padding:6px 10px!important;
   box-sizing:border-box!important;border:0!important;border-radius:28px!important;
   background:var(--vy-chrome-black)!important;
-  background-image:none!important;
+  background-image:radial-gradient(120% 38% at 50% -2%,rgba(255,255,255,.105),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 48%)!important;
   box-shadow:var(--vy-chrome-rim)!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
@@ -10384,11 +10398,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
   width:68px;min-width:68px;max-width:68px;
   height:42px;min-height:42px;max-height:42px;
   box-sizing:border-box;border:0;border-radius:21px;
-  background:#c8c6c8;
-  box-shadow:none;
+  background:linear-gradient(180deg,#d8d5d8 0%,#c5c1c5 42%,#aaa6aa 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(52,48,52,.18);
   pointer-events:none;z-index:0;
   transform:translate3d(0,0,0);
-  transition:transform 280ms cubic-bezier(.20,.78,.20,1);
+  transition:transform 420ms cubic-bezier(.18,.90,.24,1.12);
   will-change:transform;
 }
 /* Keep the selection capsule in step with the compact page handoff on old GPUs. */
@@ -10409,7 +10423,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
    fades horizontally and downward within the existing 10px bottom clearance.
    No blur/filter, animation or hit target is added on Android 8 WebViews. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after {
-  content:""!important;display:none!important;position:absolute!important;
+  content:""!important;display:block!important;position:absolute!important;
   left:25%!important;right:auto!important;top:100%!important;bottom:auto!important;
   width:50%!important;height:8px!important;margin:0!important;padding:0!important;
   border:0!important;border-radius:0!important;box-sizing:border-box!important;
@@ -10463,7 +10477,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
   display:block!important;width:100%!important;max-width:100%!important;
   height:10px!important;min-height:10px!important;flex:0 0 10px!important;
   padding:0!important;margin:0!important;font-size:8px!important;line-height:10px!important;
-  font-weight:600!important;letter-spacing:-.1px!important;text-align:center!important;white-space:nowrap!important;
+  font-weight:650!important;letter-spacing:-.1px!important;text-align:center!important;white-space:nowrap!important;
   color:inherit!important;background:transparent!important;filter:none!important;transform:none!important;animation:none!important;
 }
 /* Selected icons and labels use a flat burgundy accent without an outer glow. */
@@ -10659,17 +10673,8 @@ html.vy861-flat-black.workspace-v7 {
   --vy44-rim:rgba(205,207,213,.17);
 }
 
-/* The header, five-tab navbar and middle tab tracks share rounded ends.
-   Preserve existing widths, heights, tab positions, active-thumb movement and
-   safe-area geometry on older Android WebViews. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav {
-  border-radius:var(--vy44-shell-radius)!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
-  border-radius:var(--vy44-shell-radius)!important;
-}
+/* Root header/navbar geometry is owned only by capsule-navigation.css.
+   This legacy radius layer now scopes itself to workspace/content surfaces. */
 html.vy861-flat-black.workspace-v7 body :is(#screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings,#screen-subscription) :is(.p1-modebar,.workspace-tabs).vy-middle-ready {
   border-radius:var(--vy44-shell-radius)!important;
   border-color:#35373c!important;
@@ -11697,14 +11702,8 @@ html.vy861-flat-black.workspace-v7 {
   --vy45-panel-pad:18px;
   --vy45-card-pad:14px;
 }
-/* Full-pill outer bars. Do not change the existing 50px navbar track, nav
-   padding, selected-tab calculations, middle-bar width or transition timing. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab] {
-  border-radius:var(--vy45-pill)!important;
-}
+/* Root header/navbar radii are excluded from this legacy cross-screen layer.
+   The restored v00062 capsule-navigation.css remains their single authority. */
 html.vy861-flat-black.workspace-v7 body :is(
   #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
   #screen-upload,#screen-calculator,#screen-settings,#screen-subscription
@@ -12395,27 +12394,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body{
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body::before,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body::after{display:none!important;}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app>.top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav{
-  background:var(--vy52-chrome)!important;
-  background-image:none!important;
-  border-color:var(--vy52-border)!important;
-  /* Preserve only the approved inset glossy rim; no outer text/icon shadow. */
-  box-shadow:var(--vy-chrome-rim)!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav .active-capsule{
-  background:var(--vy52-control)!important;
-  background-image:none!important;
-  border:1px solid var(--vy52-border)!important;
-  box-shadow:none!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-android-tab].active,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-android-tab].active :is(.android-nav-icon,.android-nav-label,svg,svg *){
-  color:var(--vy52-active)!important;
-  stroke:currentColor!important;
-  filter:none!important;
-  text-shadow:none!important;
-}
+/* Persistent navbar/top-bar material is deliberately not styled here.
+   Selection-menu theming must not override capsule-navigation.css. */
 
 /* The shared palette covers every app screen with selector shapes that remain cheap
    during compositor-backed page motion. Keep the hierarchy global, but avoid repeating
@@ -13043,11 +13023,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 
 /* ===== STYLE SOURCE: master-system-00063.css ===== */
 
-/* Vyapar AI 20.10.2004.00063 — final product-system contract.
+/* Vyapar AI 20.10.2004.00064 — ocean-depth product-system contract.
    This file is intentionally last in the shared UI bundle. It does not create a
    second navigation/overlay/motion engine; it resolves historical visual
    conflicts into one quiet, aligned rendering contract.
-   Release QA measures the short 12–20px compositor handoff at sub-pixel precision. */
+   v00062 top/bottom navigation remains the canonical chrome source; this layer must not override it. */
 
 html.vy861-flat-black{
   --vy63-bg:#000000;
@@ -13065,6 +13045,57 @@ html.vy861-flat-black{
   --vy63-touch:44px;
   --vy63-card-radius:18px;
   --vy63-panel-radius:24px;
+
+  /* Semantic product tokens: one vocabulary shared by all modules. */
+  --surface-background:var(--vy63-bg);
+  --surface-primary:var(--vy63-surface);
+  --surface-secondary:var(--vy63-surface-2);
+  --surface-tertiary:#1f2024;
+  --surface-elevated:#151619;
+  --surface-overlay:rgba(0,0,0,.66);
+  --text-primary:var(--vy63-text);
+  --text-secondary:var(--vy63-muted);
+  --text-tertiary:#777a81;
+  --separator:var(--vy63-line);
+  --interactive:#d3d5d9;
+  --interactive-active:var(--vy63-accent);
+  --success:#55c58a;
+  --warning:#e2b764;
+  --danger:var(--vy63-danger);
+  --information:#7fb1ff;
+  --premium:#d8bd78;
+
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+
+  --radius-control:12px;
+  --radius-card:18px;
+  --radius-large:22px;
+  --radius-sheet:24px;
+  --radius-pill:999px;
+
+  --text-caption:11px;
+  --text-body:14px;
+  --text-body-strong:600 14px/1.35 system-ui,-apple-system,sans-serif;
+  --text-section:600 16px/1.3 system-ui,-apple-system,sans-serif;
+  --text-page:700 22px/1.2 system-ui,-apple-system,sans-serif;
+  --text-metric:700 24px/1.1 system-ui,-apple-system,sans-serif;
+  --text-money:700 24px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --motion-micro:120ms;
+  --motion-snappy:190ms;
+  --motion-fluid:280ms;
+  --motion-heavy:360ms;
+  --motion-document:260ms;
+
+  --elevation-flat:none;
+  --elevation-raised:0 1px 0 rgba(255,255,255,.035);
+  --elevation-floating:0 14px 36px rgba(0,0,0,.34);
 }
 
 html.vy861-flat-black,
@@ -13140,6 +13171,40 @@ html.vy861-flat-black main :is(
   box-shadow:none!important;
 }
 
+
+/* Semantic card roles. Static information remains visually stable; only real
+   controls advertise interactivity. These classes can be added without creating
+   new page or popup systems. */
+html.vy861-flat-black :is(.MetricCard,[data-ui-role="metric"]){
+  background:var(--surface-primary)!important;
+}
+html.vy861-flat-black :is(.MetricCard,[data-ui-role="metric"]) :is(.amount,.value,b,strong){
+  font:var(--text-money);
+  font-variant-numeric:tabular-nums;
+}
+html.vy861-flat-black :is(.ActionCard,[data-ui-role="action"]){
+  background:var(--surface-secondary)!important;
+}
+html.vy861-flat-black :is(.RecordCard,.DocumentCard,[data-ui-role="record"],[data-ui-role="document"]){
+  background:var(--surface-primary)!important;
+  border-color:var(--separator)!important;
+}
+html.vy861-flat-black :is(.AlertCard,[data-ui-role="alert"]){
+  background:var(--surface-secondary)!important;
+  border-color:color-mix(in srgb,var(--warning) 30%,transparent)!important;
+}
+html.vy861-flat-black :is(.SettingsCard,[data-ui-role="settings"]){
+  background:var(--surface-primary)!important;
+}
+html.vy861-flat-black :is(
+  .ActionCard,[data-ui-role="action"],
+  .RecordCard[role="button"],.DocumentCard[role="button"],
+  [data-ui-role="record"][role="button"],[data-ui-role="document"][role="button"]
+){
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
 /* One alignment rhythm across principal workspaces. */
 html.vy861-flat-black :is(
   #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
@@ -13186,93 +13251,10 @@ html.vy861-flat-black :is(.p611-table,.vx621-table-wrap,.scroll,.table-wrap,.rec
   overscroll-behavior-x:contain;
 }
 
-/* Final top/bottom chrome: solid, aligned and deliberately non-glittery. */
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
-  background:var(--vy63-chrome)!important;
-  background-image:none!important;
-  border:0!important;
-  box-shadow:none!important;
-  filter:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top::before,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top::after,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::before,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after{
-  content:none!important;
-  display:none!important;
-  background:none!important;
-  box-shadow:none!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
-  display:block!important;
-  width:367px!important;
-  max-width:calc(100vw - 16px)!important;
-  height:50px!important;
-  min-height:50px!important;
-  max-height:50px!important;
-  padding:0!important;
-  border-radius:25px!important;
-  overflow:visible!important;
-  contain:layout style!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top{
-  width:367px!important;
-  max-width:calc(100vw - 16px)!important;
-  margin-left:50%!important;
-  margin-right:0!important;
-  left:auto!important;
-  right:auto!important;
-  transform:translateX(-50%)!important;
-  border-radius:28px!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .nav-track{
-  height:50px!important;
-  display:grid!important;
-  grid-template-columns:repeat(5,minmax(0,1fr))!important;
-  align-items:center!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule{
-  width:68px!important;
-  min-width:68px!important;
-  max-width:68px!important;
-  height:42px!important;
-  min-height:42px!important;
-  max-height:42px!important;
-  top:4px!important;
-  border-radius:21px!important;
-  background:#c8c6c8!important;
-  background-image:none!important;
-  border:0!important;
-  box-shadow:none!important;
-  filter:none!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab]{
-  height:50px!important;
-  min-height:50px!important;
-  max-height:50px!important;
-  background:transparent!important;
-  background-image:none!important;
-  box-shadow:none!important;
-  text-shadow:none!important;
-  filter:none!important;
-}
-
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active :is(.android-nav-icon,.android-nav-label){
-  color:var(--vy63-accent)!important;
-  text-shadow:none!important;
-  box-shadow:none!important;
-  filter:none!important;
-}
+/* Navigation ownership
+   The exact v20.10.2004.00062 navbar/top-bar geometry, capsule material,
+   rim reflection and responsive behavior are intentionally owned by
+   capsule-navigation.css. Do not restyle #nav or .app > .top here. */
 
 /* Middle selectors are one flat track and one graphite selection surface. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.p1-modebar,.workspace-tabs).vy-middle-ready{
@@ -13373,20 +13355,12 @@ html.vy861-flat-black :is(.danger,.destructive,[data-danger="true"],[data-bulk-k
 
 /* Old WebView / low-RAM rendering: remove decoration before reducing usability. */
 html.vy861-flat-black:is(.perf-tier-legacy,.perf-low-ram,.perf-lite) :is(
-  .top,#nav.nav,.active-capsule,.android-sheet,.vy-form-sheet,.card,.stat
+  .android-sheet,.vy-form-sheet,.card,.stat
 ){
   filter:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   box-shadow:none!important;
-}
-
-@media(max-width:367px){
-  html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
-  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
-    width:calc(100vw - 16px)!important;
-    max-width:calc(100vw - 16px)!important;
-  }
 }
 
 @media(prefers-reduced-motion:reduce){
