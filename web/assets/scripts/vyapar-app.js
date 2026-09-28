@@ -14199,7 +14199,8 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   function titleCase(value){
-    return String(value || '').replace(/[_-]+/g,' ').replace(/\b\w/g,function(char){ return char.toUpperCase(); });
+    const text = String(value || '').replace(/[_-]+/g,' ').trim().toLowerCase();
+    return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
   }
 
   function ensureIntro(card, key, message){
@@ -14514,23 +14515,91 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
   }
 
   const transactionLabels = {
-    pType:['Transaction type',true,'Controls stock, ledger and document behavior.'],
-    pParty:['Customer / supplier',false,'Walk-in is allowed where supported.'],
-    pItem:['Item / SKU / barcode',false,'Required for sales, purchases and returns.'],
-    pQty:['Quantity',false,'Required for item-based transactions.'],
-    pRate:['Rate / amount',false,'Per-item rate or transaction amount.'],
-    pPaid:['Received / paid / refund',false,'Amount settled now.'],
-    pMode:['Payment mode',false,'Cash, UPI, bank, card, cheque or credit.'],
-    pTax:['GST %',false,'0–100.'],
-    pCess:['CESS %',false,'0–100.'],
-    pDisc:['Discount %',false,'0–100.'],
-    pAccount:['Payment account',false,'Auto uses the account mapped to payment mode.'],
-    pLinked:['Original document',false,'Required by linked return/payment rules.'],
-    pState:['State of supply',false,'Used for CGST/SGST/IGST decision.'],
-    pCurrency:['Currency',false,'Three-letter transaction currency.'],
-    pFx:['Exchange rate',false,'1 transaction currency in base currency.'],
-    pNotes:['Notes',false,'Optional internal transaction note.']
+    pType:['Transaction type',true,'Choose what you are recording.'],
+    pParty:['Customer / supplier',false,''],
+    pItem:['Item / SKU / barcode',false,''],
+    pQty:['Quantity',false,''],
+    pRate:['Rate / amount',false,''],
+    pPaid:['Received / paid / refund',false,''],
+    pMode:['Payment mode',false,''],
+    pTax:['GST %',false,''],
+    pCess:['CESS %',false,''],
+    pDisc:['Discount %',false,''],
+    pAccount:['Payment account',false,''],
+    pLinked:['Original document',false,''],
+    pState:['State of supply',false,''],
+    pCurrency:['Currency',false,''],
+    pFx:['Exchange rate',false,''],
+    pNotes:['Notes',false,'']
   };
+  const transactionLabelOverrides = {
+    SALE:{pParty:'Customer',pItem:'Item / SKU / barcode',pQty:'Quantity',pRate:'Sale rate',pPaid:'Amount received',pLinked:'Original sale'},
+    PURCHASE:{pParty:'Supplier',pItem:'Item / SKU / barcode',pQty:'Quantity',pRate:'Purchase rate',pPaid:'Amount paid',pLinked:'Original purchase'},
+    SALE_RETURN:{pParty:'Customer',pItem:'Item to return',pQty:'Quantity returned',pRate:'Return rate',pPaid:'Refund paid',pLinked:'Original sale'},
+    PURCHASE_RETURN:{pParty:'Supplier',pItem:'Item to return',pQty:'Quantity returned',pRate:'Return rate',pPaid:'Refund received',pLinked:'Original purchase'},
+    PAYMENT_IN:{pParty:'Customer / source',pRate:'Amount received'},
+    PAYMENT_OUT:{pParty:'Supplier / payee',pRate:'Amount paid'},
+    OTHER_INCOME:{pParty:'Income source',pRate:'Amount received'},
+    FIXED_ASSET:{pParty:'Vendor / source',pRate:'Asset cost'}
+  };
+  const compactAmountTypes = new Set(['PAYMENT_IN','PAYMENT_OUT','OTHER_INCOME','FIXED_ASSET']);
+  const transactionCoreIds = ['pType','pParty','pItem','pQty','pRate','pPaid','pMode'];
+  const transactionDetailIds = ['pTax','pCess','pDisc','pAccount','pLinked','pState','pCurrency','pFx','pNotes'];
+
+  function transactionFieldMeta(type,id){
+    const base = transactionLabels[id] || [id,false,''];
+    return [(transactionLabelOverrides[type] || {})[id] || base[0],base[1],base[2]];
+  }
+
+  function syncTransactionField(control,meta){
+    if(!control) return;
+    const wrapper = control.closest('.p2-field');
+    if(!wrapper) return;
+    let label = wrapper.querySelector('.p2-field-label');
+    if(!label){
+      label = document.createElement('span');
+      label.className = 'p2-field-label';
+      wrapper.prepend(label);
+    }
+    label.textContent = meta[0];
+    if(meta[1]){
+      const mark = document.createElement('span');
+      mark.className = 'p2-required-mark';
+      mark.setAttribute('aria-hidden','true');
+      mark.textContent = '*';
+      label.appendChild(mark);
+    }
+    let hint = wrapper.querySelector('.p2-field-hint');
+    if(meta[2]){
+      if(!hint){
+        hint = document.createElement('small');
+        hint.className = 'p2-field-hint';
+        wrapper.appendChild(hint);
+      }
+      hint.textContent = meta[2];
+    }else if(hint){
+      hint.remove();
+    }
+  }
+
+  function syncTransactionPresentation(form){
+    const typeControl = $('pType');
+    if(!typeControl || !form?.contains(typeControl)) return;
+    const type = raw('pType') || 'SALE';
+    Array.from(typeControl.options || []).forEach(function(option){
+      const value = String(option.value || option.textContent || '').trim();
+      if(!value) return;
+      option.value = value;
+      option.textContent = titleCase(value);
+    });
+    transactionCoreIds.concat(transactionDetailIds).forEach(function(id){
+      const control = $(id);
+      if(!control || !form.contains(control)) return;
+      syncTransactionField(control,transactionFieldMeta(type,id));
+      const wrapper = control.closest('.p2-field');
+      if(wrapper) wrapper.hidden = compactAmountTypes.has(type) && ['pItem','pQty','pPaid'].includes(id);
+    });
+  }
 
   function transactionContext(type){
     const map = {
@@ -14557,61 +14626,111 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     const preview = document.getElementById('p2TxPreview'); if(!preview) return;
     const type = raw('pType') || 'SALE', qty = Math.max(0, number(raw('pQty'))), rate = Math.max(0, number(raw('pRate')));
     const needsItem = ['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type);
+    syncTransactionPresentation(form);
     setFieldRequired('pItem', needsItem);
     setFieldRequired('pQty', needsItem);
-    const subtotal = ['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type) ? qty * rate : Math.max(rate, Math.max(0, number(raw('pPaid'))));
+    const subtotal = needsItem ? qty * rate : Math.max(rate, Math.max(0, number(raw('pPaid'))));
     const discount = subtotal * Math.max(0, Math.min(100, number(raw('pDisc')))) / 100;
     const taxable = Math.max(0, subtotal - discount);
     const tax = taxable * (Math.max(0, number(raw('pTax'))) + Math.max(0, number(raw('pCess')))) / 100;
     const total = taxable + tax, paid = Math.max(0, number(raw('pPaid'))), due = Math.max(0, total - paid);
     const linkedWarning = ['SALE_RETURN','PURCHASE_RETURN'].includes(type) && !raw('pLinked');
+    let stockText = '';
+    if(needsItem){
+      const key = raw('pItem').toLowerCase();
+      const product = (stateRef().products || []).find(function(item){
+        return [item.id,item.sku,item.barcode,item.name].some(function(value){ return String(value || '').toLowerCase() === key; });
+      });
+      if(product && window.VyaparPlatform611?.stock){
+        const available = number(window.VyaparPlatform611.stock(product.id));
+        stockText = 'Stock ' + available;
+      }
+    }
     preview.classList.toggle('is-warning', linkedWarning);
-    preview.innerHTML = '<div class="p2-preview-title"><span>' + titleCase(type) + ' preview</span><span>Not posted yet</span></div>' +
-      metric('Subtotal', cash(subtotal)) + metric('Discount', cash(discount)) + metric('Tax + CESS', cash(tax)) + metric('Balance', cash(due)) +
-      '<div class="p2-preview-note">' + (linkedWarning ? 'Choose the original invoice or purchase before saving this return. ' : '') + transactionContext(type) + '</div>';
-    const context = form.querySelector('.p2-tx-context');
-    if(context) context.textContent = transactionContext(type);
+    preview.innerHTML = '<div class="p2-preview-title"><span>' + titleCase(type) + '</span><span>' + stockText + '</span></div>' +
+      (needsItem ? metric('Total', cash(total)) + metric('Due', cash(due)) : metric('Amount', cash(total)) + metric('Mode', raw('pMode') || 'Cash')) +
+      (linkedWarning ? '<div class="p2-preview-note">Choose the original sale or purchase in More details.</div>' : '');
     const details = form.querySelector('.p2-advanced-fields');
-    if(details && (linkedWarning || ['PAYMENT_IN','PAYMENT_OUT'].includes(type))) details.open = true;
+    if(details && linkedWarning) details.open = true;
+  }
+
+  function transactionStructureIntact(form){
+    const core = form.querySelector('.p2-core-fields');
+    const details = form.querySelector('.p2-advanced-fields');
+    const advanced = form.querySelector('.p2-detail-fields');
+    const heading = core?.querySelector('.p2-form-group-title span');
+    const summary = details?.querySelector('summary');
+    if(!core || !details || !advanced || !heading?.textContent.trim() || !summary?.textContent.trim()) return false;
+    return transactionCoreIds.concat(transactionDetailIds).every(function(id){
+      const control = $(id);
+      if(!control || !form.contains(control)) return true;
+      const wrapper = control.closest('.p2-field');
+      const label = wrapper?.querySelector('.p2-field-label');
+      if(!wrapper || !label?.textContent.trim()) return false;
+      return transactionCoreIds.includes(id) ? core.contains(wrapper) : advanced.contains(wrapper);
+    });
+  }
+
+  function resetTransactionStructure(form){
+    transactionCoreIds.concat(transactionDetailIds).forEach(function(id){
+      const control = $(id);
+      if(control && form.contains(control)) form.appendChild(control);
+    });
+    const extra = $('p620AdvancedFields');
+    if(extra && form.contains(extra)) form.appendChild(extra);
+    form.querySelectorAll('.p2-core-fields,.p2-advanced-fields').forEach(function(node){ node.remove(); });
+    form.dataset.p2Enhanced = '';
   }
 
   function enhanceTransactionForm(){
     const type = $('pType'); if(!type) return;
-    const form = type.closest('.p611-form'); if(!form || form.dataset.p2Enhanced === '1') return;
-    form.dataset.p2Enhanced = '1';
+    const form = type.closest('.p611-form'); if(!form) return;
     form.classList.add('p2-tx-form');
 
-    const core = document.createElement('section');
-    core.className = 'p2-form-group p2-core-fields';
-    core.innerHTML = '<div class="p2-form-group-title"><span>Transaction basics</span><small>Type, party, item and payment</small></div><p class="p2-tx-context"></p>';
-    const details = document.createElement('details');
-    details.className = 'p2-advanced-fields';
-    details.innerHTML = '<summary>Tax, document link, currency & notes</summary><section class="p2-form-group p2-detail-fields"><div class="p2-form-group-title"><span>Additional details</span><small>All existing fields retained</small></div></section>';
-    const advanced = details.querySelector('.p2-detail-fields');
-    form.prepend(core);
-    form.appendChild(details);
+    if(form.dataset.p2Enhanced !== '1' || !transactionStructureIntact(form)){
+      resetTransactionStructure(form);
+      const currentType = raw('pType') || 'SALE';
+      const core = document.createElement('section');
+      core.className = 'p2-form-group p2-core-fields';
+      core.innerHTML = '<div class="p2-form-group-title"><span>Transaction details</span></div>';
+      const details = document.createElement('details');
+      details.className = 'p2-advanced-fields';
+      details.innerHTML = '<summary>More details</summary><section class="p2-form-group p2-detail-fields"></section>';
+      const advanced = details.querySelector('.p2-detail-fields');
+      form.prepend(core);
+      form.appendChild(details);
 
-    ['pType','pParty','pItem','pQty','pRate','pPaid','pMode'].forEach(function(id){
-      const control = $(id); if(!control || !form.contains(control)) return;
-      const meta = transactionLabels[id];
-      const wrapper = wrapField(control, meta[0], meta[1], meta[2]);
-      core.appendChild(wrapper);
-    });
-    ['pTax','pCess','pDisc','pAccount','pLinked','pState','pCurrency','pFx','pNotes'].forEach(function(id){
-      const control = $(id); if(!control || !form.contains(control)) return;
-      const meta = transactionLabels[id];
-      const wrapper = wrapField(control, meta[0], meta[1], meta[2]);
-      advanced.appendChild(wrapper);
-    });
+      transactionCoreIds.forEach(function(id){
+        const control = $(id); if(!control || !form.contains(control)) return;
+        const meta = transactionFieldMeta(currentType,id);
+        const wrapper = wrapField(control,meta[0],meta[1],meta[2]);
+        core.appendChild(wrapper);
+      });
+      transactionDetailIds.forEach(function(id){
+        const control = $(id); if(!control || !form.contains(control)) return;
+        const meta = transactionFieldMeta(currentType,id);
+        const wrapper = wrapField(control,meta[0],meta[1],meta[2]);
+        advanced.appendChild(wrapper);
+      });
+      form.dataset.p2Enhanced = '1';
+    }
 
     const actions = form.nextElementSibling?.classList.contains('actions') ? form.nextElementSibling : form.parentElement?.querySelector('.actions');
-    const preview = document.createElement('div');
-    preview.id = 'p2TxPreview';
-    preview.className = 'p2-live-preview';
-    if(actions) actions.parentNode.insertBefore(preview, actions); else form.insertAdjacentElement('afterend', preview);
+    let preview = document.getElementById('p2TxPreview');
+    if(!preview || !form.parentElement?.contains(preview)){
+      preview = document.createElement('div');
+      preview.id = 'p2TxPreview';
+      preview.className = 'p2-live-preview';
+    }
+    if(actions) actions.parentNode.insertBefore(preview,actions);
+    else form.insertAdjacentElement('afterend',preview);
 
-    form.addEventListener('input', updateTransactionPreview);
-    form.addEventListener('change', updateTransactionPreview);
+    if(form.dataset.p2Bound !== '1'){
+      form.addEventListener('input', updateTransactionPreview);
+      form.addEventListener('change', updateTransactionPreview);
+      form.dataset.p2Bound = '1';
+    }
+    syncTransactionPresentation(form);
     updateTransactionPreview();
   }
 
@@ -14856,6 +14975,11 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     version: VERSION,
     phase: 2,
     refresh: schedule,
+    needsTransactionRepair: function(){
+      const type = $('pType');
+      const form = type?.closest('.p611-form');
+      return !!form && (form.dataset.p2Enhanced !== '1' || !transactionStructureIntact(form));
+    },
     validate: {
       sale: validateSale,
       daily: validateDaily,
@@ -16798,9 +16922,13 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
     node.hidden=false;
     overlay.querySelector('.vy-form-body').appendChild(node);
     document.body.appendChild(overlay);document.body.classList.add('vy-form-open');
+    root.VyaparWorkflowUI?.refresh?.();
     const entry=active;
     syncHeader(entry);
-    entry.observer=new MutationObserver(()=>syncHeader(entry));
+    entry.observer=new MutationObserver(()=>{
+      syncHeader(entry);
+      if(root.VyaparWorkflowUI?.needsTransactionRepair?.()) root.VyaparWorkflowUI.refresh();
+    });
     entry.observer.observe(node,{childList:true,subtree:true,characterData:true});
     overlay.querySelector('[data-sheet-dismiss]').onclick=()=>close(false);
     overlay.addEventListener('click',e=>{if(e.target===overlay)close(false);});
@@ -17240,7 +17368,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
 (function(root){
   'use strict';
 
-  const VERSION='20.10.2004.00061.2026';
+  const VERSION='20.10.2004.00062.2026';
   const ACCOUNT_KEY='vyapar_ai_account_cache_v1';
   const STATE_KEY='vyapar_ai_prod_v1';
   let businessSession=null;
