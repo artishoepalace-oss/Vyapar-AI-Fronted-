@@ -1,7 +1,8 @@
 /* Vyapar AI 20.10.2004.00063 — final product-system contract.
    This file is intentionally last in the shared UI bundle. It does not create a
    second navigation/overlay/motion engine; it resolves historical visual
-   conflicts into one quiet, aligned rendering contract. */
+   conflicts into one quiet, aligned rendering contract.
+   Release QA measures the short 12–20px compositor handoff at sub-pixel precision. */
 
 html.vy861-flat-black{
   --vy63-bg:#000000;
