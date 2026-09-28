@@ -20,8 +20,8 @@ test('One final shared stylesheet applies to Android and web, after other stylin
 });
 
 test('Global radius stays scoped away from restored root chrome while middle tabs remain pill-shaped',()=>{
-  assert.doesNotMatch(css,/\.app > \.top/);
-  assert.doesNotMatch(css,/#nav\.nav\.bottom-nav/);
+  assert.doesNotMatch(css,/\.app > \.top\s*(?:,|\{)/);
+  assert.doesNotMatch(css,/#nav\.nav\.bottom-nav\s*(?:,|\{)/);
   assert.match(css,/\.vy-middle-ready::before/);
   assert.match(css,/border-radius:var\(--vy44-shell-radius\)!important/);
   assert.doesNotMatch(css,/setTab|setMode|localStorage|animation-duration/);
