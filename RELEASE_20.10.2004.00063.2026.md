@@ -3,7 +3,7 @@
 ## Master-plan UI / UX physics pass
 
 - Add one final shared visual contract after the historical component styles so Home, Business, Sales, Stock, More, Settings, forms and overlays resolve to the same spacing, sizing and surface hierarchy.
-- Remove decorative navbar/top-bar reflection, shimmer, glossy gradients and outer glow. Chrome is now solid black/graphite with a restrained hairline border; selected state remains burgundy and the active capsule stays one measured physical object.
+- Remove decorative navbar/top-bar reflection, shimmer, glossy gradients and outer glow. Chrome is now solid black/graphite with no decorative rim, reflection or glow; selected state remains burgundy and the active capsule stays one measured physical object.
 - Lock header and bottom navigation to the same 367px centerline with the existing responsive 8px viewport safety margin. Keep five equal navigation cells and the existing 68x42 active capsule geometry.
 - Replace full-viewport page travel with a short 12-20px directional compositor handoff. Direction remains understandable without carousel-like movement or large layout exposure.
 - Reduce spring overshoot and press compression so buttons, cards, sheets and menus feel physical without bouncing, glittering or distorting text.
