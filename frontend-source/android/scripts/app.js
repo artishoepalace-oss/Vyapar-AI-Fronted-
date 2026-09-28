@@ -9267,10 +9267,113 @@ function basePaid(tx){return Math.min(baseTotal(tx),n(tx.receivedPaid)*fx(tx))}
 function baseBalance(tx){return Math.max(0,baseTotal(tx)-basePaid(tx))}
 function paymentAccounts(){return (S().accounts611||[]).filter(a=>a.businessId===biz()&&a.active!==false&&a.category==='asset'&&!['AR','STOCK','FIXED','GST_IN'].includes(a.code))}
 function resolvePaymentAccountId(tx){if(tx.paymentAccountId&&accountById(tx.paymentAccountId))return tx.paymentAccountId;const mode=String(tx.paymentMode||'Cash');const code=mode==='UPI'?'UPI':mode==='Cheque'?'CHEQUE':(mode==='Bank Transfer'||mode==='Card')?'BANK':'CASH';return accountByCode(code)?.id||accountByCode('CASH')?.id||''}
-function taxCalc(items,discountPct,stateOfSupply){const gstEnabled=S().taxSettings611?.gstEnabled!==false;let subtotal=0,discount=0,tax=0,cgst=0,sgst=0,igst=0,cess=0;const home=String(S().taxSettings611?.businessState||'').trim().toLowerCase(),dest=String(stateOfSupply||'').trim().toLowerCase();items.forEach(i=>{const line=n(i.qty)*n(i.rate),d=line*n(i.discount)/100,taxable=line-d,r=gstEnabled?n(i.tax):0,tx=taxable*r/100;subtotal+=line;discount+=d;tax+=tx;cess+=taxable*n(i.cess)/100;if(home&&dest&&home!==dest)igst+=tx;else{cgst+=tx/2;sgst+=tx/2}});const td=subtotal*n(discountPct)/100,scale=subtotal?Math.max(0,(subtotal-td)/subtotal):1;discount+=td;tax*=scale;cgst*=scale;sgst*=scale;igst*=scale;cess*=scale;return{subtotal,discount,tax,cgst,sgst,igst,cess,total:subtotal-discount+tax+cess}}
-function normalizeItems(items){return (items||[]).map(i=>{const it=itemBy(i.itemId||i.product||i.name||i.sku);return{itemId:i.itemId||it?.id||'',name:i.name||i.product||it?.name||'Item',qty:Math.max(0,n(i.qty||i.quantity)),unit:i.unit||it?.unit||'pcs',rate:Math.max(0,n(i.rate||i.price)),purchaseRate:Math.max(0,n(i.purchaseRate||i.purchasePrice||it?.purchasePrice)),discount:Math.max(0,n(i.discount)),tax:Math.max(0,n(i.tax!=null?i.tax:(i.gst!=null?i.gst:it?.gst))),cess:Math.max(0,n(i.cess)),godownId:i.godownId||defaultGodown()?.id||''}})}
+function calculateTaxEngine(input){
+  const items=Array.isArray(input?.items)?input.items:[];
+  const gstEnabled=input?.gstEnabled!==false;
+  const businessState=String(input?.businessState||'').trim().toLowerCase();
+  const stateOfSupply=String(input?.stateOfSupply||'').trim().toLowerCase();
+  const discountPct=Math.max(0,n(input?.discountPct));
+  const hasInclusive=items.some(i=>i?.taxInclusive===true);
+
+  /* Keep the legacy exclusive-price path bit-for-bit compatible for existing
+     records. Inclusive pricing is opt-in per item, so old invoices never move. */
+  if(!hasInclusive){
+    let subtotal=0,discount=0,tax=0,cgst=0,sgst=0,igst=0,cess=0;
+    items.forEach(i=>{
+      const line=n(i.qty)*n(i.rate),d=line*n(i.discount)/100,taxable=line-d;
+      const rate=gstEnabled?n(i.tax):0,tx=taxable*rate/100;
+      subtotal+=line;discount+=d;tax+=tx;cess+=taxable*n(i.cess)/100;
+      if(businessState&&stateOfSupply&&businessState!==stateOfSupply)igst+=tx;
+      else{cgst+=tx/2;sgst+=tx/2}
+    });
+    const td=subtotal*discountPct/100,scale=subtotal?Math.max(0,(subtotal-td)/subtotal):1;
+    discount+=td;tax*=scale;cgst*=scale;sgst*=scale;igst*=scale;cess*=scale;
+    return{subtotal,discount,tax,cgst,sgst,igst,cess,taxable:Math.max(0,subtotal-discount),total:subtotal-discount+tax+cess};
+  }
+
+  let subtotal=0,lineDiscount=0,taxable=0,tax=0,cgst=0,sgst=0,igst=0,cess=0,exclusiveTax=0,pricedAfterLineDiscount=0;
+  items.forEach(i=>{
+    const gross=Math.max(0,n(i.qty))*Math.max(0,n(i.rate));
+    const d=gross*Math.max(0,n(i.discount))/100;
+    const priced=Math.max(0,gross-d);
+    const rate=gstEnabled?Math.max(0,n(i.tax)):0;
+    const inclusive=i.taxInclusive===true;
+    const base=inclusive&&rate>0?priced/(1+rate/100):priced;
+    const tx=inclusive?Math.max(0,priced-base):base*rate/100;
+    const lineCess=base*Math.max(0,n(i.cess))/100;
+    subtotal+=gross;lineDiscount+=d;pricedAfterLineDiscount+=priced;
+    taxable+=base;tax+=tx;cess+=lineCess;if(!inclusive)exclusiveTax+=tx;
+    if(businessState&&stateOfSupply&&businessState!==stateOfSupply)igst+=tx;
+    else{cgst+=tx/2;sgst+=tx/2}
+  });
+  const transactionDiscount=subtotal*discountPct/100;
+  const scale=subtotal?Math.max(0,(subtotal-transactionDiscount)/subtotal):1;
+  const discount=lineDiscount+transactionDiscount;
+  taxable*=scale;tax*=scale;cgst*=scale;sgst*=scale;igst*=scale;cess*=scale;exclusiveTax*=scale;
+  const total=Math.max(0,pricedAfterLineDiscount*scale+exclusiveTax+cess);
+  return{subtotal,discount,tax,cgst,sgst,igst,cess,taxable,total};
+}
+function taxCalc(items,discountPct,stateOfSupply){
+  const composition=!!S().advancedTax620?.compositionScheme;
+  return calculateTaxEngine({
+    items,discountPct,stateOfSupply,
+    businessState:S().taxSettings611?.businessState||'',
+    gstEnabled:S().taxSettings611?.gstEnabled!==false&&!composition
+  });
+}
+window.VyaparTaxEngine={
+  calculate(input={}){
+    const composition=input.compositionScheme===true||S().advancedTax620?.compositionScheme===true;
+    return calculateTaxEngine({
+      ...input,
+      businessState:input.businessState??S().taxSettings611?.businessState??'',
+      gstEnabled:input.gstEnabled??(S().taxSettings611?.gstEnabled!==false&&!composition)
+    });
+  }
+};
+function normalizeItems(items){
+  return (items||[]).map(i=>{
+    const it=itemBy(i.itemId||i.product||i.name||i.sku);
+    return{
+      itemId:i.itemId||it?.id||'',
+      name:i.name||i.product||it?.name||'Item',
+      description:String(i.description??it?.description??''),
+      hsn:String(i.hsn??i.hsnCode??it?.hsn??it?.hsnCode??''),
+      sac:String(i.sac??i.sacCode??it?.sac??it?.sacCode??''),
+      qty:Math.max(0,n(i.qty||i.quantity)),
+      unit:i.unit||it?.unit||'pcs',
+      rate:Math.max(0,n(i.rate||i.price)),
+      purchaseRate:Math.max(0,n(i.purchaseRate||i.purchasePrice||it?.purchasePrice)),
+      discount:Math.max(0,n(i.discount)),
+      tax:Math.max(0,n(i.tax!=null?i.tax:(i.gst!=null?i.gst:it?.gst))),
+      cess:Math.max(0,n(i.cess)),
+      taxInclusive:i.taxInclusive===true||i.priceIncludesTax===true||it?.taxInclusive===true||it?.priceIncludesTax===true,
+      godownId:i.godownId||defaultGodown()?.id||''
+    };
+  });
+}
 function activeTx(){return (S().transactions611||[]).filter(t=>t.businessId===biz()&&t.status!=='cancelled')}
 function txById(id){return (S().transactions611||[]).find(t=>t.businessId===biz()&&t.id===id)}
+const NON_POSTING_DOCUMENTS=new Set(['ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN']);
+function deriveDocumentState(tx){
+  if(!tx)return'DRAFT';
+  if(tx.status==='cancelled'||tx.reversedAt)return'CANCELLED';
+  if(['SALE_RETURN','PURCHASE_RETURN'].includes(tx.type)){
+    if(n(tx.total)>0&&n(tx.receivedPaid)>=n(tx.total)-.01)return'REFUNDED';
+    if(n(tx.receivedPaid)>.01)return'PARTIALLY_REFUNDED';
+    return'ISSUED';
+  }
+  if(NON_POSTING_DOCUMENTS.has(tx.type))return String(tx.status).toLowerCase()==='draft'?'DRAFT':'ISSUED';
+  if(['SALE','PURCHASE'].includes(tx.type)){
+    if(n(tx.balance)<=.01)return'PAID';
+    if(tx.dueDate&&String(tx.dueDate)<day())return'OVERDUE';
+    if(n(tx.receivedPaid)>.01)return'PARTIALLY_PAID';
+    return'ISSUED';
+  }
+  return String(tx.status).toLowerCase()==='draft'?'DRAFT':'ISSUED';
+}
+function syncDocumentState(tx){if(tx)tx.documentState=deriveDocumentState(tx);return tx?.documentState||'DRAFT'}
+
 function itemQtyInTx(tx,itemId){return (tx?.items||[]).filter(i=>i.itemId===itemId).reduce((z,i)=>z+n(i.qty),0)}
 function returnedQty(originalId,returnType,itemId,excludeId){return activeTx().filter(t=>t.type===returnType&&t.linkedTransactionId===originalId&&t.id!==excludeId).reduce((z,t)=>z+itemQtyInTx(t,itemId),0)}
 function findOriginalForReturn(type,items,partyId,partyName){const wanted=RETURN_MAP[type];const candidates=activeTx().filter(t=>t.type===wanted&&(partyId?t.partyId===partyId:partyName?String(t.partyName).toLowerCase()===String(partyName).toLowerCase():true)).filter(t=>items.every(i=>itemQtyInTx(t,i.itemId)>returnedQty(t.id,type,i.itemId))).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));return candidates[0]||null}
@@ -9297,13 +9400,94 @@ function postFixed(tx){const payId=resolvePaymentAccountId(tx),paid=basePaid(tx)
     addLedger(tx.id,'FIXED',total,0,'Fixed asset purchase '+tx.number,tx.date);if(String(tx.paymentMode)==='Credit')addLedger(tx.id,'AP',0,total,'Fixed asset payable '+tx.number,tx.date);else addLedgerId(tx.id,payId,0,total,'Fixed asset payment '+tx.number,tx.date);
   }
 }
-function recalcOriginal(original){if(!original||!['SALE','PURCHASE'].includes(original.type))return;if(original.initialReceivedPaid==null)original.initialReceivedPaid=n(original.receivedPaid);const returnType=original.type==='SALE'?'SALE_RETURN':'PURCHASE_RETURN',paymentType=original.type==='SALE'?'PAYMENT_IN':'PAYMENT_OUT';const returns=activeTx().filter(t=>t.type===returnType&&t.linkedTransactionId===original.id).reduce((z,t)=>z+n(t.total),0);const linkedPayments=activeTx().filter(t=>t.type===paymentType&&t.linkedTransactionId===original.id).reduce((z,t)=>z+n(t.total),0);original.returnedAmount=returns;original.receivedPaid=Math.min(n(original.total),n(original.initialReceivedPaid)+linkedPayments);original.balance=Math.max(0,n(original.total)-returns-original.receivedPaid);original.updatedAt=now()}
-function createTxFixed(input){const type=String(input.type||'SALE').toUpperCase();const allowed=['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN','PAYMENT_IN','PAYMENT_OUT','ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN','OTHER_INCOME','FIXED_ASSET','CANCELLED_INVOICE'];if(!allowed.includes(type))throw new Error('Unsupported transaction type');const items=normalizeItems(input.items);if(['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type)&&!items.length)throw new Error('At least one item is required');items.forEach(i=>{if(i.qty<=0)throw new Error('Quantity must be greater than zero');if(type==='SALE'&&stock(i.itemId,i.godownId)<i.qty&&S().transactionSettings611?.allowNegativeStock!==true)throw new Error(i.name+' stock is insufficient')});const party=partyBy(input.party),calc=taxCalc(items,input.discount,input.stateOfSupply),total=n(input.total)||calc.total+n(input.additionalCharges),received=Math.max(0,n(input.receivedPaid)),rate=Math.max(0.0000001,n(input.exchangeRate)||1);let linked=String(input.linkedTransactionId||'');if(RETURN_MAP[type]&&!linked){const o=findOriginalForReturn(type,items,input.partyId||party?.id||'',input.party||party?.name||'');if(o)linked=o.id}const numbering=S().numbering611?.[type]||null;let number=input.number;if(!number){if(window.VyaparPlatform611?.createTransaction===createTxFixed&&numbering){let used=new Set((S().transactions611||[]).filter(t=>t.businessId===biz()&&t.type===type).map(t=>t.number)),candidate;do{candidate=(numbering.prefix||type.slice(0,3))+'-'+String(numbering.next++).padStart(numbering.padding||5,'0')}while(used.has(candidate));number=candidate}else{const prefix=({SALE:'INV',PURCHASE:'PUR',SALE_RETURN:'SR',PURCHASE_RETURN:'PR',PAYMENT_IN:'PIN',PAYMENT_OUT:'POUT',ESTIMATE:'EST',PROFORMA:'PRO',SALE_ORDER:'SO',PURCHASE_ORDER:'PO',DELIVERY_CHALLAN:'DC',OTHER_INCOME:'OI',FIXED_ASSET:'FA',CANCELLED_INVOICE:'CAN'})[type]||type.slice(0,3);let seq=1,used=new Set((S().transactions611||[]).filter(t=>t.businessId===biz()&&t.type===type).map(t=>t.number));do{number=prefix+'-'+String(seq++).padStart(5,'0')}while(used.has(number))}}
-  const tx={id:makeId(),businessId:biz(),type,number,date:input.date||day(),time:input.time||'',partyId:input.partyId||party?.id||'',partyName:input.party||party?.name||'',items,discount:n(input.discount),tax:calc.tax,cgst:calc.cgst,sgst:calc.sgst,igst:calc.igst,cess:calc.cess,additionalCharges:n(input.additionalCharges),subtotal:calc.subtotal,total,receivedPaid:received,initialReceivedPaid:['SALE','PURCHASE'].includes(type)?received:undefined,balance:Math.max(0,total-received),paymentMode:input.paymentMode||'Cash',paymentAccountId:input.paymentAccountId||'',notes:String(input.notes||''),stateOfSupply:input.stateOfSupply||'',status:input.status||'posted',currency:input.currency||defaultCurrency(),exchangeRate:rate,baseAmount:total*rate,createdAt:now(),updatedAt:now(),linkedTransactionId:linked};
-  if((S().transactions611||[]).some(x=>x.businessId===biz()&&x.type===type&&x.number===tx.number))throw new Error('Duplicate transaction number');validateReturn(tx);validatePaymentLink(tx);S().transactions611.push(tx);if(POSTING_TYPES.has(type))postFixed(tx);if(tx.linkedTransactionId){const original=txById(tx.linkedTransactionId);recalcOriginal(original)}log('CREATE',type,tx.id,tx.number);saveAll();return tx
+function recalcOriginal(original){
+  if(!original||!['SALE','PURCHASE'].includes(original.type))return;
+  if(original.initialReceivedPaid==null)original.initialReceivedPaid=n(original.receivedPaid);
+  const returnType=original.type==='SALE'?'SALE_RETURN':'PURCHASE_RETURN';
+  const paymentType=original.type==='SALE'?'PAYMENT_IN':'PAYMENT_OUT';
+  const returns=activeTx().filter(t=>t.type===returnType&&t.linkedTransactionId===original.id).reduce((z,t)=>z+n(t.total),0);
+  const linkedPayments=activeTx().filter(t=>t.type===paymentType&&t.linkedTransactionId===original.id).reduce((z,t)=>z+n(t.total),0);
+  original.returnedAmount=returns;
+  original.receivedPaid=Math.min(n(original.total),n(original.initialReceivedPaid)+linkedPayments);
+  original.balance=Math.max(0,n(original.total)-returns-original.receivedPaid);
+  original.updatedAt=now();
+  syncDocumentState(original);
+}
+function createTxFixed(input){
+  input=input||{};
+  const type=String(input.type||'SALE').toUpperCase();
+  const allowed=['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN','PAYMENT_IN','PAYMENT_OUT','ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN','OTHER_INCOME','FIXED_ASSET','CANCELLED_INVOICE'];
+  if(!allowed.includes(type))throw new Error('Unsupported transaction type');
+
+  const mutationKey=String(input.idempotencyKey||input.clientMutationId||'').trim().slice(0,120);
+  if(mutationKey){
+    const existing=(S().transactions611||[]).find(t=>t.businessId===biz()&&t.clientMutationId===mutationKey);
+    if(existing)return existing;
+  }
+
+  const items=normalizeItems(input.items);
+  if(['SALE','PURCHASE','SALE_RETURN','PURCHASE_RETURN'].includes(type)&&!items.length)throw new Error('At least one item is required');
+  items.forEach(i=>{
+    if(i.qty<=0)throw new Error('Quantity must be greater than zero');
+    if(type==='SALE'&&stock(i.itemId,i.godownId)<i.qty&&S().transactionSettings611?.allowNegativeStock!==true)throw new Error(i.name+' stock is insufficient');
+  });
+
+  const party=partyBy(input.party);
+  const calc=taxCalc(items,input.discount,input.stateOfSupply);
+  const roundOff=n(input.roundOff);
+  const total=n(input.total)||Math.max(0,calc.total+n(input.additionalCharges)+roundOff);
+  const received=Math.max(0,n(input.receivedPaid));
+  const rate=Math.max(0.0000001,n(input.exchangeRate)||1);
+  let linked=String(input.linkedTransactionId||'');
+  if(RETURN_MAP[type]&&!linked){
+    const original=findOriginalForReturn(type,items,input.partyId||party?.id||'',input.party||party?.name||'');
+    if(original)linked=original.id;
+  }
+
+  const numbering=S().numbering611?.[type]||null;
+  let number=input.number;
+  if(!number){
+    if(window.VyaparPlatform611?.createTransaction===createTxFixed&&numbering){
+      const used=new Set((S().transactions611||[]).filter(t=>t.businessId===biz()&&t.type===type).map(t=>t.number));
+      let candidate;
+      do{candidate=(numbering.prefix||type.slice(0,3))+'-'+String(numbering.next++).padStart(numbering.padding||5,'0')}while(used.has(candidate));
+      number=candidate;
+    }else{
+      const prefix=({SALE:'INV',PURCHASE:'PUR',SALE_RETURN:'SR',PURCHASE_RETURN:'PR',PAYMENT_IN:'PIN',PAYMENT_OUT:'POUT',ESTIMATE:'EST',PROFORMA:'PRO',SALE_ORDER:'SO',PURCHASE_ORDER:'PO',DELIVERY_CHALLAN:'DC',OTHER_INCOME:'OI',FIXED_ASSET:'FA',CANCELLED_INVOICE:'CAN'})[type]||type.slice(0,3);
+      let seq=1;
+      const used=new Set((S().transactions611||[]).filter(t=>t.businessId===biz()&&t.type===type).map(t=>t.number));
+      do{number=prefix+'-'+String(seq++).padStart(5,'0')}while(used.has(number));
+    }
+  }
+
+  const tx={
+    id:makeId(),businessId:biz(),type,number,
+    date:input.date||day(),time:input.time||'',dueDate:String(input.dueDate||''),
+    partyId:input.partyId||party?.id||'',partyName:input.party||party?.name||'',
+    items,discount:n(input.discount),
+    taxableAmount:n(calc.taxable),tax:calc.tax,cgst:calc.cgst,sgst:calc.sgst,igst:calc.igst,cess:calc.cess,
+    taxMode:items.some(i=>i.taxInclusive)?'mixed-or-inclusive':'exclusive',
+    additionalCharges:n(input.additionalCharges),roundOff,subtotal:calc.subtotal,total,
+    receivedPaid:received,initialReceivedPaid:['SALE','PURCHASE'].includes(type)?received:undefined,
+    balance:Math.max(0,total-received),paymentMode:input.paymentMode||'Cash',paymentAccountId:input.paymentAccountId||'',
+    notes:String(input.notes||''),stateOfSupply:input.stateOfSupply||'',status:input.status||'posted',
+    currency:input.currency||defaultCurrency(),exchangeRate:rate,baseAmount:total*rate,
+    createdAt:now(),updatedAt:now(),linkedTransactionId:linked,
+    sourceDocumentId:String(input.sourceDocumentId||''),clientMutationId:mutationKey
+  };
+  syncDocumentState(tx);
+
+  if((S().transactions611||[]).some(x=>x.businessId===biz()&&x.type===type&&x.number===tx.number))throw new Error('Duplicate transaction number');
+  validateReturn(tx);validatePaymentLink(tx);syncDocumentState(tx);
+  S().transactions611.push(tx);
+  if(POSTING_TYPES.has(type))postFixed(tx);
+  if(tx.linkedTransactionId){const original=txById(tx.linkedTransactionId);recalcOriginal(original)}
+  log('CREATE',type,tx.id,tx.number+(mutationKey?' · mutation '+mutationKey:''));
+  saveAll();
+  return tx;
 }
 function linkedActiveChildren(tx){const allowed=tx.type==='SALE'?new Set(['SALE_RETURN','PAYMENT_IN']):tx.type==='PURCHASE'?new Set(['PURCHASE_RETURN','PAYMENT_OUT']):new Set();return activeTx().filter(t=>allowed.has(t.type)&&t.linkedTransactionId===tx.id)}
-function reverseFixed(tx){if(!tx||tx.reversedAt||tx.status==='cancelled')return;if(['SALE','PURCHASE'].includes(tx.type)){const children=linkedActiveChildren(tx);if(children.length)throw new Error('Cancel linked returns/payments first: '+children.map(x=>x.number).join(', '))}(S().ledgerEntries611||[]).filter(x=>x.transactionId===tx.id).forEach(e=>addLedgerId(tx.id+'-REV',e.accountId,e.credit,e.debit,'Reversal: '+e.narration,day()));(S().stockMovements611||[]).filter(x=>x.transactionId===tx.id).forEach(m=>move(m.itemId,m.godownId,tx.id+'-REV','Adjustment',m.quantityOut,m.quantityIn,day()));tx.reversedAt=now();tx.status='cancelled';if(tx.linkedTransactionId)recalcOriginal(txById(tx.linkedTransactionId));log('REVERSE',tx.type,tx.id,tx.number);saveAll()}
+function reverseFixed(tx){if(!tx||tx.reversedAt||tx.status==='cancelled')return;if(['SALE','PURCHASE'].includes(tx.type)){const children=linkedActiveChildren(tx);if(children.length)throw new Error('Cancel linked returns/payments first: '+children.map(x=>x.number).join(', '))}(S().ledgerEntries611||[]).filter(x=>x.transactionId===tx.id).forEach(e=>addLedgerId(tx.id+'-REV',e.accountId,e.credit,e.debit,'Reversal: '+e.narration,day()));(S().stockMovements611||[]).filter(x=>x.transactionId===tx.id).forEach(m=>move(m.itemId,m.godownId,tx.id+'-REV','Adjustment',m.quantityOut,m.quantityIn,day()));tx.reversedAt=now();tx.status='cancelled';syncDocumentState(tx);if(tx.linkedTransactionId)recalcOriginal(txById(tx.linkedTransactionId));log('REVERSE',tx.type,tx.id,tx.number);saveAll()}
 function normalizeOpeningBalances(){S().platform612OpeningMigrated=S().platform612OpeningMigrated&&typeof S().platform612OpeningMigrated==='object'?S().platform612OpeningMigrated:{};if(S().platform612OpeningMigrated[biz()])return;S().platform612OpeningMigrated[biz()]=true;const cap=accountByCode('CAPITAL');(S().accounts611||[]).filter(a=>a.businessId===biz()&&String(a.code||'').startsWith('CUSTOM-')&&Math.abs(n(a.openingBalance))>0).forEach(a=>{const v=Math.abs(n(a.openingBalance));a.openingBalance=0;if(a.category==='asset'){addLedgerId('MIGRATION-612-OPEN-'+a.id,a.id,v,0,'Opening balance '+a.name,day());if(cap)addLedgerId('MIGRATION-612-OPEN-'+a.id,cap.id,0,v,'Opening capital',day())}else if(['liability','equity'].includes(a.category)){if(cap)addLedgerId('MIGRATION-612-OPEN-'+a.id,cap.id,v,0,'Opening balance funding',day());addLedgerId('MIGRATION-612-OPEN-'+a.id,a.id,0,v,'Opening balance '+a.name,day())}})}
 function addOpeningStockValuation(){const tag='MIGRATION-612-OPENING-STOCK-'+biz();S().ledgerEntries611=S().ledgerEntries611.filter(e=>!(e.businessId===biz()&&e.transactionId===tag));const opening=(S().stockMovements611||[]).filter(m=>m.businessId===biz()&&m.movementType==='Opening Stock');let value=0;opening.forEach(m=>{const p=itemBy(m.itemId);value+=Math.max(0,n(m.quantityIn)-n(m.quantityOut))*Math.max(0,n(p?.purchasePrice))});if(value>0){addLedger(tag,'STOCK',value,0,'Opening stock valuation',day());addLedger(tag,'CAPITAL',0,value,'Opening stock capital',day())}}
 function linkedPaymentTotal(original){const paymentType=original.type==='SALE'?'PAYMENT_IN':'PAYMENT_OUT';return activeTx().filter(t=>t.type===paymentType&&t.linkedTransactionId===original.id).reduce((z,t)=>z+n(t.total),0)}
@@ -9341,7 +9525,7 @@ window.p611AddBusiness=function(){const name=String($('pBizName')?.value||'').tr
 window.p612EditBusiness=function(id){const b=(S().businesses||[]).find(x=>x.id===id);if(!b)return;const name=prompt('Business name',b.name);if(name===null)return;const currency=prompt('Base currency (e.g. INR, USD, AED)',b.baseCurrency||'INR');if(currency===null)return;b.name=String(name).trim()||b.name;b.baseCurrency=String(currency).trim().toUpperCase().replace(/[^A-Z]/g,'').slice(0,3)||b.baseCurrency||'INR';b.updatedAt=now();log('UPDATE','BUSINESS',b.id,b.name+' / '+b.baseCurrency);saveAll();renderBusinesses()};
 window.p612DeleteBusiness=function(id){const b=(S().businesses||[]).find(x=>x.id===id);if(!b)return;if((S().businesses||[]).length<=1)return alert('At least one business must remain.');if((S().transactions611||[]).some(t=>t.businessId===id))return alert('This business has transactions. Delete/cancel or export them first; deletion is blocked to protect data.');if(!confirm('Delete empty business "'+b.name+'"?'))return;['accounts611','ledgerEntries611','stockMovements611','godowns611','manufacturing611','notifications611','auditLog611','staff611','serviceReminders611','paymentReminders611'].forEach(k=>{if(Array.isArray(S()[k]))S()[k]=S()[k].filter(x=>x.businessId!==id)});S().businesses=S().businesses.filter(x=>x.id!==id);if(S().activeBusinessId===id)S().activeBusinessId=S().businesses[0].id;saveAll();renderBusinesses()};
 const originalShare=window.p611Share;window.p611Share=async function(txid){const tx=txById(txid);if(tx&&!tx.businessName)tx.businessName=(S().businesses||[]).find(b=>b.id===biz())?.name||S().profile?.businessName||'Vyapar AI Business';return originalShare?originalShare(txid):undefined};
-if(window.VyaparPlatform611){window.VyaparPlatform611.createTransaction=createTxFixed;window.VyaparPlatform611.reverseTransaction=reverseFixed;window.VyaparPlatform611.accountBalance=accountBalance;window.VyaparPlatform611.stock=stock;window.VyaparPlatform611.totals=totals;window.VyaparPlatform611.balanceSheet=balanceSheet;window.VyaparPlatform611.billWisePnL=billWisePnL;window.VyaparPlatform611.partyWisePnL=partyWisePnL;window.VyaparPlatform611.ageing=ageing;window.VyaparPlatform611.rebuildAccounting=rebuildAccounting;window.VyaparPlatform611.version=VERSION}
+if(window.VyaparPlatform611){window.VyaparPlatform611.createTransaction=createTxFixed;window.VyaparPlatform611.reverseTransaction=reverseFixed;window.VyaparPlatform611.accountBalance=accountBalance;window.VyaparPlatform611.stock=stock;window.VyaparPlatform611.totals=totals;window.VyaparPlatform611.balanceSheet=balanceSheet;window.VyaparPlatform611.billWisePnL=billWisePnL;window.VyaparPlatform611.partyWisePnL=partyWisePnL;window.VyaparPlatform611.ageing=ageing;window.VyaparPlatform611.rebuildAccounting=rebuildAccounting;window.VyaparPlatform611.documentState=deriveDocumentState;window.VyaparPlatform611.taxEngine=window.VyaparTaxEngine;window.VyaparPlatform611.version=VERSION}
 ensure612();
 })();
 
