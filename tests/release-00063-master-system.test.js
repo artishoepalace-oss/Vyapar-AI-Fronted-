@@ -12,7 +12,7 @@ test('00065 release identity stays synchronized',()=>{
   assert.equal(version.versionName,'20.10.2004.00065.2026');
   assert.equal(version.versionCode,2010200465);
   assert.match(gradle,/versionCode\s+2010200465/);
-  assert.match(gradle,/versionName\s+"20\.10\.2004\.00064\.2026"/);
+  assert.match(gradle,/versionName\s+"20\.10\.2004\.00065\.2026"/);
   assert.match(gradle,/minSdk\s+26/);
 });
 
