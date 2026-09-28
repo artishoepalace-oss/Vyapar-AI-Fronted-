@@ -59,8 +59,9 @@ test('00063 page motion is directional but restrained and low-jank',()=>{
 
 test('00063 keeps native scrolling and one motion owner',()=>{
   const js=read('frontend-source/android/scripts/motion-20102004.js');
+  const css=read('frontend-source/android/styles/motion-20102004.css');
   assert.match(js,/adaptive-damped-spring/);
   assert.match(js,/native-webview-fling/);
   assert.match(js,/if\(window\.vyaparMotion\) return/);
-  assert.match(js,/overscroll/);
+  assert.match(css,/overscroll-behavior-y:contain/);
 });
