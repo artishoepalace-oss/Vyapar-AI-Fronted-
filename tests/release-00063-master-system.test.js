@@ -27,6 +27,14 @@ test('00064 restores the v00062 navbar contract and prevents master overrides',(
   assert.match(master,/v20\.10\.2004\.00062 navbar\/top-bar geometry/);
   assert.doesNotMatch(master,/body #nav\.nav\.bottom-nav\s*\{/);
   assert.doesNotMatch(master,/body \.app > \.top\s*\{/);
+  for(const legacy of [
+    read('frontend-source/android/styles/global-radius-2026.css'),
+    read('frontend-source/android/styles/global-radius-final-00045.css'),
+    read('frontend-source/android/styles/three-dot-menu-00046.css')
+  ]){
+    assert.doesNotMatch(legacy,/#nav\.nav\.bottom-nav/);
+    assert.doesNotMatch(legacy,/\.app\s*>\s*\.top/);
+  }
 });
 
 test('00064 uses one semantic design vocabulary for content surfaces',()=>{
