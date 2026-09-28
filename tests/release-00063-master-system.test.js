@@ -6,12 +6,12 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('00064 release identity stays synchronized',()=>{
+test('00065 release identity stays synchronized',()=>{
   const version=JSON.parse(read('version.json'));
   const gradle=read('android-app/app/build.gradle');
-  assert.equal(version.versionName,'20.10.2004.00064.2026');
-  assert.equal(version.versionCode,2010200464);
-  assert.match(gradle,/versionCode\s+2010200464/);
+  assert.equal(version.versionName,'20.10.2004.00065.2026');
+  assert.equal(version.versionCode,2010200465);
+  assert.match(gradle,/versionCode\s+2010200465/);
   assert.match(gradle,/versionName\s+"20\.10\.2004\.00064\.2026"/);
   assert.match(gradle,/minSdk\s+26/);
 });
@@ -77,3 +77,5 @@ test('00064 business engine centralizes tax, document state and idempotency hook
   assert.match(app,/idempotencyKey/);
   assert.match(app,/Return quantity exceeds remaining quantity/);
 });
+
+test('00065 prevents WebView auto-fit zoom while keeping responsive layout',()=>{\n  const activity=read('android-app/app/src/main/java/com/vyaparai/app/MainActivity.java');\n  const androidHtml=read('android-app/app/src/main/assets/index.html');\n  const webHtml=read('web/index.html');\n  assert.match(activity,/setLoadWithOverviewMode\\(false\\)/);\n  assert.doesNotMatch(activity,/setLoadWithOverviewMode\\(true\\)/);\n  assert.match(activity,/setUseWideViewPort\\(true\\)/);\n  assert.match(activity,/setBuiltInZoomControls\\(false\\)/);\n  assert.match(activity,/setDisplayZoomControls\\(false\\)/);\n  assert.match(activity,/setSupportZoom\\(false\\)/);\n  assert.match(activity,/setTextZoom\\(100\\)/);\n  for(const html of [androidHtml,webHtml]){\n    assert.match(html,/minimum-scale=1\\.0/);\n    assert.match(html,/maximum-scale=1\\.0/);\n    assert.match(html,/user-scalable=no/);\n  }\n});\n
