@@ -425,6 +425,17 @@ function testAccounting(target){
   const state = window.state;
   const balance = code => platform.accountBalance(accountId(state, code));
 
+  const inclusiveTax = window.VyaparTaxEngine.calculate({
+    items: [{ qty: 1, rate: 118, tax: 18, taxInclusive: true }],
+    businessState: 'Madhya Pradesh',
+    stateOfSupply: 'Madhya Pradesh'
+  });
+  assert.ok(Math.abs(inclusiveTax.taxable - 100) < 0.001, 'inclusive GST extracts taxable base deterministically');
+  assert.ok(Math.abs(inclusiveTax.tax - 18) < 0.001, 'inclusive GST extracts GST deterministically');
+  assert.ok(Math.abs(inclusiveTax.cgst - 9) < 0.001 && Math.abs(inclusiveTax.sgst - 9) < 0.001, 'same-state GST splits CGST/SGST');
+  assert.ok(Math.abs(inclusiveTax.total - 118) < 0.001, 'inclusive selling price is not taxed twice');
+  assert.equal(platform.documentState({type:'SALE',status:'posted',balance:50,receivedPaid:0,dueDate:'2026-08-01'}),'OVERDUE');
+
   const sale = platform.createTransaction({
     type: 'SALE',
     date: '2026-08-01',
@@ -479,12 +490,23 @@ function testAccounting(target){
 
   const ledgerBeforeDocument = state.ledgerEntries611.length;
   const stockBeforeDocument = platform.stock('P1');
-  platform.createTransaction({
+  const estimate = platform.createTransaction({
     type: 'ESTIMATE',
     date: '2026-08-04',
     party: 'Customer',
-    items: [{ itemId: 'P1', name: 'Shoe', qty: 1, rate: 100, purchaseRate: 50 }]
+    items: [{ itemId: 'P1', name: 'Shoe', qty: 1, rate: 100, purchaseRate: 50 }],
+    idempotencyKey: 'estimate-qa-1'
   });
+  const estimateRetry = platform.createTransaction({
+    type: 'ESTIMATE',
+    date: '2026-08-04',
+    party: 'Customer',
+    items: [{ itemId: 'P1', name: 'Shoe', qty: 1, rate: 100, purchaseRate: 50 }],
+    idempotencyKey: 'estimate-qa-1'
+  });
+  assert.equal(estimate.documentState,'ISSUED');
+  assert.equal(estimateRetry.id,estimate.id,'same mutation key returns the original document');
+  assert.equal(state.transactions611.filter(tx=>tx.clientMutationId==='estimate-qa-1').length,1,'idempotency key prevents duplicate business event');
   assert.equal(state.ledgerEntries611.length, ledgerBeforeDocument, 'non-posting document has no ledger effect');
   assert.equal(platform.stock('P1'), stockBeforeDocument, 'non-posting document has no stock effect');
 
@@ -612,6 +634,9 @@ function testStaticParity(){
     const source = readRuntimeSource(target.app, 'utf8');
     assert.match(source, /Object\.defineProperty\(window, 'state'/);
     assert.match(source, /function postForRebuild/);
+    assert.match(source, /window\.VyaparTaxEngine=/);
+    assert.match(source, /function deriveDocumentState/);
+    assert.match(source, /clientMutationId/);
     assert.match(source, /restored\.subscription=\{\.\.\.state\.subscription\}/);
     assert.match(source, /restored\.plan=state\.plan/);
     assert.match(source, /io\.decrypt\(parsed, password\)/);
