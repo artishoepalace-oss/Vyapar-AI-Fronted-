@@ -13,6 +13,8 @@ module.exports=async function(page,out,width,progress=console.log){
    const x=node=>{const transform=getComputedStyle(node).transform;return transform==='none'?0:new DOMMatrixReadOnly(transform).m41;};
    const nav=document.getElementById('nav'),header=document.querySelector('.top');
    const navRect=nav.getBoundingClientRect(),headerRect=header.getBoundingClientRect();
+   const sourceWidth=Math.max(1,previous.getBoundingClientRect().width||innerWidth);
+   const expectedTravel=Math.min(20,Math.max(12,Math.round(sourceWidth*.045)));
    const scrollStart=document.documentElement.scrollWidth,frames=[],start=performance.now();
    if(more)console.log('QA sample '+to+' before click');
    if(more)document.querySelector('#androidMoreSheet [data-tab="'+to+'"]').click();
@@ -45,7 +47,7 @@ module.exports=async function(page,out,width,progress=console.log){
     tick();
    });
    const nr=nav.getBoundingClientRect(),hr=header.getBoundingClientRect();
-   return {frames,overlap,destination:document.querySelector('.screen:not(.hide)').id,elapsed:performance.now()-start,travel:Math.min(20,Math.max(12,Math.round(innerWidth*.045))),
+   return {frames,overlap,destination:document.querySelector('.screen:not(.hide)').id,elapsed:performance.now()-start,travel:expectedTravel,
     navMove:Math.abs(nr.x-navRect.x)+Math.abs(nr.y-navRect.y),headerMove:Math.abs(hr.x-headerRect.x)+Math.abs(hr.y-headerRect.y),
     scrollStart,scrollEnd:document.documentElement.scrollWidth};
   },{to,more});
