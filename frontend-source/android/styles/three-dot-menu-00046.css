@@ -364,27 +364,8 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body{
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body::before,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body::after{display:none!important;}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .app>.top,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav{
-  background:var(--vy52-chrome)!important;
-  background-image:none!important;
-  border-color:var(--vy52-border)!important;
-  /* Preserve only the approved inset glossy rim; no outer text/icon shadow. */
-  box-shadow:var(--vy-chrome-rim)!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav .active-capsule{
-  background:var(--vy52-control)!important;
-  background-image:none!important;
-  border:1px solid var(--vy52-border)!important;
-  box-shadow:none!important;
-}
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-android-tab].active,
-html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav button[data-android-tab].active :is(.android-nav-icon,.android-nav-label,svg,svg *){
-  color:var(--vy52-active)!important;
-  stroke:currentColor!important;
-  filter:none!important;
-  text-shadow:none!important;
-}
+/* Persistent navbar/top-bar material is deliberately not styled here.
+   Selection-menu theming must not override capsule-navigation.css. */
 
 /* The shared palette covers every app screen with selector shapes that remain cheap
    during compositor-backed page motion. Keep the hierarchy global, but avoid repeating
