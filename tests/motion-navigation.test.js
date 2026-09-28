@@ -38,10 +38,10 @@ for(const platform of ['android','web']){
   const f=fixture(platform);f.env.scrollY=410;f.html.style.setProperty('scroll-behavior','smooth','important');
   assert.equal(f.env.setTab('sales',true),true);assert.equal(f.env.scrollY,0);
   const sales=f.nodes.get('screen-sales'),home=f.nodes.get('screen-home');
-  assert.match(sales.style.getPropertyValue('transform'),/translate3d\(360px/);assert(home.classList.contains('hide'));assert(home.classList.contains('vy-page-outgoing'));assert.equal(home.style.getPropertyValue('display'),'block');
+  assert.match(sales.style.getPropertyValue('transform'),/translate3d\(16px/);assert(home.classList.contains('hide'));assert(home.classList.contains('vy-page-outgoing'));assert.equal(home.style.getPropertyValue('display'),'block');
   assert.equal(sales.value,'unsaved draft');assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);assert.equal(f.html.style.getPropertyValue('scroll-behavior'),'smooth');
   f.finish();assert(!home.classList.contains('vy-page-outgoing'));assert.equal(home.style.getPropertyValue('display'),'');
-  f.env.scrollY=780;assert.equal(f.env.setTab('home'),true);assert.equal(f.env.scrollY,410);assert.match(f.nodes.get('screen-home').style.getPropertyValue('transform'),/translate3d\(-360px/);f.finish();
+  f.env.scrollY=780;assert.equal(f.env.setTab('home'),true);assert.equal(f.env.scrollY,410);assert.match(f.nodes.get('screen-home').style.getPropertyValue('transform'),/translate3d\(-16px/);f.finish();
  });
  test(platform+': rapid taps settle obsolete handoffs and leave one logical screen',()=>{
   const f=fixture(platform);for(const tab of ['sales','stock','business','home','settings','calculator','sales'])f.env.setTab(tab);f.finish();
@@ -55,8 +55,8 @@ test('All main-tab pairs slide according to Home, Business, Sales, Stock order',
   if(from===to)continue;
   f.env.setTab(from);f.finish();f.env.vyaparMotion.navigate(to);
   const sign=tabs.indexOf(to)>tabs.indexOf(from)?1:-1;
-  assert.equal(f.nodes.get('screen-'+to).style.getPropertyValue('transform'),'translate3d('+(360*sign)+'px,0,0)',from+' to '+to);
-  f.flushFrames();assert.equal(f.nodes.get('screen-'+from).style.getPropertyValue('transform'),'translate3d('+(-360*sign)+'px,0,0)');f.finish();
+  assert.equal(f.nodes.get('screen-'+to).style.getPropertyValue('transform'),'translate3d('+(16*sign)+'px,0,0)',from+' to '+to);
+  f.flushFrames();assert.equal(f.nodes.get('screen-'+from).style.getPropertyValue('transform'),'translate3d('+(-16*sign)+'px,0,0)');f.finish();
  }
 });
 test('Rapid navbar requests keep the visible slide, then honor only the latest tap',()=>{
@@ -88,13 +88,13 @@ test('More destinations always enter from the right, including Settings to Insig
  for(const tab of ['analytics','upload','calculator','subscription','settings']){
   f.env.setTab(tab==='settings'?'calculator':'settings');f.finish();
   f.env.vyaparMotion.navigate(tab,1);
-  assert.equal(f.nodes.get('screen-'+tab).style.getPropertyValue('transform'),'translate3d(360px,0,0)');f.finish();
+  assert.equal(f.nodes.get('screen-'+tab).style.getPropertyValue('transform'),'translate3d(16px,0,0)');f.finish();
  }
 });
 test('Page CSS transitions work even when Web Animations would be overridden by legacy CSS',()=>{
  const f=fixture();for(const node of f.screens)node.animate=()=>{throw new Error('Page motion must use the CSS compositor path');};
  f.env.setTab('business');f.flushFrames();
- assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/500ms/);f.finish();
+ assert.match(f.nodes.get('screen-business').style.getPropertyValue('transition'),/280ms/);f.finish();
 });
 for(const platform of ['android','web']){
  test(platform+': low-memory navigation animates one surface and cleans up after rapid taps',()=>{
@@ -102,16 +102,16 @@ for(const platform of ['android','web']){
   const home=f.nodes.get('screen-home'),business=f.nodes.get('screen-business');
   f.env.vyaparMotion.navigate('business');
   assert(f.html.classList.contains('vy-page-compact'));
-  assert.match(business.style.getPropertyValue('transform'),/translate3d\(23px/);
+  assert.match(business.style.getPropertyValue('transform'),/translate3d\(14px/);
   assert(!home.classList.contains('vy-page-outgoing'));
   assert.equal(home.style.getPropertyValue('display'),'','Hidden source screen is never promoted to a second GPU layer');
   f.flushFrames();assert.equal(business.style.getPropertyValue('transition'),'none');
-  f.flushFrames();assert.match(business.style.getPropertyValue('transition'),/250ms/);
+  f.flushFrames();assert.match(business.style.getPropertyValue('transition'),/220ms/);
   f.env.vyaparMotion.navigate('stock');f.env.vyaparMotion.navigate('sales');
   assert.equal(f.env.currentTab,'business');f.finish();f.finish();
   assert.equal(f.env.currentTab,'sales');assert(!f.html.classList.contains('vy-page-compact'));
   for(const screen of f.screens){assert.equal(screen.style.getPropertyValue('will-change'),'');assert.equal(screen.style.getPropertyValue('opacity'),'');}
-  f.env.vyaparMotion.navigate('home');assert.match(home.style.getPropertyValue('transform'),/translate3d\(-23px/);f.finish();
+  f.env.vyaparMotion.navigate('home');assert.match(home.style.getPropertyValue('transform'),/translate3d\(-14px/);f.finish();
   assert.equal(f.screens.filter(s=>!s.classList.contains('hide')).length,1);
  });
 }
@@ -120,7 +120,7 @@ test('Low-memory More sheet defers focus until its short entrance settles',()=>{
  const overlay=f.element('androidMoreSheet'),card=overlay.card=f.element('more-card');
  f.env.vyaparMotion.openOverlay(overlay);f.flushFrames();
  assert.equal(f.env.document.activeElement,f.nodes.get('body'));
- assert.match(card.style.getPropertyValue('transition'),/245ms/);
+ assert.match(card.style.getPropertyValue('transition'),/220ms/);
  f.finish();assert.equal(f.env.document.activeElement,card);
 });
 test('WebViews without overflow clip use a single bounded navigation surface',()=>{
@@ -128,7 +128,7 @@ test('WebViews without overflow clip use a single bounded navigation surface',()
  f.env.vyaparMotion.navigate('business');
  assert(f.html.classList.contains('vy-page-compact'));
  assert(!f.nodes.get('screen-home').classList.contains('vy-page-outgoing'));
- assert.match(f.nodes.get('screen-business').style.getPropertyValue('transform'),/translate3d\(23px/);
+ assert.match(f.nodes.get('screen-business').style.getPropertyValue('transform'),/translate3d\(14px/);
  f.finish();assert.equal(f.env.currentTab,'business');assert(!f.html.classList.contains('vy-page-transitioning'));
 });
 for(const platform of ['android','web']){
