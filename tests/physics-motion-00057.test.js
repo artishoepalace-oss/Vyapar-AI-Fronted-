@@ -31,10 +31,10 @@ test('shared motion owner exposes adaptive spring physics and keeps native fling
   assert.doesNotMatch(js,/setInterval\(/);
 });
 
-test('navigation and workspace selectors use damped transform springs only',()=>{
+test('restored v00062 navigation and workspace selectors keep transform-only motion',()=>{
   const nav=read('frontend-source/android/styles/capsule-navigation.css');
   const middle=read('frontend-source/android/styles/middle-bar-2026.css');
-  assert.match(nav,/transition:transform 280ms cubic-bezier\(\.20,\.78,\.20,1\)/);
+  assert.match(nav,/transition:transform 420ms cubic-bezier\(\.18,\.90,\.24,1\.12\)/);
   assert.match(middle,/transition:transform 260ms cubic-bezier\(\.18,\.90,\.24,1\.10\)/);
   assert.doesNotMatch(nav,/transition:[^;]*(?:left|width)/);
   assert.doesNotMatch(middle,/transition:[^;]*,width/);
