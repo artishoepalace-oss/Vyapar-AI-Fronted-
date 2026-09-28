@@ -159,7 +159,9 @@ protected void onCreate(Bundle savedInstanceState) {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
-        settings.setLoadWithOverviewMode(true);
+        // The app already owns its responsive viewport. Overview mode can auto-fit
+        // a temporarily wide table/form and make the whole UI appear to zoom.
+        settings.setLoadWithOverviewMode(false);
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
