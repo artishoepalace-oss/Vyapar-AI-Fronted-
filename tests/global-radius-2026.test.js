@@ -19,13 +19,14 @@ test('One final shared stylesheet applies to Android and web, after other stylin
   assert.match(css,/--vy44-inner-radius:24px/);
 });
 
-test('Header, navbar and animated middle bar use fully rounded ends without reimplementing tab motion',()=>{
-  assert.match(css,/\.app > \.top/);
-  assert.match(css,/#nav\.nav\.bottom-nav/);
+test('Global radius stays scoped away from restored root chrome while middle tabs remain pill-shaped',()=>{
+  assert.doesNotMatch(css,/\.app > \.top/);
+  assert.doesNotMatch(css,/#nav\.nav\.bottom-nav/);
   assert.match(css,/\.vy-middle-ready::before/);
   assert.match(css,/border-radius:var\(--vy44-shell-radius\)!important/);
   assert.doesNotMatch(css,/setTab|setMode|localStorage|animation-duration/);
   assert.match(middle,/translate3d\(var\(--vy-middle-x/);
+  assert.match(navbar,/border-radius:25px!important/);
   assert.match(navbar,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
 });
 
