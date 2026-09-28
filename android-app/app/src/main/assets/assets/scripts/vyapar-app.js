@@ -822,11 +822,11 @@
   const transientSelector='.glass-toast';
   /* Cross-WebView damped-spring approximations. Values above 1 provide a tiny
      physical settle without the rubber-band look or per-frame layout work. */
-  const ease='cubic-bezier(.18,.89,.32,1.12)';
-  const easeSoft='cubic-bezier(.2,.82,.24,1.04)';
+  const ease='cubic-bezier(.20,.82,.24,1)';
+  const easeSoft='cubic-bezier(.20,.80,.25,1)';
   const easeClose='cubic-bezier(.32,0,.2,1)';
   const pageEase='cubic-bezier(.18,.86,.22,1)';
-  const moreEase='cubic-bezier(.18,.9,.22,1.08)';
+  const moreEase='cubic-bezier(.20,.84,.24,1)';
   const physicsProfile={engine:'adaptive-damped-spring',scroll:'native-webview-fling',minAndroidApi:26};
   const closeSelector='#closeUpgradePopup,#closePlanSuccessPopup,#closeCancelPopup,#permissionLater,[data-glass-cancel],[data-glass-ok],[data-back-close],[data-update-later],.vy6601-select-head button,[data-cancel],#accountDeleteCancel,.production-close,.vx643-modal-close,[data-close]';
   const focusSelector='button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]';
@@ -931,7 +931,7 @@
     cancel(node);
     const base=css(node,'transform','none');
     const rest=base==='none'?'':base+' ';
-    const distance=Math.min(34,Math.round((window.innerWidth||360)*.095))*(direction<0?-1:1);
+    const distance=Math.min(18,Math.max(12,Math.round((window.innerWidth||360)*.045)))*(direction<0?-1:1);
     tween(node,{transform:rest+'translate3d('+distance+'px,0,0)'},{transform:base},205,null,ease);
   }
 
@@ -997,8 +997,8 @@
     if(compactMotion()){
       /* Old GPUs stall while rasterizing two full-height screens. Keep the
          outgoing page hidden and animate only the already visible destination. */
-      const time=duration(250);
-      const distance=Math.min(24,Math.round((window.innerWidth||360)*.065))*(direction<0?-1:1);
+      const time=duration(220);
+      const distance=Math.min(16,Math.max(12,Math.round((window.innerWidth||360)*.04)))*(direction<0?-1:1);
       const base=css(incoming,'transform','none');
       const rest=base==='none'?'':base+' ';
       const active={outgoing,incoming,frame:0,timer:0,outgoingStyle:null,
@@ -1033,7 +1033,7 @@
       return true;
     }
 
-    const time=duration(500);
+    const time=duration(280);
     if(!time)return false;
     const active={outgoing,incoming,frame:0,timer:0,
       outgoingStyle:saveInline(outgoing,pageStyleProps),incomingStyle:saveInline(incoming,pageStyleProps)};
@@ -1041,7 +1041,7 @@
 
     const rect=context.previousRect||pageRect(outgoing);
     const width=Math.max(1,Number(rect.width)||window.innerWidth||360);
-    const travel=Math.max(width,window.innerWidth||width);
+    const travel=Math.min(20,Math.max(12,Math.round(width*.045)));
     const incomingDistance=travel*(direction<0?-1:1);
     const outgoingDistance=-incomingDistance;
     const incomingBase=css(incoming,'transform','none');
@@ -1088,7 +1088,7 @@
     const incomingTo=incomingBase;
 
     // CSS transitions override legacy !important screen transforms; Web Animations do not.
-    // Move both real screens by one viewport, with no fade, cloning or rerendering.
+    // Move both real screens only a short distance; direction stays legible without carousel-like travel.
     outgoing.style.setProperty('transition','none','important');
     incoming.style.setProperty('transition','none','important');
     outgoing.style.setProperty('transform',outgoingFrom,'important');
@@ -1238,7 +1238,7 @@
       v+=a*dt;x+=v*dt;
       /* Panels may settle a few percent past rest, like a damped physical sheet,
          but never enough to expose layout behind the rounded edge. */
-      const p=Math.max(0,Math.min(1.055,x));
+      const p=Math.max(0,Math.min(1.018,x));
       out.push({offset:i/frames,p:i===frames?1:p});
     }
     return out;
@@ -1280,10 +1280,10 @@
     const base=css(card,'transform','none');
     const rest=base==='none'?'':base+' ';
     const compact=more&&compactMotion();
-    const entrance=more?(compact?245:460):sheet?280:220;
+    const entrance=more?(compact?220:320):sheet?260:210;
     tween(overlay,{opacity:'0'},{opacity:'1'},more?(compact?150:260):sheet?150:130,null,easeSoft);
     const fullSheet=info.sheet;
-    const panelTime=more?entrance:fullSheet?300:sheet?235:195;
+    const panelTime=more?entrance:fullSheet?280:sheet?225:190;
     if(!springPanelIn(card,base,fullSheet,more,panelTime,null)){
       tween(card,{transform:rest+(fullSheet?'translate3d(0,100%,0)':'translate3d(0,'+(sheet?'22':'10')+'px,0) scale('+(sheet?'.996':'.992')+')')},{transform:base},panelTime,null,more?moreEase:ease);
     }
@@ -17368,7 +17368,7 @@ const ob=new MutationObserver(()=>{clearTimeout(window.__6601);window.__6601=set
 (function(root){
   'use strict';
 
-  const VERSION='20.10.2004.00062.2026';
+  const VERSION='20.10.2004.00063.2026';
   const ACCOUNT_KEY='vyapar_ai_account_cache_v1';
   const STATE_KEY='vyapar_ai_prod_v1';
   let businessSession=null;

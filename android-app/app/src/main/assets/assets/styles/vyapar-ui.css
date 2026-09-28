@@ -9488,13 +9488,13 @@ html.vy861-flat-black.workspace-v7 .screen button:focus-visible,html.vy861-flat-
 /* Vyapar AI — shared directional page and sheet motion authority.
    JS owns page/dialog/sheet transforms. CSS only provides micro feedback and disables legacy duplicate motion. */
 html.vy-motion-ready{
-  --vy-motion-ease:cubic-bezier(.18,.89,.32,1.12);
-  --vy-motion-ease-soft:cubic-bezier(.2,.82,.24,1.04);
-  --vy-motion-spring:cubic-bezier(.16,.92,.22,1.08);
+  --vy-motion-ease:cubic-bezier(.20,.82,.24,1);
+  --vy-motion-ease-soft:cubic-bezier(.20,.80,.25,1);
+  --vy-motion-spring:cubic-bezier(.20,.82,.24,1);
   --vy-motion-settle:cubic-bezier(.2,.78,.2,1);
   --vy-motion-fast:92ms;
   --vy-motion-ui:150ms;
-  --vy-motion-page:500ms;
+  --vy-motion-page:280ms;
 }
 /* The viewport owns page scrolling. A second scroll container on body breaks
    the sticky header, while inherited smooth scrolling competes with page slides. */
@@ -9545,7 +9545,7 @@ html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.s
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 html.vy-motion-ready body :is(button,.btn,[role="button"],.android-sheet-item,.settings-row,.vy675-settings-row,.vx622-settings-row):not(:disabled):active{
-  transform:translate3d(0,1px,0) scale(.974)!important;
+  transform:translate3d(0,1px,0) scale(.988)!important;
 }
 html.vy-motion-ready body input,
 html.vy-motion-ready body select,
@@ -9580,7 +9580,7 @@ html.vy-motion-ready body #nav.nav button[data-android-tab]:not(:disabled):activ
 html.vy-motion-ready body #nav.nav .android-nav-icon{
   transition:transform 210ms var(--vy-motion-spring),background-color var(--vy-motion-ui) ease!important;
 }
-html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-2px,0) scale(1.045)!important}
+html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-1px,0) scale(1.015)!important}
 
 /* One JS motion owner for all known overlays/cards. */
 html.vy-motion-ready body :is(
@@ -9605,7 +9605,7 @@ html.vy-motion-ready body #androidMoreSheet .android-sheet-grid{display:flex!imp
 html.vy-motion-ready body #androidMoreSheet .android-sheet-item{min-height:60px!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.04)!important;background:transparent!important;border-radius:0!important;padding:9px 8px!important;box-shadow:none!important}
 html.vy-motion-ready body #androidMoreSheet .android-sheet-item:last-child{border-bottom:0!important}
 html.vy-motion-ready body #androidMoreSheet .android-sheet-item-icon{color:#d3d5d9!important;background:#222428!important;border-radius:12px!important;transition:transform 110ms var(--vy-motion-ease),background-color 120ms ease!important}
-html.vy-motion-ready body #androidMoreSheet .android-sheet-item:active .android-sheet-item-icon{transform:scale(.95)!important}
+html.vy-motion-ready body #androidMoreSheet .android-sheet-item:active .android-sheet-item-icon{transform:scale(.985)!important}
 html.vy-motion-ready body #shopProgressSheet .shop-progress-sheet{max-height:calc(100dvh - 110px - env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
 
 html.vy-motion-ready body .glass-toast{
@@ -9656,7 +9656,7 @@ html.vy-motion-ready body .screen.vy-page-outgoing{pointer-events:none!important
 html.vy861-flat-black.vy-motion-ready.vy-physics-motion body :is(
   .card,.stat,.android-quick-action,.subscription-plan-card,.vx622-menu-trigger
 ):not(:disabled):active{
-  transform:translate3d(0,1px,0) scale(.982)!important;
+  transform:translate3d(0,1px,0) scale(.989)!important;
 }
 html.vy861-flat-black.vy-motion-ready.vy-physics-motion.perf-scrolling body :is(
   .card,.stat,.android-quick-action,.settings-row,.vy675-settings-row
@@ -9676,7 +9676,7 @@ html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(
 }
 html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):not(:disabled):active{
   transition-duration:72ms!important;
-  transform:translate3d(0,1px,0) scale(.972)!important;
+  transform:translate3d(0,1px,0) scale(.988)!important;
 }
 html.vy861-flat-black.vy-motion-ready body :is(button,.btn,[role="button"]):focus-visible{
   outline:2px solid rgba(226,229,235,.76)!important;
@@ -9689,7 +9689,7 @@ html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item
   transition:transform 220ms var(--vy-motion-spring),background-color 150ms ease,opacity 150ms ease!important;
 }
 html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item:active{
-  transform:translate3d(0,1px,0) scale(.986)!important;
+  transform:translate3d(0,1px,0) scale(.990)!important;
 }
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{transition:none!important;}
@@ -10310,7 +10310,7 @@ html.vy861-flat-black {
   --vy-chrome-width:367px;
   --vy-chrome-left:8px;
   --vy-chrome-right:8px;
-  --vy-chrome-rim:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.10);
+  --vy-chrome-rim:inset 0 0 0 1px rgba(255,255,255,.09);
 }
 @supports (left:max(8px,1px)) {
   html.vy861-flat-black {
@@ -10331,7 +10331,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top {
   height:56px!important;min-height:56px!important;padding:6px 10px!important;
   box-sizing:border-box!important;border:0!important;border-radius:28px!important;
   background:var(--vy-chrome-black)!important;
-  background-image:radial-gradient(120% 38% at 50% -2%,rgba(255,255,255,.105),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 48%)!important;
+  background-image:none!important;
   box-shadow:var(--vy-chrome-rim)!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
@@ -10384,11 +10384,11 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .act
   width:68px;min-width:68px;max-width:68px;
   height:42px;min-height:42px;max-height:42px;
   box-sizing:border-box;border:0;border-radius:21px;
-  background:linear-gradient(180deg,#d8d5d8 0%,#c5c1c5 42%,#aaa6aa 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(52,48,52,.18);
+  background:#c8c6c8;
+  box-shadow:none;
   pointer-events:none;z-index:0;
   transform:translate3d(0,0,0);
-  transition:transform 420ms cubic-bezier(.18,.90,.24,1.12);
+  transition:transform 280ms cubic-bezier(.20,.78,.20,1);
   will-change:transform;
 }
 /* Keep the selection capsule in step with the compact page handoff on old GPUs. */
@@ -10409,7 +10409,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
    fades horizontally and downward within the existing 10px bottom clearance.
    No blur/filter, animation or hit target is added on Android 8 WebViews. */
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after {
-  content:""!important;display:block!important;position:absolute!important;
+  content:""!important;display:none!important;position:absolute!important;
   left:25%!important;right:auto!important;top:100%!important;bottom:auto!important;
   width:50%!important;height:8px!important;margin:0!important;padding:0!important;
   border:0!important;border-radius:0!important;box-sizing:border-box!important;
@@ -10463,7 +10463,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav butt
   display:block!important;width:100%!important;max-width:100%!important;
   height:10px!important;min-height:10px!important;flex:0 0 10px!important;
   padding:0!important;margin:0!important;font-size:8px!important;line-height:10px!important;
-  font-weight:650!important;letter-spacing:-.1px!important;text-align:center!important;white-space:nowrap!important;
+  font-weight:600!important;letter-spacing:-.1px!important;text-align:center!important;white-space:nowrap!important;
   color:inherit!important;background:transparent!important;filter:none!important;transform:none!important;animation:none!important;
 }
 /* Selected icons and labels use a flat burgundy accent without an outer glow. */
@@ -13037,6 +13037,362 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 }
 @media(prefers-reduced-motion:reduce){
   html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx622-menu-panel,.vx622-menu-item){
+    transition:none!important;
+  }
+}
+
+/* ===== STYLE SOURCE: master-system-00063.css ===== */
+
+/* Vyapar AI 20.10.2004.00063 — final product-system contract.
+   This file is intentionally last in the shared UI bundle. It does not create a
+   second navigation/overlay/motion engine; it resolves historical visual
+   conflicts into one quiet, aligned rendering contract.
+   Release QA measures the short 12–20px compositor handoff at sub-pixel precision. */
+
+html.vy861-flat-black{
+  --vy63-bg:#000000;
+  --vy63-chrome:#121212;
+  --vy63-surface:#111214;
+  --vy63-surface-2:#18191c;
+  --vy63-control:#222328;
+  --vy63-line:rgba(255,255,255,.085);
+  --vy63-line-soft:rgba(255,255,255,.045);
+  --vy63-text:#f4f4f5;
+  --vy63-muted:#a6a8ad;
+  --vy63-accent:#a50035;
+  --vy63-danger:#ef6477;
+  --vy63-gutter:12px;
+  --vy63-touch:44px;
+  --vy63-card-radius:18px;
+  --vy63-panel-radius:24px;
+}
+
+html.vy861-flat-black,
+html.vy861-flat-black body,
+html.vy861-flat-black .app,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{
+  background:var(--vy63-bg)!important;
+  color:var(--vy63-text);
+}
+
+html.vy861-flat-black *,
+html.vy861-flat-black *::before,
+html.vy861-flat-black *::after{box-sizing:border-box}
+
+html.vy861-flat-black body,
+html.vy861-flat-black main,
+html.vy861-flat-black .screen{max-width:100%;min-width:0}
+
+html.vy861-flat-black .screen > *,
+html.vy861-flat-black :is(.row,.grid,.grid2,.grid3,.actions,.toolbar,.section-head,.card-head,.vx621-feature-grid,.vx621-kpis,.production-account-grid) > *{
+  min-width:0;
+}
+
+html.vy861-flat-black :is(
+  h1,h2,h3,h4,.page-title,.section-title,.section-head,.card-title,.settings-title,
+  .vx621-feature-copy,.vx621-feature-copy h3,.vy-form-head h2,.android-sheet-copy
+){
+  max-width:100%;
+  overflow-wrap:anywhere;
+  text-wrap:pretty;
+}
+
+html.vy861-flat-black :is(p,.muted,.hint,.helper,.subtitle,.android-sheet-item-copy){
+  overflow-wrap:anywhere;
+}
+
+/* Quiet solid surfaces. No card glitter, halo or decorative gradient. */
+html.vy861-flat-black main :is(
+  .card,.stat,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .production-card,.production-account-card,.vx621-hero,.vx621-kpi,.vx621-group,.vx621-context,
+  .vx621-recent,.home-growth-card,.home-section-card,.shop-growth-card,.chart-wrap,.notice,
+  .subscription-card,.plan-card,.calculator-card,.calc-shell
+){
+  background:var(--vy63-surface)!important;
+  background-image:none!important;
+  border:1px solid var(--vy63-line-soft)!important;
+  box-shadow:none!important;
+  outline:0;
+}
+
+html.vy861-flat-black main :is(
+  .business-tool,.business-action,.business-tool-card,.home-tool-card,.quick-card,.quick-action,
+  .home-quick-action,.home-action-card,.home-kpi,.home-stat,.shop-growth-stat,.shop-growth-goal,
+  .production-account-grid>div,.p2-live-preview,.vy660-live-box
+){
+  background:var(--vy63-surface-2)!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+
+html.vy861-flat-black main :is(
+  .card,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .production-card,.vx621-hero,.vx621-group,.home-section-card,.shop-growth-card
+) :is(
+  .card,.stat,.settings-card,.business-tool,.business-action,.home-tool-card,.quick-card,
+  .quick-action,.home-kpi,.home-stat,.vx621-kpi
+){
+  background:var(--vy63-surface-2)!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* One alignment rhythm across principal workspaces. */
+html.vy861-flat-black :is(
+  #screen-home,#screen-business,#screen-sales,#screen-stock,#screen-analytics,
+  #screen-upload,#screen-calculator,#screen-settings,#screen-subscription
+){
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+
+html.vy861-flat-black :is(
+  .card,.settings-section,.settings-card,.sales-card,.stock-card,.business-module-card,
+  .production-card,.vx621-hero,.vx621-group,.home-section-card,.shop-growth-card,
+  .subscription-card,.plan-card
+){
+  border-radius:var(--vy63-card-radius)!important;
+}
+
+html.vy861-flat-black :is(.section-title,.section-head,.card-title,.settings-title){
+  margin-top:0!important;
+  margin-bottom:8px!important;
+}
+
+html.vy861-flat-black :is(button,.btn,[role="button"],input,select,textarea){
+  max-width:100%;
+}
+
+html.vy861-flat-black :is(button,.btn,[role="button"]){
+  min-height:var(--vy63-touch);
+  line-height:1.25;
+}
+
+html.vy861-flat-black input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]),
+html.vy861-flat-black select,
+html.vy861-flat-black textarea{
+  width:100%;
+  min-width:0;
+  min-height:var(--vy63-touch);
+}
+
+html.vy861-flat-black :is(.p611-table,.vx621-table-wrap,.scroll,.table-wrap,.record-table-wrap){
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overscroll-behavior-x:contain;
+}
+
+/* Final top/bottom chrome: solid, aligned and deliberately non-glittery. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
+  background:var(--vy63-chrome)!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top::after,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::before,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
+  display:block!important;
+  width:367px!important;
+  max-width:calc(100vw - 16px)!important;
+  height:50px!important;
+  min-height:50px!important;
+  max-height:50px!important;
+  padding:0!important;
+  border-radius:25px!important;
+  overflow:visible!important;
+  contain:layout style!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top{
+  width:367px!important;
+  max-width:calc(100vw - 16px)!important;
+  margin-left:50%!important;
+  margin-right:0!important;
+  left:auto!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+  border-radius:28px!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .nav-track{
+  height:50px!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:center!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav .active-capsule{
+  width:68px!important;
+  min-width:68px!important;
+  max-width:68px!important;
+  height:42px!important;
+  min-height:42px!important;
+  max-height:42px!important;
+  top:4px!important;
+  border-radius:21px!important;
+  background:#c8c6c8!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab]{
+  height:50px!important;
+  min-height:50px!important;
+  max-height:50px!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active,
+html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav button[data-android-tab].active :is(.android-nav-icon,.android-nav-label){
+  color:var(--vy63-accent)!important;
+  text-shadow:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+
+/* Middle selectors are one flat track and one graphite selection surface. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(.p1-modebar,.workspace-tabs).vy-middle-ready{
+  background:var(--vy63-chrome)!important;
+  background-image:none!important;
+  border:1px solid var(--vy63-line-soft)!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+/* Match the legacy route-scoped selector specificity so this final contract
+   actually wins the cascade instead of being silently overridden by older UI layers. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(#screen-business,#screen-sales,#screen-stock,#screen-analytics,#screen-upload,#screen-calculator,#screen-settings) :is(.p1-modebar,.workspace-tabs).vy-middle-ready::before{
+  background:#2a2b2f!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+
+/* Unified overlay surfaces: opaque enough to read, no frosted/glitter stack. */
+html.vy861-flat-black.vy-motion-ready body :is(
+  .vy-form-overlay,.android-sheet-overlay,.shop-progress-overlay,.glass-dialog-overlay,
+  .subscription-overlay,.production-overlay,.vx643-modal-overlay,.github-update-overlay,
+  .account-delete-overlay,.upgrade-plan-popup,.upgrade-popup-overlay
+){
+  background:rgba(0,0,0,.66)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+html.vy861-flat-black.vy-motion-ready body :is(
+  .vy-unified-panel,.vy-form-sheet,.android-sheet,.shop-progress-sheet,.glass-dialog-card,
+  .subscription-dialog,.production-modal,.vx643-modal,.github-update-dialog,.account-delete-dialog,
+  .modal-card,.sheet-content
+){
+  background:#151619!important;
+  background-image:none!important;
+  border:1px solid var(--vy63-line)!important;
+  border-radius:var(--vy63-panel-radius)!important;
+  box-shadow:none!important;
+  filter:none!important;
+  color:var(--vy63-text)!important;
+}
+
+html.vy861-flat-black.vy-motion-ready body .vy-form-head{
+  min-height:56px;
+  padding:10px 16px!important;
+  gap:12px!important;
+  border-bottom:1px solid var(--vy63-line-soft)!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-body{
+  padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px))!important;
+}
+html.vy861-flat-black.vy-motion-ready body .vy-form-handle{
+  width:42px!important;
+  height:4px!important;
+  margin:10px auto 4px!important;
+  background:#55575c!important;
+  box-shadow:none!important;
+}
+
+/* More remains one clean list, not nested floating cards. */
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-grid{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item{
+  min-height:56px!important;
+  padding:8px 10px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid var(--vy63-line-soft)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html.vy861-flat-black.vy-motion-ready body #androidMoreSheet .android-sheet-item:last-child{border-bottom:0!important}
+
+/* Remove decorative shadows/glows from common chrome controls without changing semantics. */
+html.vy861-flat-black :is(
+  .vx622-menu-trigger,.android-sheet-item-icon,.vy675-settings-row,.vx622-settings-row,
+  .business-tool-search-field,.vy-search-control,.record-search,.vy-invoice-search,.vy-stock-search
+){
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+
+html.vy861-flat-black :is(.vx622-menu-panel,.popover,.menu-popover,[role="menu"]){
+  background:#18191c!important;
+  background-image:none!important;
+  border:1px solid var(--vy63-line)!important;
+  box-shadow:none!important;
+}
+
+/* Keep destructive semantics explicit, not decorative. */
+html.vy861-flat-black :is(.danger,.destructive,[data-danger="true"],[data-bulk-kind="delete"]){
+  color:var(--vy63-danger)!important;
+}
+
+/* Old WebView / low-RAM rendering: remove decoration before reducing usability. */
+html.vy861-flat-black:is(.perf-tier-legacy,.perf-low-ram,.perf-lite) :is(
+  .top,#nav.nav,.active-capsule,.android-sheet,.vy-form-sheet,.card,.stat
+){
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:367px){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
+    width:calc(100vw - 16px)!important;
+    max-width:calc(100vw - 16px)!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.vy861-flat-black.vy-motion-ready body :is(
+    button,.btn,[role="button"],.active-capsule,.android-nav-icon,.android-sheet-item
+  ){
     transition:none!important;
   }
 }
