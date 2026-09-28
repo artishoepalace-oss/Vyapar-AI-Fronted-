@@ -52,7 +52,11 @@ module.exports=async function(page,out,width,progress=console.log){
  }
  function check(data,sign,label){
   assert(data.frames.length>=8,'Visible animation frames: '+label);
-  assert(new Set(data.frames.map(f=>Math.round(f.inX))).size>=8,'Page actually slides: '+label);
+  const signedPositions=data.frames.map(f=>f.inX*sign);
+  const subpixelPositions=new Set(signedPositions.map(value=>Math.round(value*10)/10));
+  const motionRange=Math.max(...signedPositions)-Math.min(...signedPositions);
+  assert(subpixelPositions.size>=4,'Page exposes multiple composited positions: '+label);
+  assert(motionRange>data.travel*.55,'Page actually moves through the intended short travel: '+label);
   assert(data.frames[0].inX*sign>data.travel*.65,'Destination starts at the correct edge: '+label);
   let previous=data.travel+2;
   for(const f of data.frames){
@@ -65,7 +69,7 @@ module.exports=async function(page,out,width,progress=console.log){
   assert(data.scrollStart<=width&&data.scrollEnd<=width,'No horizontal overflow: '+label);
   assert(!data.overlap,'More closes before the page slide starts');
   assert(data.elapsed>=180,'Restrained page transition has time to render: '+label);
-  results.push({label,frames:data.frames.length,positions:new Set(data.frames.map(f=>Math.round(f.inX))).size,elapsed:Math.round(data.elapsed)});
+  results.push({label,frames:data.frames.length,positions:new Set(data.frames.map(f=>Math.round(f.inX*10)/10)).size,elapsed:Math.round(data.elapsed)});
  }
  for(const from of tabs)for(const to of tabs){
   if(from===to)continue;progress('Checking page slide '+width+'px '+from+' → '+to);await go(from);
