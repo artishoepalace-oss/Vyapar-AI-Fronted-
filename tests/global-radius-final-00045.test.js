@@ -16,13 +16,15 @@ test('v00045 radius layer stays after prior global radius and before later compo
   const later=list.slice(list.indexOf('global-radius-final-00045.css')+1);
   assert.ok(later.every(name=>name==='middle-bar-2026.css'||/^three-dot-menu-\d+\.css$/.test(name)||name==='master-system-00063.css'),'Only scoped component overrides and the final master contract may follow the radius contract');
 });
-test('full-pill chrome, inner tabs, cards, searches and sheet hosts are present',()=>{
-  ['#nav.nav.bottom-nav','.app > .top','.vy-middle-ready::before','.p1-modebar',
+test('inner tabs, cards, searches and sheet hosts keep shared radii without owning root chrome',()=>{
+  ['.vy-middle-ready::before','.p1-modebar',
    '.workspace-tabs','.vx621-kpis','.vx621-kpi','.vx621-feature-card',
    '.vx621-stock-records','.vy675-page-body','.vy-invoice-workspace',
    '.vy-search-control','.record-search','.vy-invoice-search','.vy-stock-search',
    '.android-sheet','#vyFormSheet','#vyaparOtpGate','.glass-dialog-card',
    '.vx622-menu-trigger','#monthly-profit-records'].forEach(q=>assert.ok(css.includes(q),q));
+  assert.doesNotMatch(css,/#nav\.nav\.bottom-nav/);
+  assert.doesNotMatch(css,/\.app > \.top/);
   assert.match(css,/--vy45-pill:999px/);
   assert.match(css,/--vy45-panel:24px/);
   assert.match(css,/--vy45-card:18px/);
