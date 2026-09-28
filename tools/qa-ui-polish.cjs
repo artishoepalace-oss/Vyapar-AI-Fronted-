@@ -141,8 +141,8 @@ const version=require('../version.json').versionName;
       return {header:size('.app > .top'),nav:size('#nav.nav'),middle:size('#screen-business .p1-modebar'),
         kpi:size('#screen-business .vx621-kpi'),search:size('#screen-business .business-tool-search-field')};
     });
-    assert(radius.header>=40&&radius.nav>=40&&radius.middle>=40&&radius.kpi===18&&radius.search>=40,
-      '00058 pill bars and 18px inner-card radii are applied to actual business UI: '+JSON.stringify(radius));
+    assert(Math.abs(radius.header-28)<.5&&Math.abs(radius.nav-25)<.5&&radius.middle>=40&&radius.kpi===18&&radius.search>=40,
+      '00063 measured chrome and 18px business-card radii are applied to actual UI: '+JSON.stringify(radius));
     const due=await page.locator('.vx621-kpi').last().boundingBox(),kpi=await page.locator('.vx621-kpi').first().boundingBox();
     assert(due.width>kpi.width*1.8,'Customer Due spans the summary');
     const surface=await page.locator('#screen-business .p1-modebar').evaluate(bar=>{
@@ -150,7 +150,7 @@ const version=require('../version.json').versionName;
       return {bg:track.backgroundColor,blur:track.backdropFilter,gradient:track.backgroundImage,
         thumb:thumb.backgroundColor,thumbGradient:thumb.backgroundImage,shadow:thumb.boxShadow};
     });
-    assert.deepEqual(surface,{bg:'rgb(18, 18, 18)',blur:'none',gradient:'none',thumb:'rgb(36, 36, 36)',thumbGradient:'none',shadow:'none'},'Middle bar has an opaque black track and solid grey selection');
+    assert.deepEqual(surface,{bg:'rgb(18, 18, 18)',blur:'none',gradient:'none',thumb:'rgb(42, 43, 47)',thumbGradient:'none',shadow:'none'},'Middle bar has an opaque black track and solid graphite selection');
     await mode('business','daily');
     for(const [target,sign] of [['accounts',1],['daily',-1]]){
       const poses=await page.evaluate(target=>{
