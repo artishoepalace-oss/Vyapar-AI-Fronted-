@@ -145,7 +145,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .app > .top,
 html.vy861-flat-black.workspace-v7.vy-motion-ready body #nav.nav.bottom-nav{
   background:var(--vy63-chrome)!important;
   background-image:none!important;
-  border:1px solid var(--vy63-line)!important;
+  border:0!important;
   box-shadow:none!important;
   filter:none!important;
   backdrop-filter:none!important;
