@@ -74,7 +74,7 @@ html.vy-motion-ready body button:focus-visible,
 html.vy-motion-ready body a:focus-visible{outline:2px solid rgba(211,213,217,.72)!important;outline-offset:3px!important}
 
 
-/* Semantic motion classes: one timing vocabulary; no transition:all. */
+/* Semantic motion classes: one timing vocabulary with explicit properties. */
 html.vy-motion-ready body [data-motion-class="micro"]{
   transition-duration:var(--motion-micro)!important;
 }
@@ -104,20 +104,8 @@ html.vy-motion-ready body #vyaparOtpGate .auth-logo{
   width:100%!important;height:100%!important;object-fit:contain!important;padding:0!important;border-radius:20px!important;background:transparent!important;transform:none!important;
 }
 
-/* Bottom navigation: fixed geometry, fast response, no halo. */
-html.vy-motion-ready body #nav.nav{
-  left:8px!important;right:8px!important;width:auto!important;max-width:620px!important;margin:0 auto!important;
-  bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;transform:none!important;height:68px!important;min-height:68px!important;
-  box-sizing:border-box!important;border-radius:26px!important;padding:5px!important;background:rgba(12,13,15,.975)!important;
-  border:1px solid rgba(255,255,255,.018)!important;box-shadow:none!important;
-}
-html.vy-motion-ready body #nav.nav button[data-android-tab]{border-radius:20px!important}
-html.vy-motion-ready body #nav.nav button.active{background:rgba(255,255,255,.06)!important;color:#fff!important}
-html.vy-motion-ready body #nav.nav button[data-android-tab]:not(:disabled):active{transform:translate3d(0,1px,0) scale(.968)!important}
-html.vy-motion-ready body #nav.nav .android-nav-icon{
-  transition:transform 210ms var(--vy-motion-spring),background-color var(--vy-motion-ui) ease!important;
-}
-html.vy-motion-ready body #nav.nav button.active .android-nav-icon{transform:translate3d(0,-1px,0) scale(1.015)!important}
+/* Bottom navigation geometry/material/micro-motion is owned exclusively by
+   capsule-navigation.css so the restored v00062 contract cannot be shadowed. */
 
 /* One JS motion owner for all known overlays/cards. */
 html.vy-motion-ready body :is(
