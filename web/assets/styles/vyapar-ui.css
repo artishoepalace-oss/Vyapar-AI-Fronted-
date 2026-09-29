@@ -12200,7 +12200,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   color:var(--vx46-danger)!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"]) .vx622-option-icon {
-  background:var(--vx46-danger-icon)!important;
+  background:transparent!important;
 }
 
 /* Selection toolbar remains functional; count is visually secondary while the
@@ -12718,9 +12718,9 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(
   [data-bulk-kind="delete"],[data-bulk-kind="cancel"]
 ):disabled .vx622-option-icon {
-  background:var(--vy52-control)!important;
-  border-color:var(--vy52-border)!important;
-  color:var(--vy52-muted)!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  color:currentColor!important;
 }
 
 
@@ -12820,7 +12820,16 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
   background:var(--vy52-control)!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-option-icon {
-  display:none!important;
+  display:inline-flex!important;
+  flex:0 0 28px!important;
+  width:28px!important;min-width:28px!important;max-width:28px!important;
+  height:28px!important;min-height:28px!important;max-height:28px!important;
+  background:transparent!important;
+  border:0!important;border-radius:0!important;
+  color:currentColor!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-option-icon svg {
+  width:28px!important;height:28px!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-label {
   display:block!important;
@@ -12837,7 +12846,7 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"],[data-bulk-kind="cancel"]) {
   background:transparent!important;
-  color:#e56f83!important;
+  color:#cf557b!important;
 }
 html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:is(.danger,[data-bulk-kind="delete"],[data-bulk-kind="cancel"]):disabled {
   opacity:.34!important;
@@ -12875,42 +12884,65 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu > .vx62
     radial-gradient(90% 55% at 50% 0%,rgba(255,255,255,.095),rgba(255,255,255,0) 66%),
     #2a2225!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
+/* 00066 reference popup: one solid panel, outline icons and full-width row separators.
+   Keep the existing anchor, motion, selection handlers and confirmation flow.
+   Scope to app/overlay hosts so legacy page button/panel rules cannot repaint it. */
+html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-menu-card.vx622-selection-open {
+  contain:none!important;overflow:visible!important;
+  position:relative!important;z-index:31!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel{
   width:224px!important;
   max-width:calc(100vw - 28px)!important;
-  padding:6px!important;
+  padding:0!important;
   border-radius:18px!important;
-  border:1px solid rgba(255,255,255,.095)!important;
-  background:
-    radial-gradient(115% 46% at 50% -4%,rgba(255,255,255,.075),rgba(255,255,255,0) 62%),
-    #1b1c1f!important;
-  box-shadow:0 16px 38px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  border:1px solid #434343!important;
+  background:#222222!important;
+  background-image:none!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.42)!important;
   transform:translate3d(7px,-7px,0) scale(.90)!important;
   transition:opacity 145ms ease,transform 260ms cubic-bezier(.16,.92,.22,1.08),visibility 0s linear 260ms!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu.is-open .vx622-menu-panel{
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu.is-open .vx622-menu-panel{
   transform:translate3d(0,0,0) scale(1)!important;
   transition:opacity 145ms ease,transform 260ms cubic-bezier(.16,.92,.22,1.08),visibility 0s linear 0s!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item{
-  min-height:48px!important;height:auto!important;
-  padding:12px 14px!important;
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item{
+  min-height:64px!important;height:auto!important;
+  padding:16px 20px!important;
+  gap:18px!important;
   justify-content:flex-start!important;
   text-align:left!important;
-  border-radius:12px!important;
-  font-size:14px!important;line-height:1.25!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;
+  color:#f5f5f5!important;
+  font-size:16px!important;font-weight:400!important;line-height:1.25!important;
   transition:transform 190ms cubic-bezier(.16,.92,.22,1.08),background-color 130ms ease,opacity 130ms ease!important;
   transition-delay:0ms!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-label{
-  width:100%!important;text-align:left!important;
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-label{
+  flex:1 1 auto!important;
+  width:auto!important;text-align:left!important;
+  white-space:normal!important;overflow-wrap:break-word!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:active{
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item[data-bulk-kind="clear"]{
+  color:#a6a7ad!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item:active{
   transform:scale(.975)!important;
   background:#292a2f!important;
 }
-html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-item:not(:last-child){
-  border-bottom:1px solid rgba(255,255,255,.055)!important;
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item:not(:last-child){
+  border-bottom:1px solid #363636!important;
+}
+
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item:is([data-bulk-kind="delete"],[data-bulk-kind="cancel"]){
+  color:#cf557b!important;
+}
+html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item:is([data-bulk-kind="delete"],[data-bulk-kind="cancel"]):disabled{
+  color:var(--vy52-muted)!important;
+  opacity:.34!important;
 }
 
 /* App sheets share one physical surface: dark material + static top reflection.
@@ -13009,14 +13041,15 @@ html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(
 }
 @media(max-width:360px){
   html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu .vx622-menu-panel{
-    width:212px!important;max-width:calc(100vw - 24px)!important;
+    width:224px!important;max-width:calc(100vw - 24px)!important;
   }
   html.vy861-flat-black.workspace-v7.vy-motion-ready body #vyGitHubUpdate .update-actions{
     grid-template-columns:minmax(0,1fr)!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
-  html.vy861-flat-black.workspace-v7.vy-motion-ready body .vx622-bulk-menu :is(.vx622-menu-panel,.vx622-menu-item){
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel,
+  html.vy861-flat-black.workspace-v7.vy-motion-ready body :is(main,#vyFormSheet,.vy-unified-overlay) .vx622-bulk-menu .vx622-menu-panel > .vx622-menu-item{
     transition:none!important;
   }
 }
