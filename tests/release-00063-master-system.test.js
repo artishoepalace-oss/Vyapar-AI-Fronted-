@@ -6,13 +6,13 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('00066 release identity stays synchronized',()=>{
+test('00067 release identity stays synchronized',()=>{
   const version=JSON.parse(read('version.json'));
   const gradle=read('android-app/app/build.gradle');
-  assert.equal(version.versionName,'20.10.2004.00066.2026');
-  assert.equal(version.versionCode,2010200466);
-  assert.match(gradle,/versionCode\s+2010200466/);
-  assert.match(gradle,/versionName\s+"20\.10\.2004\.00066\.2026"/);
+  assert.equal(version.versionName,'20.10.2004.00067.2026');
+  assert.equal(version.versionCode,2010200467);
+  assert.match(gradle,/versionCode\s+2010200467/);
+  assert.match(gradle,/versionName\s+"20\.10\.2004\.00067\.2026"/);
   assert.match(gradle,/minSdk\s+26/);
 });
 

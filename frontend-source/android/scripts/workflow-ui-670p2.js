@@ -370,7 +370,6 @@
   }
 
   const transactionLabels = {
-    pType:['Transaction type',true,'Choose what you are recording.'],
     pParty:['Customer / supplier',false,''],
     pItem:['Item / SKU / barcode',false,''],
     pQty:['Quantity',false,''],
@@ -398,7 +397,7 @@
     FIXED_ASSET:{pParty:'Vendor / source',pRate:'Asset cost'}
   };
   const compactAmountTypes = new Set(['PAYMENT_IN','PAYMENT_OUT','OTHER_INCOME','FIXED_ASSET']);
-  const transactionCoreIds = ['pType','pParty','pItem','pQty','pRate','pPaid','pMode'];
+  const transactionCoreIds = ['pParty','pItem','pQty','pRate','pPaid','pMode'];
   const transactionDetailIds = ['pTax','pCess','pDisc','pAccount','pLinked','pState','pCurrency','pFx','pNotes'];
 
   function transactionFieldMeta(type,id){
@@ -441,12 +440,6 @@
     const typeControl = $('pType');
     if(!typeControl || !form?.contains(typeControl)) return;
     const type = raw('pType') || 'SALE';
-    Array.from(typeControl.options || []).forEach(function(option){
-      const value = String(option.value || option.textContent || '').trim();
-      if(!value) return;
-      option.value = value;
-      option.textContent = titleCase(value);
-    });
     transactionCoreIds.concat(transactionDetailIds).forEach(function(id){
       const control = $(id);
       if(!control || !form.contains(control)) return;

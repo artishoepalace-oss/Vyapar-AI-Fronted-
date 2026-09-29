@@ -80,6 +80,12 @@ const version=require('../version.json').versionName;
     await page.evaluate(()=>{document.querySelectorAll('.shop-progress-overlay,.android-permission-overlay').forEach(el=>el.remove());document.documentElement.classList.add('native-android');state.profile.businessName='QA Shoe Shop';state.monthly=[{id:'m1',month:'2026-01',profit:1200},{id:'m2',month:'2026-09',profit:6700},{id:'m3',month:'2025-09',profit:5000}];state.daily=[{id:'d1',date:'2026-09-15',sale:1000,profit:200}];state.stocks=[];VyaparRecords.invalidate();VyaparInsights.invalidate();render();});
     // Screenshot-requested business popups: real controls and saves, disposable data.
     await go('business');
+    for(const module of ['customers','suppliers','inventory']){
+      await page.evaluate(m=>vx621OpenAdvanced('business',m,'business'),module);await sheet();
+      assert.equal(await page.getByRole('button',{name:'All Modules',exact:false}).count(),0,'No All Modules button in '+module);
+      await shot('popup-'+module);
+      await page.evaluate(()=>VyaparFormSheets.close(true));await settle();
+    }
     async function popup(label){
       stage='popup-'+label;await settle();
       assert.equal(await page.locator('#vyFormSheet').count(),1,'One shared popup');
@@ -93,6 +99,19 @@ const version=require('../version.json').versionName;
       await shot(stage);
     }
     async function closePopup(){if(await page.locator('#vyFormSheet').count()){await page.evaluate(()=>handleNativeBackPress());await settle();}assert.equal(await page.locator('#vyFormSheet').count(),0);await go('business');}
+    if(width===360){
+      for(const [module,types] of [['cashbank',['PAYMENT_IN','PAYMENT_OUT','OTHER_INCOME','FIXED_ASSET']],['documents620',['ESTIMATE','PROFORMA','SALE_ORDER','PURCHASE_ORDER','DELIVERY_CHALLAN']]]){
+        for(const type of types){
+          await page.evaluate(m=>vx621OpenPlatform('business',m,'business'),module);await sheet();
+          const title=type.toLowerCase().replace(/(^|_)([a-z])/g,(_,space,c)=>(space?' ':'')+c.toUpperCase());
+          await page.locator('#vyFormSheet button').filter({hasText:new RegExp('^'+title+'$')}).click();await sheet();
+          assert.equal(await page.locator('#pType').inputValue(),type,'Named action preserves '+type);
+          assert.equal(await page.locator('#vyFormHeading').innerText(),title);
+          assert.equal(await page.locator('#pType').isVisible(),false);
+          await page.evaluate(()=>VyaparFormSheets.close(true));await settle();
+        }
+      }
+    }
     await page.evaluate(()=>businessShowModule('expenses'));await popup('expense');
     assert.equal(await page.locator('#vyFormSheet .vy-tool-section').count(),2);
     if(width===360){
@@ -118,7 +137,10 @@ const version=require('../version.json').versionName;
     assert.equal(await page.evaluate(()=>state.messaging620.autoTypes.SALE),true);
     if(!await page.locator('#mAuto_SALE').count()){await go('business');await page.evaluate(()=>p611Open('messages620'));await settle();}
     await page.locator('#mAuto_SALE').uncheck();await page.getByRole('button',{name:'Save Messaging',exact:true}).click();await closePopup();
-    await page.evaluate(()=>p611Open('reports620'));await popup('reports');
+    await go('business');
+    assert.equal(await page.getByRole('heading',{name:'58 Reports',exact:true}).count(),0,'Duplicate report card is removed');
+    await go('stock');await mode('stock','tools');
+    await page.locator('.vx621-stock-tools button').filter({hasText:'Stock Reports'}).click();await popup('reports');
     const reportCount=await page.locator('#vyFormSheet .p620-report-card:visible').count();assert(reportCount>30);
     await page.getByLabel('Search',{exact:true}).fill('sales register');await settle();
     assert.equal(await page.locator('#vyFormSheet .p620-report-card:visible').count(),1,'Report search hides nonmatches');
@@ -223,16 +245,41 @@ const version=require('../version.json').versionName;
     await mode('sales','billing');await page.locator('.vx621-sales-tools button').filter({hasText:'New Sale',exact:true}).click();await sheet();
     assert.equal((await page.locator('#vyFormSheet .p2-form-group-title').first().innerText()).trim(),'Transaction details','Transaction heading is always visible');
     const txCoreLabels00062=await page.locator('#vyFormSheet .p2-core-fields .p2-field-label:visible').evaluateAll(nodes=>nodes.map(n=>n.textContent.replace('*','').trim()));
-    for(const label00062 of ['Transaction type','Customer','Item / SKU / barcode','Quantity','Sale rate','Amount received','Payment mode'])assert(txCoreLabels00062.includes(label00062),'Missing readable transaction label: '+label00062);
+    for(const label00062 of ['Customer','Item / SKU / barcode','Quantity','Sale rate','Amount received','Payment mode'])assert(txCoreLabels00062.includes(label00062),'Missing readable transaction label: '+label00062);
     const txMoreDetails00062=page.locator('#vyFormSheet .p2-advanced-fields');assert.equal((await txMoreDetails00062.locator('summary').innerText()).trim(),'More details');assert.equal(await txMoreDetails00062.evaluate(el=>el.open),false,'Advanced fields stay collapsed by default');
-    const txTypeNames00062=await page.locator('#pType option').evaluateAll(nodes=>nodes.map(n=>n.textContent.trim()));assert(txTypeNames00062.includes('Sale return')&&txTypeNames00062.includes('Payment in')&&!txTypeNames00062.some(x=>x.includes('_')),'Technical transaction names are replaced with readable names');
-    await page.locator('#pType').selectOption('PURCHASE');await page.locator('#pType').dispatchEvent('change');await settle();
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'New Sale');
+    assert.equal(await page.locator('#pType').getAttribute('type'),'hidden','Action fixes the transaction type');
+    assert(!txCoreLabels00062.includes('Transaction type'),'No redundant type field');
+    await page.evaluate(()=>VyaparFormSheets.close(true));
+    await go('business');await mode('business','daily');
+    await page.locator('.vx621-action').filter({hasText:'Purchase'}).filter({hasNotText:'Return'}).click();await sheet();
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'Purchase');await shot('popup-purchase');
+    assert.equal(await page.locator('#pType').inputValue(),'PURCHASE');
     assert((await page.locator('#pRate').evaluate(el=>el.closest('.p2-field')?.querySelector('.p2-field-label')?.textContent||'')).includes('Purchase rate'),'Purchase fields use context-specific labels');
-    await page.locator('#pType').selectOption('SALE');await page.locator('#pType').dispatchEvent('change');await settle();
+    await page.locator('#pParty').fill('QA typed supplier');await page.locator('#pItem').fill('QA billed shoe');await page.locator('#pQty').fill('2');await page.locator('#pRate').fill('200');
+    await page.getByRole('button',{name:'Save Transaction',exact:true}).click();await sheet();
+    assert.equal(await page.evaluate(()=>state.transactions611.filter(t=>t.partyName==='QA typed supplier'&&t.type==='PURCHASE').length),1,'Purchase action saves one purchase');
+    assert.equal(await page.locator('#pType').inputValue(),'PURCHASE','Save keeps the action type');
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'Purchase','Save keeps the action title');
+    await page.evaluate(()=>VyaparFormSheets.close(true));
+    await go('business');await mode('business','daily');
+    await page.locator('.vx621-action').filter({hasText:'Payment In'}).click();await sheet();
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'Payment In');await shot('popup-payment-in');
+    assert.equal(await page.locator('#pType').inputValue(),'PAYMENT_IN');
+    assert.equal(await page.locator('#pItem').isVisible(),false,'Payment form hides item controls');
+    await page.evaluate(()=>VyaparFormSheets.close(true));
+    await go('sales');await mode('sales','billing');
+    await page.locator('.vx621-sales-tools button').filter({hasText:'Sale Return'}).click();await sheet();
+    assert.equal(await page.locator('#vyFormHeading').innerText(),'Sale Return');await shot('popup-sale-return');
+    assert.equal(await page.locator('#pType').inputValue(),'SALE_RETURN');
+    assert(await page.locator('#pLinked').isVisible(),'Returns retain the original-document selector');
+    await page.evaluate(()=>VyaparFormSheets.close(true));
+    await page.locator('.vx621-sales-tools button').filter({hasText:'New Sale',exact:true}).click();await sheet();
+    assert.equal(await page.locator('#pType').inputValue(),'SALE','A new action replaces the previous type');
     await page.evaluate(()=>{const input00062=document.getElementById('pRate'),wrapper00062=input00062?.closest('.p2-field');if(wrapper00062){wrapper00062.parentNode.insertBefore(input00062,wrapper00062);wrapper00062.remove();}});
     await settle();
     assert((await page.locator('#pRate').evaluate(el=>el.closest('.p2-field')?.querySelector('.p2-field-label')?.textContent||'')).includes('Sale rate'),'Renderer refresh repairs missing field headings');
-    await page.locator('#pType').dispatchEvent('click');await settle();assert.equal(await page.locator('#vy6601Select').count(),1);await page.evaluate(()=>handleNativeBackPress());await settle();assert.equal(await page.locator('#vyFormSheet').count(),1,'Nested Back keeps parent form');await page.locator('#pParty').fill('QA customer');await page.locator('#pItem').fill('QA billed shoe');await page.locator('#pRate').fill('400');
+    await page.locator('#pMode').dispatchEvent('click');await settle();assert.equal(await page.locator('#vy6601Select').count(),1);await page.evaluate(()=>handleNativeBackPress());await settle();assert.equal(await page.locator('#vyFormSheet').count(),1,'Nested Back keeps parent form');await page.locator('#pParty').fill('QA customer');await page.locator('#pItem').fill('QA billed shoe');await page.locator('#pRate').fill('400');
     await page.getByRole('button',{name:'Save Transaction',exact:true}).click();await settle();
     const transaction=await page.evaluate(()=>state.transactions611.find(t=>t.partyName==='QA customer'));assert(transaction,'Billing saves a transaction for stocked goods');assert.equal(transaction.total,400);
     await page.evaluate(()=>handleNativeBackPress());await settle();
